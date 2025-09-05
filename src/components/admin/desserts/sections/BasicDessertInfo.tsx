@@ -1,0 +1,77 @@
+import { UseFormReturn } from 'react-hook-form';
+import { DessertInput, DESSERT_TYPES } from '@/types/dessert';
+import { Label } from '@/components/ui/Label';
+import { Input } from '@/components/ui/Input';
+import { Switch } from '@/components/ui/Switch';
+import { ImageUpload } from '@/components/common/ImageUpload';
+
+interface BasicDessertInfoProps {
+  form: UseFormReturn<DessertInput>;
+}
+
+export default function BasicDessertInfo({ form }: BasicDessertInfoProps) {
+  const { register, formState: { errors }, watch, setValue } = form;
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="name">Nom</Label>
+        <Input
+          id="name"
+          {...register('name', { required: 'Le nom est requis' })}
+          error={errors.name?.message}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="type">Type</Label>
+        <select
+          id="type"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          {...register('type', { required: 'Le type est requis' })}
+        >
+          <option value="">Sélectionner un type</option>
+          {DESSERT_TYPES.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+        {errors.type?.message && (
+          <p className="text-sm text-red-500">{errors.type.message}</p>
+        )}
+      </div>
+
+      <div>
+        <Label htmlFor="price">Prix</Label>
+        <Input
+          id="price"
+          type="number"
+          step="0.01"
+          {...register('price', {
+            required: 'Le prix est requis',
+            min: { value: 0, message: 'Le prix doit être positif' }
+          })}
+          error={errors.price?.message}
+        />
+      </div>
+
+      <div>
+        <Label>Image</Label>
+        <ImageUpload
+          value={watch('image')}
+          onChange={(file) => setValue('image', file)}
+          error={errors.image?.message}
+        />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="available"
+          {...register('available')}
+        />
+        <Label htmlFor="available">Disponible</Label>
+      </div>
+    </div>
+  );
+}

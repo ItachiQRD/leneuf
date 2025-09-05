@@ -8,7 +8,7 @@ export type DrinkType = (typeof drinkTypes)[number];
 // Schéma pour une taille
 const DrinkSizeSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
-  volume: z.number().min(1, "Le volume est requis"),
+  volume: z.string().min(1, "Le volume est requis"),
   price: z.number().min(0, "Le prix doit être positif"),
   isDefault: z.boolean()
 });

@@ -3,7 +3,7 @@ import { BaseProduct } from './models';
 import { z } from 'zod';
 
 // Types de base pour les aliments
-export type FoodType = 'burger' | 'pizza' | 'salad' | 'sandwich_durum';
+export type FoodType = 'burger' | 'pizza' | 'salad' | 'sandwich_durum' | 'tacos' | 'bowls' | 'paninis' | 'plates' | 'tex_mex' | 'defsoce';
 export type FoodCategory = 'bestseller' | 'new' | 'regular';
 export type SpicyLevel = 'mild' | 'medium' | 'hot' | 'extra_hot';
 export type ExtraCategory = 'protein' | 'vegetable' | 'cheese' | 'other';
@@ -13,7 +13,13 @@ export const FOOD_TYPES = [
   { value: 'burger', label: 'Burger' },
   { value: 'pizza', label: 'Pizza' },
   { value: 'salad', label: 'Salade' },
-  { value: 'sandwich_durum', label: 'Sandwich/Durum' }
+  { value: 'sandwich_durum', label: 'Sandwich/Durum' },
+  { value: 'tacos', label: 'Tacos' },
+  { value: 'bowls', label: 'Bowls' },
+  { value: 'paninis', label: 'Paninis' },
+  { value: 'plates', label: 'Assiettes' },
+  { value: 'tex_mex', label: 'Tex Mex' },
+  { value: 'defsoce', label: 'Defsoces' }
 ] as const;
 
 export const FOOD_CATEGORIES = [
@@ -69,6 +75,58 @@ export interface Extra {
   category: ExtraCategory;
 }
 
+// Interfaces pour les nouvelles catégories
+export interface PizzaSize {
+  name: string;
+  price: number;
+  diameter: string;
+  isDefault: boolean;
+}
+
+export interface TacoSize {
+  name: string;
+  price: number;
+  isDefault: boolean;
+}
+
+export interface TacoOption {
+  category: string;
+  name: string;
+  price: number;
+  available: boolean;
+}
+
+export interface TacoOptions {
+  meats: TacoOption[];
+  sauces: TacoOption[];
+  cheeses: TacoOption[];
+  supplements: TacoOption[];
+}
+
+export interface BowlMeat {
+  name: string;
+  price: number;
+  available: boolean;
+}
+
+export interface PaniniAccompaniments {
+  fries: boolean;
+  drink?: string;
+  drinkPrice: number;
+}
+
+export interface PlateAccompaniments {
+  bread: boolean;
+  fries: boolean;
+  salad: boolean;
+}
+
+export interface DefsoceOptions {
+  availableBases: string[];
+  availableIngredients: string[];
+  maxIngredients: number;
+}
+
 // Interface de base pour un plat
 export interface FoodBase {
   _id?: string;
@@ -90,6 +148,15 @@ export interface FoodBase {
   allergens: string[];
   spicyLevel: SpicyLevel;
   active?: boolean;
+  // Nouveaux champs pour les catégories étendues
+  pizzaBase?: 'tomate' | 'creme_fraiche';
+  pizzaSizes?: PizzaSize[];
+  tacoSizes?: TacoSize[];
+  tacoOptions?: TacoOptions;
+  bowlMeats?: BowlMeat[];
+  paniniAccompaniments?: PaniniAccompaniments;
+  plateAccompaniments?: PlateAccompaniments;
+  defsoceOptions?: DefsoceOptions;
 }
 
 export const FoodSchema = z.object({
@@ -97,7 +164,7 @@ export const FoodSchema = z.object({
   name: z.string().min(1, 'Le nom est requis'),
   description: z.string().min(1, 'La description est requise'),
   price: z.number().min(0, 'Le prix doit être positif'),
-  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum'], {
+  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum', 'tacos', 'bowls', 'paninis', 'plates', 'tex_mex', 'defsoce'], {
     errorMap: () => ({ message: 'Type de plat invalide' })
   }),
   category: z.enum(['bestseller', 'new', 'regular'], {

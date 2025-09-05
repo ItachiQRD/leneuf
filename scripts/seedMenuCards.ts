@@ -1,11 +1,11 @@
-import mongoose from 'mongoose';
-import Food from '../src/models/Food';
-import Drink from '../src/models/Drink';
-import Side from '../src/models/Side';
-import Dessert from '../src/models/Dessert';
-import Menu from '../src/models/Menu';
-import Promotion from '../src/models/Promotion';
-import { dbConnect } from '../src/lib/dbConnect';
+const mongoose = require('mongoose');
+const Food = require('../src/models/Food').default;
+const Drink = require('../src/models/Drink').default;
+const Side = require('../src/models/Side').default;
+const Dessert = require('../src/models/Dessert').Dessert;
+const Menu = require('../src/models/Menu').default;
+const Promotion = require('../src/models/Promotion').default;
+const dbConnect = require('../src/lib/dbConnect').default;
 
 const seedMenuCards = async () => {
   try {

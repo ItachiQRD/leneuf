@@ -31,11 +31,7 @@ const INGREDIENT_TYPES: SelectOption[] = [
   { value: 'extra', label: 'Extra' },
 ];
 
-const USAGE_TYPES: SelectOption[] = [
-  { value: 'base', label: 'Ingrédient de base uniquement' },
-  { value: 'extra', label: 'Supplément uniquement' },
-  { value: 'both', label: 'Base et Supplément' },
-];
+// Supprimé car usage n'est plus dans le schéma
 
 export default function IngredientForm({ initialData, onSubmit, onCancel, onDelete }: IngredientFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,8 +41,8 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
     resolver: zodResolver(IngredientSchema),
     defaultValues: {
       name: initialData?.name ?? '',
+      description: initialData?.description ?? '',
       type: initialData?.type ?? 'meat',
-      usage: initialData?.usage ?? 'base',
       price: initialData?.price ?? 0,
       image: initialData?.image ?? '',
       isAvailable: initialData?.isAvailable ?? true,
@@ -54,15 +50,6 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
       isVegetarian: initialData?.isVegetarian ?? false,
       allergens: initialData?.allergens ?? [],
       orderIndex: initialData?.orderIndex ?? 0,
-      nutritionalInfo: initialData?.nutritionalInfo ?? {
-        calories: 0,
-        proteins: 0,
-        carbs: 0,
-        fats: 0,
-        fiber: 0,
-        sugar: 0,
-        servingSize: 100
-      }
     },
     mode: 'onSubmit',
   });
@@ -132,11 +119,11 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
                   className="w-full"
                 />
 
-                <Select
-                  label="Utilisation"
-                  {...register('usage')}
-                  error={errors.usage?.message}
-                  options={USAGE_TYPES}
+                <Input
+                  label="Description"
+                  {...register('description')}
+                  error={getErrorMessage(errors.description)}
+                  placeholder="Description de l'ingrédient"
                   className="w-full"
                 />
 
@@ -230,54 +217,6 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-                Valeurs nutritionnelles (pour 100g)
-              </h3>
-              <div className="space-y-4">
-                <Input
-                  label="Calories (kcal)"
-                  type="number"
-                  {...register('nutritionalInfo.calories', { valueAsNumber: true })}
-                  error={getErrorMessage(errors.nutritionalInfo?.calories)}
-                />
-                <Input
-                  label="Protéines (g)"
-                  type="number"
-                  step="0.1"
-                  {...register('nutritionalInfo.proteins', { valueAsNumber: true })}
-                  error={getErrorMessage(errors.nutritionalInfo?.proteins)}
-                />
-                <Input
-                  label="Glucides (g)"
-                  type="number"
-                  step="0.1"
-                  {...register('nutritionalInfo.carbs', { valueAsNumber: true })}
-                  error={getErrorMessage(errors.nutritionalInfo?.carbs)}
-                />
-                <Input
-                  label="Lipides (g)"
-                  type="number"
-                  step="0.1"
-                  {...register('nutritionalInfo.fats', { valueAsNumber: true })}
-                  error={getErrorMessage(errors.nutritionalInfo?.fats)}
-                />
-                <Input
-                  label="Fibres (g)"
-                  type="number"
-                  step="0.1"
-                  {...register('nutritionalInfo.fiber', { valueAsNumber: true })}
-                  error={getErrorMessage(errors.nutritionalInfo?.fiber)}
-                />
-                <Input
-                  label="Sucres (g)"
-                  type="number"
-                  step="0.1"
-                  {...register('nutritionalInfo.sugar', { valueAsNumber: true })}
-                  error={getErrorMessage(errors.nutritionalInfo?.sugar)}
-                />
-              </div>
-            </div>
 
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
               <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">

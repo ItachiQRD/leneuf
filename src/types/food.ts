@@ -3,10 +3,9 @@ import { BaseProduct } from './models';
 import { z } from 'zod';
 
 // Types de base pour les aliments
-export type FoodType = 'burger' | 'pizza' | 'salad' | 'sandwich_durum' | 'tacos' | 'bowls' | 'paninis' | 'plates' | 'tex_mex' | 'kids_menu' | 'small_hunger';
+export type FoodType = 'burger' | 'pizza' | 'salad' | 'sandwich_durum' | 'paninis' | 'plates' | 'tex_mex' | 'kids_menu' | 'small_hunger';
 export type FoodCategory = 'bestseller' | 'new' | 'regular';
 export type SpicyLevel = 'mild' | 'medium' | 'hot' | 'extra_hot';
-export type ExtraCategory = 'protein' | 'vegetable' | 'cheese' | 'other';
 
 // Constantes pour les options
 export const FOOD_TYPES = [
@@ -14,8 +13,6 @@ export const FOOD_TYPES = [
   { value: 'pizza', label: 'Pizza' },
   { value: 'salad', label: 'Salade' },
   { value: 'sandwich_durum', label: 'Sandwich/Durum' },
-  { value: 'tacos', label: 'Tacos' },
-  { value: 'bowls', label: 'Bowls' },
   { value: 'paninis', label: 'Paninis' },
   { value: 'plates', label: 'Assiettes' },
   { value: 'tex_mex', label: 'Tex Mex' },
@@ -36,12 +33,6 @@ export const SPICY_LEVELS = [
   { value: 'extra_hot', label: 'Très épicé' }
 ] as const;
 
-export const EXTRA_CATEGORIES = [
-  { value: 'protein', label: 'Protéine' },
-  { value: 'vegetable', label: 'Légume' },
-  { value: 'cheese', label: 'Fromage' },
-  { value: 'other', label: 'Autre' }
-] as const;
 
 // Constantes pour les allergènes
 export const COMMON_ALLERGENS = [
@@ -68,20 +59,12 @@ export interface NutritionalInfo {
   servingSize: string;
 }
 
-// Interface pour les extras
-export interface Extra {
-  name: string;
-  price: number;
-  available: boolean;
-  category: ExtraCategory;
-}
 
 // Interface de base pour un plat
 export interface FoodBase {
   _id?: string;
   name: string;
-  description: string;
-  price: number;
+  price?: number; // Optionnel pour les pizzas
   type: FoodType;
   category: FoodCategory;
   image?: string | File;
@@ -89,8 +72,6 @@ export interface FoodBase {
   preparationTimeMinutes: number;
   available: boolean;
   nutritionalInfo: NutritionalInfo;
-  extras: Extra[];
-  maxSauces: number;
   isVegan: boolean;
   isVegetarian: boolean;
   isGlutenFree: boolean;
@@ -102,37 +83,29 @@ export interface FoodBase {
 export const FoodSchema = z.object({
   _id: z.string().optional(),
   name: z.string().min(1, 'Le nom est requis'),
-  description: z.string().min(1, 'La description est requise'),
-  price: z.number().min(0, 'Le prix doit être positif'),
-  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum'], {
+  price: z.number().min(0, 'Le prix doit être positif').optional().or(z.undefined()),
+  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'tex_mex', 'kids_menu', 'small_hunger'], {
     errorMap: () => ({ message: 'Type de plat invalide' })
   }),
   category: z.enum(['bestseller', 'new', 'regular'], {
     errorMap: () => ({ message: 'Catégorie invalide' })
   }),
-  image: z.string({ required_error: 'L\'image est requise' }),
-  baseIngredients: z.array(z.string()),
+  image: z.string().optional(),
+  baseIngredients: z.array(z.string()).default([]),
   preparationTimeMinutes: z.number().min(1, 'Le temps de préparation est requis'),
-  available: z.boolean(),
+  available: z.boolean().default(true),
   nutritionalInfo: z.object({
-    calories: z.number(),
-    proteins: z.number(),
-    carbs: z.number(),
-    fats: z.number(),
-    servingSize: z.string()
+    calories: z.number().min(0).default(0),
+    proteins: z.number().min(0).default(0),
+    carbs: z.number().min(0).default(0),
+    fats: z.number().min(0).default(0),
+    servingSize: z.string().default('100g')
   }),
-  extras: z.array(z.object({
-    name: z.string(),
-    price: z.number(),
-    available: z.boolean(),
-    category: z.enum(['protein', 'vegetable', 'cheese', 'other'])
-  })),
-  maxSauces: z.number(),
-  isVegan: z.boolean(),
-  isVegetarian: z.boolean(),
-  isGlutenFree: z.boolean(),
-  allergens: z.array(z.string()),
-  spicyLevel: z.enum(['mild', 'medium', 'hot', 'extra_hot']),
+  isVegan: z.boolean().default(false),
+  isVegetarian: z.boolean().default(false),
+  isGlutenFree: z.boolean().default(false),
+  allergens: z.array(z.string()).default([]),
+  spicyLevel: z.enum(['mild', 'medium', 'hot', 'extra_hot']).default('mild'),
   active: z.boolean().optional()
 });
 
@@ -141,7 +114,27 @@ export type FoodFormData = Omit<FoodBase, '_id'>;
 
 // Type pour l'API
 export type FoodInputAPI = Omit<FoodBase, 'image'> & {
-  image?: string;
+  image?: string | File;
+  // Champs optionnels spécifiques
+  pizzaBase?: string;
+  pizzaSizes?: Array<{
+    name: string;
+    price: number;
+    diameter: string;
+    isDefault: boolean;
+  }>;
+  paniniAccompaniments?: {
+    fries: boolean;
+    drink?: string;
+    drinkPrice: number;
+  };
+  plateAccompaniments?: {
+    bread: boolean;
+    fries: boolean;
+    salad: boolean;
+  };
+  includesSurprise?: boolean;
+  includesCaprisun?: boolean;
 };
 
 // Type pour la réponse de l'API
@@ -149,6 +142,26 @@ export interface Food extends FoodBase {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
+  // Champs optionnels spécifiques
+  pizzaBase?: string;
+  pizzaSizes?: Array<{
+    name: string;
+    price: number;
+    diameter: string;
+    isDefault: boolean;
+  }>;
+  paniniAccompaniments?: {
+    fries: boolean;
+    drink?: string;
+    drinkPrice: number;
+  };
+  plateAccompaniments?: {
+    bread: boolean;
+    fries: boolean;
+    salad: boolean;
+  };
+  includesSurprise?: boolean;
+  includesCaprisun?: boolean;
 }
 
 // Type pour les filtres de recherche

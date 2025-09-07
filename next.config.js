@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: 'export',
+  trailingSlash: true,
   images: {
     domains: ['your-image-domain.com'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],

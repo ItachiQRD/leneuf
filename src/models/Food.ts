@@ -7,13 +7,9 @@ const foodSchema = new mongoose.Schema({
     required: [true, 'Le nom est requis'],
     trim: true,
   },
-  description: {
-    type: String,
-    required: [true, 'La description est requise'],
-  },
   price: {
     type: Number,
-    required: [true, 'Le prix est requis'],
+    required: false,
     min: 0,
   },
   image: {
@@ -23,7 +19,7 @@ const foodSchema = new mongoose.Schema({
   type: {
     type: String,
     required: [true, 'Le type est requis'],
-    enum: ['burger', 'pizza', 'salad', 'sandwich_durum', 'tacos', 'bowls', 'paninis', 'plates', 'tex_mex', 'kids_menu', 'small_hunger'],
+    enum: ['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'tex_mex', 'kids_menu', 'small_hunger'],
   },
   category: {
     type: String,
@@ -63,21 +59,6 @@ const foodSchema = new mongoose.Schema({
     fats: { type: Number, default: 0 },
     servingSize: { type: String, default: '100g' },
   },
-  extras: [{
-    name: { type: String, required: true },
-    price: { type: Number, required: true, min: 0 },
-    maxQuantity: { type: Number, required: true, min: 1 },
-    category: { 
-      type: String, 
-      required: true,
-      enum: ['protein', 'vegetable', 'cheese', 'other']
-    }
-  }],
-  maxSauces: {
-    type: Number,
-    default: 2,
-    min: 0,
-  },
   isVegan: {
     type: Boolean,
     default: false,
@@ -101,44 +82,6 @@ const foodSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     diameter: { type: String, required: true },
     isDefault: { type: Boolean, default: false }
-  }],
-  // Champs spécifiques aux tacos
-  tacoSizes: [{
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    isDefault: { type: Boolean, default: false }
-  }],
-  tacoOptions: {
-    meats: [{
-      category: { type: String, required: true },
-      name: { type: String, required: true },
-      price: { type: Number, required: true },
-      available: { type: Boolean, default: true }
-    }],
-    sauces: [{
-      category: { type: String, required: true },
-      name: { type: String, required: true },
-      price: { type: Number, required: true },
-      available: { type: Boolean, default: true }
-    }],
-    cheeses: [{
-      category: { type: String, required: true },
-      name: { type: String, required: true },
-      price: { type: Number, required: true },
-      available: { type: Boolean, default: true }
-    }],
-    supplements: [{
-      category: { type: String, required: true },
-      name: { type: String, required: true },
-      price: { type: Number, required: true },
-      available: { type: Boolean, default: true }
-    }]
-  },
-  // Champs spécifiques aux bowls
-  bowlMeats: [{
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    available: { type: Boolean, default: true }
   }],
   // Champs spécifiques aux paninis
   paniniAccompaniments: {
@@ -174,6 +117,6 @@ const foodSchema = new mongoose.Schema({
 
 // Indexes pour améliorer les performances
 foodSchema.index({ type: 1, category: 1 });
-foodSchema.index({ name: 'text', description: 'text' });
+foodSchema.index({ name: 'text' });
 
 export default mongoose.models.Food || mongoose.model<Food>('Food', foodSchema);

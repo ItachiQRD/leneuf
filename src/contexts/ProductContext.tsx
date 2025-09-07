@@ -3,7 +3,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
 
 // Types
-import { Food, FoodInput } from '@/types/food';
+import { Food, FoodInputAPI } from '@/types/food';
 import { Drink, DrinkInput } from '@/types/drink';
 import { Dessert, DessertInput } from '@/types/dessert';
 import { Sauce, SauceInput } from '@/types/sauce';
@@ -13,8 +13,8 @@ import { Ingredient, IngredientInput } from '@/types/ingredient';
 interface ProductContextType {
   // Foods
   foods: Food[];
-  createFood: (food: FoodInput) => Promise<void>;
-  updateFood: (id: string, food: Partial<FoodInput>) => Promise<void>;
+  createFood: (food: FoodInputAPI) => Promise<void>;
+  updateFood: (id: string, food: Partial<FoodInputAPI>) => Promise<void>;
   deleteFood: (id: string) => Promise<void>;
   
   // Drinks
@@ -140,12 +140,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated]);
 
   // Foods CRUD
-  const createFood = useCallback(async (food: FoodInput) => {
+  const createFood = useCallback(async (food: FoodInputAPI) => {
     try {
       const formData = new FormData();
       
-      if (food.image instanceof File) {
-        formData.append('image', food.image);
+      if (food.image && typeof food.image === 'object' && 'name' in food.image) {
+        formData.append('image', food.image as File);
         const { image, ...restData } = food;
         formData.append('data', JSON.stringify(restData));
       } else {
@@ -177,13 +177,13 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const updateFood = useCallback(async (id: string, food: Partial<FoodInput>) => {
+  const updateFood = useCallback(async (id: string, food: Partial<FoodInputAPI>) => {
     try {
       console.log(' [ProductContext] Mise à jour food:', id, food);
       const formData = new FormData();
       
-      if (food.image instanceof File) {
-        formData.append('image', food.image);
+      if (food.image && typeof food.image === 'object' && 'name' in food.image) {
+        formData.append('image', food.image as File);
         const { image, ...restData } = food;
         formData.append('data', JSON.stringify({ ...restData, _id: id }));
       } else {
@@ -777,3 +777,5 @@ export function useProducts() {
   }
   return context;
 }
+
+

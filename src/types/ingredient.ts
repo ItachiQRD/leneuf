@@ -18,8 +18,8 @@ export type NutritionalInfo = z.infer<typeof NutritionalInfoSchema>;
 
 export const IngredientSchema = z.object({
   name: z.string().min(1, 'Le nom est requis'),
+  description: z.string().optional().default(''),
   type: z.enum(['meat', 'cheese', 'vegetable', 'extra']),
-  usage: z.enum(['base', 'extra', 'both']).default('base'),
   price: z.number().min(0, 'Le prix doit être positif'),
   image: z.union([z.string(), z.instanceof(File)]).optional(),
   isAvailable: z.boolean().default(true),
@@ -27,14 +27,13 @@ export const IngredientSchema = z.object({
   isVegetarian: z.boolean().default(false),
   allergens: z.array(z.string()).default([]),
   orderIndex: z.number().int().min(0).default(0),
-  nutritionalInfo: NutritionalInfoSchema,
 });
 
 export interface Ingredient {
   _id: string;
   name: string;
+  description?: string;
   type: IngredientType;
-  usage: IngredientUsage;
   price: number;
   image: string;
   isAvailable: boolean;
@@ -42,7 +41,8 @@ export interface Ingredient {
   isVegetarian: boolean;
   allergens: string[];
   orderIndex: number;
-  nutritionalInfo: NutritionalInfo;
+  active: boolean;
+  deletedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

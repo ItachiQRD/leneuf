@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import formidable from 'formidable';
-import { adminMiddleware } from '@/middleware/adminMiddleware';
+import { withAdmin } from '@/utils/api';
 import { connectDB } from '@/lib/mongodb';
 import Side from '@/models/Side';
 import { imageService } from '@/services/imageService';
@@ -143,4 +143,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default adminMiddleware(handler);
+export default withAdmin(handler);

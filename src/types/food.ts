@@ -3,7 +3,7 @@ import { BaseProduct } from './models';
 import { z } from 'zod';
 
 // Types de base pour les aliments
-export type FoodType = 'burger' | 'pizza' | 'salad' | 'sandwich_durum';
+export type FoodType = 'burger' | 'pizza' | 'salad' | 'sandwich_durum' | 'tacos' | 'bowls' | 'paninis' | 'plates' | 'tex_mex' | 'kids_menu' | 'small_hunger';
 export type FoodCategory = 'bestseller' | 'new' | 'regular';
 export type SpicyLevel = 'mild' | 'medium' | 'hot' | 'extra_hot';
 export type ExtraCategory = 'protein' | 'vegetable' | 'cheese' | 'other';
@@ -13,7 +13,14 @@ export const FOOD_TYPES = [
   { value: 'burger', label: 'Burger' },
   { value: 'pizza', label: 'Pizza' },
   { value: 'salad', label: 'Salade' },
-  { value: 'sandwich_durum', label: 'Sandwich/Durum' }
+  { value: 'sandwich_durum', label: 'Sandwich/Durum' },
+  { value: 'tacos', label: 'Tacos' },
+  { value: 'bowls', label: 'Bowls' },
+  { value: 'paninis', label: 'Paninis' },
+  { value: 'plates', label: 'Assiettes' },
+  { value: 'tex_mex', label: 'Tex Mex' },
+  { value: 'kids_menu', label: 'Menu Enfants' },
+  { value: 'small_hunger', label: 'P\'tite Faim' }
 ] as const;
 
 export const FOOD_CATEGORIES = [

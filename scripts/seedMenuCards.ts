@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
-const Food = require('../src/models/Food').default;
-const Drink = require('../src/models/Drink').default;
-const Side = require('../src/models/Side').default;
-const Dessert = require('../src/models/Dessert').Dessert;
-const Menu = require('../src/models/Menu').default;
-const Promotion = require('../src/models/Promotion').default;
-const dbConnect = require('../src/lib/dbConnect').default;
+import mongoose from 'mongoose';
+import Food from '../src/models/Food';
+import Drink from '../src/models/Drink';
+import Side from '../src/models/Side';
+import Dessert from '../src/models/Dessert';
+import Menu from '../src/models/Menu';
+import Promotion from '../src/models/Promotion';
+import { dbConnect } from '../src/lib/dbConnect';
 
 const seedMenuCards = async () => {
   try {
@@ -108,6 +108,36 @@ const seedMenuCards = async () => {
         maxSauces: 0,
         isVegan: false,
         isVegetarian: false,
+        isGlutenFree: false,
+        pizzaBase: 'tomate',
+        pizzaSizes: [
+          { name: 'junior', price: 9, diameter: '29cm', isDefault: true },
+          { name: 'senior', price: 13, diameter: '33cm', isDefault: false },
+          { name: 'mega', price: 17, diameter: '40cm', isDefault: false }
+        ]
+      },
+      {
+        name: 'Pizza Végane',
+        description: 'Poivrons, olives, champignons, artichauts',
+        price: 9,
+        type: 'pizza',
+        category: 'regular',
+        image: '/images/menu/pizzas/vegane.jpg',
+        preparationTimeMinutes: 15,
+        baseIngredients: ['tomate', 'fromage_vegan', 'poivrons', 'olives', 'champignons', 'artichauts'],
+        allergens: ['gluten'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 220,
+          proteins: 8,
+          carbs: 35,
+          fats: 6,
+          servingSize: '100g'
+        },
+        extras: [],
+        maxSauces: 0,
+        isVegan: true,
+        isVegetarian: true,
         isGlutenFree: false,
         pizzaBase: 'tomate',
         pizzaSizes: [
@@ -337,6 +367,30 @@ const seedMenuCards = async () => {
         isVegan: false,
         isVegetarian: false,
         isGlutenFree: false
+      },
+      {
+        name: 'Sandwich Durum',
+        description: 'Kebab/Poulet avec légumes crus',
+        price: 7,
+        type: 'sandwich_durum',
+        category: 'regular',
+        image: '/images/menu/sandwichs/durum.jpg',
+        preparationTimeMinutes: 8,
+        baseIngredients: ['tortilla', 'kebab_poulet', 'legumes_crus'],
+        allergens: ['gluten'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 420,
+          proteins: 22,
+          carbs: 42,
+          fats: 16,
+          servingSize: '1 portion'
+        },
+        extras: [],
+        maxSauces: 1,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: false
       }
     ];
 
@@ -389,6 +443,78 @@ const seedMenuCards = async () => {
         isVegan: false,
         isVegetarian: false,
         isGlutenFree: false
+      },
+      {
+        name: 'Burger Triple',
+        description: '3 steaks 80g, 3 cheddars',
+        price: 9,
+        type: 'burger',
+        category: 'bestseller',
+        image: '/images/menu/burgers/triple.jpg',
+        preparationTimeMinutes: 15,
+        baseIngredients: ['pain_burger', 'steak_80g', 'steak_80g', 'steak_80g', 'cheddar', 'cheddar', 'cheddar'],
+        allergens: ['gluten', 'milk'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 1000,
+          proteins: 65,
+          carbs: 45,
+          fats: 55,
+          servingSize: '1 portion'
+        },
+        extras: [],
+        maxSauces: 2,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: false
+      },
+      {
+        name: 'Chicken Burger',
+        description: 'Poulet pané, cheddar',
+        price: 7,
+        type: 'burger',
+        category: 'regular',
+        image: '/images/menu/burgers/chicken.jpg',
+        preparationTimeMinutes: 10,
+        baseIngredients: ['pain_burger', 'poulet_pane', 'cheddar'],
+        allergens: ['gluten', 'milk'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 550,
+          proteins: 30,
+          carbs: 40,
+          fats: 28,
+          servingSize: '1 portion'
+        },
+        extras: [],
+        maxSauces: 2,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: false
+      },
+      {
+        name: 'Burger Le Neuf',
+        description: '2 steaks 80g, cheddar, œuf',
+        price: 9,
+        type: 'burger',
+        category: 'bestseller',
+        image: '/images/menu/burgers/le-neuf.jpg',
+        preparationTimeMinutes: 12,
+        baseIngredients: ['pain_burger', 'steak_80g', 'steak_80g', 'cheddar', 'oeuf'],
+        allergens: ['gluten', 'milk', 'eggs'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 800,
+          proteins: 50,
+          carbs: 38,
+          fats: 45,
+          servingSize: '1 portion'
+        },
+        extras: [],
+        maxSauces: 2,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: false
       }
     ];
 
@@ -410,6 +536,64 @@ const seedMenuCards = async () => {
           proteins: 35,
           carbs: 60,
           fats: 25,
+          servingSize: '1 portion'
+        },
+        extras: [],
+        maxSauces: 1,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: false,
+        plateAccompaniments: {
+          bread: true,
+          fries: true,
+          salad: true
+        }
+      },
+      {
+        name: 'Assiette Poulet',
+        description: 'Poulet avec frites et salade',
+        price: 10,
+        type: 'plates',
+        category: 'regular',
+        image: '/images/menu/plats/poulet.jpg',
+        preparationTimeMinutes: 15,
+        baseIngredients: ['poulet', 'frites', 'salade'],
+        allergens: [],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 600,
+          proteins: 40,
+          carbs: 55,
+          fats: 20,
+          servingSize: '1 portion'
+        },
+        extras: [],
+        maxSauces: 1,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: true,
+        plateAccompaniments: {
+          bread: true,
+          fries: true,
+          salad: true
+        }
+      },
+      {
+        name: 'Assiette Mixte',
+        description: 'Kebab et poulet avec frites et salade',
+        price: 12,
+        type: 'plates',
+        category: 'regular',
+        image: '/images/menu/plats/mixte.jpg',
+        preparationTimeMinutes: 15,
+        baseIngredients: ['kebab', 'poulet', 'frites', 'salade'],
+        allergens: ['gluten'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 750,
+          proteins: 45,
+          carbs: 65,
+          fats: 30,
           servingSize: '1 portion'
         },
         extras: [],
@@ -455,6 +639,35 @@ const seedMenuCards = async () => {
           drink: '33cl',
           drinkPrice: 0
         }
+      },
+      {
+        name: 'Panini Fromage',
+        description: 'Fromage avec frites et boisson 33cl',
+        price: 6.5,
+        type: 'paninis',
+        category: 'regular',
+        image: '/images/menu/paninis/fromage.jpg',
+        preparationTimeMinutes: 8,
+        baseIngredients: ['pain_panini', 'fromage'],
+        allergens: ['gluten', 'milk'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 450,
+          proteins: 20,
+          carbs: 45,
+          fats: 18,
+          servingSize: '1 portion'
+        },
+        extras: [],
+        maxSauces: 0,
+        isVegan: false,
+        isVegetarian: true,
+        isGlutenFree: false,
+        paniniAccompaniments: {
+          fries: true,
+          drink: '33cl',
+          drinkPrice: 0
+        }
       }
     ];
 
@@ -483,15 +696,145 @@ const seedMenuCards = async () => {
         isVegan: false,
         isVegetarian: false,
         isGlutenFree: false
+      },
+      {
+        name: 'Hot Wings',
+        description: 'Ailes de poulet épicées',
+        price: 8.5,
+        type: 'tex_mex',
+        category: 'regular',
+        image: '/images/menu/tex-mex/hot-wings.jpg',
+        preparationTimeMinutes: 15,
+        baseIngredients: ['ailes_poulet', 'sauce_epicee'],
+        allergens: ['gluten'],
+        spicyLevel: 'hot',
+        nutritionalInfo: {
+          calories: 350,
+          proteins: 25,
+          carbs: 15,
+          fats: 22,
+          servingSize: '7 pièces'
+        },
+        extras: [],
+        maxSauces: 1,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: false
+      },
+      {
+        name: 'Nuggets',
+        description: 'Nuggets de poulet',
+        price: 8.5,
+        type: 'tex_mex',
+        category: 'regular',
+        image: '/images/menu/tex-mex/nuggets.jpg',
+        preparationTimeMinutes: 10,
+        baseIngredients: ['nuggets_poulet'],
+        allergens: ['gluten', 'eggs'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 380,
+          proteins: 20,
+          carbs: 30,
+          fats: 18,
+          servingSize: '7 pièces'
+        },
+        extras: [],
+        maxSauces: 1,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: false
+      },
+      {
+        name: 'Mozza Sticks',
+        description: 'Bâtonnets de mozzarella panés',
+        price: 8.5,
+        type: 'tex_mex',
+        category: 'regular',
+        image: '/images/menu/tex-mex/mozza-sticks.jpg',
+        preparationTimeMinutes: 8,
+        baseIngredients: ['mozzarella', 'panure'],
+        allergens: ['gluten', 'milk', 'eggs'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 320,
+          proteins: 15,
+          carbs: 25,
+          fats: 18,
+          servingSize: '7 pièces'
+        },
+        extras: [],
+        maxSauces: 1,
+        isVegan: false,
+        isVegetarian: true,
+        isGlutenFree: false
+      }
+    ];
+
+    // 9. MENUS ENFANTS
+    const kidsMenus = [
+      {
+        name: 'Menu Enfant',
+        description: 'Nuggets ou Tenders avec frites et boisson',
+        price: 6.5,
+        type: 'kids_menu',
+        category: 'regular',
+        image: '/images/menu/kids/menu-enfant.jpg',
+        preparationTimeMinutes: 10,
+        baseIngredients: ['nuggets_tenders', 'frites', 'boisson'],
+        allergens: ['gluten', 'eggs'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 450,
+          proteins: 20,
+          carbs: 40,
+          fats: 18,
+          servingSize: '1 portion'
+        },
+        extras: [],
+        maxSauces: 1,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: false,
+        includesSurprise: true,
+        includesCaprisun: true
+      }
+    ];
+
+    // 10. P'TITE FAIM
+    const smallHunger = [
+      {
+        name: 'P\'tite Faim',
+        description: 'Petit burger avec frites et boisson 33cl',
+        price: 5.5,
+        type: 'small_hunger',
+        category: 'regular',
+        image: '/images/menu/small-hunger/ptite-faim.jpg',
+        preparationTimeMinutes: 8,
+        baseIngredients: ['petit_burger', 'frites', 'boisson_33cl'],
+        allergens: ['gluten', 'milk'],
+        spicyLevel: 'mild',
+        nutritionalInfo: {
+          calories: 400,
+          proteins: 15,
+          carbs: 35,
+          fats: 20,
+          servingSize: '1 portion'
+        },
+        extras: [],
+        maxSauces: 1,
+        isVegan: false,
+        isVegetarian: false,
+        isGlutenFree: false
       }
     ];
 
     // Insérer toutes les données
-    const allFoods = [...pizzas, ...tacos, ...bowls, ...sandwiches, ...burgers, ...plats, ...paninis, ...texMex];
+    const allFoods = [...pizzas, ...tacos, ...bowls, ...sandwiches, ...burgers, ...plats, ...paninis, ...texMex, ...kidsMenus, ...smallHunger];
     await Food.insertMany(allFoods);
     console.log(`${allFoods.length} plats insérés`);
 
-    // 9. BOISSONS
+    // 11. BOISSONS
     const drinks = [
       {
         name: 'Coca-Cola',
@@ -523,53 +866,49 @@ const seedMenuCards = async () => {
         sizes: [
           { name: '50cl', price: 1, volume: '50cl', isDefault: true }
         ]
+      },
+      {
+        name: 'Energy Drink',
+        type: 'soda',
+        brand: 'Red Bull',
+        image: '/images/menu/drinks/energy.jpg',
+        available: true,
+        nutritionalInfo: {
+          calories: 110,
+          sugar: 27,
+          servingSize: 250
+        },
+        sizes: [
+          { name: '25cl', price: 2.5, volume: '25cl', isDefault: true }
+        ]
+      },
+      {
+        name: 'Chill Drink',
+        type: 'soda',
+        brand: 'Fanta',
+        image: '/images/menu/drinks/chill.jpg',
+        available: true,
+        nutritionalInfo: {
+          calories: 120,
+          sugar: 30,
+          servingSize: 330
+        },
+        sizes: [
+          { name: '33cl', price: 1.5, volume: '33cl', isDefault: true }
+        ]
       }
     ];
 
     await Drink.insertMany(drinks);
     console.log(`${drinks.length} boissons insérées`);
 
-    // 10. DESSERTS
-    const desserts = [
-      {
-        name: 'Brownie',
-        type: 'brownie',
-        price: 2.5,
-        image: '/images/menu/desserts/brownie.jpg',
-        available: true,
-        active: true,
-        sizes: []
-      },
-      {
-        name: 'Tarte au Daim',
-        type: 'cake',
-        price: 3.5,
-        image: '/images/menu/desserts/tarte-daim.jpg',
-        available: true,
-        active: true,
-        sizes: []
-      },
-      {
-        name: 'Tiramisu',
-        type: 'cake',
-        price: 3,
-        image: '/images/menu/desserts/tiramisu.jpg',
-        available: true,
-        active: true,
-        sizes: []
-      }
-    ];
-
-    await Dessert.insertMany(desserts);
-    console.log(`${desserts.length} desserts insérés`);
-
-    // 11. Frites
+    // 12. FRIES
     const sides = [
       {
         name: 'Frites',
         description: 'Frites croustillantes',
         category: 'fries',
-        price: 2,
+        price: 3,
         image: '/images/menu/sides/frites.jpg',
         available: true,
         ingredients: ['pommes_de_terre', 'huile'],
@@ -581,33 +920,9 @@ const seedMenuCards = async () => {
           fats: 16,
           servingSize: '100g'
         },
-        spicyLevel: 'mild',
-        sizes: [
-          { name: 'Petite', price: 2, weight: '100g', isDefault: true },
-          { name: 'Moyenne', price: 3.5, weight: '150g', isDefault: false },
-          { name: 'Grande', price: 4.5, weight: '200g', isDefault: false }
-        ]
-      },
-      {
-        name: 'Frites Lardon',
-        description: 'Frites avec lardons',
-        category: 'fries',
-        price: 3,
-        image: '/images/menu/sides/frites-lardon.jpg',
-        available: true,
-        ingredients: ['pommes_de_terre', 'lardons', 'huile'],
-        allergens: [],
-        nutritionalInfo: {
-          calories: 380,
-          proteins: 8,
-          carbs: 40,
-          fats: 20,
-          servingSize: '100g'
-        },
-        spicyLevel: 'mild',
         sizes: [
           { name: 'Petite', price: 3, weight: '100g', isDefault: true },
-          { name: 'Grande', price: 5, weight: '200g', isDefault: false }
+          { name: 'Grande', price: 4.5, weight: '150g', isDefault: false }
         ]
       }
     ];
@@ -615,119 +930,71 @@ const seedMenuCards = async () => {
     await Side.insertMany(sides);
     console.log(`${sides.length} accompagnements insérés`);
 
-    // 12. MENUS COMBINÉS
-    const menus = [
+    // 13. DESSERTS
+    const desserts = [
       {
-        name: 'Menu Senior',
-        description: '2 pizzas senior + 1 boisson 1.5L',
-        price: 25,
-        type: 'senior',
-        items: [
-          {
-            productType: 'food',
-            productId: new mongoose.Types.ObjectId(),
-            quantity: 2,
-            name: 'Pizza Senior',
-            price: 13
-          },
-          {
-            productType: 'drink',
-            productId: new mongoose.Types.ObjectId(),
-            quantity: 1,
-            name: 'Boisson 1.5L',
-            price: 2.9
-          }
-        ],
-        image: '/images/menu/menus/senior.jpg',
+        name: 'Brownie',
+        type: 'brownie',
+        price: 3.5,
+        image: '/images/menu/desserts/brownie.jpg',
         available: true,
         active: true,
-        includesFries: false,
-        includesDrink: true,
-        drinkSize: '1.5L',
-        includesDessert: false,
-        isKidsMenu: false
+        sizes: []
       },
       {
-        name: 'Menu Enfants',
-        description: '5 Nuggets + Frites + Caprisun + Surprise',
-        price: 6,
-        type: 'kids',
-        items: [
-          {
-            productType: 'food',
-            productId: new mongoose.Types.ObjectId(),
-            quantity: 1,
-            name: '5 Nuggets',
-            price: 4
-          },
-          {
-            productType: 'side',
-            productId: new mongoose.Types.ObjectId(),
-            quantity: 1,
-            name: 'Frites',
-            price: 2
-          },
-          {
-            productType: 'drink',
-            productId: new mongoose.Types.ObjectId(),
-            quantity: 1,
-            name: 'Caprisun',
-            price: 1
-          }
-        ],
-        image: '/images/menu/menus/kids.jpg',
+        name: 'Tarte',
+        type: 'cake',
+        price: 4,
+        image: '/images/menu/desserts/tarte.jpg',
         available: true,
         active: true,
-        includesFries: true,
-        includesDrink: true,
-        includesDessert: false,
-        isKidsMenu: true,
-        surprise: 'Jouet surprise'
-      }
-    ];
-
-    await Menu.insertMany(menus);
-    console.log(`${menus.length} menus insérés`);
-
-    // 13. PROMOTIONS
-    const promotions = [
+        sizes: []
+      },
       {
-        name: '2 Pizzas Seniors achetées = 3ème Offerte',
-        description: 'Achetez 2 pizzas senior et obtenez la 3ème gratuite',
-        type: 'pizza_promotion',
-        conditions: {
-          minQuantity: 2,
-          applicableCategories: ['pizza'],
-          productTypes: ['food']
-        },
-        reward: {
-          freeItems: [{
-            productId: new mongoose.Types.ObjectId(),
-            quantity: 1,
-            name: 'Pizza Senior Gratuite'
-          }]
-        },
-        validFrom: new Date(),
-        validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
+        name: 'Tiramisu',
+        type: 'cake',
+        price: 4.5,
+        image: '/images/menu/desserts/tiramisu.jpg',
+        available: true,
         active: true,
-        pizzaPromotion: {
-          requiredQuantity: 2,
-          freeQuantity: 1,
-          pizzaSizes: ['senior'],
-          applicablePizzas: []
-        }
+        sizes: []
       }
     ];
 
-    await Promotion.insertMany(promotions);
-    console.log(`${promotions.length} promotions insérées`);
+    await Dessert.insertMany(desserts);
+    console.log(`${desserts.length} desserts insérés`);
 
-    console.log('Seed terminé avec succès !');
+    // 14. GLACES
+    const iceCreams = [
+      {
+        name: 'Glace',
+        type: 'ice_cream',
+        price: 2.5,
+        image: '/images/menu/desserts/glace.jpg',
+        available: true,
+        active: true,
+        sizes: [
+          { name: '100ml', price: 2.5, isDefault: true },
+          { name: '500ml', price: 4, isDefault: false }
+        ]
+      }
+    ];
+
+    await Dessert.insertMany(iceCreams);
+    console.log(`${iceCreams.length} glaces insérées`);
+
+    console.log('✅ Toutes les données de menu ont été insérées avec succès !');
     process.exit(0);
+
   } catch (error) {
-    console.error('Erreur lors du seed:', error);
+    console.error('❌ Erreur lors de l\'insertion des données:', error);
     process.exit(1);
   }
 };
 
-seedMenuCards();
+// Exécuter le script si appelé directement
+if (require.main === module) {
+  seedMenuCards();
+}
+
+export default seedMenuCards;

@@ -73,12 +73,14 @@ const promotionSchema = new mongoose.Schema({
     default: 0,
     min: 0
   },
-  // Champs spécifiques aux promotions de pizza
-  pizzaPromotion: {
-    requiredQuantity: { type: Number, min: 2 },
-    freeQuantity: { type: Number, min: 1 },
-    pizzaSizes: [{ type: String }], // ['senior', 'mega']
-    applicablePizzas: [{ type: mongoose.Schema.Types.ObjectId }]
+  // Informations spécifiques aux promotions de pizza
+  pizzaSizes: [{
+    type: String,
+    enum: ['junior', 'senior', 'mega']
+  }],
+  // Texte de la promotion (ex: "2 Pizzas Seniors achetées = 3ème Offerte")
+  promotionText: {
+    type: String
   }
 }, {
   timestamps: true,
@@ -96,3 +98,4 @@ promotionSchema.index({ active: 1, type: 1 });
 promotionSchema.index({ name: 'text', description: 'text' });
 
 export default mongoose.models.Promotion || mongoose.model('Promotion', promotionSchema);
+

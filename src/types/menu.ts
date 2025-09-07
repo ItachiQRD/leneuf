@@ -1,19 +1,17 @@
 import { z } from 'zod';
-import { BaseProduct } from './models';
 
 // Types de base
 export type MenuType = 'combo' | 'promotion' | 'family' | 'couple' | 'senior' | 'trio' | 'kids';
-export type MenuItemType = 'food' | 'drink' | 'side' | 'dessert';
 
 // Schéma pour un article de menu
 const MenuItemSchema = z.object({
   productType: z.enum(['food', 'drink', 'side', 'dessert']),
-  productId: z.string().min(1, "L'ID du produit est requis"),
-  quantity: z.number().min(1, "La quantité doit être au moins 1"),
+  productId: z.string(),
+  quantity: z.number().min(1),
   size: z.string().optional(),
   variant: z.string().optional(),
-  name: z.string().min(1, "Le nom est requis"),
-  price: z.number().min(0, "Le prix doit être positif")
+  name: z.string(),
+  price: z.number().min(0)
 });
 
 // Schéma principal pour les menus
@@ -35,20 +33,25 @@ export const MenuSchema = z.object({
   includesFries: z.boolean().default(false),
   includesDrink: z.boolean().default(false),
   drinkSize: z.enum(['33cl', '1.5L']).optional(),
-  includesDessert: z.boolean().default(false),
-  isKidsMenu: z.boolean().default(false),
-  surprise: z.string().optional()
+  includesSurprise: z.boolean().default(false),
+  promotionText: z.string().optional()
 });
 
-// Types dérivés du schéma
-export type MenuInput = z.infer<typeof MenuSchema>;
+// Types dérivés
 export type MenuItem = z.infer<typeof MenuItemSchema>;
+export type MenuInput = z.infer<typeof MenuSchema>;
 
 // Interface complète pour un menu
-export interface Menu extends BaseProduct {
+export interface Menu {
   _id: string;
+  name: string;
+  description: string;
+  price: number;
   type: MenuType;
   items: MenuItem[];
+  image: string;
+  available: boolean;
+  active: boolean;
   validUntil?: Date;
   minOrderValue?: number;
   discount?: number;
@@ -58,24 +61,13 @@ export interface Menu extends BaseProduct {
   includesFries: boolean;
   includesDrink: boolean;
   drinkSize?: '33cl' | '1.5L';
-  includesDessert: boolean;
-  isKidsMenu: boolean;
-  surprise?: string;
+  includesSurprise: boolean;
+  promotionText?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// Type pour les filtres
-export interface MenuFilters {
-  type?: MenuType;
-  available?: boolean;
-  isPromotion?: boolean;
-  isKidsMenu?: boolean;
-  priceRange?: {
-    min: number;
-    max: number;
-  };
-}
-
-// Constantes pour les options des selects
+// Constantes pour les options
 export const MENU_TYPES = [
   { value: 'combo', label: 'Combo' },
   { value: 'promotion', label: 'Promotion' },
@@ -85,6 +77,3 @@ export const MENU_TYPES = [
   { value: 'trio', label: 'Trio' },
   { value: 'kids', label: 'Enfants' }
 ] as const;
-
-// Type pour le formulaire
-export type MenuFormData = MenuInput;

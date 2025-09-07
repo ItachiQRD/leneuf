@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/Table";
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 import { Pencil, Trash2, Plus, Upload } from 'lucide-react';
 
 // Composant pour afficher une image avec gestion des erreurs
@@ -65,6 +66,11 @@ export default function ProductManager({
     image: '',
   });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{isOpen: boolean, itemId: string | null, itemName: string}>({
+    isOpen: false,
+    itemId: null,
+    itemName: ''
+  });
 
   const handleEdit = (item: any) => {
     setEditingItem(item);
@@ -113,10 +119,31 @@ export default function ProductManager({
     setSelectedImage(null);
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
-      await onDeleteItem(id);
+  const handleDelete = (id: string, name: string) => {
+    setDeleteConfirm({
+      isOpen: true,
+      itemId: id,
+      itemName: name
+    });
+  };
+
+  const confirmDelete = async () => {
+    if (deleteConfirm.itemId) {
+      await onDeleteItem(deleteConfirm.itemId);
+      setDeleteConfirm({
+        isOpen: false,
+        itemId: null,
+        itemName: ''
+      });
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirm({
+      isOpen: false,
+      itemId: null,
+      itemName: ''
+    });
   };
 
   return (
@@ -246,7 +273,7 @@ export default function ProductManager({
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleDelete(item._id)}
+                  onClick={() => handleDelete(item._id, item.name)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -255,6 +282,27 @@ export default function ProductManager({
           ))}
         </TableBody>
       </Table>
+
+      {/* Modal de confirmation de suppression */}
+      <Dialog open={deleteConfirm.isOpen} onOpenChange={cancelDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmer la suppression</DialogTitle>
+            <DialogDescription>
+              Êtes-vous sûr de vouloir supprimer "{deleteConfirm.itemName}" ? 
+              Cette action est irréversible.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={cancelDelete}>
+              Annuler
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Supprimer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

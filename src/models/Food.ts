@@ -23,7 +23,7 @@ const foodSchema = new mongoose.Schema({
   type: {
     type: String,
     required: [true, 'Le type est requis'],
-    enum: ['burger', 'pizza', 'salad', 'sandwich_durum', 'tacos', 'bowls', 'paninis', 'plates', 'tex_mex', 'defsoce'],
+    enum: ['burger', 'pizza', 'salad', 'sandwich_durum', 'tacos', 'bowls', 'paninis', 'plates', 'tex_mex', 'kids_menu', 'small_hunger'],
   },
   category: {
     type: String,
@@ -97,14 +97,14 @@ const foodSchema = new mongoose.Schema({
     default: 'tomate'
   },
   pizzaSizes: [{
-    name: { type: String, required: true }, // 'junior', 'senior', 'mega'
+    name: { type: String, required: true },
     price: { type: Number, required: true },
-    diameter: { type: String, required: true }, // '29cm', '33cm', '40cm'
+    diameter: { type: String, required: true },
     isDefault: { type: Boolean, default: false }
   }],
   // Champs spécifiques aux tacos
   tacoSizes: [{
-    name: { type: String, required: true }, // 'M', 'L', 'XL'
+    name: { type: String, required: true },
     price: { type: Number, required: true },
     isDefault: { type: Boolean, default: false }
   }],
@@ -142,21 +142,24 @@ const foodSchema = new mongoose.Schema({
   }],
   // Champs spécifiques aux paninis
   paniniAccompaniments: {
-    fries: { type: Boolean, default: true },
-    drink: { type: String }, // '33cl'
+    fries: { type: Boolean, default: false },
+    drink: { type: String },
     drinkPrice: { type: Number, default: 0 }
   },
   // Champs spécifiques aux assiettes
   plateAccompaniments: {
-    bread: { type: Boolean, default: true },
-    fries: { type: Boolean, default: true },
-    salad: { type: Boolean, default: true }
+    bread: { type: Boolean, default: false },
+    fries: { type: Boolean, default: false },
+    salad: { type: Boolean, default: false }
   },
-  // Champs spécifiques aux defsoces
-  defsoceOptions: {
-    availableBases: [{ type: String }], // ['tomate', 'creme_fraiche']
-    availableIngredients: [{ type: String }],
-    maxIngredients: { type: Number, default: 2 }
+  // Champs spécifiques aux menus enfants
+  includesSurprise: {
+    type: Boolean,
+    default: false
+  },
+  includesCaprisun: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true,

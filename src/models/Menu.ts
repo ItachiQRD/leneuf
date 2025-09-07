@@ -99,7 +99,7 @@ const menuSchema = new mongoose.Schema({
     type: Number,
     min: 0
   },
-  // Champs spécifiques aux menus
+  // Informations spécifiques aux menus
   includesFries: {
     type: Boolean,
     default: false
@@ -112,16 +112,14 @@ const menuSchema = new mongoose.Schema({
     type: String,
     enum: ['33cl', '1.5L']
   },
-  includesDessert: {
+  // Pour les menus enfants
+  includesSurprise: {
     type: Boolean,
     default: false
   },
-  isKidsMenu: {
-    type: Boolean,
-    default: false
-  },
-  surprise: {
-    type: String // Pour le menu enfants
+  // Pour les promotions
+  promotionText: {
+    type: String
   }
 }, {
   timestamps: true,
@@ -138,3 +136,4 @@ menuSchema.index({ type: 1, available: 1 });
 menuSchema.index({ name: 'text', description: 'text' });
 
 export default mongoose.models.Menu || mongoose.model('Menu', menuSchema);
+

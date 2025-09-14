@@ -60,7 +60,7 @@ export default function BasicDessertInfo({ form }: BasicDessertInfoProps) {
         <Label>Image</Label>
         <ImageUpload
           value={watch('image')}
-          onChange={(file) => setValue('image', file)}
+          onChange={(file: string | File) => setValue('image', file)}
           error={errors.image?.message}
         />
       </div>

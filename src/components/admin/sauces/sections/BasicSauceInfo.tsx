@@ -75,7 +75,7 @@ export default function BasicSauceInfo({ form }: BasicSauceInfoProps) {
         <Label>Image</Label>
         <ImageUpload
           value={watch('image')}
-          onChange={(value) => setValue('image', value)}
+          onChange={(value: string | File) => setValue('image', value)}
           error={errors.image?.message}
         />
       </div>

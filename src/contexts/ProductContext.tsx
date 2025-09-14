@@ -1,6 +1,7 @@
                                                                                                                                         import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { isFile } from '@/utils/fileUtils';
 
 // Types
 import { Food, FoodInputAPI } from '@/types/food';
@@ -318,7 +319,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       const formData = new FormData();
       
-      if (drink.image instanceof File) {
+      if (isFile(drink.image)) {
         formData.append('image', drink.image);
         const { image, ...restData } = drink;
         formData.append('data', JSON.stringify(restData));
@@ -354,7 +355,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       const formData = new FormData();
       
-      if (drink.image instanceof File) {
+      if (isFile(drink.image)) {
         formData.append('image', drink.image);
         const { image, ...restData } = drink;
         formData.append('data', JSON.stringify({ ...restData, _id: id }));
@@ -415,7 +416,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       const formData = new FormData();
       
-      if (side.image instanceof File) {
+      if (isFile(side.image)) {
         formData.append('image', side.image);
         const { image, ...restData } = side;
         formData.append('data', JSON.stringify(restData));
@@ -451,7 +452,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       const formData = new FormData();
       
-      if (side.image instanceof File) {
+      if (isFile(side.image)) {
         formData.append('image', side.image);
         const { image, ...restData } = side;
         formData.append('data', JSON.stringify({ ...restData, _id: id }));
@@ -610,7 +611,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       const formData = new FormData();
       
-      if (sauce.image instanceof File) {
+      if (isFile(sauce.image)) {
         formData.append('image', sauce.image);
         const { image, ...restData } = sauce;
         formData.append('data', JSON.stringify(restData));
@@ -646,7 +647,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       const formData = new FormData();
       
-      if (sauce.image instanceof File) {
+      if (isFile(sauce.image)) {
         formData.append('image', sauce.image);
         const { image, ...restData } = sauce;
         formData.append('data', JSON.stringify({ ...restData, _id: id }));
@@ -707,7 +708,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       const formData = new FormData();
       
-      if (ingredient.image instanceof File) {
+      if (isFile(ingredient.image)) {
         formData.append('image', ingredient.image);
         const { image, ...restData } = ingredient;
         formData.append('data', JSON.stringify(restData));
@@ -748,7 +749,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     try {
       const formData = new FormData();
       
-      if (ingredient.image instanceof File) {
+      if (isFile(ingredient.image)) {
         formData.append('image', ingredient.image);
         const { image, ...restData } = ingredient;
         formData.append('data', JSON.stringify(restData));

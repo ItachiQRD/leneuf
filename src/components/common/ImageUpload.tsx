@@ -26,7 +26,7 @@ export function ImageUpload({ value, onChange, error, label }: ImageUploadProps)
 
     if (typeof value === 'string') {
       setPreviewUrl(value);
-    } else if (value instanceof File) {
+    } else if (value && typeof value === 'object' && value.constructor === File) {
       const url = URL.createObjectURL(value);
       setPreviewUrl(url);
       return () => URL.revokeObjectURL(url);

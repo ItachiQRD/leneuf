@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Drink, DrinkInput, DrinkSchema } from '@/types/drink';
 import { useToast } from '@/hooks/use-toast';
+import { isFile } from '@/utils/fileUtils';
 import { Button } from '@/components/ui/Buttons';
 import { useAuth } from '@/contexts/AuthContext';
 import NutritionalInfo from './sections/NutritionalInfo';
@@ -68,7 +69,7 @@ export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkForm
       const formData = new FormData();
       
       // Vérifier si l'image est un objet File
-      if (data.image && data.image instanceof File) {
+      if (data.image && isFile(data.image)) {
         formData.append('image', data.image);
         const { image, ...restData } = data;
         formData.append('data', JSON.stringify({

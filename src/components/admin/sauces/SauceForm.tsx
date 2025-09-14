@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Sauce, SauceInput, SAUCE_CATEGORIES, SPICY_LEVELS } from '@/types/sauce';
 import { useToast } from '@/hooks/use-toast';
+import { isFile } from '@/utils/fileUtils';
 import { Button } from '@/components/ui/Buttons';
 import { motion } from 'framer-motion';
 
@@ -94,7 +95,7 @@ export default function SauceForm({
       const formData = new FormData();
 
       // Gérer l'image
-      if (data.image instanceof File) {
+      if (isFile(data.image)) {
         formData.append('image', data.image);
         const { image, ...restData } = convertedData;
         formData.append('data', JSON.stringify({

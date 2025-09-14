@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Dessert, DessertInput, DessertType } from '@/types/dessert';
 import { useProducts } from '@/contexts/ProductContext';
 import { useToast } from '@/hooks/use-toast';
+import { isFile } from '@/utils/fileUtils';
 import { Button } from '@/components/ui/Buttons';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
@@ -131,7 +132,7 @@ export default function DessertForm({
       const { image, ...restData } = data;
       
       // Si une nouvelle image est fournie (File), l'ajouter au FormData
-      const hasNewImage = image instanceof File;
+      const hasNewImage = isFile(image);
       if (hasNewImage) {
         console.log(' [DessertForm] Nouvelle image détectée');
         formData.append('image', image);
@@ -159,8 +160,9 @@ export default function DessertForm({
         const formattedErrors = validationResult.error.format();
         let errorMessage = "Erreurs de validation:\n";
         Object.entries(formattedErrors).forEach(([field, error]) => {
-          if (field !== '_errors' && error?._errors) {
-            errorMessage += `${field}: ${error._errors.join(', ')}\n`;
+          if (field !== '_errors' && error && typeof error === 'object' && '_errors' in error) {
+            const errorObj = error as { _errors: string[] };
+            errorMessage += `${field}: ${errorObj._errors.join(', ')}\n`;
           }
         });
         throw new Error(errorMessage);

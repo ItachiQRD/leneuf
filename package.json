@@ -8,6 +8,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "vercel-build": "next build",
+    "deploy": "node scripts/deploy-vercel.js",
+    "check-vercel": "node scripts/check-vercel.js",
     "seed": "ts-node scripts/seed.ts",
     
     "seed-sandwiches": "node scripts/seedSandwiches.js",

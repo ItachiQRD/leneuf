@@ -95,7 +95,7 @@ export default function BasicSideInfo({ form, category }: BasicSideInfoProps) {
           </label>
           <ImageUpload
             value={watch('image')}
-            onChange={(value: string | File) => setValue('image', value)}
+            onChange={(value: string | File) => setValue('image', value as any)}
             error={errors.image?.message}
           />
         </div>

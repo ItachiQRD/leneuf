@@ -165,7 +165,7 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
         </label>
         <ImageUpload
           value={watchedImage}
-          onChange={(file: string | File) => setValue('image', file)}
+          onChange={(file: string | File) => setValue('image', file as any)}
           error={errors.image?.message}
         />
       </div>

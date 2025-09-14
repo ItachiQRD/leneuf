@@ -56,6 +56,11 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = form;
 
+  // Enregistrer l'image avec le formulaire
+  useEffect(() => {
+    register('image', { required: 'L\'image est requise' });
+  }, [register]);
+
   useEffect(() => {
     if (Object.keys(errors).length > 0) {
       console.log('Erreurs de validation:', errors);
@@ -73,12 +78,27 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
   const onFormSubmit = async (data: IngredientInput) => {
     try {
       setIsSubmitting(true);
+      
+      // Validation de l'image
+      if (!data.image) {
+        toast({
+          title: "Erreur",
+          description: "L'image est requise",
+          variant: "destructive"
+        });
+        return;
+      }
+
       // Assurez-vous que les valeurs numériques sont des nombres
       const formattedData = {
         ...data,
         price: parseFloat(data.price.toString()),
-        orderIndex: parseInt(data.orderIndex.toString())
+        orderIndex: parseInt(data.orderIndex.toString()),
+        // S'assurer que l'image est une string ou un File
+        image: data.image
       };
+      
+      console.log('Données formatées à envoyer:', formattedData);
       await onSubmit(formattedData);
     } catch (error) {
       console.error('Erreur:', error);

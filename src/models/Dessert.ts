@@ -46,6 +46,10 @@ const dessertSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  deletedAt: {
+    type: Date,
+    default: null
+  },
   sizes: {
     type: [sizeSchema],
     default: []
@@ -62,4 +66,6 @@ const dessertSchema = new mongoose.Schema({
   }
 });
 
-export const Dessert = mongoose.models.Dessert || mongoose.model<DessertType>('Dessert', dessertSchema);
+const Dessert = mongoose.models.Dessert || mongoose.model<DessertType>('Dessert', dessertSchema);
+
+export default Dessert;

@@ -1,10 +1,13 @@
-// pages/api/admin/sides/index.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { connectDB } from '@/lib/mongodb';
 import Side from '@/models/Side';
 import { withAdmin } from '@/utils/api';
-import formidable, { Files, Fields } from 'formidable';
-import { imageService } from '@/services/imageService';
+import formidable from 'formidable';
+import { ImageService } from '@/services/imageService';
+import { sideSchema } from '@/types/side';
+import { ZodError } from 'zod';
+
+const imageService = new ImageService();
 
 export const config = {
   api: {
@@ -12,175 +15,125 @@ export const config = {
   },
 };
 
+async function parseForm(req: NextApiRequest) {
+  const form = formidable({
+    keepExtensions: true,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+  });
+
+  return new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      resolve({ fields, files });
+    });
+  });
+}
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method } = req;
+  await connectDB();
 
-  try {
-    await connectDB();
+  switch (req.method) {
+    case 'GET':
+      try {
+        const sides = await Side.find({ active: true, deletedAt: { $exists: false } });
+        res.status(200).json(sides);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des accompagnements:', error);
+        return res.status(500).json({ message: 'Erreur serveur' });
+      }
+      break;
 
-    switch (method) {
-      case 'GET':
-        try {
-          const sides = await Side.find({}).sort({ createdAt: -1 });
-          res.status(200).json(sides);
-        } catch (error) {
-          console.error('Error fetching sides:', error);
-          res.status(500).json({ message: 'Erreur lors de la récupération des accompagnements' });
+    case 'POST':
+      try {
+        console.log(' [API Sides] Création d\'un nouvel accompagnement');
+        
+        const form = formidable({
+          maxFileSize: 5 * 1024 * 1024, // 5MB
+        });
+
+        console.log(' [API Sides] Parsing du formulaire...');
+        const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) reject(err);
+            resolve([fields, files]);
+          });
+        });
+
+        if (!fields.data) {
+          throw new Error('Données manquantes');
         }
-        break;
 
-      case 'POST':
+        let data;
         try {
-          const form = formidable({
-            maxFileSize: 5 * 1024 * 1024, // 5MB
-          });
+          data = typeof fields.data === 'string'
+            ? JSON.parse(fields.data)
+            : JSON.parse(fields.data[0]);
+          console.log(' [API Sides] Données parsées:', data);
+        } catch (error) {
+          console.error(' [API Sides] Erreur parsing JSON:', error);
+          throw new Error('Format de données invalide');
+        }
 
-          const [fields, files] = await new Promise<[Fields, Files]>((resolve, reject) => {
-            form.parse(req, (err, fields, files) => {
-              if (err) reject(err);
-              resolve([fields, files]);
-            });
-          });
-
-          const data = fields.data ? JSON.parse(fields.data.toString()) : {};
-          let imageUrl = '';
-
-          if (files.image) {
-            const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
-            try {
-              imageUrl = await imageService.uploadImage(imageFile, 'sides');
-              data.image = imageUrl;
-            } catch (error) {
-              throw new Error('Erreur lors du traitement de l\'image');
-            }
+        // Gérer l'image
+        if (files.image) {
+          console.log(' [API Sides] Traitement de l\'image...');
+          const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+          try {
+            const imageUrl = await imageService.uploadImage(imageFile, 'sides');
+            console.log(' [API Sides] Image uploadée:', imageUrl);
+            data.image = imageUrl;
+          } catch (error) {
+            console.error(' [API Sides] Erreur upload image:', error);
+            throw new Error('Erreur lors du traitement de l\'image');
           }
+        } else if (!data.image) {
+          throw new Error('Une image est requise');
+        }
 
-          const side = await Side.create({
-            name: data.name,
-            description: data.description,
-            price: parseFloat(data.price),
-            category: data.category,
-            image: data.image,
-            ingredients: Array.isArray(data.ingredients) ? data.ingredients : [],
-            allergens: Array.isArray(data.allergens) ? data.allergens : [],
-            nutritionalInfo: data.nutritionalInfo || {},
-            available: data.available ?? true,
-            sizes: Array.isArray(data.sizes) ? data.sizes : [],
-            vegetarian: data.vegetarian ?? false,
-            vegan: data.vegan ?? false,
-            preparationTime: parseInt(data.preparationTime) || 0,
-          });
+        // Nettoyer les données (convertir les strings en numbers et supprimer les champs non nécessaires)
+        const cleanData = {
+          ...data,
+          price: typeof data.price === 'string' ? parseFloat(data.price) : data.price,
+          preparationTime: typeof data.preparationTime === 'string' ? parseInt(data.preparationTime) : data.preparationTime,
+          sizes: data.sizes.map((size: any) => ({
+            ...size,
+            price: typeof size.price === 'string' ? parseFloat(size.price) : size.price
+          }))
+        };
 
+        // Supprimer les champs qui ne sont plus dans le modèle
+        delete cleanData.description;
+
+        // Validation et création
+        try {
+          console.log(' [API Sides] Données avant validation:', cleanData);
+          const validatedData = sideSchema.parse(cleanData);
+          console.log(' [API Sides] Données validées:', validatedData);
+          const side = await Side.create(validatedData);
+          console.log(' [API Sides] Accompagnement créé avec succès');
           res.status(201).json(side);
         } catch (error) {
-          console.error('Error creating side:', error);
-          res.status(500).json({ 
-            error: 'Error creating side',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          });
-        }
-        break;
-
-      case 'PUT':
-        try {
-          const form = formidable({
-            maxFileSize: 5 * 1024 * 1024, // 5MB
-          });
-
-          const [fields, files] = await new Promise<[Fields, Files]>((resolve, reject) => {
-            form.parse(req, (err, fields, files) => {
-              if (err) reject(err);
-              resolve([fields, files]);
+          if (error instanceof ZodError) {
+            console.error(' [API Sides] Erreur validation Zod:', error.errors);
+            return res.status(400).json({
+              message: 'Erreur de validation',
+              errors: error.errors
             });
-          });
-
-          const data = fields.data ? JSON.parse(fields.data.toString()) : {};
-          let imageUrl = '';
-
-          if (files.image) {
-            const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
-            try {
-              // Si c'est une mise à jour, récupérer l'ancienne image pour la supprimer
-              const existingSide = await Side.findById(data._id);
-              if (existingSide?.image) {
-                await imageService.deleteImage(existingSide.image);
-              }
-              imageUrl = await imageService.uploadImage(imageFile, 'sides');
-              data.image = imageUrl;
-            } catch (error) {
-              throw new Error('Erreur lors du traitement de l\'image');
-            }
           }
-
-          const existingSide = await Side.findById(data._id);
-          if (!existingSide) {
-            return res.status(404).json({ message: 'Accompagnement non trouvé' });
-          }
-
-          const updatedSide = await Side.findByIdAndUpdate(
-            data._id,
-            { 
-              name: data.name,
-              description: data.description,
-              price: parseFloat(data.price),
-              category: data.category,
-              image: data.image,
-              ingredients: Array.isArray(data.ingredients) ? data.ingredients : [],
-              allergens: Array.isArray(data.allergens) ? data.allergens : [],
-              nutritionalInfo: data.nutritionalInfo || {},
-              available: data.available ?? true,
-              sizes: Array.isArray(data.sizes) ? data.sizes : [],
-              vegetarian: data.vegetarian ?? false,
-              vegan: data.vegan ?? false,
-              preparationTime: parseInt(data.preparationTime) || 0,
-            },
-            { new: true }
-          );
-
-          res.json(updatedSide);
-        } catch (error) {
-          console.error('Error updating side:', error);
-          res.status(500).json({ 
-            error: 'Error updating side',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          });
+          throw error;
         }
-        break;
+      } catch (error) {
+        console.error(' [API Sides] Erreur création:', error);
+        res.status(500).json({
+          message: 'Erreur lors de la création de l\'accompagnement',
+          error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+        });
+      }
+      break;
 
-      case 'DELETE':
-        try {
-          const { id } = req.query;
-
-          const side = await Side.findById(id);
-          if (!side) {
-            return res.status(404).json({ message: 'Accompagnement non trouvé' });
-          }
-
-          if (side.image) {
-            await imageService.deleteImage(side.image);
-          }
-
-          await Side.findByIdAndDelete(id);
-          res.status(200).json({ message: 'Accompagnement supprimé avec succès' });
-        } catch (error) {
-          console.error('Error deleting side:', error);
-          res.status(500).json({ 
-            error: 'Error deleting side',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          });
-        }
-        break;
-
-      default:
-        res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-        res.status(405).json({ message: `Method ${method} not allowed` });
-    }
-  } catch (error) {
-    console.error('API Error:', error);
-    res.status(500).json({ 
-      error: 'Internal server error',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    });
+    default:
+      res.setHeader('Allow', ['GET', 'POST']);
+      return res.status(405).json({ message: 'Méthode non autorisée' });
   }
 }
 

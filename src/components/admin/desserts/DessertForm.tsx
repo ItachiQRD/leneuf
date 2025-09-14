@@ -172,17 +172,9 @@ export default function DessertForm({
       if (dessertId) {
         console.log(' [DessertForm] Mise à jour du dessert:', dessertId);
         await updateDessert(dessertId, hasNewImage ? formData : formattedData);
-        toast({
-          title: "Succès",
-          description: "Dessert modifié avec succès"
-        });
       } else {
         console.log(' [DessertForm] Création d\'un nouveau dessert');
         await createDessert(formData);
-        toast({
-          title: "Succès",
-          description: "Dessert créé avec succès"
-        });
       }
 
       onSubmit();

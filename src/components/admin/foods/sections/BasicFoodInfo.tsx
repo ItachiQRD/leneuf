@@ -27,7 +27,6 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
       bowls: { calories: 320, proteins: 18, carbs: 30, fats: 12, servingSize: '1 bowl' },
       paninis: { calories: 420, proteins: 22, carbs: 38, fats: 16, servingSize: '1 panini' },
       plates: { calories: 480, proteins: 28, carbs: 25, fats: 22, servingSize: '1 assiette' },
-      tex_mex: { calories: 520, proteins: 30, carbs: 42, fats: 25, servingSize: '1 portion' },
       kids_menu: { calories: 280, proteins: 15, carbs: 30, fats: 12, servingSize: '1 portion' },
       small_hunger: { calories: 180, proteins: 10, carbs: 20, fats: 8, servingSize: '1 portion' }
     };

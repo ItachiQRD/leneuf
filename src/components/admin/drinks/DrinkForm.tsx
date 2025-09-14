@@ -35,7 +35,6 @@ export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkForm
       type: initialData?.type || 'soda',
       image: initialData?.image || undefined,
       brand: initialData?.brand || '',
-      price:1,
       available: initialData?.available ?? true,
       sizes: initialData?.sizes || [{
         name: 'Standard',

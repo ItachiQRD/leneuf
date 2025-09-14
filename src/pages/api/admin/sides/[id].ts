@@ -1,12 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import formidable from 'formidable';
-import { withAdmin } from '@/utils/api';
 import { connectDB } from '@/lib/mongodb';
 import Side from '@/models/Side';
-import { imageService } from '@/services/imageService';
+import { withAdmin } from '@/utils/api';
+import formidable from 'formidable';
+import { ImageService } from '@/services/imageService';
 import { sideSchema } from '@/types/side';
-import fs from 'fs/promises';
-import { FormidableFileWithPath } from '@/types/formidable';
+import { ZodError } from 'zod';
+
+const imageService = new ImageService();
 
 export const config = {
   api: {
@@ -14,132 +15,145 @@ export const config = {
   },
 };
 
+async function parseForm(req: NextApiRequest) {
+  const form = formidable({
+    keepExtensions: true,
+    maxFileSize: 5 * 1024 * 1024, // 5MB
+  });
+
+  return new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      resolve({ fields, files });
+    });
+  });
+}
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-
+  
   if (!id || typeof id !== 'string') {
     return res.status(400).json({ message: 'ID invalide' });
   }
 
-  await connectDB();
+  try {
+    await connectDB();
 
-  switch (req.method) {
-    case 'GET':
-      try {
-        const side = await Side.findOne({ _id: id, active: true });
-        if (!side) {
-          return res.status(404).json({ message: 'Side non trouvé' });
-        }
-        return res.status(200).json(side);
-      } catch (error) {
-        console.error('GET Error:', error);
-        return res.status(500).json({ message: 'Erreur lors de la récupération du side' });
-      }
-
-    case 'PUT':
-      try {
-        const form = formidable({
-          uploadDir: './public/uploads',
-          keepExtensions: true,
-          maxFileSize: 5 * 1024 * 1024,
-        });
-
-        const [fields, files] = await new Promise<[formidable.Fields<string>, formidable.Files<string>]>((resolve, reject) => {
-          form.parse(req, (err, fields, files) => {
-            if (err) reject(err);
-            resolve([fields, files]);
-          });
-        });
-
-        if (!fields.data) {
-          return res.status(400).json({ message: 'Les données sont requises' });
-        }
-
-        let sideData;
+    switch (req.method) {
+      case 'PUT':
         try {
-          sideData = JSON.parse(fields.data.toString());
-        } catch (error) {
-          return res.status(400).json({ message: 'Les données JSON sont invalides' });
-        }
-
-        // Traiter l'image si présente
-        let imageUrl = sideData.image;
-        const imageFile = files.image && !Array.isArray(files.image) ? files.image : null;
-        
-        if (files.image) {
-          const imageFile = files.image as unknown as FormidableFileWithPath;
+          console.log(' [API Sides] Mise à jour d\'un accompagnement');
           
-          try {
-            const buffer = await fs.readFile(imageFile.filepath);
-            const processedImage = await imageService.processImage({
-              fieldname: 'image',
-              originalname: imageFile.originalFilename || 'untitled',
-              encoding: '7bit',
-              mimetype: imageFile.mimetype || 'image/jpeg',
-              buffer,
-              size: imageFile.size
+          const form = formidable({
+            maxFileSize: 5 * 1024 * 1024, // 5MB
+          });
+
+          console.log(' [API Sides] Parsing du formulaire...');
+          const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+            form.parse(req, (err, fields, files) => {
+              if (err) reject(err);
+              resolve([fields, files]);
             });
-            imageUrl = processedImage.originalPath;
-        
-            // Nettoyage
-            await fs.unlink(imageFile.filepath).catch(console.error);
-          } catch (imageError) {
-            console.error('Image Processing Error:', imageError);
-            return res.status(400).json({ message: 'Erreur lors du traitement de l\'image' });
-          }
-        }
-
-        // Validation des données
-        try {
-          const validatedData = sideSchema.parse({
-            ...sideData,
-            image: imageUrl
           });
 
-          // Mise à jour
-          const updatedSide = await Side.findByIdAndUpdate(
-            id,
-            { ...validatedData },
-            { new: true, runValidators: true }
-          );
-
-          if (!updatedSide) {
-            return res.status(404).json({ message: 'Side non trouvé' });
+          if (!fields.data) {
+            throw new Error('Données manquantes');
           }
 
-          return res.status(200).json(updatedSide);
+          let updateData;
+          try {
+            updateData = typeof fields.data === 'string'
+              ? JSON.parse(fields.data)
+              : JSON.parse(fields.data[0]);
+            console.log(' [API Sides] Données parsées:', updateData);
+          } catch (error) {
+            console.error(' [API Sides] Erreur parsing JSON:', error);
+            throw new Error('Format de données invalide');
+          }
+
+          // Gérer l'image si une nouvelle image est fournie
+          if (files.image) {
+            console.log(' [API Sides] Traitement de la nouvelle image...');
+            const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+            try {
+              const imageUrl = await imageService.uploadImage(imageFile, 'sides');
+              console.log(' [API Sides] Nouvelle image uploadée:', imageUrl);
+              updateData.image = imageUrl;
+            } catch (error) {
+              console.error(' [API Sides] Erreur upload image:', error);
+              throw new Error('Erreur lors du traitement de l\'image');
+            }
+          }
+
+          // Nettoyer les données (convertir les strings en numbers et supprimer les champs non nécessaires)
+          const cleanData = {
+            ...updateData,
+            price: typeof updateData.price === 'string' ? parseFloat(updateData.price) : updateData.price,
+            preparationTime: typeof updateData.preparationTime === 'string' ? parseInt(updateData.preparationTime) : updateData.preparationTime,
+            sizes: updateData.sizes ? updateData.sizes.map((size: any) => ({
+              ...size,
+              price: typeof size.price === 'string' ? parseFloat(size.price) : size.price
+            })) : updateData.sizes
+          };
+
+          // Supprimer les champs qui ne sont plus dans le modèle
+          delete cleanData.description;
+
+          // Validation et mise à jour
+          try {
+            console.log(' [API Sides] Données avant validation:', cleanData);
+            const validatedData = sideSchema.parse(cleanData);
+            console.log(' [API Sides] Données validées:', validatedData);
+            const side = await Side.findByIdAndUpdate(id, validatedData, { new: true });
+            
+            if (!side) {
+              return res.status(404).json({ message: 'Accompagnement non trouvé' });
+            }
+            
+            console.log(' [API Sides] Accompagnement mis à jour avec succès');
+            return res.status(200).json(side);
+          } catch (error) {
+            if (error instanceof ZodError) {
+              console.error(' [API Sides] Erreur validation Zod:', error.errors);
+              return res.status(400).json({
+                message: 'Erreur de validation',
+                errors: error.errors
+              });
+            }
+            throw error;
+          }
         } catch (error) {
-          return res.status(400).json({
-            message: 'Données invalides',
-            errors: error.errors || [{ message: 'Erreur de validation' }]
+          console.error(' [API Sides] Erreur mise à jour:', error);
+          return res.status(500).json({
+            message: 'Erreur lors de la mise à jour de l\'accompagnement',
+            error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
           });
         }
-      } catch (error) {
-        console.error('PUT Error:', error);
-        return res.status(500).json({ message: 'Erreur lors de la mise à jour du side' });
-      }
 
-    case 'DELETE':
-      try {
-        const side = await Side.findByIdAndUpdate(
-          id,
-          { active: false },
-          { new: true }
-        );
-        
-        if (!side) {
-          return res.status(404).json({ message: 'Side non trouvé' });
+      case 'DELETE':
+        try {
+          const side = await Side.findByIdAndUpdate(id, { 
+            active: false, 
+            deletedAt: new Date() 
+          }, { new: true });
+          
+          if (!side) {
+            return res.status(404).json({ message: 'Accompagnement non trouvé' });
+          }
+          
+          return res.status(200).json({ message: 'Accompagnement supprimé avec succès' });
+        } catch (error) {
+          console.error('Erreur lors de la suppression de l\'accompagnement:', error);
+          return res.status(500).json({ message: 'Erreur lors de la suppression de l\'accompagnement' });
         }
-        
-        return res.status(200).json({ message: 'Side supprimé avec succès' });
-      } catch (error) {
-        console.error('DELETE Error:', error);
-        return res.status(500).json({ message: 'Erreur lors de la suppression du side' });
-      }
 
-    default:
-      res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-      return res.status(405).json({ message: `Method ${req.method} not allowed` });
+      default:
+        res.setHeader('Allow', ['PUT', 'DELETE']);
+        return res.status(405).json({ message: 'Méthode non autorisée' });
+    }
+  } catch (error) {
+    console.error('Erreur serveur:', error);
+    return res.status(500).json({ message: 'Erreur serveur interne' });
   }
 }
 

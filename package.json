@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "seed": "ts-node scripts/seed.ts",
-    "export": "next build && next export",    
+    
     "seed-sandwiches": "node scripts/seedSandwiches.js",
     "seed-burgers": "node scripts/seedBurgers.js",
     "seed-salads": "node scripts/seedSalads.js",

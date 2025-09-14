@@ -12,6 +12,7 @@ interface Size {
 
 export interface Dessert {
   _id: string;
+  id?: string; // Ajouté pour la transformation toJSON de Mongoose
   name: string;
   type: DessertType;
   price: number;

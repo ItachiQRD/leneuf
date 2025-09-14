@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Food, FoodType, FoodInputAPI } from '@/types/food';
 import { useToast } from '@/contexts/ToastContext';
+import { useProducts } from '@/contexts/ProductContext';
 import { Button } from '@/components/ui/Buttons';
 import { motion } from 'framer-motion';
 
@@ -26,6 +27,7 @@ export default function FoodForm({
   const [activeSection, setActiveSection] = useState('basic');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast } = useToast();
+  const { createFood, updateFood } = useProducts();
 
   const getInitialImage = () => {
     if (initialData?.image && typeof initialData.image === 'string') {
@@ -45,7 +47,6 @@ export default function FoodForm({
       bowls: { calories: 320, proteins: 18, carbs: 30, fats: 12, servingSize: '1 bowl' },
       paninis: { calories: 420, proteins: 22, carbs: 38, fats: 16, servingSize: '1 panini' },
       plates: { calories: 480, proteins: 28, carbs: 25, fats: 22, servingSize: '1 assiette' },
-      tex_mex: { calories: 520, proteins: 30, carbs: 42, fats: 25, servingSize: '1 portion' },
       kids_menu: { calories: 280, proteins: 15, carbs: 30, fats: 12, servingSize: '1 portion' },
       small_hunger: { calories: 180, proteins: 10, carbs: 20, fats: 8, servingSize: '1 portion' }
     };
@@ -119,107 +120,19 @@ export default function FoodForm({
     }
   ];
 
-  // Fonction pour nettoyer les données avant envoi
-  const cleanDataForAPI = (data: any) => {
-    const cleanedData: any = {
-      name: data.name,
-      type: data.type,
-      image: typeof data.image === 'string' ? data.image : undefined,
-      active: data.active,
-      available: data.available,
-      category: data.category,
-      preparationTimeMinutes: Number(data.preparationTimeMinutes),
-      baseIngredients: data.baseIngredients,
-      allergens: data.allergens,
-      spicyLevel: data.spicyLevel,
-      nutritionalInfo: {
-        calories: Number(data.nutritionalInfo?.calories || 0),
-        proteins: Number(data.nutritionalInfo?.proteins || 0),
-        carbs: Number(data.nutritionalInfo?.carbs || 0),
-        fats: Number(data.nutritionalInfo?.fats || 0),
-        servingSize: data.nutritionalInfo?.servingSize || '100g'
-      },
-      isVegan: data.isVegan,
-      isVegetarian: data.isVegetarian,
-      isGlutenFree: data.isGlutenFree
-    };
-
-    // Ajouter l'ID si c'est une mise à jour
-    if (initialData?._id) {
-      cleanedData._id = initialData._id;
-    }
-
-    // Ajouter le prix seulement s'il est défini et n'est pas undefined
-    if (data.price !== undefined && data.price !== null && data.price !== '') {
-      cleanedData.price = Number(data.price);
-    }
-    
-    // Ajouter les champs optionnels spécifiques s'ils existent
-    if (data.pizzaBase) cleanedData.pizzaBase = data.pizzaBase;
-    if (data.pizzaSizes) {
-      cleanedData.pizzaSizes = data.pizzaSizes.map((size: any) => ({
-        ...size,
-        price: Number(size.price)
-      }));
-    }
-    if (data.paniniAccompaniments) {
-      cleanedData.paniniAccompaniments = {
-        ...data.paniniAccompaniments,
-        drinkPrice: Number(data.paniniAccompaniments.drinkPrice || 0)
-      };
-    }
-    if (data.plateAccompaniments) cleanedData.plateAccompaniments = data.plateAccompaniments;
-    if (data.includesSurprise) cleanedData.includesSurprise = data.includesSurprise;
-    if (data.includesCaprisun) cleanedData.includesCaprisun = data.includesCaprisun;
-    
-    return cleanedData;
-  };
 
   const onFormSubmit = async (data: FoodInputAPI) => {
     try {
       setIsSubmitting(true);
       console.log('Données du formulaire:', data);
-      const formData = new FormData();
-      
-      if (data.image && typeof data.image === 'object' && 'name' in data.image) {
-        formData.append('image', data.image as File);
-        const cleanedData = cleanDataForAPI(data);
-        console.log('Données nettoyées sans image:', cleanedData);
-        formData.append('data', JSON.stringify(cleanedData));
+
+      if (initialData?._id) {
+        // Modification
+        await updateFood(initialData._id, data);
       } else {
-        const cleanedData = cleanDataForAPI(data);
-        console.log('Données nettoyées complètes:', cleanedData);
-        formData.append('data', JSON.stringify(cleanedData));
+        // Création
+        await createFood(data);
       }
-
-      const method = initialData?._id ? 'PUT' : 'POST';
-      const successMessage = initialData?._id 
-        ? "Le plat a été modifié avec succès"
-        : "Le plat a été créé avec succès";
-
-      const response = await fetch('/api/admin/foods', {
-        method,
-        credentials: 'include',
-        body: formData
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Erreur API détaillée:', errorData);
-        console.error('Erreurs de validation:', errorData.errors);
-        throw new Error(errorData.message || 'Une erreur est survenue');
-      }
-
-      showToast({
-        title: "Succès !",
-        description: successMessage,
-        variant: "success"
-      });
-
-      // Rafraîchir la page après création/modification
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
 
       onSubmit();
     } catch (error) {

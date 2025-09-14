@@ -32,7 +32,7 @@ const ProductImage = ({ src, alt, className = "" }: { src: string, alt: string, 
         src={src}
         alt={alt}
         fill
-        className="object-cover rounded"
+        className="object-contain rounded"
         onError={() => setError(true)}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         unoptimized={src.startsWith('blob:')}

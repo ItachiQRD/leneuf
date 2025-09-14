@@ -56,11 +56,6 @@ const sideSchema = createBaseSchema<SideType>({
     required: [true, 'Le nom est requis'],
     trim: true
   },
-  description: {  // Ajouté
-    type: String,
-    required: [true, 'La description est requise'],
-    trim: true
-  },
   category: {
     type: String,
     enum: ['fries', 'wings', 'onion_rings', 'salad', 'coleslaw'],
@@ -124,6 +119,11 @@ sideSchema.index({ 'sizes.price': 1 });
 sideSchema.index({ vegetarian: 1 });
 sideSchema.index({ vegan: 1 });
 
-const Side = mongoose.models.Side || mongoose.model<SideDocument>('Side', sideSchema);
+// Supprimer le modèle du cache s'il existe pour forcer la recompilation
+if (mongoose.models.Side) {
+  delete mongoose.models.Side;
+}
+
+const Side = mongoose.model<SideDocument>('Side', sideSchema);
 
 export default Side;

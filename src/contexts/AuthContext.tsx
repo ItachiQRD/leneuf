@@ -48,15 +48,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         credentials: 'include',
       });
       
-      const data = await response.json();
-      
+      // Vérifier si la réponse est valide avant de parser le JSON
       if (!response.ok) {
         if (response.status === 401) {
           // C'est normal si l'utilisateur n'est pas connecté
           setUser(null);
           return;
         }
-        console.error('Erreur checkAuth:', data);
+        console.error('Erreur checkAuth: HTTP', response.status);
+        setUser(null);
+        return;
+      }
+
+      // Récupérer le contenu de la réponse
+      const text = await response.text();
+      
+      if (!text) {
+        console.error('Erreur checkAuth: Réponse vide');
+        setUser(null);
+        return;
+      }
+
+      // Essayer de parser le JSON
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseError) {
+        console.error('Erreur checkAuth: JSON.parse:', parseError);
+        console.error('Contenu reçu:', text);
+        setUser(null);
+        return;
+      }
+      
+      if (!data || !data.user) {
+        console.error('Erreur checkAuth: Données utilisateur manquantes');
         setUser(null);
         return;
       }
@@ -82,7 +107,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      // Récupérer le contenu de la réponse
+      const text = await response.text();
+      console.log('Login response text:', text);
+      
+      if (!text) {
+        const errorMessage = 'Réponse vide du serveur';
+        console.error('Erreur login: Réponse vide');
+        setError(errorMessage);
+        toast({
+          title: 'Erreur de connexion',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Essayer de parser le JSON
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseError) {
+        console.error('Erreur login: JSON.parse:', parseError);
+        console.error('Contenu reçu:', text);
+        const errorMessage = 'Réponse invalide du serveur';
+        setError(errorMessage);
+        toast({
+          title: 'Erreur de connexion',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+        return;
+      }
+
       console.log('Login response:', { status: response.status, data });
 
       if (!response.ok || data.error) {
@@ -140,7 +197,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
+      // Récupérer le contenu de la réponse
+      const text = await response.text();
+      
+      if (!text) {
+        throw new Error('Réponse vide du serveur');
+      }
+
+      // Essayer de parser le JSON
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (parseError) {
+        console.error('Erreur register: JSON.parse:', parseError);
+        console.error('Contenu reçu:', text);
+        throw new Error('Réponse invalide du serveur');
+      }
 
       if (!response.ok) {
         throw new Error(result.message || 'Erreur d\'inscription');

@@ -104,4 +104,6 @@ const sauceSchema = new mongoose.Schema({
   }
 });
 
-export const Sauce = mongoose.models.Sauce || mongoose.model<SauceType>('Sauce', sauceSchema);
+const Sauce = mongoose.models.Sauce || mongoose.model<SauceType>('Sauce', sauceSchema);
+
+export default Sauce;

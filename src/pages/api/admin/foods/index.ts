@@ -24,7 +24,7 @@ const nutritionalInfoSchema = z.object({
 // Schéma de validation pour les plats
 const foodSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
-  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'tex_mex', 'kids_menu', 'small_hunger'], {
+  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'kids_menu', 'small_hunger'], {
     errorMap: () => ({ message: "Type de plat invalide" })
   }),
   price: z.number().min(0, "Le prix doit être positif").optional().or(z.undefined()),
@@ -131,10 +131,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             throw new Error('Une image est requise');
           }
 
+          // Nettoyer les données (convertir les strings en numbers)
+          const cleanData = {
+            ...data,
+            price: data.price ? (typeof data.price === 'string' ? parseFloat(data.price) : data.price) : undefined,
+            preparationTimeMinutes: typeof data.preparationTimeMinutes === 'string' ? parseInt(data.preparationTimeMinutes) : data.preparationTimeMinutes,
+            nutritionalInfo: {
+              ...data.nutritionalInfo,
+              calories: typeof data.nutritionalInfo?.calories === 'string' ? parseInt(data.nutritionalInfo.calories) : data.nutritionalInfo?.calories || 0,
+              proteins: typeof data.nutritionalInfo?.proteins === 'string' ? parseInt(data.nutritionalInfo.proteins) : data.nutritionalInfo?.proteins || 0,
+              carbs: typeof data.nutritionalInfo?.carbs === 'string' ? parseInt(data.nutritionalInfo.carbs) : data.nutritionalInfo?.carbs || 0,
+              fats: typeof data.nutritionalInfo?.fats === 'string' ? parseInt(data.nutritionalInfo.fats) : data.nutritionalInfo?.fats || 0
+            }
+          };
+
           // Validation et création
           try {
-            console.log(' [API Foods] Données avant validation:', data);
-            const validatedData = foodSchema.parse(data);
+            console.log(' [API Foods] Données avant validation:', cleanData);
+            const validatedData = foodSchema.parse(cleanData);
             console.log(' [API Foods] Données validées:', validatedData);
             const food = await Food.create(validatedData);
             console.log(' [API Foods] Plat créé avec succès');
@@ -235,7 +249,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           }
         } catch (error) {
           console.error(' [API Foods] Erreur mise à jour:', error);
-          res.status(500).json({
+          return res.status(500).json({
             message: 'Erreur lors de la mise à jour du plat',
             error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
           });
@@ -245,11 +259,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       default:
         console.log(' [API Foods] Méthode non autorisée:', req.method);
         res.setHeader('Allow', ['GET', 'POST', 'PUT']);
-        res.status(405).json({ message: `Method ${req.method} Not Allowed` });
+        return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
   } catch (error) {
     console.error(' [API Foods] Erreur serveur:', error);
-    res.status(500).json({ message: 'Erreur serveur interne' });
+    return res.status(500).json({ message: 'Erreur serveur interne' });
   }
 }
 

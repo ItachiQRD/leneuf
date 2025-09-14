@@ -39,12 +39,6 @@ export default function BasicSideInfo({ form, category }: BasicSideInfoProps) {
         />
       </div>
 
-      <Textarea
-        label="Description"
-        {...register('description')}
-        error={errors.description?.message}
-        placeholder="Décrivez l'accompagnement..."
-      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input

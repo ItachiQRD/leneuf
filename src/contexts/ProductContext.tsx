@@ -1,4 +1,4 @@
-                                                                                                                                          import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+                                                                                                                                        import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -9,6 +9,23 @@ import { Dessert, DessertInput } from '@/types/dessert';
 import { Sauce, SauceInput } from '@/types/sauce';
 import { Side, SideInput } from '@/types/side';
 import { Ingredient, IngredientInput } from '@/types/ingredient';
+
+// Fonction utilitaire pour parser les réponses JSON de manière robuste
+async function parseResponse(response: Response) {
+  const text = await response.text();
+  
+  if (!text) {
+    throw new Error('Réponse vide du serveur');
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (parseError) {
+    console.error('Erreur parsing JSON:', parseError);
+    console.error('Contenu reçu:', text);
+    throw new Error('Réponse invalide du serveur');
+  }
+}
 
 interface ProductContextType {
   // Foods
@@ -79,19 +96,38 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         credentials: 'include', // Important pour envoyer les cookies
       });
 
+      // Vérifier le content-type avant de parser
+      const contentType = response.headers.get('content-type');
+      const isJson = contentType && contentType.includes('application/json');
+
+      // Récupérer le contenu de la réponse
+      const text = await response.text();
+      
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Une erreur est survenue');
+        // Essayer de parser le JSON même si le content-type n'est pas correct
+        try {
+          const error = JSON.parse(text);
+          throw new Error(error.message || `Erreur HTTP ${response.status}`);
+        } catch (jsonError) {
+          // Si ce n'est pas du JSON, utiliser le texte brut
+          throw new Error(`Erreur HTTP ${response.status}: ${text || response.statusText}`);
+        }
       }
 
-      return response.json();
-    } catch (error) {
-      if (error && typeof error === 'object' && 'message' in error) {
-        const errorMessage = error.message as string;
-        console.error('Error fetching data:', errorMessage);
-      } else {
-        console.error('Error fetching data:', error);
+      // Essayer de parser le JSON
+      if (!text) {
+        throw new Error('Réponse vide reçue');
       }
+      
+      try {
+        return JSON.parse(text);
+      } catch (parseError) {
+        console.error('[ProductContext] Erreur parsing JSON:', parseError);
+        console.error('[ProductContext] Contenu reçu:', text);
+        throw new Error('Réponse non-JSON reçue');
+      }
+    } catch (error) {
+      console.error('[ProductContext] Erreur chargement données:', error);
       throw error;
     }
   }, []);
@@ -108,24 +144,27 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       try {
         console.log(' [ProductContext] Chargement des données...');
-        const [foodsData, drinksData, dessertsData, saucesData, sidesData, ingredientsData] = await Promise.all([
-          fetchWithAuth('/api/admin/foods'),
-          fetchWithAuth('/api/admin/drinks'),
-          fetchWithAuth('/api/admin/desserts'),
-          fetchWithAuth('/api/admin/sauces'),
-          fetchWithAuth('/api/admin/sides'),
-          fetchWithAuth('/api/admin/ingredients')
-        ]);
-
-        console.log(' [ProductContext] Foods reçus:', foodsData);
-        console.log(' [ProductContext] Premier food _id:', foodsData[0]?._id);
         
-        setFoods(foodsData);
-        setDrinks(drinksData);
-        setDesserts(dessertsData);
-        setSauces(saucesData);
-        setSides(sidesData);
-        setIngredients(ingredientsData);
+        // Charger les données une par une pour éviter les erreurs en cascade
+        const loadDataSafely = async (endpoint: string, setter: (data: any) => void, name: string) => {
+          try {
+            const data = await fetchWithAuth(endpoint);
+            setter(data || []);
+            console.log(`✅ [ProductContext] ${name} chargés:`, data?.length || 0);
+          } catch (error) {
+            console.warn(`⚠️ [ProductContext] Erreur chargement ${name}:`, error);
+            setter([]); // Initialiser avec un tableau vide en cas d'erreur
+          }
+        };
+
+        await Promise.all([
+          loadDataSafely('/api/admin/foods', setFoods, 'plats'),
+          loadDataSafely('/api/admin/drinks', setDrinks, 'boissons'),
+          loadDataSafely('/api/admin/desserts', setDesserts, 'desserts'),
+          loadDataSafely('/api/admin/sauces', setSauces, 'sauces'),
+          loadDataSafely('/api/admin/sides', setSides, 'accompagnements'),
+          loadDataSafely('/api/admin/ingredients', setIngredients, 'ingrédients')
+        ]);
         
         console.log(' [ProductContext] Données chargées avec succès');
       } catch (error) {
@@ -149,6 +188,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         const { image, ...restData } = food;
         formData.append('data', JSON.stringify(restData));
       } else {
+        // Inclure l'image même si c'est une chaîne (URL existante)
         formData.append('data', JSON.stringify(food));
       }
 
@@ -159,11 +199,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la création');
       }
 
-      const newFood = await response.json();
+      const newFood = await parseResponse(response);
       console.log(' [ProductContext] Nouveau food créé:', newFood);
       setFoods(prev => [...prev, newFood]);
       showToast({
@@ -187,6 +227,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         const { image, ...restData } = food;
         formData.append('data', JSON.stringify({ ...restData, _id: id }));
       } else {
+        // Inclure l'image même si c'est une chaîne (URL existante)
         formData.append('data', JSON.stringify({ ...food, _id: id }));
       }
 
@@ -197,11 +238,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la mise à jour');
       }
 
-      const updatedFood = await response.json();
+      const updatedFood = await parseResponse(response);
       console.log(' [ProductContext] Food mis à jour:', updatedFood);
       setFoods(prev => prev.map(f => f._id === id ? updatedFood : f));
       showToast({
@@ -229,7 +270,23 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        // Récupérer le contenu de la réponse
+        const text = await response.text();
+        
+        if (!text) {
+          throw new Error('Réponse vide du serveur');
+        }
+
+        // Essayer de parser le JSON
+        let error;
+        try {
+          error = JSON.parse(text);
+        } catch (parseError) {
+          console.error('Erreur deleteFood: JSON.parse:', parseError);
+          console.error('Contenu reçu:', text);
+          throw new Error('Réponse invalide du serveur');
+        }
+
         throw new Error(error.message || 'Erreur lors de la suppression');
       }
 
@@ -276,11 +333,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la création');
       }
 
-      const newDrink = await response.json();
+      const newDrink = await parseResponse(response);
       setDrinks(prev => [...prev, newDrink]);
       showToast({
         title: 'Succès',
@@ -312,11 +369,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la mise à jour');
       }
 
-      const updatedDrink = await response.json();
+      const updatedDrink = await parseResponse(response);
       setDrinks(prev => prev.map(d => d._id === id ? updatedDrink : d));
       showToast({
         title: 'Succès',
@@ -337,7 +394,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la suppression');
       }
 
@@ -373,11 +430,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la création');
       }
 
-      const newSide = await response.json();
+      const newSide = await parseResponse(response);
       setSides(prev => [...prev, newSide]); // Mettre à jour le state immédiatement
       showToast({
         title: 'Succès',
@@ -402,18 +459,18 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         formData.append('data', JSON.stringify({ ...side, _id: id }));
       }
 
-      const response = await fetch('/api/admin/sides', {
+      const response = await fetch(`/api/admin/sides/${id}`, {
         method: 'PUT',
         credentials: 'include',
         body: formData
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la mise à jour');
       }
 
-      const updatedSide = await response.json();
+      const updatedSide = await parseResponse(response);
       setSides(prev => prev.map(s => s._id === id ? updatedSide : s)); // Mettre à jour le state immédiatement
       showToast({
         title: 'Succès',
@@ -428,13 +485,13 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
   const deleteSide = useCallback(async (id: string) => {
     try {
-      const response = await fetch(`/api/admin/sides?id=${id}`, {
+      const response = await fetch(`/api/admin/sides/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la suppression');
       }
 
@@ -461,15 +518,25 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la création du dessert');
       }
 
-      const newDessert = await response.json();
+      const newDessert = await parseResponse(response);
       console.log(' [ProductContext] Dessert créé:', newDessert);
       setDesserts(prev => [...prev, newDessert]);
+      showToast({
+        title: 'Succès',
+        description: 'Dessert créé avec succès',
+        variant: 'success'
+      });
     } catch (error) {
       console.error(' [ProductContext] Erreur création dessert:', error);
+      showToast({
+        title: 'Erreur',
+        description: error && typeof error === 'object' && 'message' in error ? error.message as string : 'Erreur lors de la création',
+        variant: 'destructive'
+      });
       throw error;
     }
   }, []);
@@ -484,13 +551,18 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la mise à jour du dessert');
       }
 
-      const updatedDessert = await response.json();
+      const updatedDessert = await parseResponse(response);
       console.log(' [ProductContext] Dessert mis à jour:', updatedDessert);
-      setDesserts(prev => prev.map(d => d._id === id ? updatedDessert : d));
+      setDesserts(prev => prev.map(d => (d._id || d.id) === id ? updatedDessert : d));
+      showToast({
+        title: 'Succès',
+        description: 'Dessert mis à jour avec succès',
+        variant: 'success'
+      });
     } catch (error) {
       console.error(' [ProductContext] Erreur mise à jour dessert:', error);
       showToast({
@@ -511,12 +583,17 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la suppression du dessert');
       }
 
       console.log(' [ProductContext] Dessert supprimé:', id);
-      setDesserts(prev => prev.filter(d => d._id !== id));
+      setDesserts(prev => prev.filter(d => (d._id || d.id) !== id));
+      showToast({
+        title: 'Succès',
+        description: 'Dessert supprimé avec succès',
+        variant: 'success'
+      });
     } catch (error) {
       console.error(' [ProductContext] Erreur suppression dessert:', error);
       showToast({
@@ -548,11 +625,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la création');
       }
 
-      const newSauce = await response.json();
+      const newSauce = await parseResponse(response);
       setSauces(prev => [...prev, newSauce]);
       showToast({
         title: 'Succès',
@@ -584,11 +661,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la mise à jour');
       }
 
-      const updatedSauce = await response.json();
+      const updatedSauce = await parseResponse(response);
       setSauces(prev => prev.map(s => s._id === id ? updatedSauce : s));
       showToast({
         title: 'Succès',
@@ -609,7 +686,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la suppression');
       }
 
@@ -645,11 +722,16 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Erreur lors de la création');
+        try {
+          const error = await parseResponse(response);
+          throw new Error(error.message || 'Erreur lors de la création');
+        } catch (parseError) {
+          console.error('Erreur parsing response:', parseError);
+          throw new Error(`Erreur serveur (${response.status}): ${response.statusText}`);
+        }
       }
 
-      const newIngredient = await response.json();
+      const newIngredient = await parseResponse(response);
       setIngredients(prev => [...prev, newIngredient]);
       showToast({
         title: 'Succès',
@@ -681,11 +763,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Erreur lors de la mise à jour');
       }
 
-      const updatedIngredient = await response.json();
+      const updatedIngredient = await parseResponse(response);
       setIngredients(prev => prev.map(ing => 
         ing._id === id ? updatedIngredient : ing
       ));
@@ -713,7 +795,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await parseResponse(response);
         throw new Error(error.message || 'Une erreur est survenue');
       }
 

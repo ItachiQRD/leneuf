@@ -24,7 +24,7 @@ const drinkSchema = createBaseSchema<Drink>({
   brand: String,
   image: {
     type: String,
-    required: [true, 'L\'image est requise']
+    required: false
   },
   available: {
     type: Boolean,

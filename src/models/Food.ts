@@ -19,7 +19,7 @@ const foodSchema = new mongoose.Schema({
   type: {
     type: String,
     required: [true, 'Le type est requis'],
-    enum: ['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'tex_mex', 'kids_menu', 'small_hunger'],
+    enum: ['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'kids_menu', 'small_hunger'],
   },
   category: {
     type: String,

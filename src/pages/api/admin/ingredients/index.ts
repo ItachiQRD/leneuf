@@ -1,106 +1,111 @@
-// pages/api/ingredients/index.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import formidable from 'formidable';
-import { withAdmin } from '@/utils/api';
 import { connectDB } from '@/lib/mongodb';
 import Ingredient from '@/models/Ingredient';
+import { withAdmin } from '@/utils/api';
+import formidable from 'formidable';
 import { imageService } from '@/services/imageService';
-import { IngredientSchema } from '@/types/ingredient';
-import { ZodError } from 'zod';
-import path from 'path';
-import fs from 'fs';
 
-export const config = { api: { bodyParser: false } };
-
-async function parseForm(req: NextApiRequest) {
-  // Créer le dossier d'upload s'il n'existe pas
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'ingredients');
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-
-  const form = formidable({
-    uploadDir,
-    keepExtensions: true,
-    maxFileSize: 5 * 1024 * 1024, // 5MB
-    filename: (name, ext) => `${Date.now()}${ext}`, // Nom de fichier unique
-  });
-
-  return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
-    });
-  });
-}
+// Désactiver le bodyParser par défaut de Next.js
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    await connectDB();
+  await connectDB();
 
-    if (req.method === 'POST') {
-      const { fields, files } = await parseForm(req) as any;
-      let imageUrl = '';
-      let ingredientData;
-
+  switch (req.method) {
+    case 'GET':
       try {
-        ingredientData = JSON.parse(fields.data);
+        const ingredients = await Ingredient.find({ deletedAt: { $exists: false } });
+        res.status(200).json(ingredients);
       } catch (error) {
-        return res.status(400).json({ message: 'Données JSON invalides' });
+        console.error('Erreur lors de la récupération des ingrédients:', error);
+        return res.status(500).json({ message: 'Erreur serveur' });
       }
+      break;
 
-      // Traiter l'image si elle existe
-      if (files.image) {
-        try {
-          const uploadedFile = files.image[0] || files.image;
-          const fileName = path.basename(uploadedFile.filepath);
-          imageUrl = `/uploads/ingredients/${fileName}`;
-        } catch (error) {
-          console.error('Erreur lors du traitement de l\'image:', error);
-          return res.status(400).json({ message: 'Erreur lors du traitement de l\'image' });
-        }
-      }
-
+    case 'POST':
       try {
-        // Valider les données avec le schema
-        const validatedData = IngredientSchema.parse({
-          ...ingredientData,
-          description: ingredientData.description || '',
-          image: imageUrl || ingredientData.image || '',
-          isAvailable: ingredientData.isAvailable ?? true,
-          isSpicy: ingredientData.isSpicy ?? false,
-          isVegetarian: ingredientData.isVegetarian ?? false,
-          allergens: ingredientData.allergens || [],
-          orderIndex: ingredientData.orderIndex || 0
+        // Configuration de formidable pour gérer les uploads
+        const form = formidable({
+          maxFileSize: 10 * 1024 * 1024, // 10MB
+          keepExtensions: true,
         });
 
-        // Créer l'ingrédient dans la base de données
-        const ingredient = await Ingredient.create(validatedData);
-
-        return res.status(201).json(ingredient);
-      } catch (error) {
-        if (error instanceof ZodError) {
-          return res.status(400).json({
-            message: 'Données invalides',
-            errors: error.errors
-          });
+        const [fields, files] = await form.parse(req);
+        
+        // Extraire les données JSON
+        let ingredientData = {};
+        if (fields.data && fields.data[0]) {
+          try {
+            ingredientData = JSON.parse(fields.data[0]);
+          } catch (parseError) {
+            console.error('Erreur parsing data:', parseError);
+            return res.status(400).json({ message: 'Données JSON invalides' });
+          }
         }
-        throw error;
+        
+        if (!ingredientData || typeof ingredientData !== 'object') {
+          return res.status(400).json({ message: 'Données invalides' });
+        }
+
+        // Validation des champs requis
+        if (!ingredientData.name) {
+          return res.status(400).json({ message: 'Le nom est requis' });
+        }
+        if (!ingredientData.type) {
+          return res.status(400).json({ message: 'Le type est requis' });
+        }
+        if (ingredientData.price === undefined || ingredientData.price === null) {
+          return res.status(400).json({ message: 'Le prix est requis' });
+        }
+
+        // Gestion de l'image
+        let imageUrl = '';
+        if (files.image && files.image[0]) {
+          try {
+            const imageResult = await imageService.uploadImage(files.image[0], 'ingredients');
+            imageUrl = imageResult.url;
+          } catch (imageError) {
+            console.error('Erreur upload image:', imageError);
+            return res.status(400).json({ message: 'Erreur lors de l\'upload de l\'image' });
+          }
+        } else if (ingredientData.image && typeof ingredientData.image === 'string') {
+          // Si c'est déjà une URL (pour les mises à jour)
+          imageUrl = ingredientData.image;
+        } else {
+          return res.status(400).json({ message: 'L\'image est requise' });
+        }
+
+        // Conversion des types
+        const validatedData = {
+          ...ingredientData,
+          image: imageUrl,
+          price: parseFloat(ingredientData.price),
+          orderIndex: parseInt(ingredientData.orderIndex) || 0,
+          isAvailable: Boolean(ingredientData.isAvailable),
+          isSpicy: Boolean(ingredientData.isSpicy),
+          isVegetarian: Boolean(ingredientData.isVegetarian),
+          allergens: Array.isArray(ingredientData.allergens) ? ingredientData.allergens : []
+        };
+        
+        const ingredient = new Ingredient(validatedData);
+        await ingredient.save();
+        res.status(201).json(ingredient);
+      } catch (error) {
+        console.error('Erreur lors de la création de l\'ingrédient:', error);
+        if (error instanceof Error) {
+          return res.status(400).json({ message: error.message });
+        }
+        return res.status(400).json({ message: 'Erreur lors de la création de l\'ingrédient' });
       }
-    }
+      break;
 
-    if (req.method === 'GET') {
-      const ingredients = await Ingredient.find({ active: { $ne: false } }).sort({ createdAt: -1 });
-      return res.status(200).json(ingredients);
-    }
-
-    res.setHeader('Allow', ['GET', 'POST']);
-    return res.status(405).json({ message: `Method ${req.method} not allowed` });
-  } catch (error) {
-    console.error('API Error:', error);
-    return res.status(500).json({ 
-      message: error instanceof Error ? error.message : 'Une erreur est survenue' 
-    });
+    default:
+      res.setHeader('Allow', ['GET', 'POST']);
+      return res.status(405).json({ message: 'Méthode non autorisée' });
   }
 }
 

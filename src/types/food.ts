@@ -3,7 +3,7 @@ import { BaseProduct } from './models';
 import { z } from 'zod';
 
 // Types de base pour les aliments
-export type FoodType = 'burger' | 'pizza' | 'salad' | 'sandwich_durum' | 'paninis' | 'plates' | 'tex_mex' | 'kids_menu' | 'small_hunger';
+export type FoodType = 'burger' | 'pizza' | 'salad' | 'sandwich_durum' | 'paninis' | 'plates' | 'kids_menu' | 'small_hunger';
 export type FoodCategory = 'bestseller' | 'new' | 'regular';
 export type SpicyLevel = 'mild' | 'medium' | 'hot' | 'extra_hot';
 
@@ -15,7 +15,6 @@ export const FOOD_TYPES = [
   { value: 'sandwich_durum', label: 'Sandwich/Durum' },
   { value: 'paninis', label: 'Paninis' },
   { value: 'plates', label: 'Assiettes' },
-  { value: 'tex_mex', label: 'Tex Mex' },
   { value: 'kids_menu', label: 'Menu Enfants' },
   { value: 'small_hunger', label: 'P\'tite Faim' }
 ] as const;
@@ -84,7 +83,7 @@ export const FoodSchema = z.object({
   _id: z.string().optional(),
   name: z.string().min(1, 'Le nom est requis'),
   price: z.number().min(0, 'Le prix doit être positif').optional().or(z.undefined()),
-  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'tex_mex', 'kids_menu', 'small_hunger'], {
+  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'kids_menu', 'small_hunger'], {
     errorMap: () => ({ message: 'Type de plat invalide' })
   }),
   category: z.enum(['bestseller', 'new', 'regular'], {

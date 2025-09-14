@@ -21,7 +21,7 @@ export const IngredientSchema = z.object({
   description: z.string().optional().default(''),
   type: z.enum(['meat', 'cheese', 'vegetable', 'extra']),
   price: z.number().min(0, 'Le prix doit être positif'),
-  image: z.union([z.string(), z.instanceof(File)]).optional(),
+  image: z.union([z.string(), z.instanceof(File)]),
   isAvailable: z.boolean().default(true),
   isSpicy: z.boolean().default(false),
   isVegetarian: z.boolean().default(false),

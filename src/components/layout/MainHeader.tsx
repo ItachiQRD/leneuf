@@ -51,9 +51,16 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           {/* Logo / Home Link */}
           <Link 
             href="/"
-            className={`text-2xl font-bold font-playfair ${textColor} hover:opacity-80 transition-opacity`}
+            className="flex items-center hover:opacity-80 transition-opacity"
           >
-            Le 9
+            <Image
+              src="/images/logo.png"
+              alt="Le 9 Logo"
+              width={60}
+              height={60}
+              className=""
+              style={{ width: 'auto', height: 'auto' }}
+            />
           </Link>
 
           {/* Navigation - Desktop */}

@@ -25,11 +25,10 @@ export const DrinkSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
   type: z.enum(["soda", "water", "juice", "coffee", "milkshake"]),
   brand: z.string().optional(),
-  price: z.number().min(0, "Le prix doit être positif"),
   image: z.union([
     z.string(),
     z.instanceof(File),
-  ]),
+  ]).optional(),
   available: z.boolean(),
   sizes: z.array(DrinkSizeSchema).min(1, "Au moins une taille est requise"),
   nutritionalInfo: nutritionalInfoSchema,

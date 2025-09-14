@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Side, SideCategory, SideInput } from '@/types/side';
 import { useToast } from '@/contexts/ToastContext';
+import { useProducts } from '@/contexts/ProductContext';
 import { Button } from '@/components/ui/Buttons';
 import { motion } from 'framer-motion';
 
@@ -26,6 +27,7 @@ export default function SideForm({
   const [activeSection, setActiveSection] = useState('basic');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast } = useToast();
+  const { createSide, updateSide } = useProducts();
 
   const form = useForm<SideInput>({
     defaultValues: {
@@ -33,7 +35,7 @@ export default function SideForm({
       name: '',
       active: true,
       price: 0,
-      image: '',
+      image: initialData?.image || '',
       available: true,
       sizes: [],
       ingredients: [],
@@ -75,37 +77,24 @@ export default function SideForm({
   const onFormSubmit = async (data: SideInput) => {
     try {
       setIsSubmitting(true);
-      const formData = new FormData();
       
-      if (data.image && data.image instanceof File) {
-        formData.append('image', data.image);
-        const { image, ...restData } = data;
-        formData.append('data', JSON.stringify(restData));
+      // Vérifier qu'une image est fournie
+      if (!data.image || (typeof data.image === 'string' && data.image.trim() === '')) {
+        showToast({
+          title: "Erreur",
+          description: "Une image est requise pour l'accompagnement",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      if (initialData?._id) {
+        // Modification
+        await updateSide(initialData._id, data);
       } else {
-        formData.append('data', JSON.stringify(data));
+        // Création
+        await createSide(data);
       }
-
-      const method = initialData?._id ? 'PUT' : 'POST';
-      const successMessage = initialData?._id 
-        ? "L'accompagnement a été modifié avec succès"
-        : "L'accompagnement a été créé avec succès";
-
-      const response = await fetch('/api/admin/sides', {
-        method,
-        credentials: 'include',
-        body: formData
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Une erreur est survenue');
-      }
-
-      showToast({
-        title: "Succès !",
-        description: successMessage,
-        variant: "success"
-      });
 
       onSubmit();
     } catch (error) {

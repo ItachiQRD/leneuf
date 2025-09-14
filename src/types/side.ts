@@ -22,7 +22,6 @@ export interface SideNutritionalInfo {
 // Interface principale
 export interface Side extends BaseProduct {
   name: string;
-  description: string;
   category: SideCategory;
   price: number;
   image: string | File;
@@ -41,7 +40,6 @@ export interface Side extends BaseProduct {
 // Interface pour la création/mise à jour
 export interface SideInput extends Omit<Side, '_id' | 'createdAt' | 'updatedAt' | 'active'> {
   name: string;
-  description: string;
   category: SideCategory;
   price: number;
   image: string | File;
@@ -86,7 +84,6 @@ export const nutritionalInfoSchema = z.object({
 
 export const sideSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
-  description: z.string().min(10, "La description doit être plus détaillée"),
   category: z.enum(['fries', 'wings', 'onion_rings', 'salad', 'coleslaw']),
   price: z.number().min(0, "Le prix doit être positif"),
   image: z.union([z.string(), z.instanceof(File)]),

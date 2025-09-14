@@ -6,9 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { isFile } from '@/utils/fileUtils';
 import { Button } from '@/components/ui/Buttons';
 import { useAuth } from '@/contexts/AuthContext';
-import NutritionalInfo from './sections/NutritionalInfo';
 import BasicDrinkInfo from './sections/BasicDrinkInfo';
-import SizesDrinkSection from './sections/SizesDrinkSection';
 
 interface DrinkFormProps {
   initialData?: Partial<Drink>;
@@ -17,15 +15,12 @@ interface DrinkFormProps {
 }
 
 const sections = [
-  { id: 'basic', label: 'Informations de base' },
-  { id: 'sizes', label: 'Tailles' },
-  { id: 'nutrition', label: 'Valeurs nutritionnelles' }
+  { id: 'basic', label: 'Informations de base' }
 ];
 
 export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkFormProps) {
   const [activeSection, setActiveSection] = useState('basic');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { getToken } = useAuth();
   const { toast } = useToast();
 
   
@@ -40,7 +35,7 @@ export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkForm
       sizes: initialData?.sizes || [{
         name: 'Standard',
         price: 2.50,
-        volume: 330,
+        volume: '330ml',
         isDefault: true
       }],
       nutritionalInfo: {
@@ -138,8 +133,6 @@ export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkForm
 
         <div className="space-y-6">
           {activeSection === 'basic' && <BasicDrinkInfo form={form} />}
-          {activeSection === 'sizes' && <SizesDrinkSection form={form} />}
-          {activeSection === 'nutrition' && <NutritionalInfo form={form} />}
         </div>
 
         <div className="mt-6 flex justify-end space-x-4">

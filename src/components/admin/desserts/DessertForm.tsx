@@ -11,7 +11,6 @@ import { z } from 'zod';
 
 // Import des sections
 import BasicDessertInfo from './sections/BasicDessertInfo';
-import SizesDessertSection from './sections/SizesDessertSection';
 
 // Définition du schéma de validation Zod
 const sizeSchema = z.object({
@@ -86,12 +85,6 @@ const SECTIONS = [
     label: 'Informations de base',
     Component: BasicDessertInfo,
     errorKeys: ['name', 'price', 'image']
-  },
-  {
-    id: 'sizes',
-    label: 'Tailles et prix',
-    Component: SizesDessertSection,
-    errorKeys: ['sizes']
   }
 ];
 

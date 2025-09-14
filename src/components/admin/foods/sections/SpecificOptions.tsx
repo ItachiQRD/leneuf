@@ -82,24 +82,6 @@ export default function SpecificOptions({ form, type }: SpecificOptionsProps) {
     </div>
   );
 
-  // Options spécifiques aux bowls
-  const renderBowlOptions = () => (
-    <div className="space-y-4">
-      <h4 className="text-md font-medium text-gray-900">Options Bowl</h4>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Viandes disponibles
-        </label>
-        <p className="text-sm text-gray-600 mb-2">
-          Définissez les viandes disponibles pour ce bowl
-        </p>
-        <div className="text-sm text-gray-500 italic">
-          Fonctionnalité à implémenter : gestion des viandes de bowl
-        </div>
-      </div>
-    </div>
-  );
 
   // Options spécifiques aux paninis
   const renderPaniniOptions = () => (
@@ -185,10 +167,6 @@ export default function SpecificOptions({ form, type }: SpecificOptionsProps) {
     switch (type) {
       case 'pizza':
         return renderPizzaOptions();
-      case 'tacos':
-        return renderTacoOptions();
-      case 'bowls':
-        return renderBowlOptions();
       case 'paninis':
         return renderPaniniOptions();
       case 'plates':

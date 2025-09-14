@@ -8,7 +8,6 @@ import { motion } from 'framer-motion';
 
 // Import des sections
 import BasicSauceInfo from './sections/BasicSauceInfo';
-import NutritionalInfo from './sections/NutritionalInfo';
 import SpicySection from './sections/SpicySection';
 
 interface SauceFormProps {
@@ -23,12 +22,6 @@ const SECTIONS = [
     label: 'Informations de base',
     Component: BasicSauceInfo,
     errorKeys: ['name', 'type', 'description', 'price', 'image', 'maxQuantity']
-  },
-  {
-    id: 'nutritional',
-    label: 'Informations nutritionnelles',
-    Component: NutritionalInfo,
-    errorKeys: ['nutritionalInfo']
   },
   {
     id: 'spicy',

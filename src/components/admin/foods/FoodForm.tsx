@@ -8,7 +8,6 @@ import { motion } from 'framer-motion';
 
 // Sections de formulaire
 import BasicFoodInfo from './sections/BasicFoodInfo';
-import NutritionalInfo from './sections/NutritionalInfo';
 import SpecificOptions from './sections/SpecificOptions';
 
 interface FoodFormProps {
@@ -36,22 +35,6 @@ export default function FoodForm({
     return '';
   };
 
-  // Valeurs nutritionnelles par défaut selon le type de plat
-  const getDefaultNutritionalInfo = (foodType: string) => {
-    const defaults = {
-      burger: { calories: 650, proteins: 35, carbs: 45, fats: 35, servingSize: '1 burger' },
-      pizza: { calories: 280, proteins: 12, carbs: 35, fats: 10, servingSize: '100g' },
-      salad: { calories: 120, proteins: 8, carbs: 15, fats: 4, servingSize: '1 portion' },
-      sandwich_durum: { calories: 450, proteins: 25, carbs: 40, fats: 20, servingSize: '1 sandwich' },
-      tacos: { calories: 380, proteins: 20, carbs: 35, fats: 18, servingSize: '1 taco' },
-      bowls: { calories: 320, proteins: 18, carbs: 30, fats: 12, servingSize: '1 bowl' },
-      paninis: { calories: 420, proteins: 22, carbs: 38, fats: 16, servingSize: '1 panini' },
-      plates: { calories: 480, proteins: 28, carbs: 25, fats: 22, servingSize: '1 assiette' },
-      kids_menu: { calories: 280, proteins: 15, carbs: 30, fats: 12, servingSize: '1 portion' },
-      small_hunger: { calories: 180, proteins: 10, carbs: 20, fats: 8, servingSize: '1 portion' }
-    };
-    return defaults[foodType as keyof typeof defaults] || { calories: 0, proteins: 0, carbs: 0, fats: 0, servingSize: '100g' };
-  };
 
   // Tailles de pizza par défaut
   const getDefaultPizzaSizes = () => [
@@ -73,7 +56,6 @@ export default function FoodForm({
       baseIngredients: [],
       allergens: [],
       spicyLevel: 'mild',
-      nutritionalInfo: getDefaultNutritionalInfo(type),
       isVegan: false,
       isVegetarian: false,
       isGlutenFree: false,
@@ -90,7 +72,6 @@ export default function FoodForm({
         baseIngredients: initialData.baseIngredients || [],
         allergens: initialData.allergens || [],
         spicyLevel: initialData.spicyLevel || 'mild',
-        nutritionalInfo: initialData.nutritionalInfo || getDefaultNutritionalInfo(initialData.type || type),
         isVegan: initialData.isVegan ?? false,
         isVegetarian: initialData.isVegetarian ?? false,
         isGlutenFree: initialData.isGlutenFree ?? false,
@@ -185,9 +166,6 @@ export default function FoodForm({
             <BasicFoodInfo form={form} type={type} />
           )}
           
-          {activeSection === 'nutrition' && (
-            <NutritionalInfo form={form} />
-          )}
 
           {activeSection === 'specific' && (
             <SpecificOptions form={form} type={type} />

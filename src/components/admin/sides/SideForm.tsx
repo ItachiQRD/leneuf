@@ -9,7 +9,6 @@ import { motion } from 'framer-motion';
 // Sections de formulaire
 import BasicSideInfo from './sections/BasicSideInfo';
 import SizesSection from './sections/SizesSection';
-import NutritionalInfo from './sections/NutritionalInfo';
 
 interface SideFormProps {
   initialData?: Partial<Side>;
@@ -151,9 +150,6 @@ export default function SideForm({
             <SizesSection form={form} />
           )}
           
-          {activeSection === 'nutrition' && (
-            <NutritionalInfo form={form} />
-          )}
         </div>
 
         {/* Actions */}

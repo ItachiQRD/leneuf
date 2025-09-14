@@ -131,7 +131,7 @@ export default function FoodManager({
             <TableRow key={item._id}>
               <TableCell>
                 <ProductImage
-                  src={item.image}
+                  src={typeof item.image === 'string' ? item.image : '/images/placeholder.jpg'}
                   alt={item.name}
                   className="w-12 h-12"
                 />
@@ -140,7 +140,7 @@ export default function FoodManager({
                 <div>
                   <div className="font-medium">{item.name}</div>
                   <div className="text-sm text-gray-500 truncate max-w-xs">
-                    {item.description}
+                    {item.type}
                   </div>
                 </div>
               </TableCell>

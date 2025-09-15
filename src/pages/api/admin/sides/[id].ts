@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Side from '@/models/Side';
 import { withAdmin } from '@/utils/api';
 import formidable from 'formidable';
@@ -37,7 +37,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    await connectDB();
+    await dbConnect();
 
     switch (req.method) {
       case 'PUT':

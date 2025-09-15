@@ -64,7 +64,7 @@ const hoverVariants = {
 
 export default function SidesPage() {
   const { sides, sauces } = useProducts();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
@@ -88,12 +88,11 @@ export default function SidesPage() {
   });
 
   const handleAddToCart = (side: any) => {
-    addToCart({
-      id: side._id || side.id,
+    addItem({
+      _id: side._id || side.id,
       name: side.name,
       price: side.price,
       image: side.image,
-      quantity: 1,
       type: side.type
     });
   };

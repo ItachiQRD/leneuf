@@ -66,7 +66,7 @@ const hoverVariants = {
 
 export default function SaladsPage() {
   const { foods } = useProducts();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
@@ -89,12 +89,11 @@ export default function SaladsPage() {
   });
 
   const handleAddToCart = (salad: any) => {
-    addToCart({
-      id: salad._id || salad.id,
+    addItem({
+      _id: salad._id || salad.id,
       name: salad.name,
       price: salad.price,
       image: salad.image,
-      quantity: 1,
       type: 'food'
     });
   };

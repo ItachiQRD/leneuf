@@ -111,7 +111,6 @@ export default function AdminFoodsPage() {
                     value={typeFilter}
                     onChange={(e) => setTypeFilter(e.target.value)}
                     options={typeFilterOptions}
-                    placeholder="Filtrer par type"
                     className="pl-10"
                   />
                 </div>

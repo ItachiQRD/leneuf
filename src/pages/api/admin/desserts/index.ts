@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Dessert from '@/models/Dessert';
 import { withAdmin } from '@/utils/api';
 import formidable from 'formidable';
@@ -26,7 +26,7 @@ async function parseForm(req: NextApiRequest) {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await connectDB();
+  await dbConnect();
 
   switch (req.method) {
     case 'GET':
@@ -45,7 +45,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         let dessertData;
 
         try {
-          dessertData = JSON.parse(fields.data);
+          const dataString = Array.isArray(fields.data) ? fields.data[0] : fields.data;
+          if (!dataString) {
+            return res.status(400).json({ message: 'Données manquantes' });
+          }
+          dessertData = JSON.parse(dataString);
         } catch (error) {
           return res.status(400).json({ message: 'Données JSON invalides' });
         }

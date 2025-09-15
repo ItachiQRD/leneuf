@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Drink from '@/models/Drink';
 import { withAdmin } from '@/utils/api';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await connectDB();
+  await dbConnect();
 
   switch (req.method) {
     case 'GET':

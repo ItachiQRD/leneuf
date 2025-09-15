@@ -1,6 +1,6 @@
 // src/pages/api/admin/foods/index.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Food from '@/models/Food';
 import { withAdmin } from '@/utils/api';
 import formidable from 'formidable';
@@ -69,7 +69,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log(' [API Foods] URL:', req.url);
 
   try {
-    await connectDB();
+    await dbConnect();
 
     switch (req.method) {
       case 'GET':

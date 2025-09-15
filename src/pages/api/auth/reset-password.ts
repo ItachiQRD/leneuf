@@ -1,7 +1,7 @@
 // src/pages/api/auth/reset-password.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import User from '@/models/User';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import bcrypt from 'bcryptjs';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    await connectDB();
+    await dbConnect();
     const { email, newPassword } = req.body;
 
     console.log(' Tentative de réinitialisation pour:', email);

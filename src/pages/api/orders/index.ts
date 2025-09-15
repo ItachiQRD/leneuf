@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectToDatabase } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Order from '@/models/Order';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      await connectToDatabase();
+      await dbConnect();
       const orders = await Order.find({}).sort({ createdAt: -1 });
       res.status(200).json(orders);
     } catch (error) {
@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else if (req.method === 'POST') {
     try {
-      await connectToDatabase();
+      await dbConnect();
       const order = new Order(req.body);
       const savedOrder = await order.save();
       res.status(201).json(savedOrder);

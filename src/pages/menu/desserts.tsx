@@ -64,14 +64,13 @@ const hoverVariants = {
 
 export default function DessertsPage() {
   const { desserts } = useProducts();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   // Filtrer les desserts
   const filteredDesserts = desserts.filter((dessert: any) => {
-    const matchesSearch = dessert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        dessert.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = dessert.name.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesFilter = selectedFilter === 'all' || 
                          (selectedFilter === 'ice_cream' && dessert.name.toLowerCase().includes('glace')) ||
@@ -83,12 +82,11 @@ export default function DessertsPage() {
   });
 
   const handleAddToCart = (dessert: any) => {
-    addToCart({
-      id: dessert._id || dessert.id,
+    addItem({
+      _id: dessert._id || dessert.id,
       name: dessert.name,
       price: dessert.price,
       image: dessert.image,
-      quantity: 1,
       type: 'dessert'
     });
   };
@@ -264,7 +262,7 @@ export default function DessertsPage() {
                     </div>
 
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {dessert.description || 'Délicieux dessert préparé avec soin'}
+                      Délicieux dessert préparé avec soin
                     </p>
 
                     {/* Informations nutritionnelles */}

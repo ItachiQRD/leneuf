@@ -92,7 +92,7 @@ const hoverVariants = {
 
 export default function CommandePage() {
   const { foods, drinks, desserts, sides } = useProducts();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const { isDark } = useDarkMode();
   const [activeTab, setActiveTab] = useState('pizzas');
   const [isPaniniModalOpen, setIsPaniniModalOpen] = useState(false);
@@ -117,12 +117,11 @@ export default function CommandePage() {
   };
 
   const handleAddToCart = (product: any) => {
-    addToCart({
-      id: product._id || product.id,
+    addItem({
+      _id: product._id || product.id,
       name: product.name,
       price: product.price,
       image: product.image,
-      quantity: 1,
       type: 'food'
     });
   };

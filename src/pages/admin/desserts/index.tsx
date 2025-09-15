@@ -127,7 +127,7 @@ export default function AdminDessertsPage() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
             <DessertForm
               initialData={editingDessert || undefined}
-              type="pastry"
+              type="cake"
               onSubmit={handleSubmit}
               onCancel={handleCancel}
             />
@@ -168,7 +168,6 @@ export default function AdminDessertsPage() {
                       {dessert.name}
                     </h3>
                     
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">{dessert.description}</p>
                     
                     {/* Prix */}
                     <div className="mb-4">

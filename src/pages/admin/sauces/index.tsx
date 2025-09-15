@@ -96,7 +96,6 @@ export default function AdminSaucesPage() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
             <SauceForm
               initialData={editingSauce || undefined}
-              type={'mayo' as SauceCategory}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
             />

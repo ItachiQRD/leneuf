@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Ingredient from '@/models/Ingredient';
 import { withAdmin } from '@/utils/api';
 import formidable from 'formidable';
@@ -13,7 +13,7 @@ export const config = {
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await connectDB();
+  await dbConnect();
 
   switch (req.method) {
     case 'GET':
@@ -52,13 +52,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         }
 
         // Validation des champs requis
-        if (!ingredientData.name) {
+        const data = ingredientData as any;
+        if (!data.name) {
           return res.status(400).json({ message: 'Le nom est requis' });
         }
-        if (!ingredientData.type) {
+        if (!data.type) {
           return res.status(400).json({ message: 'Le type est requis' });
         }
-        if (ingredientData.price === undefined || ingredientData.price === null) {
+        if (data.price === undefined || data.price === null) {
           return res.status(400).json({ message: 'Le prix est requis' });
         }
 
@@ -66,29 +67,28 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         let imageUrl = '';
         if (files.image && files.image[0]) {
           try {
-            const imageResult = await imageService.uploadImage(files.image[0], 'ingredients');
-            imageUrl = imageResult.url;
+            imageUrl = await imageService.uploadImage(files.image[0], 'ingredients');
           } catch (imageError) {
             console.error('Erreur upload image:', imageError);
             return res.status(400).json({ message: 'Erreur lors de l\'upload de l\'image' });
           }
-        } else if (ingredientData.image && typeof ingredientData.image === 'string') {
+        } else if (data.image && typeof data.image === 'string') {
           // Si c'est déjà une URL (pour les mises à jour)
-          imageUrl = ingredientData.image;
+          imageUrl = data.image;
         } else {
           return res.status(400).json({ message: 'L\'image est requise' });
         }
 
         // Conversion des types
         const validatedData = {
-          ...ingredientData,
+          ...data,
           image: imageUrl,
-          price: parseFloat(ingredientData.price),
-          orderIndex: parseInt(ingredientData.orderIndex) || 0,
-          isAvailable: Boolean(ingredientData.isAvailable),
-          isSpicy: Boolean(ingredientData.isSpicy),
-          isVegetarian: Boolean(ingredientData.isVegetarian),
-          allergens: Array.isArray(ingredientData.allergens) ? ingredientData.allergens : []
+          price: parseFloat(data.price),
+          orderIndex: parseInt(data.orderIndex) || 0,
+          isAvailable: Boolean(data.isAvailable),
+          isSpicy: Boolean(data.isSpicy),
+          isVegetarian: Boolean(data.isVegetarian),
+          allergens: Array.isArray(data.allergens) ? data.allergens : []
         };
         
         const ingredient = new Ingredient(validatedData);

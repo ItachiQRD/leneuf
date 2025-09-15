@@ -64,7 +64,7 @@ const hoverVariants = {
 
 export default function DrinksPage() {
   const { drinks } = useProducts();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
@@ -83,12 +83,11 @@ export default function DrinksPage() {
   });
 
   const handleAddToCart = (drink: any) => {
-    addToCart({
-      id: drink._id || drink.id,
+    addItem({
+      _id: drink._id || drink.id,
       name: drink.name,
       price: drink.price,
       image: drink.image,
-      quantity: 1,
       type: 'drink'
     });
   };

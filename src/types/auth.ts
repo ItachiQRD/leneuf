@@ -1,4 +1,4 @@
-import { User } from './models';
+import { UserModel } from './models';
 
 // Type pour l'adresse
 interface Address {

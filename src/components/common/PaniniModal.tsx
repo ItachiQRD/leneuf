@@ -36,7 +36,7 @@ const paniniConfig = {
 };
 
 export default function PaniniModal({ isOpen, onClose }: PaniniModalProps) {
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const [selectedIngredient, setSelectedIngredient] = useState<string | null>(null);
 
   const handleIngredientSelection = (ingredientName: string) => {
@@ -49,17 +49,12 @@ export default function PaniniModal({ isOpen, onClose }: PaniniModalProps) {
     const ingredient = paniniIngredients.find(ing => ing.name === selectedIngredient);
     if (!ingredient) return;
 
-    addToCart({
-      id: `panini-${selectedIngredient.toLowerCase().replace(' ', '-')}`,
+    addItem({
+      _id: `panini-${selectedIngredient.toLowerCase().replace(' ', '-')}`,
       name: `Panini ${selectedIngredient}`,
       price: paniniConfig.basePrice + ingredient.price,
       image: paniniConfig.image,
-      quantity: 1,
-      type: 'food',
-      customizations: {
-        ingredient: selectedIngredient,
-        ingredientPrice: ingredient.price
-      }
+      type: 'food'
     });
 
     onClose();

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Food from '@/models/Food';
 import { withAdmin } from '@/utils/api';
 import formidable from 'formidable';
@@ -30,7 +30,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    await connectDB();
+    await dbConnect();
 
     switch (req.method) {
       case 'PUT':
@@ -39,7 +39,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           let updateData;
           
           try {
-            updateData = JSON.parse(fields.data as string);
+            const dataString = Array.isArray(fields.data) ? fields.data[0] : fields.data;
+            if (!dataString) {
+              return res.status(400).json({ message: 'Données manquantes' });
+            }
+            updateData = JSON.parse(dataString);
           } catch (error) {
             return res.status(400).json({ message: 'Données JSON invalides' });
           }

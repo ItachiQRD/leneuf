@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 import { verifyToken } from '@/utils/jwt';
 
@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Connexion à la base de données
     console.log('🔌 Connexion à la base de données...');
-    await connectDB();
+    await dbConnect();
     console.log('✅ Connecté à la base de données');
 
     // Récupérer l'utilisateur (sans le mot de passe)

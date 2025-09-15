@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 import { signToken } from '@/utils/jwt';
 import { serialize } from 'cookie';
@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      await connectDB();
+      await dbConnect();
       const user = await User.findOne({ email }).select('+password');
 
       if (!user) {
@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Créer le token JWT
       const tokenPayload = {
-        userId: user._id.toString(),
+        userId: (user._id as any).toString(),
         email: user.email,
         isAdmin: user.isAdmin
       };

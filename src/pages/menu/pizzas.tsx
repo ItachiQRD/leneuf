@@ -14,7 +14,9 @@ import {
   Leaf,
   Zap,
   Plus,
-  Minus
+  Minus,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
 import ProductImage from '@/components/common/ProductImage';
@@ -72,7 +74,7 @@ const hoverVariants = {
 
 export default function PizzasPage() {
   const { foods } = useProducts();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -101,14 +103,12 @@ export default function PizzasPage() {
     const pizzaSize = pizza.pizzaSizes?.find((size: any) => size.name === selectedPizzaSize);
     
     if (pizzaSize) {
-      addToCart({
-        id: pizza._id || pizza.id,
+      addItem({
+        _id: pizza._id || pizza.id,
         name: pizza.name,
         price: pizzaSize.price,
         image: pizza.image,
-        quantity: 1,
-        type: 'food',
-        size: selectedPizzaSize
+        type: 'food'
       });
     }
   };

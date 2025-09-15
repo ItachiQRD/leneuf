@@ -2,7 +2,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import formidable from 'formidable';
 import { withAdmin } from '@/utils/api';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Ingredient from '@/models/Ingredient';
 import { IngredientSchema } from '@/types/ingredient';
 import { ZodError } from 'zod';
@@ -40,7 +40,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    await connectDB();
+    await dbConnect();
 
     switch (req.method) {
       case 'GET': {
@@ -56,7 +56,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         let ingredientData;
 
         try {
-          ingredientData = JSON.parse(fields.data);
+          const dataString = Array.isArray(fields.data) ? fields.data[0] : fields.data;
+          if (!dataString) {
+            return res.status(400).json({ message: 'Données manquantes' });
+          }
+          ingredientData = JSON.parse(dataString);
         } catch (error) {
           return res.status(400).json({ message: 'Données JSON invalides' });
         }

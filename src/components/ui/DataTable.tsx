@@ -59,7 +59,7 @@ export function DataTable({ columns, data, searchPlaceholder = "Rechercher...", 
                   >
                     {column.cell
                       ? column.cell({ row })
-                      : row[column.accessorKey]}
+                      : column.accessorKey ? row[column.accessorKey] : ''}
                   </td>
                 ))}
               </tr>

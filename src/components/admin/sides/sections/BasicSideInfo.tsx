@@ -1,13 +1,13 @@
 // components/admin/sides/sections/BasicSideInfo.tsx
 import { UseFormReturn } from 'react-hook-form';
-import { Side, SideCategory } from '@/types/side';
+import { SideInput, SideCategory } from '@/types/side';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Switch } from '@/components/ui/Switch';
 import { ImageUpload } from '@/components/common/ImageUpload';
 
 interface BasicSideInfoProps {
-  form: UseFormReturn<Side>;
+  form: UseFormReturn<SideInput>;
   category: SideCategory;
 }
 

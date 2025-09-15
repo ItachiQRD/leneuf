@@ -1,6 +1,6 @@
 // components/admin/sides/sections/SizesSection.tsx
 import { UseFormReturn } from 'react-hook-form';
-import { Side } from '@/types/side';
+import { SideInput } from '@/types/side';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Buttons';
 import { Switch } from '@/components/ui/Switch';
@@ -8,7 +8,7 @@ import { Plus, Minus } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface SizesSectionProps {
-  form: UseFormReturn<Side>;
+  form: UseFormReturn<SideInput>;
 }
 
 const DEFAULT_SIZES: Record<string, Array<{ name: string; weight: string }>> = {

@@ -16,7 +16,7 @@ const baseFields: SchemaDefinition<BaseSchemaFields> = {
 
 // Fonction pour créer un schéma de base avec timestamps
 export function createBaseSchema<T extends BaseModel>(
-  definition: SchemaDefinition<SchemaDefinitionType<T>>
+  definition: any
 ): Schema<T> {
   return new Schema(
     {

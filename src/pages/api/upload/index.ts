@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import formidable from 'formidable';
 import path from 'path';
 import fs from 'fs/promises';
-import { adminMiddleware } from '@/middleware/adminMiddleware';
+// import { adminMiddleware } from '@/middleware/adminMiddleware';
 
 export const config = {
   api: {
@@ -70,4 +70,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default adminMiddleware(handler);
+export default handler;

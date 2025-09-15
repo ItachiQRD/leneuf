@@ -111,7 +111,7 @@ export default function AdminDrinksPage() {
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-cyan-300 dark:hover:border-cyan-600"
               >
                 {/* Image avec overlay */}
-                {drink.image && (
+                {drink.image && typeof drink.image === 'string' && (
                   <div className="relative h-48 overflow-hidden">
                     <img
                       src={drink.image}
@@ -160,10 +160,8 @@ export default function AdminDrinksPage() {
                       size="sm"
                       onClick={async () => {
                         if (window.confirm('Êtes-vous sûr de vouloir supprimer cette boisson ?')) {
-                          const success = await deleteDrink(drink._id);
-                          if (success) {
-                            // La mise à jour de l'état est gérée dans le contexte
-                          }
+                          await deleteDrink(drink._id);
+                          // La mise à jour de l'état est gérée dans le contexte
                         }
                       }}
                       className="flex-1"

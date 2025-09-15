@@ -1,7 +1,7 @@
 // src/pages/api/auth/verify-email.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import User from '@/models/User';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    await connectDB();
+    await dbConnect();
     const { token } = req.body;
 
     // Ajout de select pour inclure verificationToken et verificationTokenExpires
@@ -27,8 +27,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Mise à jour des champs
     user.emailVerified = true;
-    user.verificationToken = undefined;
-    user.verificationTokenExpires = undefined;
+    (user as any).verificationToken = undefined;
+    (user as any).verificationTokenExpires = undefined;
     await user.save();
 
     res.status(200).json({

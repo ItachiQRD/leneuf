@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FoodType, FoodCategory, SpicyLevel, ExtraCategory } from '@/types/food';
+import { FoodType, FoodCategory, SpicyLevel } from '@/types/food';
 
 // Schéma pour les informations nutritionnelles
 const NutritionalInfoSchema = z.object({

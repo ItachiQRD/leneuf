@@ -137,73 +137,19 @@ export default function RegisterForm() {
           <input
             id="street"
             type="text"
-            {...register('address.street', {
+            {...register('address', {
               required: 'L\'adresse est requise'
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             placeholder="Numéro et nom de rue"
             disabled={loading}
           />
-          {errors.address?.street && (
-            <p className="mt-1 text-sm text-red-600">{errors.address.street.message}</p>
+          {errors.address && (
+            <p className="mt-1 text-sm text-red-600">{errors.address.message}</p>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-              Ville
-            </label>
-            <input
-              id="city"
-              type="text"
-              {...register('address.city', {
-                required: 'La ville est requise'
-              })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              disabled={loading}
-            />
-            {errors.address?.city && (
-              <p className="mt-1 text-sm text-red-600">{errors.address.city.message}</p>
-            )}
-          </div>
 
-          <div>
-            <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
-              Code postal
-            </label>
-            <input
-              id="postalCode"
-              type="text"
-              {...register('address.postalCode', {
-                required: 'Le code postal est requis',
-                pattern: {
-                  value: /^[0-9]{5}$/,
-                  message: 'Code postal invalide'
-                }
-              })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              disabled={loading}
-            />
-            {errors.address?.postalCode && (
-              <p className="mt-1 text-sm text-red-600">{errors.address.postalCode.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="complement" className="block text-sm font-medium text-gray-700">
-            Complément d'adresse
-          </label>
-          <input
-            id="complement"
-            type="text"
-            {...register('address.complement')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            placeholder="(optionnel)"
-            disabled={loading}
-          />
-        </div>
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">

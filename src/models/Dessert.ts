@@ -38,6 +38,11 @@ const dessertSchema = new mongoose.Schema({
     type: String,
     required: [true, 'L\'image est requise']
   },
+  description: {
+    type: String,
+    required: false,
+    trim: true
+  },
   available: {
     type: Boolean,
     default: true

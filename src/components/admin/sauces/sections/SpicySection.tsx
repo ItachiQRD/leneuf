@@ -1,14 +1,14 @@
 import { UseFormReturn } from 'react-hook-form';
-import { Sauce } from '@/types/sauce';
+import { SauceInput } from '@/types/sauce';
 import { Flame } from 'lucide-react'; // Changed from Fire to Flame
 
 interface SpicySectionProps {
-  form: UseFormReturn<Sauce>;
+  form: UseFormReturn<SauceInput>;
 }
 
-// Assurons-nous que les valeurs correspondent exactement au type Sauce
+// Assurons-nous que les valeurs correspondent exactement au type SauceInput
 const SPICY_LEVELS: Array<{
-  value: Sauce['spicyLevel'];
+  value: SauceInput['spicyLevel'];
   label: string;
   description: string;
 }> = [
@@ -33,7 +33,7 @@ export default function SpicySection({ form }: SpicySectionProps) {
   const { watch, setValue } = form;
   const currentLevel = watch('spicyLevel');
 
-  const handleSpicyLevelChange = (level: Sauce['spicyLevel']) => {
+  const handleSpicyLevelChange = (level: SauceInput['spicyLevel']) => {
     setValue('spicyLevel', level);
   };
 

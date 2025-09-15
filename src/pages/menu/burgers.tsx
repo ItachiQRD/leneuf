@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
 import ProductImage from '@/components/common/ProductImage';
+import SmartImage from '@/components/common/SmartImage';
 import { useCart } from '@/contexts/CartContext';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import OrderButton from '@/components/common/OrderButton';
@@ -73,7 +74,7 @@ const hoverVariants = {
 
 export default function BurgersPage() {
   const { foods } = useProducts();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -98,12 +99,11 @@ export default function BurgersPage() {
   });
 
   const handleAddToCart = (burger: any) => {
-    addToCart({
-      id: burger._id || burger.id,
+    addItem({
+      _id: burger._id || burger.id,
       name: burger.name,
       price: burger.price,
       image: burger.image,
-      quantity: 1,
       type: 'food'
     });
   };

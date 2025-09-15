@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Side from '@/models/Side';
 import { withAdmin } from '@/utils/api';
 import formidable from 'formidable';
@@ -30,7 +30,7 @@ async function parseForm(req: NextApiRequest) {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await connectDB();
+  await dbConnect();
 
   switch (req.method) {
     case 'GET':

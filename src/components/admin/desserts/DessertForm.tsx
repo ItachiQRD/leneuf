@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Buttons';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 
-// Import des sections ebib
+// Import des sections 
 import BasicDessertInfo from './sections/BasicDessertInfo';
 
 // Définition du schéma de validation Zod

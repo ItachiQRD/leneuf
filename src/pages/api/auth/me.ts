@@ -11,6 +11,8 @@ interface JWTPayload {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log('\n👤 /api/auth/me - Vérification de session');
+  console.log('🔧 JWT_SECRET défini:', !!process.env.JWT_SECRET);
+  console.log('🍪 Cookies reçus:', req.cookies);
 
   if (req.method !== 'GET') {
     console.log('❌ Méthode non autorisée:', req.method);
@@ -21,6 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Récupérer le token du cookie
     const token = req.cookies.token;
     console.log('🔍 Recherche du token dans les cookies...');
+    console.log('🔑 Token trouvé:', !!token);
 
     if (!token) {
       console.log('❌ Pas de token trouvé');

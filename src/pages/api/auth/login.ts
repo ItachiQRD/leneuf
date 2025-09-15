@@ -63,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Configurer le cookie
       const cookieOptions = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: false, // Temporairement désactivé pour Vercel
         sameSite: 'lax' as const,
         maxAge: 30 * 24 * 60 * 60, // 30 jours
         path: '/',

@@ -197,6 +197,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         method: 'POST',
         credentials: 'include',
         body: formData
+        // Ne pas définir Content-Type pour FormData
       });
 
       if (!response.ok) {
@@ -331,6 +332,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         method: 'POST',
         credentials: 'include',
         body: formData
+        // Ne pas définir Content-Type pour FormData
       });
 
       if (!response.ok) {
@@ -363,10 +365,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         formData.append('data', JSON.stringify({ ...drink, _id: id }));
       }
 
-      const response = await fetch('/api/admin/drinks', {
+      const response = await fetch(`/api/admin/drinks/${id}`, {
         method: 'PUT',
         credentials: 'include',
         body: formData
+        // Ne pas définir Content-Type pour FormData
       });
 
       if (!response.ok) {
@@ -428,6 +431,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         method: 'POST',
         credentials: 'include',
         body: formData
+        // Ne pas définir Content-Type pour FormData
       });
 
       if (!response.ok) {
@@ -464,6 +468,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         method: 'PUT',
         credentials: 'include',
         body: formData
+        // Ne pas définir Content-Type pour FormData
       });
 
       if (!response.ok) {
@@ -512,11 +517,23 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   const createDessert = useCallback(async (dessertData: DessertInput | FormData) => {
     try {
       console.log(' [ProductContext] Création dessert...');
-      const response = await fetch('/api/admin/desserts', {
+      
+      const options: RequestInit = {
         method: 'POST',
-        body: dessertData instanceof FormData ? dessertData : JSON.stringify(dessertData),
         credentials: 'include',
-      });
+      };
+
+      if (dessertData instanceof FormData) {
+        options.body = dessertData;
+        // Ne pas définir Content-Type pour FormData
+      } else {
+        options.body = JSON.stringify(dessertData);
+        options.headers = {
+          'Content-Type': 'application/json',
+        };
+      }
+
+      const response = await fetch('/api/admin/desserts', options);
 
       if (!response.ok) {
         const error = await parseResponse(response);
@@ -545,11 +562,23 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   const updateDessert = useCallback(async (id: string, dessertData: Partial<DessertInput> | FormData) => {
     try {
       console.log(' [ProductContext] Mise à jour dessert:', id);
-      const response = await fetch(`/api/admin/desserts/${id}`, {
+      
+      const options: RequestInit = {
         method: 'PUT',
-        body: dessertData instanceof FormData ? dessertData : JSON.stringify(dessertData),
         credentials: 'include',
-      });
+      };
+
+      if (dessertData instanceof FormData) {
+        options.body = dessertData;
+        // Ne pas définir Content-Type pour FormData
+      } else {
+        options.body = JSON.stringify(dessertData);
+        options.headers = {
+          'Content-Type': 'application/json',
+        };
+      }
+
+      const response = await fetch(`/api/admin/desserts/${id}`, options);
 
       if (!response.ok) {
         const error = await parseResponse(response);
@@ -623,6 +652,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         method: 'POST',
         credentials: 'include',
         body: formData
+        // Ne pas définir Content-Type pour FormData
       });
 
       if (!response.ok) {
@@ -655,10 +685,11 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         formData.append('data', JSON.stringify({ ...sauce, _id: id }));
       }
 
-      const response = await fetch('/api/admin/sauces', {
+      const response = await fetch(`/api/admin/sauces/${id}`, {
         method: 'PUT',
         credentials: 'include',
         body: formData
+        // Ne pas définir Content-Type pour FormData
       });
 
       if (!response.ok) {

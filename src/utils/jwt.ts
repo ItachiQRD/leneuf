@@ -55,7 +55,12 @@ export const verifyTokenEdge = async (token: string): Promise<JWTPayload | null>
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
     const { payload } = await jwtVerify(token, secret);
     
-    return payload as JWTPayload;
+    // Conversion explicite pour éviter les conflits de types
+    return {
+      userId: payload.userId as string,
+      email: payload.email as string,
+      isAdmin: payload.isAdmin as boolean
+    };
   } catch (error) {
     console.error('❌ Erreur lors de la vérification du token (Edge):', error);
     return null;

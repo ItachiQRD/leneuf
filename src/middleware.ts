@@ -10,9 +10,22 @@ const publicRoutes = [
   '/api/auth/register',
   '/',
   '/menu',
+  '/menu/',
+  '/menu/burgers',
+  '/menu/pizzas',
+  '/menu/salads',
+  '/menu/plates',
+  '/menu/paninis',
+  '/menu/tacos',
+  '/menu/drinks',
+  '/menu/sides',
+  '/menu/desserts',
+  '/menu/sauces',
   '/about',
   '/contact',
-  '/api/public'
+  '/api/public',
+  '/api/menu',
+  '/api/products'
 ];
 
 // Routes qui nécessitent des droits d'administrateur
@@ -34,17 +47,28 @@ export async function middleware(request: NextRequest) {
   if (publicRoutes.some(route => pathname.startsWith(route)) || 
       pathname.startsWith('/_next') ||
       pathname.startsWith('/static') ||
+      pathname.startsWith('/favicon') ||
+      pathname.startsWith('/images') ||
+      pathname.startsWith('/uploads') ||
       pathname.includes('.')) {
     return NextResponse.next();
   }
 
-  // Pour l'instant, on laisse passer toutes les requêtes
-  // L'authentification sera gérée côté API
+  // Seules les routes admin nécessitent une authentification
+  if (adminRoutes.some(route => pathname.startsWith(route))) {
+    // L'authentification sera gérée côté API pour les routes admin
+    return NextResponse.next();
+  }
+
+  // Toutes les autres routes sont publiques
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    '/((?!api/public|_next/static|_next/image|favicon.ico).*)',
+    // Seulement les routes admin et auth
+    '/admin/:path*',
+    '/api/admin/:path*',
+    '/api/auth/:path*'
   ],
 };

@@ -1,4 +1,3 @@
-// src/pages/api/auth/logout.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { serialize } from 'cookie';
 
@@ -7,15 +6,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: 'Méthode non autorisée' });
   }
 
-  // Supprimer le cookie en le remplaçant par un cookie expiré
-  const cookie = serialize('token', '', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge: -1,
-    path: '/',
-  });
+  try {
+    // Supprimer le cookie de token
+    const cookie = serialize('token', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0, // Expire immédiatement
+      path: '/',
+    });
 
-  res.setHeader('Set-Cookie', cookie);
-  res.status(200).json({ message: 'Déconnexion réussie' });
+    res.setHeader('Set-Cookie', cookie);
+    
+    return res.status(200).json({ 
+      success: true, 
+      message: 'Déconnexion réussie' 
+    });
+  } catch (error) {
+    console.error('Erreur lors de la déconnexion:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de la déconnexion' 
+    });
+  }
 }

@@ -6,24 +6,46 @@ if (!process.env.MONGODB_URI) {
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-let cached: typeof mongoose | null = null;
+// Cache global pour Vercel
+declare global {
+  var mongoose: {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+  } | undefined;
+}
+
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 async function dbConnect() {
-  if (cached) {
-    return cached;
+  if (cached!.conn) {
+    return cached!.conn;
+  }
+
+  if (!cached!.promise) {
+    const opts = {
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 10000, // 10 secondes
+      socketTimeoutMS: 45000, // 45 secondes
+      connectTimeoutMS: 10000, // 10 secondes
+    };
+
+    cached!.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      return mongoose;
+    });
   }
 
   try {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached = await mongoose.connect(MONGODB_URI, opts);
-    return cached;
+    cached!.conn = await cached!.promise;
   } catch (e) {
-    cached = null;
+    cached!.promise = null;
     throw e;
   }
+
+  return cached!.conn;
 }
 
 export default dbConnect;

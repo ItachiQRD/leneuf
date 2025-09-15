@@ -45,3 +45,19 @@ export const verifyToken = (token: string): JWTPayload | null => {
     return null;
   }
 };
+
+// Version compatible Edge Runtime pour le middleware
+export const verifyTokenEdge = async (token: string): Promise<JWTPayload | null> => {
+  try {
+    // Import dynamique pour éviter les problèmes d'Edge Runtime
+    const { SignJWT, jwtVerify } = await import('jose');
+    
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const { payload } = await jwtVerify(token, secret);
+    
+    return payload as JWTPayload;
+  } catch (error) {
+    console.error('❌ Erreur lors de la vérification du token (Edge):', error);
+    return null;
+  }
+};

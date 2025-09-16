@@ -101,7 +101,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           });
 
           if (!fields.data) {
-            throw new Error('Données manquantes');
+            return res.status(400).json({ message: 'Données manquantes' });
           }
 
           let data;
@@ -189,7 +189,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           });
 
           if (!fields.data) {
-            throw new Error('Données manquantes');
+            return res.status(400).json({ message: 'Données manquantes' });
           }
 
           let data;

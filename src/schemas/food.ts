@@ -28,14 +28,6 @@ export const FoodSchema = z.object({
   preparationTimeMinutes: z.number().int().min(1, 'Le temps de préparation doit être au moins 1 minute'),
   category: z.enum(['bestseller', 'new', 'regular'] as const),
   baseIngredients: z.array(z.string()).min(1, 'Au moins un ingrédient est requis'),
-  allergens: z.array(z.string()),
-  spicyLevel: z.enum(['mild', 'medium', 'hot'] as const),
-  nutritionalInfo: NutritionalInfoSchema,
-  extras: z.array(ExtraSchema).default([]),
-  maxSauces: z.number().int().min(0, 'Le nombre maximum de sauces doit être positif'),
-  isVegan: z.boolean(),
-  isVegetarian: z.boolean(),
-  isGlutenFree: z.boolean(),
   active: z.boolean().optional(),
   description: z.string().optional()
 });

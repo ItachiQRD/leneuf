@@ -45,7 +45,7 @@ const SIZES: ImageSize[] = [
 
 export class ImageService {
   private uploadsDir: string;
-  private categories: string[] = ['foods', 'drinks', 'sauces', 'desserts', 'sides'];
+  private categories: string[] = ['foods', 'drinks', 'sauces', 'desserts', 'sides', 'ingredients'];
 
   constructor() {
     this.uploadsDir = path.join(process.cwd(), 'public/uploads');

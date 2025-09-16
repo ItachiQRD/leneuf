@@ -43,13 +43,9 @@ export const sauceSchema = z.object({
   price: z.number().min(0, "Le prix doit être positif").or(z.string().transform(val => Number(val))),
   image: z.string(),
   available: z.boolean().default(true),
-  maxQuantity: z.number().min(1).or(z.string().transform(val => Number(val))).default(100),
   allergens: z.array(z.string()).default([]),
   nutritionalInfo: nutritionalInfoSchema,
-  spicyLevel: z.enum(['mild', 'medium', 'hot']).default('mild'),
-  isVegan: z.boolean().default(false),
-  isVegetarian: z.boolean().default(false),
-  isGlutenFree: z.boolean().default(false)
+  spicyLevel: z.enum(['mild', 'medium', 'hot']).default('mild')
 });
 
 // Interface pour la création/mise à jour

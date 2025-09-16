@@ -90,11 +90,8 @@ export const sideSchema = z.object({
   available: z.boolean(),
   sizes: z.array(sizeSchema),
   ingredients: z.array(z.string()),
-  allergens: z.array(z.string()),
   nutritionalInfo: nutritionalInfoSchema,
   spicyLevel: z.enum(['mild', 'medium', 'hot']).optional(),
-  vegetarian: z.boolean(),
-  vegan: z.boolean(),
   preparationTime: z.number().min(1, "Le temps de préparation est requis"),
 });
 

@@ -130,33 +130,69 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
         {/* Temps de préparation */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Temps de préparation (minutes) *
+            Temps de préparation (minutes)
           </label>
           <Input
             type="number"
             min="1"
-            {...register('preparationTimeMinutes', { 
+            {...register('preparationTimeMinutes', {
               required: 'Le temps de préparation est requis',
-              min: { value: 1, message: 'Le temps doit être au moins 1 minute' }
+              min: { value: 1, message: 'Le temps doit être d\'au moins 1 minute' }
             })}
             placeholder="15"
             error={errors.preparationTimeMinutes?.message}
           />
         </div>
 
-        {/* Niveau d'épice */}
+        {/* Ingrédients de base */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Niveau d'épice
+            Ingrédients de base
           </label>
-          <Select
-            {...register('spicyLevel')}
-            error={errors.spicyLevel?.message}
-            options={[...SPICY_LEVELS]}
+          <Input
+            placeholder="Ajouter un ingrédient et appuyer sur Entrée"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                const value = (e.target as HTMLInputElement).value.trim();
+                if (value) {
+                  const currentIngredients = watch('baseIngredients') || [];
+                  setValue('baseIngredients', [...currentIngredients, value]);
+                  (e.target as HTMLInputElement).value = '';
+                }
+              }
+            }}
           />
+          <div className="flex flex-wrap gap-2 mt-2">
+            {watch('baseIngredients')?.map((ingredient, index) => (
+              <span
+                key={index}
+                className="px-3 py-1.5 bg-green-50 text-green-800 rounded-full text-sm flex items-center gap-2 group"
+              >
+                {ingredient}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentIngredients = watch('baseIngredients') || [];
+                    setValue(
+                      'baseIngredients',
+                      currentIngredients.filter((_, i) => i !== index)
+                    );
+                  }}
+                  className="text-green-600 hover:text-green-800"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+          {errors.baseIngredients?.message && (
+            <p className="text-sm text-red-500">{errors.baseIngredients.message}</p>
+          )}
         </div>
-      </div>
 
+
+      </div>
 
       {/* Image */}
       <div>
@@ -168,74 +204,6 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
           onChange={(file: string | File) => setValue('image', file as any)}
           error={errors.image?.message}
         />
-      </div>
-
-      {/* Ingrédients de base */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Ingrédients de base
-        </label>
-        <Input
-          placeholder="Séparez les ingrédients par des virgules"
-          onChange={(e) => {
-            const ingredients = e.target.value.split(',').map(ing => ing.trim()).filter(ing => ing);
-            setValue('baseIngredients', ingredients);
-          }}
-        />
-        <p className="text-sm text-gray-500 mt-1">
-          Ex: Pain brioche, Steak haché, Salade, Tomate, Oignon
-        </p>
-      </div>
-
-      {/* Allergènes */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Allergènes
-        </label>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {COMMON_ALLERGENS.map((allergen) => (
-            <label key={allergen.id} className="flex items-center space-x-2">
-              <Checkbox
-                onChange={(checked) => {
-                  const currentAllergens = watch('allergens') || [];
-                  if (checked) {
-                    setValue('allergens', [...currentAllergens, allergen.id]);
-                  } else {
-                    setValue('allergens', currentAllergens.filter(a => a !== allergen.id));
-                  }
-                }}
-              />
-              <span className="text-sm text-gray-700">{allergen.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Options diététiques */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Options diététiques
-        </label>
-        <div className="flex space-x-6">
-          <label className="flex items-center space-x-2">
-            <Checkbox
-              {...register('isVegan')}
-            />
-            <span className="text-sm text-gray-700">Vegan</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <Checkbox
-              {...register('isVegetarian')}
-            />
-            <span className="text-sm text-gray-700">Végétarien</span>
-          </label>
-          <label className="flex items-center space-x-2">
-            <Checkbox
-              {...register('isGlutenFree')}
-            />
-            <span className="text-sm text-gray-700">Sans gluten</span>
-          </label>
-        </div>
       </div>
 
       {/* Note sur les extras */}

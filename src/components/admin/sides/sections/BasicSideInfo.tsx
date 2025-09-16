@@ -109,47 +109,7 @@ export default function BasicSideInfo({ form, category }: BasicSideInfoProps) {
             <span className="text-sm text-gray-600">Disponible</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={watch('vegetarian')}
-              onCheckedChange={(checked) => setValue('vegetarian', checked)}
-            />
-            <span className="text-sm text-gray-600">Végétarien</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={watch('vegan')}
-              onCheckedChange={(checked) => setValue('vegan', checked)}
-            />
-            <span className="text-sm text-gray-600">Vegan</span>
-          </div>
         </div>
-      </div>
-
-      {/* Allergènes */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Allergènes
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {['Gluten', 'Lactose', 'Œufs', 'Soja', 'Fruits à coque', 'Sésame'].map((allergen) => (
-            <label key={allergen} className="inline-flex items-center">
-              <input
-                type="checkbox"
-                {...register('allergens')}
-                value={allergen}
-                className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-              />
-              <span className="ml-2 text-sm text-gray-600">{allergen}</span>
-            </label>
-          ))}
-        </div>
-        {errors.allergens?.message && (
-          <p className="mt-1 text-sm text-red-600">
-            {errors.allergens.message}
-          </p>
-        )}
       </div>
     </div>
   );

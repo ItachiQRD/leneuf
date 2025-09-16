@@ -80,51 +80,12 @@ export default function BasicSauceInfo({ form }: BasicSauceInfoProps) {
         />
       </div>
 
-      <div>
-        <Label htmlFor="maxQuantity">Quantité maximale par commande</Label>
-        <Input
-          id="maxQuantity"
-          type="number"
-          {...register('maxQuantity', {
-            required: 'La quantité maximale est requise',
-            min: { value: 1, message: 'La quantité doit être d\'au moins 1' }
-          })}
-          error={errors.maxQuantity?.message}
-        />
-      </div>
-
       <div className="flex items-center space-x-2">
         <Switch
           id="available"
           {...register('available')}
         />
         <Label htmlFor="available">Disponible</Label>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="isVegan"
-            {...register('isVegan')}
-          />
-          <Label htmlFor="isVegan">Végan</Label>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="isVegetarian"
-            {...register('isVegetarian')}
-          />
-          <Label htmlFor="isVegetarian">Végétarien</Label>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="isGlutenFree"
-            {...register('isGlutenFree')}
-          />
-          <Label htmlFor="isGlutenFree">Sans gluten</Label>
-        </div>
       </div>
     </div>
   );

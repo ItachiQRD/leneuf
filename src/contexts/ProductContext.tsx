@@ -24,7 +24,9 @@ async function parseResponse(response: Response) {
   } catch (parseError) {
     console.error('Erreur parsing JSON:', parseError);
     console.error('Contenu reçu:', text);
-    throw new Error('Réponse invalide du serveur');
+    console.error('Status:', response.status, 'StatusText:', response.statusText);
+    console.error('Headers:', Object.fromEntries(response.headers.entries()));
+    throw new Error(`Réponse invalide du serveur (${response.status}): ${text.substring(0, 200)}...`);
   }
 }
 

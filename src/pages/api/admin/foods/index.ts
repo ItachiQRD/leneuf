@@ -20,7 +20,7 @@ const foodSchema = z.object({
   type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum'], {
     errorMap: () => ({ message: "Type de plat invalide" })
   }),
-  price: z.number().min(0, "Le prix doit être positif"),
+  price: z.number().min(0, "Le prix doit être positif").optional(),
   image: z.string(),
   active: z.boolean().default(true),
   available: z.boolean().default(true),
@@ -107,9 +107,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             baseIngredients: Array.isArray(data.baseIngredients) ? data.baseIngredients : (data.baseIngredients ? [data.baseIngredients] : [])
           };
 
+          // Vérifier que les champs obligatoires sont présents
+          if (!cleanData.name) {
+            return res.status(400).json({ message: 'Le nom est requis' });
+          }
+          if (!cleanData.type) {
+            return res.status(400).json({ message: 'Le type est requis' });
+          }
+          if (cleanData.type !== 'pizza' && !cleanData.price) {
+            return res.status(400).json({ message: 'Le prix est requis pour ce type de plat' });
+          }
+          if (!cleanData.image) {
+            return res.status(400).json({ message: 'L\'image est requise' });
+          }
+          if (!cleanData.baseIngredients || cleanData.baseIngredients.length === 0) {
+            return res.status(400).json({ message: 'Au moins un ingrédient de base est requis' });
+          }
+
           // Validation et création
           try {
-            console.log(' [API Foods] Données avant validation:', cleanData);
+            console.log(' [API Foods] Données avant validation:', JSON.stringify(cleanData, null, 2));
+            console.log(' [API Foods] Types des champs:');
+            Object.entries(cleanData).forEach(([key, value]) => {
+              console.log(`  ${key}: ${typeof value} = ${value}`);
+            });
+            
             const validatedData = foodSchema.parse(cleanData);
             console.log(' [API Foods] Données validées:', validatedData);
             const food = await Food.create(validatedData);
@@ -118,6 +140,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           } catch (error) {
             if (error instanceof ZodError) {
               console.error(' [API Foods] Erreur validation Zod:', error.errors);
+              console.error(' [API Foods] Données qui ont échoué:', JSON.stringify(cleanData, null, 2));
               return res.status(400).json({
                 message: 'Erreur de validation',
                 errors: error.errors

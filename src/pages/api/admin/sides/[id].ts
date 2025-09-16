@@ -132,15 +132,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-          const side = await Side.findByIdAndUpdate(id, { 
-            active: false, 
-            deletedAt: new Date() 
-          }, { new: true });
+          console.log(' [API Sides] Suppression de l\'accompagnement ID:', id);
+          
+          const side = await Side.findByIdAndDelete(id);
           
           if (!side) {
             return res.status(404).json({ message: 'Accompagnement non trouvé' });
           }
           
+          console.log(' [API Sides] Accompagnement supprimé définitivement de la base de données');
           return res.status(200).json({ message: 'Accompagnement supprimé avec succès' });
         } catch (error) {
           console.error('Erreur lors de la suppression de l\'accompagnement:', error);

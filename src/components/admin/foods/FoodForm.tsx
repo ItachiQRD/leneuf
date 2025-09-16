@@ -33,12 +33,6 @@ export default function FoodForm({
   };
 
 
-  // Tailles de pizza par défaut
-  const getDefaultPizzaSizes = () => [
-    { name: 'Junior', price: 9, diameter: '26cm', isDefault: true },
-    { name: 'Sénior', price: 13, diameter: '32cm', isDefault: false },
-    { name: 'Méga', price: 17, diameter: '40cm', isDefault: false }
-  ];
 
   const form = useForm<FoodInputAPI>({
     defaultValues: {
@@ -51,13 +45,7 @@ export default function FoodForm({
       category: 'regular',
       preparationTimeMinutes: 15,
       baseIngredients: [],
-      allergens: [],
-      spicyLevel: 'mild',
-      isVegan: false,
-      isVegetarian: false,
-      isGlutenFree: false,
-      // Tailles de pizza par défaut si c'est une pizza
-      ...(type === 'pizza' && { pizzaSizes: getDefaultPizzaSizes() }),
+      description: '',
       ...(initialData && {
         name: initialData.name || '',
         price: initialData.price,
@@ -67,13 +55,7 @@ export default function FoodForm({
         available: initialData.available ?? true,
         preparationTimeMinutes: initialData.preparationTimeMinutes || 15,
         baseIngredients: initialData.baseIngredients || [],
-        allergens: initialData.allergens || [],
-        spicyLevel: initialData.spicyLevel || 'mild',
-        isVegan: initialData.isVegan ?? false,
-        isVegetarian: initialData.isVegetarian ?? false,
-        isGlutenFree: initialData.isGlutenFree ?? false,
-        // Tailles de pizza par défaut si c'est une pizza et pas de données existantes
-        ...(initialData.type === 'pizza' && !(initialData as any).pizzaSizes && { pizzaSizes: getDefaultPizzaSizes() })
+        description: initialData.description || ''
       })
     }
   });
@@ -94,12 +76,45 @@ export default function FoodForm({
       setIsSubmitting(true);
       console.log('Données du formulaire:', data);
 
+      // Validation côté client
+      if (!data.baseIngredients || data.baseIngredients.length === 0) {
+        showToast({
+          title: "Erreur de validation",
+          description: "Vous devez ajouter au moins un ingrédient de base",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Nettoyer les données pour ne garder que les champs nécessaires
+      const cleanData = {
+        name: data.name,
+        type: data.type,
+        price: typeof data.price === 'string' ? parseFloat(data.price) : data.price,
+        image: data.image,
+        available: data.available,
+        preparationTimeMinutes: typeof data.preparationTimeMinutes === 'string' ? parseInt(data.preparationTimeMinutes) : data.preparationTimeMinutes,
+        category: data.category,
+        baseIngredients: data.baseIngredients || [],
+        active: data.active,
+        description: data.description
+      };
+
+      console.log('Données nettoyées:', cleanData);
+      console.log('Champs supprimés:', {
+        allergens: data.allergens,
+        spicyLevel: data.spicyLevel,
+        isVegan: data.isVegan,
+        isVegetarian: data.isVegetarian,
+        isGlutenFree: data.isGlutenFree
+      });
+
       if (initialData?._id) {
         // Modification
-        await updateFood(initialData._id, data);
-      } else {
+        await updateFood(initialData._id, cleanData);
+        } else {
         // Création
-        await createFood(data);
+        await createFood(cleanData);
       }
 
       onSubmit();
@@ -141,18 +156,18 @@ export default function FoodForm({
               onClick={onCancel}
               disabled={isSubmitting}
             >
-              Annuler
-            </Button>
+          Annuler
+        </Button>
             <Button
               type="submit"
               variant="default"
               loading={isSubmitting}
             >
               {initialData?._id ? 'Mettre à jour' : 'Créer'}
-            </Button>
+        </Button>
           </div>
-        </div>
-      </form>
+      </div>
+    </form>
     </div>
   );
 }

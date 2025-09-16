@@ -182,14 +182,17 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   // Foods CRUD
   const createFood = useCallback(async (food: FoodInputAPI) => {
     try {
+      console.log(' [ProductContext] Données reçues pour createFood:', food);
       const formData = new FormData();
       
       if (food.image && typeof food.image === 'object' && 'name' in food.image) {
         formData.append('image', food.image as File);
         const { image, ...restData } = food;
+        console.log(' [ProductContext] Données JSON à envoyer:', restData);
         formData.append('data', JSON.stringify(restData));
       } else {
         // Inclure l'image même si c'est une chaîne (URL existante)
+        console.log(' [ProductContext] Données JSON à envoyer (avec image string):', food);
         formData.append('data', JSON.stringify(food));
       }
 
@@ -341,7 +344,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       }
 
       const newDrink = await parseResponse(response);
-      setDrinks(prev => [...prev, newDrink]);
+      console.log(' [ProductContext] Nouvelle boisson reçue:', newDrink);
+      setDrinks(prev => {
+        const updated = [...prev, newDrink];
+        console.log(' [ProductContext] State drinks mis à jour:', updated.length, 'boissons');
+        return updated;
+      });
       showToast({
         title: 'Succès',
         description: 'La boisson a été créée avec succès',
@@ -378,7 +386,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       }
 
       const updatedDrink = await parseResponse(response);
-      setDrinks(prev => prev.map(d => d._id === id ? updatedDrink : d));
+      console.log(' [ProductContext] Boisson mise à jour reçue:', updatedDrink);
+      setDrinks(prev => {
+        const updated = prev.map(d => d._id === id ? updatedDrink : d);
+        console.log(' [ProductContext] State drinks mis à jour pour modification');
+        return updated;
+      });
       showToast({
         title: 'Succès',
         description: 'La boisson a été mise à jour avec succès',
@@ -392,7 +405,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
   const deleteDrink = useCallback(async (id: string) => {
     try {
-      const response = await fetch(`/api/admin/drinks?id=${id}`, {
+      const response = await fetch(`/api/admin/drinks/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -587,7 +600,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
       const updatedDessert = await parseResponse(response);
       console.log(' [ProductContext] Dessert mis à jour:', updatedDessert);
-      setDesserts(prev => prev.map(d => (d._id || d.id) === id ? updatedDessert : d));
+      setDesserts(prev => prev.map(d => String(d._id || d.id) === String(id) ? updatedDessert : d));
       showToast({
         title: 'Succès',
         description: 'Dessert mis à jour avec succès',
@@ -661,7 +674,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       }
 
       const newSauce = await parseResponse(response);
-      setSauces(prev => [...prev, newSauce]);
+      console.log(' [ProductContext] Nouvelle sauce reçue:', newSauce);
+      setSauces(prev => {
+        const updated = [...prev, newSauce];
+        console.log(' [ProductContext] State sauces mis à jour:', updated.length, 'sauces');
+        return updated;
+      });
       showToast({
         title: 'Succès',
         description: 'La sauce a été créée avec succès',
@@ -698,7 +716,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       }
 
       const updatedSauce = await parseResponse(response);
-      setSauces(prev => prev.map(s => s._id === id ? updatedSauce : s));
+      console.log(' [ProductContext] Sauce mise à jour reçue:', updatedSauce);
+      setSauces(prev => {
+        const updated = prev.map(s => String(s._id) === String(id) ? updatedSauce : s);
+        console.log(' [ProductContext] State sauces mis à jour pour modification');
+        return updated;
+      });
       showToast({
         title: 'Succès',
         description: 'La sauce a été mise à jour avec succès',

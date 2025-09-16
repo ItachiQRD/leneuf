@@ -1,5 +1,5 @@
 import { UseFormReturn } from 'react-hook-form';
-import { FoodInputAPI, FOOD_TYPES, FOOD_CATEGORIES, SPICY_LEVELS, COMMON_ALLERGENS } from '@/types/food';
+import { FoodInputAPI, FOOD_TYPES, FOOD_CATEGORIES } from '@/types/food';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
@@ -147,7 +147,7 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
         {/* Ingrédients de base */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Ingrédients de base
+            Ingrédients de base <span className="text-red-500">*</span>
           </label>
           <Input
             placeholder="Ajouter un ingrédient et appuyer sur Entrée"
@@ -163,6 +163,9 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
               }
             }}
           />
+          <p className="text-sm text-gray-500 mt-1">
+            Ex: Pain brioche, Steak haché, Salade, Tomate, Oignon
+          </p>
           <div className="flex flex-wrap gap-2 mt-2">
             {watch('baseIngredients')?.map((ingredient, index) => (
               <span
@@ -188,6 +191,11 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
           </div>
           {errors.baseIngredients?.message && (
             <p className="text-sm text-red-500">{errors.baseIngredients.message}</p>
+          )}
+          {(!watch('baseIngredients') || watch('baseIngredients').length === 0) && (
+            <p className="text-sm text-amber-600 mt-1">
+              ⚠️ Vous devez ajouter au moins un ingrédient de base
+            </p>
           )}
         </div>
 

@@ -18,7 +18,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
       try {
-        const ingredients = await Ingredient.find({ deletedAt: { $exists: false } });
+        const ingredients = await Ingredient.find({ $or: [{ active: true }, { active: { $exists: false } }] });
         res.status(200).json(ingredients);
       } catch (error) {
         console.error('Erreur lors de la récupération des ingrédients:', error);
@@ -91,8 +91,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           allergens: Array.isArray(data.allergens) ? data.allergens : []
         };
         
-        const ingredient = new Ingredient(validatedData);
-        await ingredient.save();
+        const ingredient = await Ingredient.create(validatedData);
         res.status(201).json(ingredient);
       } catch (error) {
         console.error('Erreur lors de la création de l\'ingrédient:', error);

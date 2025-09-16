@@ -1,0 +1,541 @@
+[{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d26"
+  },
+  "name": "Cordon bleu",
+  "__v": 0,
+  "allergens": [
+    "gluten",
+    "lait",
+    "œufs"
+  ],
+  "image": "/uploads/ingredients/1757270685854.png",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 280,
+    "proteins": 19,
+    "carbs": 15,
+    "fats": 16,
+    "servingSize": 100
+  },
+  "orderIndex": 1,
+  "price": 2.5,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:44:45.880Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d28"
+  },
+  "name": "Nuggets",
+  "__v": 0,
+  "allergens": [
+    "gluten",
+    "œufs"
+  ],
+  "image": "/uploads/ingredients/1757270696531.png",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 296,
+    "proteins": 15,
+    "carbs": 18,
+    "fats": 18,
+    "servingSize": 100
+  },
+  "orderIndex": 2,
+  "price": 2,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:44:56.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d2a"
+  },
+  "name": "Tenders",
+  "__v": 0,
+  "allergens": [
+    "gluten",
+    "œufs"
+  ],
+  "image": "/uploads/ingredients/1757270707968.png",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 280,
+    "proteins": 17,
+    "carbs": 16,
+    "fats": 16,
+    "servingSize": 100
+  },
+  "orderIndex": 3,
+  "price": 2,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:45:07.977Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d2c"
+  },
+  "name": "Viande hachée",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757270719451.png",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 243,
+    "proteins": 26,
+    "carbs": 0,
+    "fats": 15,
+    "servingSize": 100
+  },
+  "orderIndex": 4,
+  "price": 2,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:45:19.464Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d2e"
+  },
+  "name": "Poulet mariné",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757270728962.png",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 165,
+    "proteins": 31,
+    "carbs": 0,
+    "fats": 3.6,
+    "servingSize": 100
+  },
+  "orderIndex": 5,
+  "price": 2,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:45:28.983Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d30"
+  },
+  "name": "Steak 45g",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757270963029.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 250,
+    "proteins": 26,
+    "carbs": 0,
+    "fats": 17,
+    "servingSize": 100
+  },
+  "orderIndex": 6,
+  "price": 2,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:49:23.040Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d32"
+  },
+  "name": "Steak 90g",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757270952918.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 250,
+    "proteins": 26,
+    "carbs": 0,
+    "fats": 17,
+    "servingSize": 100
+  },
+  "orderIndex": 7,
+  "price": 3.5,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:49:12.963Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d34"
+  },
+  "name": "Poulet pané",
+  "__v": 0,
+  "allergens": [
+    "gluten",
+    "œufs"
+  ],
+  "image": "/uploads/ingredients/1757271047885.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 280,
+    "proteins": 17,
+    "carbs": 18,
+    "fats": 15,
+    "servingSize": 100
+  },
+  "orderIndex": 8,
+  "price": 2,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:50:47.897Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d36"
+  },
+  "name": "Merguez",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757271058000.jpg",
+  "isAvailable": true,
+  "isSpicy": true,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 290,
+    "proteins": 16,
+    "carbs": 2,
+    "fats": 25,
+    "servingSize": 100
+  },
+  "orderIndex": 9,
+  "price": 1.5,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:50:58.019Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d38"
+  },
+  "name": "Kebab",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757270751432.png",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": false,
+  "nutritionalInfo": {
+    "calories": 217,
+    "proteins": 21,
+    "carbs": 2,
+    "fats": 14,
+    "servingSize": 100
+  },
+  "orderIndex": 10,
+  "price": 2,
+  "type": "meat",
+  "usage": "base",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:45:51.444Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d3a"
+  },
+  "name": "Salade",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757271069954.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": true,
+  "nutritionalInfo": {
+    "calories": 15,
+    "proteins": 1.4,
+    "carbs": 2.9,
+    "fats": 0.2,
+    "fiber": 1.3,
+    "servingSize": 100
+  },
+  "orderIndex": 11,
+  "price": 0.5,
+  "type": "vegetable",
+  "usage": "both",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:51:09.963Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d3c"
+  },
+  "name": "Tomate",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757271079360.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": true,
+  "nutritionalInfo": {
+    "calories": 18,
+    "proteins": 0.9,
+    "carbs": 3.9,
+    "fats": 0.2,
+    "fiber": 1.2,
+    "sugar": 2.6,
+    "servingSize": 100
+  },
+  "orderIndex": 12,
+  "price": 0.5,
+  "type": "vegetable",
+  "usage": "both",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:51:19.383Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d3e"
+  },
+  "name": "Oignon",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757271146209.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": true,
+  "nutritionalInfo": {
+    "calories": 40,
+    "proteins": 1.1,
+    "carbs": 9.3,
+    "fats": 0.1,
+    "fiber": 1.7,
+    "sugar": 4.2,
+    "servingSize": 100
+  },
+  "orderIndex": 13,
+  "price": 0.3,
+  "type": "vegetable",
+  "usage": "both",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:52:26.215Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d40"
+  },
+  "name": "Champignon",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757271158490.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": true,
+  "nutritionalInfo": {
+    "calories": 22,
+    "proteins": 3.1,
+    "carbs": 3.3,
+    "fats": 0.3,
+    "fiber": 1,
+    "servingSize": 100
+  },
+  "orderIndex": 14,
+  "price": 0.5,
+  "type": "vegetable",
+  "usage": "both",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:52:38.497Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d42"
+  },
+  "name": "Poivron",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757271174484.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": true,
+  "nutritionalInfo": {
+    "calories": 20,
+    "proteins": 0.9,
+    "carbs": 4.6,
+    "fats": 0.2,
+    "fiber": 1.7,
+    "sugar": 2.4,
+    "servingSize": 100
+  },
+  "orderIndex": 15,
+  "price": 0.5,
+  "type": "vegetable",
+  "usage": "both",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:52:54.494Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d44"
+  },
+  "name": "Olive",
+  "__v": 0,
+  "allergens": [],
+  "image": "/uploads/ingredients/1757271256134.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": true,
+  "nutritionalInfo": {
+    "calories": 115,
+    "proteins": 0.8,
+    "carbs": 6,
+    "fats": 11,
+    "fiber": 3.2,
+    "servingSize": 100
+  },
+  "orderIndex": 16,
+  "price": 0.5,
+  "type": "vegetable",
+  "usage": "both",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:54:16.141Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d46"
+  },
+  "name": "Chèvre",
+  "__v": 0,
+  "allergens": [
+    "lait"
+  ],
+  "image": "/uploads/ingredients/1757271266122.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": true,
+  "nutritionalInfo": {
+    "calories": 268,
+    "proteins": 18.5,
+    "carbs": 0.9,
+    "fats": 21.6,
+    "servingSize": 100
+  },
+  "orderIndex": 17,
+  "price": 1,
+  "type": "cheese",
+  "usage": "both",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:54:26.133Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d48"
+  },
+  "name": "Mozzarella",
+  "__v": 0,
+  "allergens": [
+    "lait"
+  ],
+  "image": "/uploads/ingredients/1757271277318.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": true,
+  "nutritionalInfo": {
+    "calories": 280,
+    "proteins": 28,
+    "carbs": 2.2,
+    "fats": 17,
+    "servingSize": 100
+  },
+  "orderIndex": 18,
+  "price": 1,
+  "type": "cheese",
+  "usage": "both",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:54:37.417Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67980cc1861a5fa4876f9d4c"
+  },
+  "name": "Cheddar",
+  "__v": 0,
+  "allergens": [
+    "lait"
+  ],
+  "image": "/uploads/ingredients/1757271287701.jpg",
+  "isAvailable": true,
+  "isSpicy": false,
+  "isVegetarian": true,
+  "nutritionalInfo": {
+    "calories": 402,
+    "proteins": 25,
+    "carbs": 1.3,
+    "fats": 33,
+    "servingSize": 100
+  },
+  "orderIndex": 19,
+  "price": 1,
+  "type": "cheese",
+  "usage": "both",
+  "description": "",
+  "updatedAt": {
+    "$date": "2025-09-07T18:54:47.910Z"
+  }
+}]

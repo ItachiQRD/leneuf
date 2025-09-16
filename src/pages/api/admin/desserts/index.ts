@@ -31,7 +31,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
       try {
-        const desserts = await Dessert.find({ active: true, deletedAt: { $exists: false } });
+        const desserts = await Dessert.find({ active: true });
         res.status(200).json(desserts);
       } catch (error) {
         console.error('Erreur lors de la récupération des desserts:', error);
@@ -107,8 +107,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
         console.log(' [API Desserts] Données nettoyées:', cleanData);
 
-        const dessert = new Dessert(cleanData);
-        await dessert.save();
+        const dessert = await Dessert.create(cleanData);
         console.log(' [API Desserts] Dessert créé avec succès');
         res.status(201).json(dessert);
       } catch (error) {

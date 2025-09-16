@@ -148,8 +148,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           }
         }
 
-        // Marquer comme supprimé au lieu de le supprimer physiquement
-        await Ingredient.findByIdAndUpdate(id, { active: false, deletedAt: new Date() });
+        // Supprimer définitivement de la base de données
+        await Ingredient.findByIdAndDelete(id);
+        console.log(' [API Ingredients] Ingrédient supprimé définitivement de la base de données');
         return res.status(200).json({ message: 'Ingrédient supprimé avec succès' });
       }
 

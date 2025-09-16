@@ -8,7 +8,7 @@ import { Plus, Pencil, Trash2, Star, Leaf } from 'lucide-react';
 import IngredientModal from '@/components/admin/ingredients/IngredientModal';
 
 export default function IngredientsPage() {
-  const { ingredients, loading, error, deleteIngredient } = useProducts();
+  const { ingredients, loading, error, createIngredient, updateIngredient, deleteIngredient } = useProducts();
   const [editingIngredient, setEditingIngredient] = useState<Ingredient | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
@@ -53,21 +53,28 @@ export default function IngredientsPage() {
     setIsCreating(false);
   };
 
+  const handleSubmit = async (data: any) => {
+    try {
+      if (editingIngredient) {
+        // Modification
+        await updateIngredient(editingIngredient._id, data);
+      } else {
+        // Création
+        await createIngredient(data);
+      }
+      handleClose();
+    } catch (error) {
+      console.error('Erreur lors de la soumission:', error);
+      // L'erreur est déjà gérée par le ProductContext
+    }
+  };
+
   const handleDelete = async (ingredient: Ingredient) => {
     try {
       await deleteIngredient(ingredient._id);
-      toast({
-        title: "Succès",
-        description: "L'ingrédient a été supprimé avec succès",
-        variant: "success"
-      });
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression",
-        variant: "destructive"
-      });
+      // L'erreur est déjà gérée par le ProductContext
     }
   };
 

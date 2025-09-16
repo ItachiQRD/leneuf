@@ -31,15 +31,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-          const sauce = await Sauce.findByIdAndUpdate(id, { 
-            active: false, 
-            deletedAt: new Date() 
-          }, { new: true });
+          console.log(' [API Sauces] Suppression de la sauce ID:', id);
+          
+          const sauce = await Sauce.findByIdAndDelete(id);
           
           if (!sauce) {
             return res.status(404).json({ message: 'Sauce non trouvée' });
           }
           
+          console.log(' [API Sauces] Sauce supprimée définitivement de la base de données');
           return res.status(200).json({ message: 'Sauce supprimée avec succès' });
         } catch (error) {
           console.error('Erreur lors de la suppression de la sauce:', error);

@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { isFile } from '@/utils/fileUtils';
 import { Button } from '@/components/ui/Buttons';
 import { useAuth } from '@/contexts/AuthContext';
+import { useProducts } from '@/contexts/ProductContext';
 import BasicDrinkInfo from './sections/BasicDrinkInfo';
 
 interface DrinkFormProps {
@@ -22,6 +23,7 @@ export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkForm
   const [activeSection, setActiveSection] = useState('basic');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { createDrink, updateDrink } = useProducts();
 
   
   const form = useForm<DrinkInput>({
@@ -61,41 +63,25 @@ export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkForm
     console.log('Données du formulaire:', data);
     try {
       setIsSubmitting(true);
-      const formData = new FormData();
       
-      // Vérifier si l'image est un objet File
-      if (data.image && isFile(data.image)) {
-        formData.append('image', data.image);
-        const { image, ...restData } = data;
-        formData.append('data', JSON.stringify({
-          ...restData,
-          _id: initialData?._id, // Ajouter l'ID pour la mise à jour
-          image: initialData?.image // Ajouter l'ancienne image pour la suppression
-        }));
+      // Vérifier qu'une image est fournie
+      if (!data.image || (typeof data.image === 'string' && data.image.trim() === '')) {
+        showToast({
+          title: "Erreur",
+          description: "Une image est requise pour la boisson",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      if (initialData?._id) {
+        // Modification
+        await updateDrink(initialData._id, data);
       } else {
-        formData.append('data', JSON.stringify({
-          ...data,
-          _id: initialData?._id // Ajouter l'ID pour la mise à jour
-        }));
+        // Création
+        await createDrink(data);
       }
-  
-      const response = await fetch('/api/admin/drinks', {
-        method: initialData?._id ? 'PUT' : 'POST',
-        credentials: 'include',
-        body: formData
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Erreur lors de la ${initialData?._id ? 'mise à jour' : 'création'}`);
-      }
-  
-      toast({
-        title: "Succès !",
-        description: `La boisson a été ${initialData?._id ? 'mise à jour' : 'créée'} avec succès`,
-        variant: "success"
-      });
-      
+
       onSubmit();
     } catch (error) {
       console.error('Erreur:', error);

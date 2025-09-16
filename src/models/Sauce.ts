@@ -62,11 +62,6 @@ const sauceSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  maxQuantity: {
-    type: Number,
-    required: [true, 'La quantité maximale est requise'],
-    min: 1
-  },
   allergens: {
     type: [String],
     default: []
@@ -79,18 +74,6 @@ const sauceSchema = new mongoose.Schema({
     type: String,
     enum: ['mild', 'medium', 'hot'],
     required: [true, 'Le niveau de piquant est requis']
-  },
-  isVegan: {
-    type: Boolean,
-    default: false
-  },
-  isVegetarian: {
-    type: Boolean,
-    default: false
-  },
-  isGlutenFree: {
-    type: Boolean,
-    default: false
   }
 }, {
   timestamps: true,

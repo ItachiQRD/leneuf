@@ -31,7 +31,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
       try {
-        const sauces = await Sauce.find({ deletedAt: { $exists: false } });
+        const sauces = await Sauce.find({ active: true });
         res.status(200).json(sauces);
       } catch (error) {
         console.error('Erreur lors de la récupération des sauces:', error);
@@ -92,10 +92,36 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           return res.status(400).json({ message: 'Données invalides' });
         }
         
+        // Validation des champs obligatoires
+        if (!sauceData.name) {
+          return res.status(400).json({ message: 'Le nom est requis' });
+        }
+        if (!sauceData.type) {
+          return res.status(400).json({ message: 'Le type est requis' });
+        }
+        if (!sauceData.description) {
+          return res.status(400).json({ message: 'La description est requise' });
+        }
+        if (!sauceData.price && sauceData.price !== 0) {
+          return res.status(400).json({ message: 'Le prix est requis' });
+        }
+        if (!sauceData.image) {
+          return res.status(400).json({ message: 'L\'image est requise' });
+        }
+        if (!sauceData.nutritionalInfo) {
+          return res.status(400).json({ message: 'Les informations nutritionnelles sont requises' });
+        }
+        if (!sauceData.spicyLevel) {
+          return res.status(400).json({ message: 'Le niveau de piquant est requis' });
+        }
+
         console.log(' [API Sauces] Données nettoyées:', sauceData);
+        console.log(' [API Sauces] Types des champs:');
+        Object.entries(sauceData).forEach(([key, value]) => {
+          console.log(`  ${key}: ${typeof value} = ${JSON.stringify(value)}`);
+        });
         
-        const sauce = new Sauce(sauceData);
-        await sauce.save();
+        const sauce = await Sauce.create(sauceData);
         console.log(' [API Sauces] Sauce créée avec succès');
         res.status(201).json(sauce);
       } catch (error) {

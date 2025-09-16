@@ -111,29 +111,19 @@ export const FoodSchema = z.object({
 // Type pour le formulaire
 export type FoodFormData = Omit<FoodBase, '_id'>;
 
-// Type pour l'API
-export type FoodInputAPI = Omit<FoodBase, 'image'> & {
-  image?: string | File;
-  // Champs optionnels spécifiques
-  pizzaBase?: string;
-  pizzaSizes?: Array<{
-    name: string;
-    price: number;
-    diameter: string;
-    isDefault: boolean;
-  }>;
-  paniniAccompaniments?: {
-    fries: boolean;
-    drink?: string;
-    drinkPrice: number;
-  };
-  plateAccompaniments?: {
-    bread: boolean;
-    fries: boolean;
-    salad: boolean;
-  };
-  includesSurprise?: boolean;
-  includesCaprisun?: boolean;
+// Type pour l'API (simplifié)
+export type FoodInputAPI = {
+  _id?: string;
+  name: string;
+  type: FoodType;
+  price: number;
+  image: string | File;
+  available: boolean;
+  preparationTimeMinutes: number;
+  category: FoodCategory;
+  baseIngredients: string[];
+  active?: boolean;
+  description?: string;
 };
 
 // Type pour la réponse de l'API

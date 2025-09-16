@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { isFile } from '@/utils/fileUtils';
 import { Button } from '@/components/ui/Buttons';
 import { motion } from 'framer-motion';
+import { useProducts } from '@/contexts/ProductContext';
 
 // Import des sections
 import BasicSauceInfo from './sections/BasicSauceInfo';
@@ -39,6 +40,7 @@ export default function SauceForm({
   const [activeSection, setActiveSection] = useState('basic');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { createSauce, updateSauce } = useProducts();
 
   const form = useForm<SauceInput>({
     defaultValues: {
@@ -48,7 +50,6 @@ export default function SauceForm({
       price: 0,
       image: '',
       available: true,
-      maxQuantity: 5,
       allergens: [],
       nutritionalInfo: {
         calories: 0,
@@ -58,9 +59,6 @@ export default function SauceForm({
         servingSize: 'portion'
       },
       spicyLevel: 'mild',
-      isVegan: false,
-      isVegetarian: false,
-      isGlutenFree: false,
       ...initialData
     }
   });
@@ -71,11 +69,20 @@ export default function SauceForm({
     try {
       setIsSubmitting(true);
       
+      // Vérifier qu'une image est fournie
+      if (!data.image || (typeof data.image === 'string' && data.image.trim() === '')) {
+        toast({
+          title: "Erreur",
+          description: "Une image est requise pour la sauce",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       // Convertir les champs numériques
       const convertedData = {
         ...data,
         price: Number(data.price),
-        maxQuantity: Number(data.maxQuantity),
         nutritionalInfo: {
           ...data.nutritionalInfo,
           calories: Number(data.nutritionalInfo.calories),
@@ -85,57 +92,13 @@ export default function SauceForm({
         }
       };
       
-      const formData = new FormData();
-
-      // Gérer l'image
-      if (isFile(data.image)) {
-        formData.append('image', data.image);
-        const { image, ...restData } = convertedData;
-        formData.append('data', JSON.stringify({
-          ...restData,
-          _id: initialData?._id
-        }));
-      } else if (data.image) {
-        formData.append('data', JSON.stringify({
-          ...convertedData,
-          _id: initialData?._id
-        }));
+      if (initialData?._id) {
+        // Modification
+        await updateSauce(initialData._id, data);
       } else {
-        toast({
-          title: "Erreur",
-          description: "Une image est requise",
-          variant: "destructive"
-        });
-        return;
+        // Création
+        await createSauce(data);
       }
-
-      const method = initialData?._id ? 'PUT' : 'POST';
-      
-      const response = await fetch('/api/admin/sauces', {
-        method,
-        credentials: 'include',
-        body: formData
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        if (responseData.errors) {
-          const errorMessage = Array.isArray(responseData.errors)
-            ? responseData.errors.map((e: any) => e.message).join('\n')
-            : responseData.errors;
-          throw new Error(errorMessage);
-        }
-        throw new Error(responseData.message || 'Une erreur est survenue');
-      }
-
-      toast({
-        title: "Succès !",
-        description: initialData?._id 
-          ? "La sauce a été modifiée avec succès"
-          : "La sauce a été créée avec succès",
-        variant: "success"
-      });
 
       onSubmit();
     } catch (error) {

@@ -12,7 +12,6 @@ export interface Sauce extends BaseProduct {
   price: number;
   image: string | File;
   available: boolean;
-  maxQuantity: number;
   allergens: string[];
   nutritionalInfo: {
     calories: number;
@@ -22,9 +21,6 @@ export interface Sauce extends BaseProduct {
     servingSize: string;
   };
   spicyLevel: SpicyLevel;
-  isVegan: boolean;
-  isVegetarian: boolean;
-  isGlutenFree: boolean;
 }
 
 const nutritionalInfoSchema = z.object({

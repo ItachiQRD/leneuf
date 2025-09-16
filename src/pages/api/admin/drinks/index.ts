@@ -31,7 +31,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
       try {
-        const drinks = await Drink.find({ deletedAt: { $exists: false } });
+        const drinks = await Drink.find({ active: true });
         res.status(200).json(drinks);
       } catch (error) {
         console.error('Erreur lors de la récupération des boissons:', error);
@@ -92,10 +92,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           return res.status(400).json({ message: 'Données invalides' });
         }
         
+        // Validation des champs obligatoires
+        if (!drinkData.name) {
+          return res.status(400).json({ message: 'Le nom est requis' });
+        }
+        if (!drinkData.type) {
+          return res.status(400).json({ message: 'Le type est requis' });
+        }
+        if (!drinkData.sizes || drinkData.sizes.length === 0) {
+          return res.status(400).json({ message: 'Au moins une taille est requise' });
+        }
+        if (!drinkData.nutritionalInfo) {
+          return res.status(400).json({ message: 'Les informations nutritionnelles sont requises' });
+        }
+
         console.log(' [API Drinks] Données nettoyées:', drinkData);
         
-        const drink = new Drink(drinkData);
-        await drink.save();
+        // Utiliser create() au lieu de new + save() pour une meilleure validation
+        const drink = await Drink.create(drinkData);
         console.log(' [API Drinks] Boisson créée avec succès');
         res.status(201).json(drink);
       } catch (error) {

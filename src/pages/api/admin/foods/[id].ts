@@ -90,15 +90,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-          const food = await Food.findByIdAndUpdate(id, { 
-            active: false, 
-            deletedAt: new Date() 
-          }, { new: true });
+          console.log(' [API Foods] Suppression du plat ID:', id);
+          
+          const food = await Food.findByIdAndDelete(id);
           
           if (!food) {
             return res.status(404).json({ message: 'Plat non trouvé' });
           }
           
+          console.log(' [API Foods] Plat supprimé définitivement de la base de données');
           return res.status(200).json({ message: 'Plat supprimé avec succès' });
         } catch (error) {
           console.error('Erreur lors de la suppression du plat:', error);

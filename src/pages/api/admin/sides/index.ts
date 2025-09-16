@@ -35,7 +35,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
       try {
-        const sides = await Side.find({ active: true, deletedAt: { $exists: false } });
+        const sides = await Side.find({ active: true });
         res.status(200).json(sides);
       } catch (error) {
         console.error('Erreur lors de la récupération des accompagnements:', error);

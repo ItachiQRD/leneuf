@@ -7,9 +7,7 @@ import { imageService } from '@/services/imageService';
 
 export const config = {
   api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
+    bodyParser: false,
   },
 };
 
@@ -96,15 +94,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-          const dessert = await Dessert.findByIdAndUpdate(id, { 
-            active: false, 
-            deletedAt: new Date() 
-          }, { new: true });
+          console.log(' [API Desserts] Suppression du dessert ID:', id);
+          
+          const dessert = await Dessert.findByIdAndDelete(id);
           
           if (!dessert) {
             return res.status(404).json({ message: 'Dessert non trouvé' });
           }
           
+          console.log(' [API Desserts] Dessert supprimé définitivement de la base de données');
           return res.status(200).json({ message: 'Dessert supprimé avec succès' });
         } catch (error) {
           console.error('Erreur lors de la suppression du dessert:', error);

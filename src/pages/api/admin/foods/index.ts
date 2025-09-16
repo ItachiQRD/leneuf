@@ -213,8 +213,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             const validatedData = foodSchema.parse(data);
             console.log(' [API Foods] Données validées:', validatedData);
             
-            const { _id, ...updateData } = validatedData;
-            const food = await Food.findByIdAndUpdate(_id, updateData, { new: true });
+            const food = await Food.findByIdAndUpdate(data._id, validatedData, { new: true });
             
             if (!food) {
               throw new Error('Plat non trouvé');

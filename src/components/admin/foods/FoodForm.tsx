@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Buttons';
 import BasicFoodInfo from './sections/BasicFoodInfo';
 
 interface FoodFormProps {
-  initialData?: Partial<Food>;
+  initialData?: Partial<FoodInputAPI>;
   type: FoodType;
   onSubmit: () => void;
   onCancel: () => void;
@@ -101,13 +101,6 @@ export default function FoodForm({
       };
 
       console.log('Données nettoyées:', cleanData);
-      console.log('Champs supprimés:', {
-        allergens: data.allergens,
-        spicyLevel: data.spicyLevel,
-        isVegan: data.isVegan,
-        isVegetarian: data.isVegetarian,
-        isGlutenFree: data.isGlutenFree
-      });
 
       if (initialData?._id) {
         // Modification

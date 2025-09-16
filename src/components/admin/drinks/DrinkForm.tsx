@@ -66,7 +66,7 @@ export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkForm
       
       // Vérifier qu'une image est fournie
       if (!data.image || (typeof data.image === 'string' && data.image.trim() === '')) {
-        showToast({
+        toast({
           title: "Erreur",
           description: "Une image est requise pour la boisson",
           variant: "destructive"

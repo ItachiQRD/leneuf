@@ -4,11 +4,9 @@ import { Food, FoodType, FoodInputAPI } from '@/types/food';
 import { useToast } from '@/contexts/ToastContext';
 import { useProducts } from '@/contexts/ProductContext';
 import { Button } from '@/components/ui/Buttons';
-import { motion } from 'framer-motion';
 
 // Sections de formulaire
 import BasicFoodInfo from './sections/BasicFoodInfo';
-import SpecificOptions from './sections/SpecificOptions';
 
 interface FoodFormProps {
   initialData?: Partial<Food>;
@@ -23,7 +21,6 @@ export default function FoodForm({
   onSubmit,
   onCancel
 }: FoodFormProps) {
-  const [activeSection, setActiveSection] = useState('basic');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast } = useToast();
   const { createFood, updateFood } = useProducts();
@@ -87,17 +84,7 @@ export default function FoodForm({
     { 
       id: 'basic', 
       label: 'Informations de base',
-      hasErrors: !!errors.name || !!errors.price || !!errors.image
-    },
-    { 
-      id: 'nutrition', 
-      label: 'Valeurs nutritionnelles',
-      hasErrors: !!errors.nutritionalInfo
-    },
-    { 
-      id: 'specific', 
-      label: 'Options spécifiques',
-      hasErrors: false
+      hasErrors: !!errors.name || !!errors.price || !!errors.image || !!errors.preparationTimeMinutes || !!errors.category || !!errors.baseIngredients
     }
   ];
 
@@ -131,45 +118,10 @@ export default function FoodForm({
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
       <form onSubmit={handleSubmit(onFormSubmit)}>
-        {/* Navigation des sections */}
-        <div className="mb-6 border-b">
-          <nav className="flex space-x-4">
-            {sections.map(section => (
-              <button
-                key={section.id}
-                type="button"
-                onClick={() => setActiveSection(section.id)}
-                className={`px-4 py-2 relative ${
-                  activeSection === section.id
-                    ? 'text-orange-600'
-                    : 'text-gray-600 hover:text-orange-500'
-                } ${section.hasErrors ? 'text-red-500' : ''}`}
-              >
-                {section.label}
-                {section.hasErrors && (
-                  <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
-                )}
-                {activeSection === section.id && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-600"
-                  />
-                )}
-              </button>
-            ))}
-          </nav>
-        </div>
 
         {/* Contenu des sections */}
         <div className="space-y-6">
-          {activeSection === 'basic' && (
-            <BasicFoodInfo form={form} type={type} />
-          )}
-          
-
-          {activeSection === 'specific' && (
-            <SpecificOptions form={form} type={type} />
-          )}
+          <BasicFoodInfo form={form} type={type} />
         </div>
 
         {/* Actions */}

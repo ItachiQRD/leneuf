@@ -13,56 +13,24 @@ export const config = {
   },
 };
 
-const nutritionalInfoSchema = z.object({
-  calories: z.number().min(0).default(0),
-  proteins: z.number().min(0).default(0),
-  carbs: z.number().min(0).default(0),
-  fats: z.number().min(0).default(0),
-  servingSize: z.string().default('100g')
-});
 
-// Schéma de validation pour les plats
+// Schéma de validation pour les plats (simplifié)
 const foodSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
-  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'kids_menu', 'small_hunger'], {
+  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum'], {
     errorMap: () => ({ message: "Type de plat invalide" })
   }),
-  price: z.number().min(0, "Le prix doit être positif").optional().or(z.undefined()),
-  image: z.string().optional(),
+  price: z.number().min(0, "Le prix doit être positif"),
+  image: z.string(),
   active: z.boolean().default(true),
   available: z.boolean().default(true),
   preparationTimeMinutes: z.number().min(1, "Le temps de préparation doit être au moins 1 minute"),
   category: z.enum(['bestseller', 'new', 'regular'], {
     errorMap: () => ({ message: "Catégorie invalide" })
   }),
-  baseIngredients: z.array(z.string()).default([]),
-  allergens: z.array(z.string()).default([]),
-  spicyLevel: z.enum(['mild', 'medium', 'hot', 'extra_hot']).default('mild'),
-  nutritionalInfo: nutritionalInfoSchema.default({}),
-  isVegan: z.boolean().default(false),
-  isVegetarian: z.boolean().default(false),
-  isGlutenFree: z.boolean().default(false),
-  // Champs optionnels spécifiques
-  pizzaBase: z.string().optional(),
-  pizzaSizes: z.array(z.object({
-    name: z.string(),
-    price: z.number(),
-    diameter: z.string(),
-    isDefault: z.boolean().default(false)
-  })).optional(),
-  paniniAccompaniments: z.object({
-    fries: z.boolean().default(false),
-    drink: z.string().optional(),
-    drinkPrice: z.number().default(0)
-  }).optional(),
-  plateAccompaniments: z.object({
-    bread: z.boolean().default(false),
-    fries: z.boolean().default(false),
-    salad: z.boolean().default(false)
-  }).optional(),
-  includesSurprise: z.boolean().optional(),
-  includesCaprisun: z.boolean().optional()
-}).passthrough();
+  baseIngredients: z.array(z.string()).min(1, "Au moins un ingrédient est requis"),
+  description: z.string().optional()
+});
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log(' [API Foods] Méthode reçue:', req.method);
@@ -136,13 +104,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             ...data,
             price: data.price ? (typeof data.price === 'string' ? parseFloat(data.price) : data.price) : undefined,
             preparationTimeMinutes: typeof data.preparationTimeMinutes === 'string' ? parseInt(data.preparationTimeMinutes) : data.preparationTimeMinutes,
-            nutritionalInfo: {
-              ...data.nutritionalInfo,
-              calories: typeof data.nutritionalInfo?.calories === 'string' ? parseInt(data.nutritionalInfo.calories) : data.nutritionalInfo?.calories || 0,
-              proteins: typeof data.nutritionalInfo?.proteins === 'string' ? parseInt(data.nutritionalInfo.proteins) : data.nutritionalInfo?.proteins || 0,
-              carbs: typeof data.nutritionalInfo?.carbs === 'string' ? parseInt(data.nutritionalInfo.carbs) : data.nutritionalInfo?.carbs || 0,
-              fats: typeof data.nutritionalInfo?.fats === 'string' ? parseInt(data.nutritionalInfo.fats) : data.nutritionalInfo?.fats || 0
-            }
+            baseIngredients: Array.isArray(data.baseIngredients) ? data.baseIngredients : (data.baseIngredients ? [data.baseIngredients] : [])
           };
 
           // Validation et création

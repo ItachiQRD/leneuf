@@ -148,15 +148,24 @@ const Footer = () => {
               © {currentYear} Le Neuf. Tous droits réservés.
             </p>
             <div className="flex space-x-6">
-              {['Mentions légales', 'Politique de confidentialité', 'CGV'].map((item) => (
-                <Link
-                  key={item}
-                  href="#"
-                  className="text-text-tertiary hover:text-primary transition-colors text-sm"
-                >
-                  {item}
-                </Link>
-              ))}
+              <Link
+                href="/legal/mentions-legales"
+                className="text-text-tertiary hover:text-primary transition-colors text-sm"
+              >
+                Mentions légales
+              </Link>
+              <Link
+                href="/legal/politique-confidentialite"
+                className="text-text-tertiary hover:text-primary transition-colors text-sm"
+              >
+                Politique de confidentialité
+              </Link>
+              <Link
+                href="/legal/conditions-generales"
+                className="text-text-tertiary hover:text-primary transition-colors text-sm"
+              >
+                CGV
+              </Link>
             </div>
           </div>
         </div>

@@ -138,7 +138,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           if (error instanceof ZodError) {
             console.error(' [API Sides] Erreur validation Zod:');
             error.errors.forEach((err, index) => {
-              console.error(`  ${index + 1}. Champ: ${err.path.join('.')}, Message: ${err.message}, Valeur: ${err.input}`);
+              console.error(`  ${index + 1}. Champ: ${err.path.join('.')}, Message: ${err.message}`);
             });
             return res.status(400).json({
               message: 'Erreur de validation',

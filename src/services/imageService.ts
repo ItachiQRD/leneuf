@@ -70,7 +70,7 @@ export class ImageService {
     return `/uploads/${category}/${filename}-${suffix}.webp`;
   }
 
-  async uploadImage(file: formidable.File, category: string = 'foods'): Promise<string> {
+  async uploadImage(file: any, category: string = 'foods'): Promise<string> {
     if (!this.categories.includes(category)) {
       throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
     }
@@ -78,7 +78,7 @@ export class ImageService {
     return result.large;
   }
 
-  async processImage(file: formidable.File, category: string): Promise<ProcessedImage> {
+  async processImage(file: any, category: string): Promise<ProcessedImage> {
     await this.init();
 
     const filename = uuidv4();
@@ -143,7 +143,7 @@ export class ImageService {
   }
 
   // Nouvelle méthode pour créer une seule image de haute qualité
-  async uploadSingleHighQualityImage(file: formidable.File, category: string = 'foods'): Promise<string> {
+  async uploadSingleHighQualityImage(file: any, category: string = 'foods'): Promise<string> {
     if (!this.categories.includes(category)) {
       throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
     }

@@ -69,7 +69,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           if (files.image) {
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              imageUrl = await imageService.uploadImage(imageFile, 'desserts');
+              imageUrl = await imageService.uploadToGmail(imageFile, 'desserts');
               console.log(' [API Desserts] Image uploadée:', imageUrl);
             } catch (error) {
               console.error(' [API Desserts] Erreur upload image:', error);

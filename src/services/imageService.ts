@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import fs from 'fs/promises';
 import formidable from 'formidable';
+import { gmailStorage } from './gmailStorage';
 
 interface ImageSize {
   width: number;
@@ -141,15 +142,13 @@ export class ImageService {
     };
   }
 
-  // Nouvelle méthode pour créer une seule image de haute qualité
+  // Nouvelle méthode pour créer une seule image de haute qualité et l'uploader vers Gmail
   async uploadSingleHighQualityImage(file: formidable.File, category: string = 'foods'): Promise<string> {
     if (!this.categories.includes(category)) {
       throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
     }
 
-    await this.init();
-
-    const filename = uuidv4();
+    const filename = `${uuidv4()}.webp`;
     const imageBuffer = await fs.readFile(file.filepath);
     const metadata = await sharp(imageBuffer).metadata();
 
@@ -169,9 +168,8 @@ export class ImageService {
       }
     }
 
-    const outputPath = path.join(this.uploadsDir, category, `${filename}.webp`);
-
-    await sharp(imageBuffer)
+    // Traiter l'image avec Sharp
+    const processedImageBuffer = await sharp(imageBuffer)
       .resize(targetWidth, targetHeight, {
         fit: 'inside',
         withoutEnlargement: true,
@@ -184,18 +182,53 @@ export class ImageService {
         effort: 6,
         smartSubsample: true
       })
-      .toFile(outputPath);
+      .toBuffer();
 
-    // Nettoyer le fichier temporaire
-    await fs.unlink(file.filepath);
-
-    return `/uploads/${category}/${filename}.webp`;
+    // Uploader vers Gmail
+    try {
+      const messageId = await gmailStorage.uploadImage(
+        processedImageBuffer, 
+        filename, 
+        'image/webp'
+      );
+      
+      // Nettoyer le fichier temporaire
+      await fs.unlink(file.filepath);
+      
+      // Retourner l'URL Gmail
+      return gmailStorage.generateImageUrl(messageId, filename);
+    } catch (error) {
+      console.error('Erreur upload Gmail, fallback vers stockage local:', error);
+      
+      // Fallback vers stockage local si Gmail échoue
+      await this.init();
+      const outputPath = path.join(this.uploadsDir, category, filename);
+      
+      await fs.writeFile(outputPath, processedImageBuffer);
+      await fs.unlink(file.filepath);
+      
+      return `/uploads/${category}/${filename}`;
+    }
   }
 
   async deleteImage(imageUrl: string) {
     if (!imageUrl) return;
 
-    // Extraire la catégorie et le nom de fichier de l'URL
+    // Vérifier si c'est une URL Gmail
+    const gmailMatches = imageUrl.match(/\/api\/gmail-image\/([^\/]+)\/(.+)/);
+    if (gmailMatches) {
+      const [, messageId, filename] = gmailMatches;
+      try {
+        await gmailStorage.deleteImage(messageId);
+        console.log(`Image Gmail supprimée: ${messageId}`);
+        return;
+      } catch (error) {
+        console.error('Erreur suppression image Gmail:', error);
+        return;
+      }
+    }
+
+    // Fallback pour les images locales
     const matches = imageUrl.match(/\/uploads\/([^\/]+)\/([^-]+)/);
     if (!matches) return;
 

@@ -79,7 +79,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           console.log(' [API Sides] Traitement de l\'image...');
           const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
           try {
-            const imageUrl = await imageService.uploadSingleHighQualityImage(imageFile, 'sides');
+            const imageUrl = await imageService.uploadImage(imageFile, 'sides');
             console.log(' [API Sides] Image uploadée:', imageUrl);
             data.image = imageUrl;
           } catch (error) {

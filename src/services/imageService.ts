@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import fs from 'fs/promises';
 import formidable from 'formidable';
-import { gmailStorage } from './gmailStorage';
 
 interface ImageSize {
   width: number;
@@ -142,13 +141,15 @@ export class ImageService {
     };
   }
 
-  // Nouvelle méthode pour créer une seule image de haute qualité et l'uploader vers Gmail
+  // Nouvelle méthode pour créer une seule image de haute qualité
   async uploadSingleHighQualityImage(file: formidable.File, category: string = 'foods'): Promise<string> {
     if (!this.categories.includes(category)) {
       throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
     }
 
-    const filename = `${uuidv4()}.webp`;
+    await this.init();
+
+    const filename = uuidv4();
     const imageBuffer = await fs.readFile(file.filepath);
     const metadata = await sharp(imageBuffer).metadata();
 
@@ -168,8 +169,9 @@ export class ImageService {
       }
     }
 
-    // Traiter l'image avec Sharp
-    const processedImageBuffer = await sharp(imageBuffer)
+    const outputPath = path.join(this.uploadsDir, category, `${filename}.webp`);
+
+    await sharp(imageBuffer)
       .resize(targetWidth, targetHeight, {
         fit: 'inside',
         withoutEnlargement: true,
@@ -182,84 +184,40 @@ export class ImageService {
         effort: 6,
         smartSubsample: true
       })
-      .toBuffer();
+      .toFile(outputPath);
 
-    // Uploader vers Gmail ou fallback temporaire
-    try {
-      const messageId = await gmailStorage.uploadImage(
-        processedImageBuffer, 
-        filename, 
-        'image/webp'
-      );
-      
-      // Nettoyer le fichier temporaire
-      await fs.unlink(file.filepath);
-      
-      // Retourner l'URL Gmail
-      return gmailStorage.generateImageUrl(messageId, filename);
-    } catch (error) {
-      console.error('Erreur upload Gmail, utilisation du fallback temporaire:', error);
-      
-      // Fallback temporaire : stockage local pour le développement
-      await this.init();
-      const outputPath = path.join(this.uploadsDir, category, filename);
-      
-      await fs.writeFile(outputPath, processedImageBuffer);
-      await fs.unlink(file.filepath);
-      
-      // Retourner l'URL locale temporaire
-      return `/api/uploads/${category}/${filename}`;
-    }
+    // Nettoyer le fichier temporaire
+    await fs.unlink(file.filepath);
+
+    return `/uploads/${category}/${filename}.webp`;
   }
 
   async deleteImage(imageUrl: string) {
     if (!imageUrl) return;
 
-    // Supprimer depuis Gmail
-    const gmailMatches = imageUrl.match(/\/api\/gmail-image\/([^\/]+)\/(.+)/);
-    if (gmailMatches) {
-      const [, messageId, filename] = gmailMatches;
+    // Extraire la catégorie et le nom de fichier de l'URL
+    const matches = imageUrl.match(/\/uploads\/([^\/]+)\/([^-]+)/);
+    if (!matches) return;
+
+    const [, category, filename] = matches;
+
+    // Supprimer toutes les variantes
+    for (const { suffix } of SIZES) {
+      const imagePath = this.getImagePath(filename, suffix, category);
       try {
-        await gmailStorage.deleteImage(messageId);
-        console.log(`Image Gmail supprimée: ${messageId}`);
-        return;
+        await fs.unlink(imagePath);
       } catch (error) {
-        console.error('Erreur suppression image Gmail:', error);
-        throw error;
+        console.error(`Failed to delete image ${imagePath}:`, error);
       }
     }
 
-    // Supprimer depuis le stockage local temporaire
-    const localMatches = imageUrl.match(/\/api\/uploads\/([^\/]+)\/(.+)/);
-    if (localMatches) {
-      const [, category, filename] = localMatches;
-      try {
-        const filePath = path.join(this.uploadsDir, category, filename);
-        await fs.unlink(filePath);
-        console.log(`Image locale supprimée: ${filePath}`);
-        return;
-      } catch (error) {
-        console.error('Erreur suppression image locale:', error);
-        // Ne pas lever d'erreur pour les images locales
-      }
+    // Supprimer aussi l'image simple si elle existe
+    const simpleImagePath = path.join(this.uploadsDir, category, `${filename}.webp`);
+    try {
+      await fs.unlink(simpleImagePath);
+    } catch (error) {
+      // Ignorer si le fichier n'existe pas
     }
-
-    // Ancien format d'URL (compatibilité)
-    const oldMatches = imageUrl.match(/\/uploads\/([^\/]+)\/(.+)/);
-    if (oldMatches) {
-      const [, category, filename] = oldMatches;
-      try {
-        const filePath = path.join(this.uploadsDir, category, filename);
-        await fs.unlink(filePath);
-        console.log(`Ancienne image supprimée: ${filePath}`);
-        return;
-      } catch (error) {
-        console.error('Erreur suppression ancienne image:', error);
-        // Ne pas lever d'erreur pour les anciennes images
-      }
-    }
-
-    console.warn('Format d\'URL d\'image non reconnu:', imageUrl);
   }
 }
 

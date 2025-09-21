@@ -68,7 +68,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           if (files.image) {
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadSingleHighQualityImage(imageFile, 'drinks');
+              const imageUrl = await imageService.uploadImage(imageFile, 'drinks');
               drinkData.image = imageUrl;
               console.log(' [API Drinks] Image uploadée:', imageUrl);
             } catch (error) {

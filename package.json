@@ -45,8 +45,6 @@
     "fast-food-app": "file:",
     "formidable": "^3.5.3",
     "framer-motion": "^11.15.0",
-    "google-auth-library": "^10.3.0",
-    "googleapis": "^160.0.0",
     "ioredis": "^5.4.1",
     "jose": "^5.9.6",
     "jsonwebtoken": "^9.0.2",

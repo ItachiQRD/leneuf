@@ -5,44 +5,6 @@ import fs from 'fs/promises';
 import formidable from 'formidable';
 import { gmailStorage } from './gmailStorage';
 
-interface ImageSize {
-  width: number;
-  height: number;
-  quality?: number;
-  suffix: string;
-  fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
-}
-
-interface ProcessedImage {
-  large: string;
-  medium: string;
-  thumbnail: string;
-}
-
-// Configuration améliorée pour une meilleure qualité
-const SIZES: ImageSize[] = [
-  { 
-    width: 1200, 
-    height: 1200, 
-    quality: 95, 
-    suffix: 'large',
-    fit: 'inside' // Préserve les proportions sans recadrer
-  },
-  { 
-    width: 600, 
-    height: 600, 
-    quality: 90, 
-    suffix: 'medium',
-    fit: 'inside'
-  },
-  { 
-    width: 300, 
-    height: 300, 
-    quality: 85, 
-    suffix: 'thumbnail',
-    fit: 'cover' // Pour les miniatures, on peut recadrer
-  }
-];
 
 export class ImageService {
   private uploadsDir: string;
@@ -62,92 +24,12 @@ export class ImageService {
     );
   }
 
-  private getImagePath(filename: string, suffix: string, category: string): string {
-    return path.join(this.uploadsDir, category, `${filename}-${suffix}.webp`);
-  }
-
-  private getPublicPath(filename: string, suffix: string, category: string): string {
-    return `/uploads/${category}/${filename}-${suffix}.webp`;
-  }
 
   async uploadImage(file: any, category: string = 'foods'): Promise<string> {
     if (!this.categories.includes(category)) {
       throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
     }
-    const result = await this.processImage(file, category);
-    return result.large;
-  }
-
-  async processImage(file: any, category: string): Promise<ProcessedImage> {
-    await this.init();
-
-    const filename = uuidv4();
-    const imageBuffer = await fs.readFile(file.filepath);
-
-    // Obtenir les métadonnées de l'image originale
-    const metadata = await sharp(imageBuffer).metadata();
-    const { width: originalWidth, height: originalHeight } = metadata;
-
-    const processSize = async ({ width, height, quality, suffix, fit }: ImageSize) => {
-      const outputPath = this.getImagePath(filename, suffix, category);
-      
-      // Pour les images plus petites que la taille cible, on les garde à leur taille originale
-      const targetWidth = originalWidth && originalWidth < width ? originalWidth : width;
-      const targetHeight = originalHeight && originalHeight < height ? originalHeight : height;
-
-      let sharpInstance = sharp(imageBuffer);
-
-      // Appliquer des optimisations selon la taille
-      if (suffix === 'large') {
-        // Pour les grandes images, on applique un léger sharpen pour compenser la compression
-        sharpInstance = sharpInstance
-          .sharpen({ sigma: 0.5, m1: 0.5, m2: 2, x1: 2, y2: 10 })
-          .normalize(); // Améliore le contraste
-      } else if (suffix === 'medium') {
-        // Pour les images moyennes, on applique un sharpen plus léger
-        sharpInstance = sharpInstance
-          .sharpen({ sigma: 0.3, m1: 0.5, m2: 2, x1: 2, y2: 10 });
-      }
-
-      await sharpInstance
-        .resize(targetWidth, targetHeight, {
-          fit: fit || 'inside',
-          position: 'center',
-          withoutEnlargement: true, // Ne pas agrandir les images plus petites
-          kernel: sharp.kernel.lanczos3 // Meilleur algorithme de redimensionnement
-        })
-        .webp({ 
-          quality: quality || 90,
-          effort: 6, // Plus d'effort pour une meilleure compression
-          lossless: false,
-          nearLossless: false,
-          smartSubsample: true // Optimise la sous-échantillonnage
-        })
-        .toFile(outputPath);
-
-      return this.getPublicPath(filename, suffix, category);
-    };
-
-    const [large, medium, thumbnail] = await Promise.all(
-      SIZES.map(size => processSize(size))
-    );
-
-    // Nettoyer le fichier temporaire
-    await fs.unlink(file.filepath);
-
-    return {
-      large,
-      medium,
-      thumbnail
-    };
-  }
-
-  // Nouvelle méthode pour créer une seule image de haute qualité
-  async uploadSingleHighQualityImage(file: any, category: string = 'foods'): Promise<string> {
-    if (!this.categories.includes(category)) {
-      throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
-    }
-
+    
     await this.init();
 
     const filename = uuidv4();
@@ -191,6 +73,11 @@ export class ImageService {
     await fs.unlink(file.filepath);
 
     return `/uploads/${category}/${filename}.webp`;
+  }
+
+  // Alias pour la compatibilité
+  async uploadSingleHighQualityImage(file: any, category: string = 'foods'): Promise<string> {
+    return this.uploadImage(file, category);
   }
 
   // Méthode pour uploader vers Gmail (pour Vercel)
@@ -248,43 +135,6 @@ export class ImageService {
     return result.imageUrl!;
   }
 
-  async deleteImage(imageUrl: string) {
-    if (!imageUrl) return;
-
-    // Vérifier si c'est une image Gmail
-    if (imageUrl.includes('/api/gmail-image/')) {
-      const matches = imageUrl.match(/\/api\/gmail-image\/([^\/]+)\/(.+)/);
-      if (matches) {
-        const [, messageId, filename] = matches;
-        await gmailStorage.deleteImage(messageId);
-        return;
-      }
-    }
-
-    // Sinon, traiter comme une image locale
-    const matches = imageUrl.match(/\/uploads\/([^\/]+)\/([^-]+)/);
-    if (!matches) return;
-
-    const [, category, filename] = matches;
-
-    // Supprimer toutes les variantes
-    for (const { suffix } of SIZES) {
-      const imagePath = this.getImagePath(filename, suffix, category);
-      try {
-        await fs.unlink(imagePath);
-      } catch (error) {
-        console.error(`Failed to delete image ${imagePath}:`, error);
-      }
-    }
-
-    // Supprimer aussi l'image simple si elle existe
-    const simpleImagePath = path.join(this.uploadsDir, category, `${filename}.webp`);
-    try {
-      await fs.unlink(simpleImagePath);
-    } catch (error) {
-      // Ignorer si le fichier n'existe pas
-    }
-  }
 }
 
 export const imageService = new ImageService();

@@ -3,11 +3,9 @@ import dbConnect from '@/lib/dbConnect';
 import Side from '@/models/Side';
 import { withAdmin } from '@/utils/api';
 import formidable from 'formidable';
-import { ImageService } from '@/services/imageService';
+import { imageService } from '@/services/imageService';
 import { sideSchema } from '@/types/side';
 import { ZodError } from 'zod';
-
-const imageService = new ImageService();
 
 export const config = {
   api: {

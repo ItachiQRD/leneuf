@@ -194,7 +194,7 @@ export class ImageService {
   }
 
   // Méthode pour uploader vers Gmail (pour Vercel)
-  async uploadToGmail(file: formidable.File, category: string = 'foods'): Promise<string> {
+  async uploadToGmail(file: any, category: string = 'foods'): Promise<string> {
     if (!this.categories.includes(category)) {
       throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
     }

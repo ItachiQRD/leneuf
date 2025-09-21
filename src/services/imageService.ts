@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import fs from 'fs/promises';
 import formidable from 'formidable';
+import { gmailStorage } from './gmailStorage';
 
 interface ImageSize {
   width: number;
@@ -192,10 +193,75 @@ export class ImageService {
     return `/uploads/${category}/${filename}.webp`;
   }
 
+  // Méthode pour uploader vers Gmail (pour Vercel)
+  async uploadToGmail(file: formidable.File, category: string = 'foods'): Promise<string> {
+    if (!this.categories.includes(category)) {
+      throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
+    }
+
+    const filename = `${uuidv4()}.webp`;
+    const imageBuffer = await fs.readFile(file.filepath);
+    const metadata = await sharp(imageBuffer).metadata();
+
+    // Optimiser l'image pour Gmail
+    const maxWidth = 1920;
+    const maxHeight = 1920;
+    
+    let targetWidth = metadata.width;
+    let targetHeight = metadata.height;
+
+    // Redimensionner seulement si l'image est trop grande
+    if (metadata.width && metadata.height) {
+      if (metadata.width > maxWidth || metadata.height > maxHeight) {
+        const ratio = Math.min(maxWidth / metadata.width, maxHeight / metadata.height);
+        targetWidth = Math.round(metadata.width * ratio);
+        targetHeight = Math.round(metadata.height * ratio);
+      }
+    }
+
+    // Traiter l'image avec Sharp
+    const processedBuffer = await sharp(imageBuffer)
+      .resize(targetWidth, targetHeight, {
+        fit: 'inside',
+        withoutEnlargement: true,
+        kernel: sharp.kernel.lanczos3
+      })
+      .sharpen({ sigma: 0.5, m1: 0.5, m2: 2, x1: 2, y2: 10 })
+      .normalize()
+      .webp({ 
+        quality: 95,
+        effort: 6,
+        smartSubsample: true
+      })
+      .toBuffer();
+
+    // Upload vers Gmail
+    const result = await gmailStorage.uploadImage(processedBuffer, filename, category);
+
+    if (!result.success) {
+      throw new Error(`Gmail upload failed: ${result.error}`);
+    }
+
+    // Nettoyer le fichier temporaire
+    await fs.unlink(file.filepath);
+
+    return result.imageUrl!;
+  }
+
   async deleteImage(imageUrl: string) {
     if (!imageUrl) return;
 
-    // Extraire la catégorie et le nom de fichier de l'URL
+    // Vérifier si c'est une image Gmail
+    if (imageUrl.includes('/api/gmail-image/')) {
+      const matches = imageUrl.match(/\/api\/gmail-image\/([^\/]+)\/(.+)/);
+      if (matches) {
+        const [, messageId, filename] = matches;
+        await gmailStorage.deleteImage(messageId);
+        return;
+      }
+    }
+
+    // Sinon, traiter comme une image locale
     const matches = imageUrl.match(/\/uploads\/([^\/]+)\/([^-]+)/);
     if (!matches) return;
 

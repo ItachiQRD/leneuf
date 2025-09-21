@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import formidable from 'formidable';
-import { vercelImageService } from '@/services/vercelImageService';
+import { imageService } from '@/services/imageService';
 
 export const config = {
   api: {
@@ -69,25 +69,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       size: file.size
     });
 
-    // Sur Vercel, on ne peut pas écrire dans le système de fichiers
-    // Utiliser un service de stockage cloud ou générer une URL temporaire
-    const category = Array.isArray(fields.category) ? fields.category[0] : fields.category || 'general';
+    // Détecter l'environnement
+    const isVercel = process.env.VERCEL === '1';
+    const category = Array.isArray(fields.category) ? fields.category[0] : fields.category || 'foods';
     
-    // Pour l'instant, générer une URL placeholder
-    // En production, intégrer Cloudinary, AWS S3, ou un autre service
-    const imageUrl = vercelImageService.generatePlaceholderUrl(
-      file.originalFilename || file.newFilename || 'image',
-      category
-    );
+    let imageUrl: string;
 
-    console.log('✅ [Upload API] Upload simulé:', imageUrl);
+    if (isVercel) {
+      // Sur Vercel, utiliser Gmail
+      console.log('☁️ [Upload API] Environnement Vercel détecté, upload vers Gmail...');
+      imageUrl = await imageService.uploadToGmail(file, category);
+      console.log('✅ [Upload API] Upload Gmail réussi:', imageUrl);
+    } else {
+      // En local, utiliser le stockage local
+      console.log('🏠 [Upload API] Environnement local détecté, upload local...');
+      imageUrl = await imageService.uploadSingleHighQualityImage(file, category);
+      console.log('✅ [Upload API] Upload local réussi:', imageUrl);
+    }
 
     res.status(200).json({
       url: imageUrl,
       filename: file.newFilename,
       originalFilename: file.originalFilename,
       size: file.size,
-      message: 'Upload successful (simulated for Vercel)'
+      message: `Upload successful (${isVercel ? 'Gmail' : 'local'})`
     });
   } catch (error) {
     console.error('❌ [Upload API] Erreur:', error);

@@ -184,37 +184,24 @@ export class ImageService {
       })
       .toBuffer();
 
-    // Uploader vers Gmail
-    try {
-      const messageId = await gmailStorage.uploadImage(
-        processedImageBuffer, 
-        filename, 
-        'image/webp'
-      );
-      
-      // Nettoyer le fichier temporaire
-      await fs.unlink(file.filepath);
-      
-      // Retourner l'URL Gmail
-      return gmailStorage.generateImageUrl(messageId, filename);
-    } catch (error) {
-      console.error('Erreur upload Gmail, fallback vers stockage local:', error);
-      
-      // Fallback vers stockage local si Gmail échoue
-      await this.init();
-      const outputPath = path.join(this.uploadsDir, category, filename);
-      
-      await fs.writeFile(outputPath, processedImageBuffer);
-      await fs.unlink(file.filepath);
-      
-      return `/uploads/${category}/${filename}`;
-    }
+    // Uploader vers Gmail uniquement
+    const messageId = await gmailStorage.uploadImage(
+      processedImageBuffer, 
+      filename, 
+      'image/webp'
+    );
+    
+    // Nettoyer le fichier temporaire
+    await fs.unlink(file.filepath);
+    
+    // Retourner l'URL Gmail
+    return gmailStorage.generateImageUrl(messageId, filename);
   }
 
   async deleteImage(imageUrl: string) {
     if (!imageUrl) return;
 
-    // Vérifier si c'est une URL Gmail
+    // Supprimer uniquement depuis Gmail
     const gmailMatches = imageUrl.match(/\/api\/gmail-image\/([^\/]+)\/(.+)/);
     if (gmailMatches) {
       const [, messageId, filename] = gmailMatches;
@@ -224,33 +211,12 @@ export class ImageService {
         return;
       } catch (error) {
         console.error('Erreur suppression image Gmail:', error);
-        return;
+        throw error;
       }
     }
 
-    // Fallback pour les images locales
-    const matches = imageUrl.match(/\/uploads\/([^\/]+)\/([^-]+)/);
-    if (!matches) return;
-
-    const [, category, filename] = matches;
-
-    // Supprimer toutes les variantes
-    for (const { suffix } of SIZES) {
-      const imagePath = this.getImagePath(filename, suffix, category);
-      try {
-        await fs.unlink(imagePath);
-      } catch (error) {
-        console.error(`Failed to delete image ${imagePath}:`, error);
-      }
-    }
-
-    // Supprimer aussi l'image simple si elle existe
-    const simpleImagePath = path.join(this.uploadsDir, category, `${filename}.webp`);
-    try {
-      await fs.unlink(simpleImagePath);
-    } catch (error) {
-      // Ignorer si le fichier n'existe pas
-    }
+    // Si ce n'est pas une URL Gmail, c'est une erreur
+    console.warn('Tentative de suppression d\'une image non-Gmail:', imageUrl);
   }
 }
 

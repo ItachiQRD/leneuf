@@ -13,6 +13,11 @@ class GmailStorageService {
 
   private initializeGmail() {
     try {
+      // Vérifier que toutes les variables d'environnement sont présentes
+      if (!process.env.GMAIL_CLIENT_ID || !process.env.GMAIL_CLIENT_SECRET || !process.env.GMAIL_REFRESH_TOKEN) {
+        throw new Error('Variables d\'environnement Gmail manquantes. Vérifiez votre fichier .env.local');
+      }
+
       this.oauth2Client = new google.auth.OAuth2(
         process.env.GMAIL_CLIENT_ID,
         process.env.GMAIL_CLIENT_SECRET,
@@ -24,8 +29,10 @@ class GmailStorageService {
       });
 
       this.gmail = google.gmail({ version: 'v1', auth: this.oauth2Client });
+      console.log('✅ Gmail Storage initialisé avec succès');
     } catch (error) {
-      console.error('Erreur initialisation Gmail:', error);
+      console.error('❌ Erreur initialisation Gmail:', error);
+      throw error;
     }
   }
 

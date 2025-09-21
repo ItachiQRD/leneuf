@@ -101,6 +101,14 @@ GMAIL_USER_EMAIL=your_email@gmail.com
 1. L'ID du message Gmail est extrait de l'URL
 2. L'email contenant l'image est supprimé de Gmail
 
+## ⚠️ **IMPORTANT : Stockage Gmail exclusif**
+
+Cette configuration utilise **uniquement Gmail** comme stockage d'images :
+- ✅ **Aucun stockage local** : Pas de fichiers dans `/public/uploads/`
+- ✅ **Compatible Vercel** : Fonctionne parfaitement sur Vercel
+- ✅ **Compatible hébergeurs** : Fonctionne sur tous les hébergeurs
+- ✅ **Configuration requise** : Gmail doit être configuré pour fonctionner
+
 ## 🔒 **Sécurité**
 
 - ✅ **Images privées** : Stockées dans votre Gmail personnel

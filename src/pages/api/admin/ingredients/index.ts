@@ -67,7 +67,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         let imageUrl = '';
         if (files.image && files.image[0]) {
           try {
-            imageUrl = await imageService.uploadImage(files.image[0], 'ingredients');
+            imageUrl = await imageService.uploadSingleHighQualityImage(files.image[0], 'ingredients');
           } catch (imageError) {
             console.error('Erreur upload image:', imageError);
             return res.status(400).json({ message: 'Erreur lors de l\'upload de l\'image' });

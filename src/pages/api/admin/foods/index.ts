@@ -88,7 +88,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             console.log(' [API Foods] Traitement de l\'image...');
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadImage(imageFile, 'foods');
+              const imageUrl = await imageService.uploadSingleHighQualityImage(imageFile, 'foods');
               console.log(' [API Foods] Image uploadée:', imageUrl);
               data.image = imageUrl;
             } catch (error) {
@@ -198,7 +198,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             console.log(' [API Foods] Traitement de la nouvelle image...');
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadImage(imageFile, 'foods');
+              const imageUrl = await imageService.uploadSingleHighQualityImage(imageFile, 'foods');
               console.log(' [API Foods] Nouvelle image uploadée:', imageUrl);
               data.image = imageUrl;
             } catch (error) {

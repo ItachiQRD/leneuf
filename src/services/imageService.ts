@@ -184,24 +184,38 @@ export class ImageService {
       })
       .toBuffer();
 
-    // Uploader vers Gmail uniquement
-    const messageId = await gmailStorage.uploadImage(
-      processedImageBuffer, 
-      filename, 
-      'image/webp'
-    );
-    
-    // Nettoyer le fichier temporaire
-    await fs.unlink(file.filepath);
-    
-    // Retourner l'URL Gmail
-    return gmailStorage.generateImageUrl(messageId, filename);
+    // Uploader vers Gmail ou fallback temporaire
+    try {
+      const messageId = await gmailStorage.uploadImage(
+        processedImageBuffer, 
+        filename, 
+        'image/webp'
+      );
+      
+      // Nettoyer le fichier temporaire
+      await fs.unlink(file.filepath);
+      
+      // Retourner l'URL Gmail
+      return gmailStorage.generateImageUrl(messageId, filename);
+    } catch (error) {
+      console.error('Erreur upload Gmail, utilisation du fallback temporaire:', error);
+      
+      // Fallback temporaire : stockage local pour le développement
+      await this.init();
+      const outputPath = path.join(this.uploadsDir, category, filename);
+      
+      await fs.writeFile(outputPath, processedImageBuffer);
+      await fs.unlink(file.filepath);
+      
+      // Retourner l'URL locale temporaire
+      return `/api/uploads/${category}/${filename}`;
+    }
   }
 
   async deleteImage(imageUrl: string) {
     if (!imageUrl) return;
 
-    // Supprimer uniquement depuis Gmail
+    // Supprimer depuis Gmail
     const gmailMatches = imageUrl.match(/\/api\/gmail-image\/([^\/]+)\/(.+)/);
     if (gmailMatches) {
       const [, messageId, filename] = gmailMatches;
@@ -215,8 +229,37 @@ export class ImageService {
       }
     }
 
-    // Si ce n'est pas une URL Gmail, c'est une erreur
-    console.warn('Tentative de suppression d\'une image non-Gmail:', imageUrl);
+    // Supprimer depuis le stockage local temporaire
+    const localMatches = imageUrl.match(/\/api\/uploads\/([^\/]+)\/(.+)/);
+    if (localMatches) {
+      const [, category, filename] = localMatches;
+      try {
+        const filePath = path.join(this.uploadsDir, category, filename);
+        await fs.unlink(filePath);
+        console.log(`Image locale supprimée: ${filePath}`);
+        return;
+      } catch (error) {
+        console.error('Erreur suppression image locale:', error);
+        // Ne pas lever d'erreur pour les images locales
+      }
+    }
+
+    // Ancien format d'URL (compatibilité)
+    const oldMatches = imageUrl.match(/\/uploads\/([^\/]+)\/(.+)/);
+    if (oldMatches) {
+      const [, category, filename] = oldMatches;
+      try {
+        const filePath = path.join(this.uploadsDir, category, filename);
+        await fs.unlink(filePath);
+        console.log(`Ancienne image supprimée: ${filePath}`);
+        return;
+      } catch (error) {
+        console.error('Erreur suppression ancienne image:', error);
+        // Ne pas lever d'erreur pour les anciennes images
+      }
+    }
+
+    console.warn('Format d\'URL d\'image non reconnu:', imageUrl);
   }
 }
 

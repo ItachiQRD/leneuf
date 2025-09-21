@@ -81,6 +81,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               console.error(' [API Sides] Erreur upload image:', error);
               throw new Error('Erreur lors du traitement de l\'image');
             }
+          } else if (updateData.image && typeof updateData.image === 'string') {
+            // Vérifier si l'image existante est accessible
+            const fs = require('fs');
+            const path = require('path');
+            const imagePath = path.join(process.cwd(), 'public', updateData.image);
+            
+            if (!fs.existsSync(imagePath)) {
+              console.log(' [API Sides] Image existante non trouvée, génération d\'une image placeholder...');
+              // Générer une URL placeholder ou garder l'ancienne URL
+              // Pour l'instant, on garde l'ancienne URL mais on log l'erreur
+              console.warn(' [API Sides] Image manquante:', updateData.image);
+            }
           }
 
           // Nettoyer les données (convertir les strings en numbers et supprimer les champs non nécessaires)
@@ -100,8 +112,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           // Validation et mise à jour
           try {
             console.log(' [API Sides] Données avant validation:', cleanData);
-            const validatedData = sideSchema.parse(cleanData);
+            
+            // Pour la mise à jour, on valide seulement les champs fournis
+            const updateSchema = sideSchema.partial();
+            const validatedData = updateSchema.parse(cleanData);
             console.log(' [API Sides] Données validées:', validatedData);
+            
             const side = await Side.findByIdAndUpdate(id, validatedData, { new: true });
             
             if (!side) {

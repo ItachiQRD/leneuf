@@ -1,4 +1,6 @@
+// @ts-ignore
 import { google } from 'googleapis';
+// @ts-ignore
 import { OAuth2Client } from 'google-auth-library';
 
 class GmailStorageService {

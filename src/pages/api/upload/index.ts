@@ -22,8 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    console.log('📤 [Upload API] Début upload...');
-    
+
     // Configuration formidable pour Vercel
     const form = formidable({
       keepExtensions: true,
@@ -31,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       maxFileSize: 5 * 1024 * 1024, // 5MB
       filter: ({ mimetype }) => {
         const isValid = Boolean(mimetype && mimetype.includes('image'));
-        console.log('🔍 [Upload API] Type MIME:', mimetype, 'Valide:', isValid);
+
         return isValid;
       },
       filename: (name, ext, part) => {
@@ -62,41 +61,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: 'No image uploaded' });
     }
 
-    console.log('📄 [Upload API] Fichier reçu:', {
-      originalFilename: file.originalFilename,
-      newFilename: file.newFilename,
-      mimetype: file.mimetype,
-      size: file.size
-    });
-
-    // Détecter l'environnement
-    const isVercel = process.env.VERCEL === '1';
+    // Utiliser Cloudinary pour tous les environnements
     const category = Array.isArray(fields.category) ? fields.category[0] : fields.category || 'foods';
-    
-    let imageUrl: string;
 
-    if (isVercel) {
-      // Sur Vercel, utiliser Gmail
-      console.log('☁️ [Upload API] Environnement Vercel détecté, upload vers Gmail...');
-      imageUrl = await imageService.uploadToGmail(file, category);
-      console.log('✅ [Upload API] Upload Gmail réussi:', imageUrl);
-    } else {
-      // En local, utiliser le stockage local
-      console.log('🏠 [Upload API] Environnement local détecté, upload local...');
-      imageUrl = await imageService.uploadSingleHighQualityImage(file, category);
-      console.log('✅ [Upload API] Upload local réussi:', imageUrl);
-    }
+    const imageUrl = await imageService.uploadToCloudinary(file, category);
 
     res.status(200).json({
       url: imageUrl,
       filename: file.newFilename,
       originalFilename: file.originalFilename,
       size: file.size,
-      message: `Upload successful (${isVercel ? 'Gmail' : 'local'})`
+      message: 'Upload successful (Cloudinary)'
     });
   } catch (error) {
     console.error('❌ [Upload API] Erreur:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: error instanceof Error ? error.message : 'Error uploading file',
       error: process.env.NODE_ENV === 'development' ? error : undefined
     });

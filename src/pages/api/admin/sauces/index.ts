@@ -41,24 +41,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'POST':
       try {
-        console.log(' [API Sauces] POST reçu');
-        
+
         // Vérifier le Content-Type pour déterminer le type de données
         const contentType = req.headers['content-type'];
-        
+
         let sauceData;
 
         if (contentType && contentType.includes('multipart/form-data')) {
           // FormData avec image
           const { fields, files } = await parseForm(req) as any;
-          
+
           try {
             const dataString = Array.isArray(fields.data) ? fields.data[0] : fields.data;
             if (!dataString) {
               return res.status(400).json({ message: 'Données manquantes' });
             }
             sauceData = JSON.parse(dataString);
-            console.log(' [API Sauces] Données parsées depuis FormData:', sauceData);
+
           } catch (error) {
             console.error(' [API Sauces] Erreur parsing data:', error);
             return res.status(400).json({ message: 'Données JSON invalides' });
@@ -68,9 +67,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           if (files.image) {
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadToGmail(imageFile, 'sauces');
+              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'sauces');
               sauceData.image = imageUrl;
-              console.log(' [API Sauces] Image uploadée:', imageUrl);
+
             } catch (error) {
               console.error(' [API Sauces] Erreur upload image:', error);
               return res.status(500).json({ message: 'Erreur lors du traitement de l\'image' });
@@ -81,17 +80,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         } else {
           // JSON direct
           sauceData = req.body;
-          console.log(' [API Sauces] Données JSON directes:', sauceData);
-          
+
           if (!sauceData.image || sauceData.image.trim() === '') {
             return res.status(400).json({ message: 'Une image est requise' });
           }
         }
-        
+
         if (!sauceData || typeof sauceData !== 'object') {
           return res.status(400).json({ message: 'Données invalides' });
         }
-        
+
         // Validation des champs obligatoires
         if (!sauceData.name) {
           return res.status(400).json({ message: 'Le nom est requis' });
@@ -115,18 +113,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           return res.status(400).json({ message: 'Le niveau de piquant est requis' });
         }
 
-        console.log(' [API Sauces] Données nettoyées:', sauceData);
-        console.log(' [API Sauces] Types des champs:');
         Object.entries(sauceData).forEach(([key, value]) => {
           console.log(`  ${key}: ${typeof value} = ${JSON.stringify(value)}`);
         });
-        
+
         const sauce = await Sauce.create(sauceData);
-        console.log(' [API Sauces] Sauce créée avec succès');
+
         res.status(201).json(sauce);
       } catch (error) {
         console.error(' [API Sauces] Erreur lors de la création de la sauce:', error);
-        return res.status(400).json({ 
+        return res.status(400).json({
           message: 'Erreur lors de la création de la sauce',
           error: error instanceof Error ? error.message : 'Erreur inconnue'
         });

@@ -24,7 +24,7 @@ async function parseForm(req: NextApiRequest) {
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  
+
   if (!id || typeof id !== 'string') {
     return res.status(400).json({ message: 'ID invalide' });
   }
@@ -37,7 +37,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         try {
           const { fields, files } = await parseForm(req);
           let updateData;
-          
+
           try {
             const dataString = Array.isArray(fields.data) ? fields.data[0] : fields.data;
             if (!dataString) {
@@ -66,9 +66,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           if (files.image) {
             const file = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              console.log(' [API Foods PUT] Upload de la nouvelle image...');
-              const imageUrl = await imageService.uploadToGmail(file, 'foods');
-              console.log(' [API Foods PUT] Image uploadée:', imageUrl);
+
+              const imageUrl = await imageService.uploadToCloudinary(file, 'foods');
+
               cleanData.image = imageUrl;
             } catch (error) {
               console.error(' [API Foods PUT] Erreur upload image:', error);
@@ -77,11 +77,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           }
 
           const food = await Food.findByIdAndUpdate(id, cleanData, { new: true });
-          
+
           if (!food) {
             return res.status(404).json({ message: 'Plat non trouvé' });
           }
-          
+
           return res.status(200).json(food);
         } catch (error) {
           console.error('Erreur lors de la mise à jour du plat:', error);
@@ -90,15 +90,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-          console.log(' [API Foods] Suppression du plat ID:', id);
-          
+
           const food = await Food.findByIdAndDelete(id);
-          
+
           if (!food) {
             return res.status(404).json({ message: 'Plat non trouvé' });
           }
-          
-          console.log(' [API Foods] Plat supprimé définitivement de la base de données');
+
           return res.status(200).json({ message: 'Plat supprimé avec succès' });
         } catch (error) {
           console.error('Erreur lors de la suppression du plat:', error);

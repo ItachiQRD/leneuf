@@ -13,7 +13,6 @@ export const config = {
   },
 };
 
-
 // Schéma de validation pour les plats (simplifié)
 const foodSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
@@ -33,8 +32,6 @@ const foodSchema = z.object({
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log(' [API Foods] Méthode reçue:', req.method);
-  console.log(' [API Foods] URL:', req.url);
 
   try {
     await dbConnect();
@@ -42,9 +39,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
       case 'GET':
         try {
-          console.log(' [API Foods] Récupération des plats actifs');
+
           const foods = await Food.find({ active: true }).sort({ createdAt: -1 });
-          console.log(' [API Foods] Plats récupérés:', foods.length);
+
           res.status(200).json(foods);
         } catch (error) {
           console.error(' [API Foods] Erreur récupération:', error);
@@ -54,13 +51,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'POST':
         try {
-          console.log(' [API Foods] Création d\'un nouveau plat');
-          
+
           const form = formidable({
             maxFileSize: 5 * 1024 * 1024, // 5MB
           });
 
-          console.log(' [API Foods] Parsing du formulaire...');
           const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
             form.parse(req, (err, fields, files) => {
               if (err) reject(err);
@@ -77,7 +72,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             data = typeof fields.data === 'string'
               ? JSON.parse(fields.data)
               : JSON.parse(fields.data[0]);
-            console.log(' [API Foods] Données parsées:', data);
+
           } catch (error) {
             console.error(' [API Foods] Erreur parsing JSON:', error);
             throw new Error('Format de données invalide');
@@ -85,11 +80,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
           // Gérer l'image
           if (files.image) {
-            console.log(' [API Foods] Traitement de l\'image...');
+
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadToGmail(imageFile, 'foods');
-              console.log(' [API Foods] Image uploadée:', imageUrl);
+              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'foods');
+
               data.image = imageUrl;
             } catch (error) {
               console.error(' [API Foods] Erreur upload image:', error);
@@ -127,15 +122,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           // Validation et création
           try {
             console.log(' [API Foods] Données avant validation:', JSON.stringify(cleanData, null, 2));
-            console.log(' [API Foods] Types des champs:');
+
             Object.entries(cleanData).forEach(([key, value]) => {
               console.log(`  ${key}: ${typeof value} = ${value}`);
             });
-            
+
             const validatedData = foodSchema.parse(cleanData);
-            console.log(' [API Foods] Données validées:', validatedData);
+
             const food = await Food.create(validatedData);
-            console.log(' [API Foods] Plat créé avec succès');
+
             res.status(201).json(food);
           } catch (error) {
             if (error instanceof ZodError) {
@@ -159,13 +154,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'PUT':
         try {
-          console.log(' [API Foods] Mise à jour d\'un plat');
-          
+
           const form = formidable({
             maxFileSize: 5 * 1024 * 1024, // 5MB
           });
 
-          console.log(' [API Foods] Parsing du formulaire...');
           const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
             form.parse(req, (err, fields, files) => {
               if (err) reject(err);
@@ -182,7 +175,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             data = typeof fields.data === 'string'
               ? JSON.parse(fields.data)
               : JSON.parse(fields.data[0]);
-            console.log(' [API Foods] Données parsées:', data);
+
           } catch (error) {
             console.error(' [API Foods] Erreur parsing JSON:', error);
             throw new Error('Format de données invalide');
@@ -195,11 +188,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
           // Gérer l'image si une nouvelle est fournie
           if (files.image) {
-            console.log(' [API Foods] Traitement de la nouvelle image...');
+
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadToGmail(imageFile, 'foods');
-              console.log(' [API Foods] Nouvelle image uploadée:', imageUrl);
+              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'foods');
+
               data.image = imageUrl;
             } catch (error) {
               console.error(' [API Foods] Erreur upload image:', error);
@@ -209,17 +202,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
           // Validation et mise à jour
           try {
-            console.log(' [API Foods] Données avant validation:', data);
+
             const validatedData = foodSchema.parse(data);
-            console.log(' [API Foods] Données validées:', validatedData);
-            
+
             const food = await Food.findByIdAndUpdate(data._id, validatedData, { new: true });
-            
+
             if (!food) {
               throw new Error('Plat non trouvé');
             }
-            
-            console.log(' [API Foods] Plat mis à jour avec succès');
+
             res.status(200).json(food);
           } catch (error) {
             if (error instanceof ZodError) {
@@ -241,7 +232,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         break;
 
       default:
-        console.log(' [API Foods] Méthode non autorisée:', req.method);
+
         res.setHeader('Allow', ['GET', 'POST', 'PUT']);
         return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }

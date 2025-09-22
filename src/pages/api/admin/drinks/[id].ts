@@ -13,7 +13,7 @@ export const config = {
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  
+
   if (!id || typeof id !== 'string') {
     return res.status(400).json({ message: 'ID invalide' });
   }
@@ -24,11 +24,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
       case 'PUT':
         try {
-          console.log(' [API Drinks] PUT reçu pour ID:', id);
-          
+
           // Vérifier le Content-Type pour déterminer le type de données
           const contentType = req.headers['content-type'];
-          
+
           let updateData;
 
           if (contentType && contentType.includes('multipart/form-data')) {
@@ -44,14 +43,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 resolve({ fields, files });
               });
             }) as any;
-            
+
             try {
               const dataString = Array.isArray(fields.data) ? fields.data[0] : fields.data;
               if (!dataString) {
                 return res.status(400).json({ message: 'Données manquantes' });
               }
               updateData = JSON.parse(dataString);
-              console.log(' [API Drinks] Données parsées depuis FormData:', updateData);
+
             } catch (error) {
               console.error(' [API Drinks] Erreur parsing data:', error);
               return res.status(400).json({ message: 'Données JSON invalides' });
@@ -61,9 +60,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             if (files.image) {
               const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
               try {
-                const imageUrl = await imageService.uploadToGmail(imageFile, 'drinks');
+                const imageUrl = await imageService.uploadToCloudinary(imageFile, 'drinks');
                 updateData.image = imageUrl;
-                console.log(' [API Drinks] Nouvelle image uploadée:', imageUrl);
+
               } catch (error) {
                 console.error(' [API Drinks] Erreur upload image:', error);
                 return res.status(500).json({ message: 'Erreur lors du traitement de l\'image' });
@@ -72,9 +71,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           } else {
             // JSON direct
             updateData = req.body;
-            console.log(' [API Drinks] Données JSON directes:', updateData);
+
           }
-          
+
           // Validation des champs obligatoires
           if (updateData.name && !updateData.name.trim()) {
             return res.status(400).json({ message: 'Le nom ne peut pas être vide' });
@@ -85,14 +84,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           if (updateData.nutritionalInfo && (!updateData.nutritionalInfo.calories && updateData.nutritionalInfo.calories !== 0)) {
             return res.status(400).json({ message: 'Les informations nutritionnelles sont requises' });
           }
-          
+
           const drink = await Drink.findByIdAndUpdate(id, updateData, { new: true });
-          
+
           if (!drink) {
             return res.status(404).json({ message: 'Boisson non trouvée' });
           }
-          
-          console.log(' [API Drinks] Boisson mise à jour avec succès');
+
           return res.status(200).json(drink);
         } catch (error) {
           console.error('Erreur lors de la mise à jour de la boisson:', error);
@@ -101,15 +99,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-          console.log(' [API Drinks] Suppression de la boisson ID:', id);
-          
+
           const drink = await Drink.findByIdAndDelete(id);
-          
+
           if (!drink) {
             return res.status(404).json({ message: 'Boisson non trouvée' });
           }
-          
-          console.log(' [API Drinks] Boisson supprimée définitivement de la base de données');
+
           return res.status(200).json({ message: 'Boisson supprimée avec succès' });
         } catch (error) {
           console.error('Erreur lors de la suppression de la boisson:', error);

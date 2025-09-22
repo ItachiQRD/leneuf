@@ -35,7 +35,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
 
         const [fields, files] = await form.parse(req);
-        
+
         // Extraire les données JSON
         let ingredientData = {};
         if (fields.data && fields.data[0]) {
@@ -46,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             return res.status(400).json({ message: 'Données JSON invalides' });
           }
         }
-        
+
         if (!ingredientData || typeof ingredientData !== 'object') {
           return res.status(400).json({ message: 'Données invalides' });
         }
@@ -67,7 +67,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         let imageUrl = '';
         if (files.image && files.image[0]) {
           try {
-            imageUrl = await imageService.uploadToGmail(files.image[0], 'ingredients');
+            imageUrl = await imageService.uploadToCloudinary(files.image[0], 'ingredients');
           } catch (imageError) {
             console.error('Erreur upload image:', imageError);
             return res.status(400).json({ message: 'Erreur lors de l\'upload de l\'image' });
@@ -90,7 +90,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           isVegetarian: Boolean(data.isVegetarian),
           allergens: Array.isArray(data.allergens) ? data.allergens : []
         };
-        
+
         const ingredient = await Ingredient.create(validatedData);
         res.status(201).json(ingredient);
       } catch (error) {

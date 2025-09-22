@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import fs from 'fs/promises';
 import formidable from 'formidable';
-import { gmailStorage } from './gmailStorage';
+import { cloudinaryStorage } from './cloudinaryStorage';
 
 
 export class ImageService {
@@ -80,53 +80,17 @@ export class ImageService {
     return this.uploadImage(file, category);
   }
 
-  // Méthode pour uploader vers Gmail (pour Vercel)
-  async uploadToGmail(file: any, category: string = 'foods'): Promise<string> {
+  // Méthode pour uploader vers Cloudinary (pour Vercel et local)
+  async uploadToCloudinary(file: any, category: string = 'foods'): Promise<string> {
     if (!this.categories.includes(category)) {
       throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
     }
 
-    const filename = `${uuidv4()}.webp`;
-    const imageBuffer = await fs.readFile(file.filepath);
-    const metadata = await sharp(imageBuffer).metadata();
-
-    // Optimiser l'image pour Gmail
-    const maxWidth = 1920;
-    const maxHeight = 1920;
-    
-    let targetWidth = metadata.width;
-    let targetHeight = metadata.height;
-
-    // Redimensionner seulement si l'image est trop grande
-    if (metadata.width && metadata.height) {
-      if (metadata.width > maxWidth || metadata.height > maxHeight) {
-        const ratio = Math.min(maxWidth / metadata.width, maxHeight / metadata.height);
-        targetWidth = Math.round(metadata.width * ratio);
-        targetHeight = Math.round(metadata.height * ratio);
-      }
-    }
-
-    // Traiter l'image avec Sharp
-    const processedBuffer = await sharp(imageBuffer)
-      .resize(targetWidth, targetHeight, {
-        fit: 'inside',
-        withoutEnlargement: true,
-        kernel: sharp.kernel.lanczos3
-      })
-      .sharpen({ sigma: 0.5, m1: 0.5, m2: 2, x1: 2, y2: 10 })
-      .normalize()
-      .webp({ 
-        quality: 95,
-        effort: 6,
-        smartSubsample: true
-      })
-      .toBuffer();
-
-    // Upload vers Gmail
-    const result = await gmailStorage.uploadImage(processedBuffer, filename, category);
+    // Upload vers Cloudinary
+    const result = await cloudinaryStorage.uploadImage(file, category);
 
     if (!result.success) {
-      throw new Error(`Gmail upload failed: ${result.error}`);
+      throw new Error(`Cloudinary upload failed: ${result.error}`);
     }
 
     // Nettoyer le fichier temporaire
@@ -134,6 +98,7 @@ export class ImageService {
 
     return result.imageUrl!;
   }
+
 
 }
 

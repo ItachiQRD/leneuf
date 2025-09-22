@@ -23,7 +23,7 @@ async function parseForm(req: NextApiRequest) {
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  
+
   if (!id || typeof id !== 'string') {
     return res.status(400).json({ message: 'ID invalide' });
   }
@@ -35,11 +35,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       case 'PUT':
         try {
           let updateData;
-          
+
           // Vérifier si c'est du FormData ou du JSON
           const contentType = req.headers['content-type'];
           let files: any = {};
-          
+
           if (contentType && contentType.includes('multipart/form-data')) {
             // FormData
             const { fields, files: parsedFiles } = await parseForm(req);
@@ -62,7 +62,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           if (files.image) {
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadToGmail(imageFile, 'desserts');
+              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'desserts');
               updateData.image = imageUrl;
             } catch (error) {
               console.error('Erreur upload image:', error);
@@ -81,11 +81,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           };
 
           const dessert = await Dessert.findByIdAndUpdate(id, cleanData, { new: true });
-          
+
           if (!dessert) {
             return res.status(404).json({ message: 'Dessert non trouvé' });
           }
-          
+
           return res.status(200).json(dessert);
         } catch (error) {
           console.error('Erreur lors de la mise à jour du dessert:', error);
@@ -94,15 +94,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-          console.log(' [API Desserts] Suppression du dessert ID:', id);
-          
+
           const dessert = await Dessert.findByIdAndDelete(id);
-          
+
           if (!dessert) {
             return res.status(404).json({ message: 'Dessert non trouvé' });
           }
-          
-          console.log(' [API Desserts] Dessert supprimé définitivement de la base de données');
+
           return res.status(200).json({ message: 'Dessert supprimé avec succès' });
         } catch (error) {
           console.error('Erreur lors de la suppression du dessert:', error);

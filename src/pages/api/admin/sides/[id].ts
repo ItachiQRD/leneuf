@@ -29,7 +29,7 @@ async function parseForm(req: NextApiRequest) {
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  
+
   if (!id || typeof id !== 'string') {
     return res.status(400).json({ message: 'ID invalide' });
   }
@@ -40,13 +40,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
       case 'PUT':
         try {
-          console.log(' [API Sides] Mise à jour d\'un accompagnement');
-          
+
           const form = formidable({
             maxFileSize: 5 * 1024 * 1024, // 5MB
           });
 
-          console.log(' [API Sides] Parsing du formulaire...');
           const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
             form.parse(req, (err, fields, files) => {
               if (err) reject(err);
@@ -63,7 +61,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             updateData = typeof fields.data === 'string'
               ? JSON.parse(fields.data)
               : JSON.parse(fields.data[0]);
-            console.log(' [API Sides] Données parsées:', updateData);
+
           } catch (error) {
             console.error(' [API Sides] Erreur parsing JSON:', error);
             throw new Error('Format de données invalide');
@@ -71,11 +69,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
           // Gérer l'image si une nouvelle image est fournie
           if (files.image) {
-            console.log(' [API Sides] Traitement de la nouvelle image...');
+
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadToGmail(imageFile, 'sides');
-              console.log(' [API Sides] Nouvelle image uploadée:', imageUrl);
+              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'sides');
+
               updateData.image = imageUrl;
             } catch (error) {
               console.error(' [API Sides] Erreur upload image:', error);
@@ -86,9 +84,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             const fs = require('fs');
             const path = require('path');
             const imagePath = path.join(process.cwd(), 'public', updateData.image);
-            
+
             if (!fs.existsSync(imagePath)) {
-              console.log(' [API Sides] Image existante non trouvée, génération d\'une image placeholder...');
+
               // Générer une URL placeholder ou garder l'ancienne URL
               // Pour l'instant, on garde l'ancienne URL mais on log l'erreur
               console.warn(' [API Sides] Image manquante:', updateData.image);
@@ -111,20 +109,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
           // Validation et mise à jour
           try {
-            console.log(' [API Sides] Données avant validation:', cleanData);
-            
+
             // Pour la mise à jour, on valide seulement les champs fournis
             const updateSchema = sideSchema.partial();
             const validatedData = updateSchema.parse(cleanData);
-            console.log(' [API Sides] Données validées:', validatedData);
-            
+
             const side = await Side.findByIdAndUpdate(id, validatedData, { new: true });
-            
+
             if (!side) {
               return res.status(404).json({ message: 'Accompagnement non trouvé' });
             }
-            
-            console.log(' [API Sides] Accompagnement mis à jour avec succès');
+
             return res.status(200).json(side);
           } catch (error) {
             if (error instanceof ZodError) {
@@ -146,15 +141,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-          console.log(' [API Sides] Suppression de l\'accompagnement ID:', id);
-          
+
           const side = await Side.findByIdAndDelete(id);
-          
+
           if (!side) {
             return res.status(404).json({ message: 'Accompagnement non trouvé' });
           }
-          
-          console.log(' [API Sides] Accompagnement supprimé définitivement de la base de données');
+
           return res.status(200).json({ message: 'Accompagnement supprimé avec succès' });
         } catch (error) {
           console.error('Erreur lors de la suppression de l\'accompagnement:', error);

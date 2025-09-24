@@ -80,15 +80,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </Link>
           </nav>
 
-          {/* Bouton Commander au centre */}
-          <div className="hidden md:flex">
-            <Link
-              href="/commander"
-              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-            >
-              🍔 Commander
-            </Link>
-          </div>
 
           {/* Liens à droite */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -203,14 +194,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 ? 'bg-white dark:bg-gray-900' 
                 : 'bg-white/95 backdrop-blur-sm'
             }`}>
-              {/* Bouton Commander en mobile */}
-              <Link
-                href="/commander"
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🍔 Commander
-              </Link>
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <Link

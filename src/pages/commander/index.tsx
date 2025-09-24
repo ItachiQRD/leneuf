@@ -1,15 +1,56 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Plus, Minus, Trash2, Clock, MapPin, Phone } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, Clock, MapPin, Phone, Menu } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function CommanderPage() {
-  const { items, updateQuantity, removeItem, clearCart, total, itemCount } = useCart();
+  const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
   const { isAuthenticated, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('sandwichs');
+
+  // Données de menu simulées
+  const menuCategories = [
+    { id: 'sandwichs', name: 'Sandwichs', active: true },
+    { id: 'burgers', name: 'Burgers', active: false },
+    { id: 'pizzas', name: 'Pizzas', active: false },
+    { id: 'assiettes', name: 'Assiettes', active: false },
+    { id: 'accompagnements', name: 'Accompagnements', active: false },
+    { id: 'tacos', name: 'Tacos / Bowls', active: false },
+    { id: 'paninis', name: 'Paninis', active: false },
+    { id: 'boissons', name: 'Boissons', active: false },
+  ];
+
+  // Articles simulés
+  const menuItems = [
+    {
+      id: '1',
+      name: 'Sandwich Poulet',
+      price: 6.50,
+      image: '/images/sandwich-poulet.jpg',
+      category: 'sandwichs',
+      description: 'Poulet grillé, salade, tomate, oignon'
+    },
+    {
+      id: '2',
+      name: 'Sandwich Thon',
+      price: 5.50,
+      image: '/images/sandwich-thon.jpg',
+      category: 'sandwichs',
+      description: 'Thon, salade, tomate, cornichons'
+    },
+    {
+      id: '3',
+      name: 'Tacos / Bowls',
+      price: 5.50,
+      image: '/images/tacos-bowls.jpg',
+      category: 'tacos',
+      description: 'Tacos ou bowl au choix'
+    }
+  ];
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -19,25 +60,29 @@ export default function CommanderPage() {
     }
   };
 
+  const handleAddToCart = (item: any) => {
+    const cartItem = {
+      _id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      category: item.category,
+      type: 'food' as const
+    };
+    addItem(cartItem);
+  };
+
   const handleCheckout = async () => {
     if (!isAuthenticated) {
-      // Rediriger vers la page de connexion
       window.location.href = '/auth/login?redirect=/commander';
       return;
     }
 
     setIsLoading(true);
     try {
-      // Ici on peut ajouter la logique de commande
       console.log('Commande en cours...', { items, total });
-      
-      // Simulation d'une commande
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Vider le panier après commande
       clearCart();
-      
-      // Rediriger vers une page de confirmation
       window.location.href = '/commande-confirmee';
     } catch (error) {
       console.error('Erreur lors de la commande:', error);
@@ -46,174 +91,161 @@ export default function CommanderPage() {
     }
   };
 
-  if (items.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
-        <div className="container mx-auto px-4 py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <ShoppingCart className="w-24 h-24 text-gray-400 mx-auto mb-6" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Votre panier est vide
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Découvrez nos délicieux plats et ajoutez-les à votre panier
-            </p>
-            <Link
-              href="/menu"
-              className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Voir le menu
-            </Link>
-          </motion.div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-4xl mx-auto"
-        >
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-            Votre commande
-          </h1>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Panier */}
-            <div className="lg:col-span-2">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                  Articles ({itemCount})
-                </h2>
-                
-                <div className="space-y-4">
-                  {items.map((item) => (
-                    <motion.div
-                      key={item._id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
-                    >
-                      <div className="relative w-20 h-20 flex-shrink-0">
-                        <Image
-                          src={item.image || '/images/placeholder-food.jpg'}
-                          alt={item.name}
-                          fill
-                          className="object-cover rounded-lg"
-                        />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white truncate">
-                          {item.name}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {item.category || item.type}
-                        </p>
-                        <p className="text-lg font-semibold text-green-600">
-                          {(item.price * item.quantity).toFixed(2)} €
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                          className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                        >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <span className="w-8 text-center font-medium">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                          className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => removeItem(item._id)}
-                          className="p-2 rounded-full bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 text-red-600"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Résumé de commande */}
-            <div className="lg:col-span-1">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 sticky top-24">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                  Résumé de commande
-                </h2>
-                
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Sous-total</span>
-                    <span className="font-medium">{total.toFixed(2)} €</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Livraison</span>
-                    <span className="font-medium text-green-600">Gratuite</span>
-                  </div>
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>Total</span>
-                      <span className="text-green-600">{total.toFixed(2)} €</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Informations de livraison */}
-                <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <h3 className="font-medium text-gray-900 dark:text-white mb-3">
-                    Informations de livraison
-                  </h3>
-                  <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-2" />
-                      <span>30-45 minutes</span>
-                    </div>
-                    <div className="flex items-center">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      <span>Zone de livraison</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Phone className="w-4 h-4 mr-2" />
-                      <span>01 23 45 67 89</span>
-                    </div>
-                  </div>
-                </div>
-
+    <div className="min-h-screen bg-gray-100 pt-20">
+      <div className="flex h-screen">
+        {/* Menu de gauche */}
+        <div className="w-64 bg-white shadow-lg">
+          <div className="p-6">
+            <h2 className="text-2xl font-bold text-red-600 mb-6">Menu</h2>
+            <nav className="space-y-2">
+              {menuCategories.map((category) => (
                 <button
-                  onClick={handleCheckout}
-                  disabled={isLoading}
-                  className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                    selectedCategory === category.id
+                      ? 'bg-red-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
-                  {isLoading ? 'Commande en cours...' : 'Confirmer la commande'}
+                  {category.name}
                 </button>
+              ))}
+            </nav>
+          </div>
+        </div>
 
-                {!isAuthenticated && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 text-center">
-                    Vous devez être connecté pour commander
-                  </p>
-                )}
+        {/* Contenu central - Articles */}
+        <div className="flex-1 p-6 overflow-y-auto">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            {menuCategories.find(c => c.id === selectedCategory)?.name}
+          </h1>
+          
+          <div className="space-y-4">
+            {menuItems
+              .filter(item => item.category === selectedCategory)
+              .map((item) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
+                >
+                  <div className="relative w-24 h-24 flex-shrink-0">
+                    <Image
+                      src={item.image || '/images/placeholder-food.jpg'}
+                      alt={item.name}
+                      fill
+                      className="object-cover rounded-lg"
+                    />
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {item.name}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {item.description}
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center space-x-4">
+                    <span className="text-xl font-bold text-red-600">
+                      {item.price.toFixed(2)} €
+                    </span>
+                    <button
+                      onClick={() => handleAddToCart(item)}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      Ajouter
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+          </div>
+        </div>
+
+        {/* Panier de droite */}
+        <div className="w-80 bg-white shadow-lg">
+          <div className="p-6">
+            <div className="flex items-center mb-6">
+              <ShoppingCart className="w-6 h-6 text-gray-600 mr-2" />
+              <h2 className="text-xl font-bold text-gray-900">Panier</h2>
+            </div>
+            
+            {items.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">Votre panier est vide</p>
               </div>
+            ) : (
+              <div className="space-y-4 mb-6">
+                {items.map((item) => (
+                  <div key={item._id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="relative w-12 h-12 flex-shrink-0">
+                      <Image
+                        src={item.image || '/images/placeholder-food.jpg'}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded"
+                      />
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium text-gray-900 truncate">
+                        {item.name}
+                      </h4>
+                      <p className="text-xs text-gray-500">
+                        {(item.price * item.quantity).toFixed(2)} €
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                        className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="w-6 text-center text-sm font-medium">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                        className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="border-t pt-4">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-lg font-semibold text-gray-900">Total</span>
+                <span className="text-lg font-bold text-gray-900">
+                  {total.toFixed(2)} €
+                </span>
+              </div>
+              
+              <button
+                onClick={handleCheckout}
+                disabled={isLoading || items.length === 0}
+                className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+              >
+                {isLoading ? 'Commande en cours...' : 'Commander'}
+              </button>
+              
+              {!isAuthenticated && (
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  Vous devez être connecté pour commander
+                </p>
+              )}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

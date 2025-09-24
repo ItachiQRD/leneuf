@@ -80,14 +80,26 @@ export class ImageService {
     return this.uploadImage(file, category);
   }
 
+  /**
+   * Supprime une image de Cloudinary
+   */
+  async deleteFromCloudinary(imageUrl: string): Promise<boolean> {
+    try {
+      return await cloudinaryStorage.deleteImageByUrl(imageUrl);
+    } catch (error) {
+      console.error('Erreur suppression image Cloudinary:', error);
+      return false;
+    }
+  }
+
   // Méthode pour uploader vers Cloudinary (pour Vercel et local)
-  async uploadToCloudinary(file: any, category: string = 'foods'): Promise<string> {
+  async uploadToCloudinary(file: any, category: string = 'foods', productName?: string): Promise<string> {
     if (!this.categories.includes(category)) {
       throw new Error(`Invalid category: ${category}. Must be one of: ${this.categories.join(', ')}`);
     }
 
     // Upload vers Cloudinary
-    const result = await cloudinaryStorage.uploadImage(file, category);
+    const result = await cloudinaryStorage.uploadImage(file, category, productName);
 
     if (!result.success) {
       throw new Error(`Cloudinary upload failed: ${result.error}`);

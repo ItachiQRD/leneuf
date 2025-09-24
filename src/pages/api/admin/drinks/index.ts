@@ -11,19 +11,6 @@ export const config = {
   },
 };
 
-async function parseForm(req: NextApiRequest) {
-  const form = formidable({
-    keepExtensions: true,
-    maxFileSize: 5 * 1024 * 1024, // 5MB
-  });
-
-  return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
-    });
-  });
-}
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect();
@@ -41,78 +28,61 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'POST':
       try {
+        const form = formidable({
+          maxFileSize: 5 * 1024 * 1024, // 5MB
+        });
 
-        // Vérifier le Content-Type pour déterminer le type de données
-        const contentType = req.headers['content-type'];
+        const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) reject(err);
+            resolve([fields, files]);
+          });
+        });
 
-        let drinkData;
+        if (!fields.data) {
+          throw new Error('Données manquantes');
+        }
 
-        if (contentType && contentType.includes('multipart/form-data')) {
-          // FormData avec image
-          const { fields, files } = await parseForm(req) as any;
+        let data;
+        try {
+          data = typeof fields.data === 'string'
+            ? JSON.parse(fields.data)
+            : JSON.parse(fields.data[0]);
+        } catch (error) {
+          throw new Error('Format de données invalide');
+        }
 
+        // Gérer l'image
+        if (files.image) {
+          const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
           try {
-            const dataString = Array.isArray(fields.data) ? fields.data[0] : fields.data;
-            if (!dataString) {
-              return res.status(400).json({ message: 'Données manquantes' });
-            }
-            drinkData = JSON.parse(dataString);
-
+            const imageUrl = await imageService.uploadToCloudinary(imageFile, 'drinks', data.name);
+            data.image = imageUrl;
           } catch (error) {
-            console.error(' [API Drinks] Erreur parsing data:', error);
-            return res.status(400).json({ message: 'Données JSON invalides' });
+            throw new Error('Erreur lors du traitement de l\'image');
           }
-
-          // Gérer l'upload d'image
-          if (files.image) {
-            const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
-            try {
-              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'drinks');
-              drinkData.image = imageUrl;
-
-            } catch (error) {
-              console.error(' [API Drinks] Erreur upload image:', error);
-              return res.status(500).json({ message: 'Erreur lors du traitement de l\'image' });
-            }
-          } else if (!drinkData.image || drinkData.image.trim() === '') {
-            return res.status(400).json({ message: 'Une image est requise' });
-          }
-        } else {
-          // JSON direct
-          drinkData = req.body;
-
-          if (!drinkData.image || drinkData.image.trim() === '') {
-            return res.status(400).json({ message: 'Une image est requise' });
-          }
+        } else if (!data.image) {
+          throw new Error('Une image est requise');
         }
 
-        if (!drinkData || typeof drinkData !== 'object') {
-          return res.status(400).json({ message: 'Données invalides' });
-        }
+        // Nettoyer les données
+        const cleanData = {
+          ...data,
+          price: typeof data.price === 'string' ? parseFloat(data.price) : data.price,
+          sizes: data.sizes ? data.sizes.map((size: any) => ({
+            ...size,
+            price: typeof size.price === 'string' ? parseFloat(size.price) : size.price
+          })) : data.sizes || []
+        };
 
-        // Validation des champs obligatoires
-        if (!drinkData.name) {
-          return res.status(400).json({ message: 'Le nom est requis' });
-        }
-        if (!drinkData.type) {
-          return res.status(400).json({ message: 'Le type est requis' });
-        }
-        if (!drinkData.sizes || drinkData.sizes.length === 0) {
-          return res.status(400).json({ message: 'Au moins une taille est requise' });
-        }
-        if (!drinkData.nutritionalInfo) {
-          return res.status(400).json({ message: 'Les informations nutritionnelles sont requises' });
-        }
-
-        // Utiliser create() au lieu de new + save() pour une meilleure validation
-        const drink = await Drink.create(drinkData);
-
+        // Validation et création
+        const drink = await Drink.create(cleanData);
         res.status(201).json(drink);
       } catch (error) {
-        console.error(' [API Drinks] Erreur lors de la création de la boisson:', error);
-        return res.status(400).json({
+        console.error('Erreur lors de la création de la boisson:', error);
+        res.status(500).json({
           message: 'Erreur lors de la création de la boisson',
-          error: error instanceof Error ? error.message : 'Erreur inconnue'
+          error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
         });
       }
       break;

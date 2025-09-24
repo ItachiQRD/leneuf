@@ -57,7 +57,7 @@ export class CloudinaryStorageService {
   /**
    * Upload une image vers Cloudinary
    */
-  async uploadImage(imageFile: any, category: string = 'foods'): Promise<UploadResult> {
+  async uploadImage(imageFile: any, category: string = 'foods', productName?: string): Promise<UploadResult> {
     try {
       console.log(`[CloudinaryStorage] Uploading image to category: ${category}`);
 
@@ -75,10 +75,14 @@ export class CloudinaryStorageService {
       imageStream.push(imageBuffer);
       imageStream.push(null);
 
+      // Générer un nom de fichier basé sur le nom du produit
+      const publicId = this.generatePublicId(productName, category);
+
       // Upload vers Cloudinary
       const result = await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           {
+            public_id: publicId,
             folder: `fast-food-app/${category}`,
             resource_type: 'auto',
             transformation: [
@@ -115,6 +119,32 @@ export class CloudinaryStorageService {
         error: error instanceof Error ? error.message : 'Unknown error'
       };
     }
+  }
+
+  /**
+   * Génère un publicId basé sur le nom du produit
+   */
+  private generatePublicId(productName: string | undefined, category: string): string {
+    if (!productName) {
+      // Si pas de nom de produit, utiliser un nom aléatoire
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2, 8);
+      return `${category}-${timestamp}-${random}`;
+    }
+
+    // Nettoyer le nom du produit pour créer un nom de fichier valide
+    const cleanName = productName
+      .toLowerCase()
+      .normalize('NFD') // Normaliser les caractères accentués
+      .replace(/[\u0300-\u036f]/g, '') // Supprimer les accents
+      .replace(/[^a-z0-9\s-]/g, '') // Garder seulement lettres, chiffres, espaces et tirets
+      .replace(/\s+/g, '-') // Remplacer les espaces par des tirets
+      .replace(/-+/g, '-') // Supprimer les tirets multiples
+      .replace(/^-|-$/g, ''); // Supprimer les tirets en début/fin
+
+    // Ajouter un timestamp pour éviter les conflits
+    const timestamp = Date.now();
+    return `${category}-${cleanName}-${timestamp}`;
   }
 
   /**
@@ -155,6 +185,38 @@ export class CloudinaryStorageService {
       ...transformations,
       secure: true
     });
+  }
+
+  /**
+   * Extrait le publicId d'une URL Cloudinary
+   */
+  extractPublicIdFromUrl(imageUrl: string): string | null {
+    try {
+      // Pattern pour extraire le publicId d'une URL Cloudinary
+      // Ex: https://res.cloudinary.com/cloud-name/image/upload/v1234567890/fast-food-app/foods/image.webp
+      const match = imageUrl.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]+)?$/);
+      return match ? match[1] : null;
+    } catch (error) {
+      console.error('[CloudinaryStorage] Erreur extraction publicId:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Supprime une image à partir de son URL Cloudinary
+   */
+  async deleteImageByUrl(imageUrl: string): Promise<boolean> {
+    try {
+      const publicId = this.extractPublicIdFromUrl(imageUrl);
+      if (!publicId) {
+        console.warn('[CloudinaryStorage] Impossible d\'extraire le publicId de l\'URL:', imageUrl);
+        return false;
+      }
+      return await this.deleteImage(publicId);
+    } catch (error) {
+      console.error('[CloudinaryStorage] Erreur suppression par URL:', error);
+      return false;
+    }
   }
 }
 

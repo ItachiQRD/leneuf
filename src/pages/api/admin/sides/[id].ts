@@ -69,11 +69,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
           // Gérer l'image si une nouvelle image est fournie
           if (files.image) {
-
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'sides');
-
+              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'sides', updateData.name);
               updateData.image = imageUrl;
             } catch (error) {
               console.error(' [API Sides] Erreur upload image:', error);
@@ -141,12 +139,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-
-          const side = await Side.findByIdAndDelete(id);
-
+          // Récupérer l'accompagnement avant suppression pour obtenir l'URL de l'image
+          const side = await Side.findById(id);
+          
           if (!side) {
             return res.status(404).json({ message: 'Accompagnement non trouvé' });
           }
+
+          // Supprimer l'image de Cloudinary si elle existe
+          if (side.image) {
+            try {
+              await imageService.deleteFromCloudinary(side.image);
+            } catch (error) {
+              console.error('Erreur suppression image Cloudinary:', error);
+              // On continue la suppression même si l'image n'a pas pu être supprimée
+            }
+          }
+
+          // Supprimer l'accompagnement de la base de données
+          await Side.findByIdAndDelete(id);
 
           return res.status(200).json({ message: 'Accompagnement supprimé avec succès' });
         } catch (error) {

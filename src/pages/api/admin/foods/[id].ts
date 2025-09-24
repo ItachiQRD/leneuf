@@ -67,7 +67,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             const file = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
 
-              const imageUrl = await imageService.uploadToCloudinary(file, 'foods');
+              const imageUrl = await imageService.uploadToCloudinary(file, 'foods', updateData.name);
 
               cleanData.image = imageUrl;
             } catch (error) {
@@ -90,12 +90,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       case 'DELETE':
         try {
-
-          const food = await Food.findByIdAndDelete(id);
-
+          // Récupérer le plat avant suppression pour obtenir l'URL de l'image
+          const food = await Food.findById(id);
+          
           if (!food) {
             return res.status(404).json({ message: 'Plat non trouvé' });
           }
+
+          // Supprimer l'image de Cloudinary si elle existe
+          if (food.image) {
+            try {
+              await imageService.deleteFromCloudinary(food.image);
+            } catch (error) {
+              console.error('Erreur suppression image Cloudinary:', error);
+              // On continue la suppression même si l'image n'a pas pu être supprimée
+            }
+          }
+
+          // Supprimer le plat de la base de données
+          await Food.findByIdAndDelete(id);
 
           return res.status(200).json({ message: 'Plat supprimé avec succès' });
         } catch (error) {

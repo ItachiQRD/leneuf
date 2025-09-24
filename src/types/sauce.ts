@@ -32,16 +32,15 @@ const nutritionalInfoSchema = z.object({
 });
 
 export const sauceSchema = z.object({
-  _id: z.string().optional(),
-  type: z.enum(['mayo', 'ketchup', 'bbq', 'special', 'hot']),
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  type: z.enum(['mayo', 'ketchup', 'bbq', 'special', 'hot']),
   description: z.string().min(10, "La description doit être plus détaillée"),
-  price: z.number().min(0, "Le prix doit être positif").or(z.string().transform(val => Number(val))),
+  price: z.number().min(0, "Le prix doit être positif"),
   image: z.string(),
-  available: z.boolean().default(true),
-  allergens: z.array(z.string()).default([]),
+  available: z.boolean(),
+  allergens: z.array(z.string()),
   nutritionalInfo: nutritionalInfoSchema,
-  spicyLevel: z.enum(['mild', 'medium', 'hot']).default('mild')
+  spicyLevel: z.enum(['mild', 'medium', 'hot'])
 });
 
 // Interface pour la création/mise à jour

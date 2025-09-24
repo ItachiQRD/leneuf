@@ -28,77 +28,63 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'POST':
       try {
-        // Configuration de formidable pour gérer les uploads
         const form = formidable({
-          maxFileSize: 10 * 1024 * 1024, // 10MB
-          keepExtensions: true,
+          maxFileSize: 5 * 1024 * 1024, // 5MB
         });
 
-        const [fields, files] = await form.parse(req);
+        const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) reject(err);
+            resolve([fields, files]);
+          });
+        });
 
-        // Extraire les données JSON
-        let ingredientData = {};
-        if (fields.data && fields.data[0]) {
+        if (!fields.data) {
+          throw new Error('Données manquantes');
+        }
+
+        let data;
+        try {
+          data = typeof fields.data === 'string'
+            ? JSON.parse(fields.data)
+            : JSON.parse(fields.data[0]);
+        } catch (error) {
+          throw new Error('Format de données invalide');
+        }
+
+        // Gérer l'image
+        if (files.image) {
+          const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
           try {
-            ingredientData = JSON.parse(fields.data[0]);
-          } catch (parseError) {
-            console.error('Erreur parsing data:', parseError);
-            return res.status(400).json({ message: 'Données JSON invalides' });
+            const imageUrl = await imageService.uploadToCloudinary(imageFile, 'ingredients', data.name);
+            data.image = imageUrl;
+          } catch (error) {
+            throw new Error('Erreur lors du traitement de l\'image');
           }
+        } else if (!data.image) {
+          throw new Error('Une image est requise');
         }
 
-        if (!ingredientData || typeof ingredientData !== 'object') {
-          return res.status(400).json({ message: 'Données invalides' });
-        }
-
-        // Validation des champs requis
-        const data = ingredientData as any;
-        if (!data.name) {
-          return res.status(400).json({ message: 'Le nom est requis' });
-        }
-        if (!data.type) {
-          return res.status(400).json({ message: 'Le type est requis' });
-        }
-        if (data.price === undefined || data.price === null) {
-          return res.status(400).json({ message: 'Le prix est requis' });
-        }
-
-        // Gestion de l'image
-        let imageUrl = '';
-        if (files.image && files.image[0]) {
-          try {
-            imageUrl = await imageService.uploadToCloudinary(files.image[0], 'ingredients');
-          } catch (imageError) {
-            console.error('Erreur upload image:', imageError);
-            return res.status(400).json({ message: 'Erreur lors de l\'upload de l\'image' });
-          }
-        } else if (data.image && typeof data.image === 'string') {
-          // Si c'est déjà une URL (pour les mises à jour)
-          imageUrl = data.image;
-        } else {
-          return res.status(400).json({ message: 'L\'image est requise' });
-        }
-
-        // Conversion des types
-        const validatedData = {
+        // Nettoyer les données
+        const cleanData = {
           ...data,
-          image: imageUrl,
-          price: parseFloat(data.price),
-          orderIndex: parseInt(data.orderIndex) || 0,
+          price: typeof data.price === 'string' ? parseFloat(data.price) : data.price,
+          orderIndex: typeof data.orderIndex === 'string' ? parseInt(data.orderIndex) : data.orderIndex || 0,
           isAvailable: Boolean(data.isAvailable),
           isSpicy: Boolean(data.isSpicy),
           isVegetarian: Boolean(data.isVegetarian),
           allergens: Array.isArray(data.allergens) ? data.allergens : []
         };
 
-        const ingredient = await Ingredient.create(validatedData);
+        // Validation et création
+        const ingredient = await Ingredient.create(cleanData);
         res.status(201).json(ingredient);
       } catch (error) {
         console.error('Erreur lors de la création de l\'ingrédient:', error);
-        if (error instanceof Error) {
-          return res.status(400).json({ message: error.message });
-        }
-        return res.status(400).json({ message: 'Erreur lors de la création de l\'ingrédient' });
+        res.status(500).json({
+          message: 'Erreur lors de la création de l\'ingrédient',
+          error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
+        });
       }
       break;
 

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dessert, DessertInput, DessertType } from '@/types/dessert';
 import { useProducts } from '@/contexts/ProductContext';
-import { useToast } from '@/hooks/use-toast';
 import { isFile } from '@/utils/fileUtils';
 import { Button } from '@/components/ui/Buttons';
 import { motion } from 'framer-motion';
@@ -96,7 +95,6 @@ export default function DessertForm({
 }: DessertFormProps) {
   const [activeSection, setActiveSection] = useState('basic');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
   const { createDessert, updateDessert } = useProducts();
 
   const form = useForm<DessertInput>({
@@ -175,11 +173,7 @@ export default function DessertForm({
       onSubmit();
     } catch (error) {
       console.error(' [DessertForm] Erreur:', error);
-      toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Une erreur est survenue",
-        variant: "destructive"
-      });
+      // Le ProductContext gère déjà l'affichage des toasts d'erreur
     } finally {
       setIsSubmitting(false);
     }

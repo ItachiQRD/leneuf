@@ -80,32 +80,26 @@ export interface FoodBase {
 }
 
 export const FoodSchema = z.object({
-  _id: z.string().optional(),
   name: z.string().min(1, 'Le nom est requis'),
-  price: z.number().min(0, 'Le prix doit être positif').optional().or(z.undefined()),
-  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'kids_menu', 'small_hunger'], {
-    errorMap: () => ({ message: 'Type de plat invalide' })
-  }),
-  category: z.enum(['bestseller', 'new', 'regular'], {
-    errorMap: () => ({ message: 'Catégorie invalide' })
-  }),
-  image: z.string().optional(),
-  baseIngredients: z.array(z.string()).default([]),
+  price: z.number().min(0, 'Le prix doit être positif'),
+  type: z.enum(['burger', 'pizza', 'salad', 'sandwich_durum', 'paninis', 'plates', 'kids_menu', 'small_hunger']),
+  category: z.enum(['bestseller', 'new', 'regular']),
+  image: z.string(),
+  baseIngredients: z.array(z.string()),
   preparationTimeMinutes: z.number().min(1, 'Le temps de préparation est requis'),
-  available: z.boolean().default(true),
+  available: z.boolean(),
   nutritionalInfo: z.object({
-    calories: z.number().min(0).default(0),
-    proteins: z.number().min(0).default(0),
-    carbs: z.number().min(0).default(0),
-    fats: z.number().min(0).default(0),
-    servingSize: z.string().default('100g')
+    calories: z.number().min(0),
+    proteins: z.number().min(0),
+    carbs: z.number().min(0),
+    fats: z.number().min(0),
+    servingSize: z.string()
   }),
-  isVegan: z.boolean().default(false),
-  isVegetarian: z.boolean().default(false),
-  isGlutenFree: z.boolean().default(false),
-  allergens: z.array(z.string()).default([]),
-  spicyLevel: z.enum(['mild', 'medium', 'hot', 'extra_hot']).default('mild'),
-  active: z.boolean().optional()
+  isVegan: z.boolean(),
+  isVegetarian: z.boolean(),
+  isGlutenFree: z.boolean(),
+  allergens: z.array(z.string()),
+  spicyLevel: z.enum(['mild', 'medium', 'hot', 'extra_hot'])
 });
 
 // Type pour le formulaire

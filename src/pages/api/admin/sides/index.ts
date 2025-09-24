@@ -73,7 +73,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         if (files.image) {
           const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
           try {
-            const imageUrl = await imageService.uploadToCloudinary(imageFile, 'sides');
+            const imageUrl = await imageService.uploadToCloudinary(imageFile, 'sides', data.name);
             data.image = imageUrl;
           } catch (error) {
             throw new Error('Erreur lors du traitement de l\'image');

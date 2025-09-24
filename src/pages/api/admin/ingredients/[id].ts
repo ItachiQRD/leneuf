@@ -136,21 +136,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           return res.status(404).json({ message: 'Ingrédient non trouvé' });
         }
 
-        // Supprimer l'image si elle existe
+        // Supprimer l'image de Cloudinary si elle existe
         if (ingredient.image) {
-          const imagePath = path.join(
-            process.cwd(),
-            'public',
-            ingredient.image.replace(/^\//, '')
-          );
-          if (fs.existsSync(imagePath)) {
-            fs.unlinkSync(imagePath);
+          try {
+            await imageService.deleteFromCloudinary(ingredient.image);
+          } catch (error) {
+            console.error('Erreur suppression image Cloudinary:', error);
+            // On continue la suppression même si l'image n'a pas pu être supprimée
           }
         }
 
         // Supprimer définitivement de la base de données
         await Ingredient.findByIdAndDelete(id);
-        console.log(' [API Ingredients] Ingrédient supprimé définitivement de la base de données');
         return res.status(200).json({ message: 'Ingrédient supprimé avec succès' });
       }
 

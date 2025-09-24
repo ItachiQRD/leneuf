@@ -4,6 +4,8 @@ import Dessert from '@/models/Dessert';
 import { withAdmin } from '@/utils/api';
 import formidable from 'formidable';
 import { imageService } from '@/services/imageService';
+import { dessertSchema } from '@/types/dessert';
+import { ZodError } from 'zod';
 
 export const config = {
   api: {
@@ -11,19 +13,6 @@ export const config = {
   },
 };
 
-async function parseForm(req: NextApiRequest) {
-  const form = formidable({
-    keepExtensions: true,
-    maxFileSize: 5 * 1024 * 1024, // 5MB
-  });
-
-  return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
-    });
-  });
-}
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect();
@@ -41,76 +30,72 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'POST':
       try {
+        const form = formidable({
+          maxFileSize: 5 * 1024 * 1024, // 5MB
+        });
 
-        // Vérifier le Content-Type pour déterminer le type de données
-        const contentType = req.headers['content-type'];
+        const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) reject(err);
+            resolve([fields, files]);
+          });
+        });
 
-        let dessertData;
-        let imageUrl = '';
+        if (!fields.data) {
+          throw new Error('Données manquantes');
+        }
 
-        if (contentType && contentType.includes('multipart/form-data')) {
-          // FormData avec image
-          const { fields, files } = await parseForm(req) as any;
+        let data;
+        try {
+          data = typeof fields.data === 'string'
+            ? JSON.parse(fields.data)
+            : JSON.parse(fields.data[0]);
+        } catch (error) {
+          throw new Error('Format de données invalide');
+        }
 
+        // Gérer l'image
+        if (files.image) {
+          const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
           try {
-            const dataString = Array.isArray(fields.data) ? fields.data[0] : fields.data;
-            if (!dataString) {
-              return res.status(400).json({ message: 'Données manquantes' });
-            }
-            dessertData = JSON.parse(dataString);
-
+            const imageUrl = await imageService.uploadToCloudinary(imageFile, 'desserts', data.name);
+            data.image = imageUrl;
           } catch (error) {
-            console.error(' [API Desserts] Erreur parsing data:', error);
-            return res.status(400).json({ message: 'Données JSON invalides' });
+            throw new Error('Erreur lors du traitement de l\'image');
           }
-
-          // Gérer l'upload d'image
-          if (files.image) {
-            const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
-            try {
-              imageUrl = await imageService.uploadToCloudinary(imageFile, 'desserts');
-
-            } catch (error) {
-              console.error(' [API Desserts] Erreur upload image:', error);
-              return res.status(500).json({ message: 'Erreur lors du traitement de l\'image' });
-            }
-          } else {
-            return res.status(400).json({ message: 'Une image est requise' });
-          }
-        } else {
-          // JSON direct
-          dessertData = req.body;
-
-          if (dessertData.image && typeof dessertData.image === 'string') {
-            imageUrl = dessertData.image;
-          } else {
-            return res.status(400).json({ message: 'Une image est requise' });
-          }
+        } else if (!data.image) {
+          throw new Error('Une image est requise');
         }
 
-        if (!dessertData || typeof dessertData !== 'object') {
-          return res.status(400).json({ message: 'Données invalides' });
-        }
-
-        // Nettoyer les données (convertir les strings en numbers)
+        // Nettoyer les données
         const cleanData = {
-          ...dessertData,
-          image: imageUrl,
-          price: typeof dessertData.price === 'string' ? parseFloat(dessertData.price) : dessertData.price,
-          sizes: dessertData.sizes ? dessertData.sizes.map((size: any) => ({
+          ...data,
+          price: typeof data.price === 'string' ? parseFloat(data.price) : data.price,
+          sizes: data.sizes ? data.sizes.map((size: any) => ({
             ...size,
             price: typeof size.price === 'string' ? parseFloat(size.price) : size.price
-          })) : dessertData.sizes || []
+          })) : data.sizes || []
         };
 
-        const dessert = await Dessert.create(cleanData);
-
-        res.status(201).json(dessert);
+        // Validation et création
+        try {
+          const validatedData = dessertSchema.parse(cleanData);
+          const dessert = await Dessert.create(validatedData);
+          res.status(201).json(dessert);
+        } catch (error) {
+          if (error instanceof ZodError) {
+            return res.status(400).json({
+              message: 'Erreur de validation',
+              errors: error.errors
+            });
+          }
+          throw error;
+        }
       } catch (error) {
-        console.error(' [API Desserts] Erreur lors de la création du dessert:', error);
-        return res.status(400).json({
+        console.error('Erreur lors de la création du dessert:', error);
+        res.status(500).json({
           message: 'Erreur lors de la création du dessert',
-          error: error instanceof Error ? error.message : 'Erreur inconnue'
+          error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
         });
       }
       break;

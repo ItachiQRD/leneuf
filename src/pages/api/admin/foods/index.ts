@@ -83,7 +83,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'foods');
+              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'foods', data.name);
 
               data.image = imageUrl;
             } catch (error) {
@@ -121,21 +121,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
           // Validation et création
           try {
-            console.log(' [API Foods] Données avant validation:', JSON.stringify(cleanData, null, 2));
-
-            Object.entries(cleanData).forEach(([key, value]) => {
-              console.log(`  ${key}: ${typeof value} = ${value}`);
-            });
-
             const validatedData = foodSchema.parse(cleanData);
-
             const food = await Food.create(validatedData);
-
             res.status(201).json(food);
           } catch (error) {
             if (error instanceof ZodError) {
-              console.error(' [API Foods] Erreur validation Zod:', error.errors);
-              console.error(' [API Foods] Données qui ont échoué:', JSON.stringify(cleanData, null, 2));
               return res.status(400).json({
                 message: 'Erreur de validation',
                 errors: error.errors
@@ -191,7 +181,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
-              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'foods');
+              const imageUrl = await imageService.uploadToCloudinary(imageFile, 'foods', data.name);
 
               data.image = imageUrl;
             } catch (error) {

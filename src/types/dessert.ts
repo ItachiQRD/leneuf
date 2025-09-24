@@ -43,24 +43,13 @@ export const sizeSchema = z.object({
 });
 
 export const dessertSchema = z.object({
-  type: z.enum(['cake', 'ice_cream', 'cookie', 'brownie', 'muffin'], {
-    required_error: "Le type de dessert est requis",
-    invalid_type_error: "Type de dessert invalide"
-  }),
+  type: z.enum(['cake', 'ice_cream', 'cookie', 'brownie', 'muffin']),
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   price: z.number().min(0, "Le prix doit être positif"),
-  image: z.string().min(1, "L'image est requise"),
-  available: z.boolean().default(true),
-  active: z.boolean().default(true),
-  sizes: z.array(sizeSchema).default([]),
-}).refine((data) => {
-  if (data.sizes.length === 0) return true;
-  // Vérifier qu'il n'y a qu'une seule taille par défaut si des tailles sont présentes
-  const defaultSizes = data.sizes.filter(size => size.isDefault);
-  return defaultSizes.length <= 1;
-}, {
-  message: "Il ne peut y avoir qu'une seule taille par défaut",
-  path: ["sizes"]
+  image: z.string(),
+  description: z.string().optional(),
+  available: z.boolean(),
+  sizes: z.array(sizeSchema)
 });
 
 // Constantes pour les options des selects

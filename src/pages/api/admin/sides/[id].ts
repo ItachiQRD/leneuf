@@ -147,7 +147,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           }
 
           // Supprimer l'image de Cloudinary si elle existe
-          if (side.image) {
+          if (side.image && typeof side.image === 'string') {
             try {
               await imageService.deleteFromCloudinary(side.image);
             } catch (error) {

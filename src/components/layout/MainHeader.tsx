@@ -65,23 +65,44 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
 
           {/* Navigation - Desktop */}
           <nav className="hidden md:flex items-center space-x-8">
+            {/* Liens à gauche */}
             <Link
               href="/menu"
-              className={`${textColor} hover:text-primary transition-colors`}
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
             >
               Menu
             </Link>
             <Link
-              href="/about"
-              className={`${textColor} hover:text-primary transition-colors`}
+              href="/promo"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
             >
-              À Propos
+              Promo
             </Link>
+          </nav>
+
+          {/* Bouton Commander au centre */}
+          <div className="hidden md:flex">
+            <Link
+              href="/commander"
+              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            >
+              🍔 Commander
+            </Link>
+          </div>
+
+          {/* Liens à droite */}
+          <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/contact"
-              className={`${textColor} hover:text-primary transition-colors`}
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
             >
               Contact
+            </Link>
+            <Link
+              href="/about"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
+            >
+              À Propos
             </Link>
           </nav>
 
@@ -182,39 +203,61 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 ? 'bg-white dark:bg-gray-900' 
                 : 'bg-white/95 backdrop-blur-sm'
             }`}>
+              {/* Bouton Commander en mobile */}
               <Link
-                href="/menu"
-                className={`text-lg font-medium ${
-                  isScrolled
-                    ? 'text-gray-700 dark:text-gray-300'
-                    : 'text-gray-900'
-                } hover:text-primary`}
+                href="/commander"
+                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Menu
+                🍔 Commander
               </Link>
-              <Link
-                href="/about"
-                className={`text-lg font-medium ${
-                  isScrolled
-                    ? 'text-gray-700 dark:text-gray-300'
-                    : 'text-gray-900'
-                } hover:text-primary`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                À Propos
-              </Link>
-              <Link
-                href="/contact"
-                className={`text-lg font-medium ${
-                  isScrolled
-                    ? 'text-gray-700 dark:text-gray-300'
-                    : 'text-gray-900'
-                } hover:text-primary`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
+              
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <Link
+                  href="/menu"
+                  className={`text-lg font-medium ${
+                    isScrolled
+                      ? 'text-gray-700 dark:text-gray-300'
+                      : 'text-gray-900'
+                  } hover:text-primary`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Menu
+                </Link>
+                <Link
+                  href="/promo"
+                  className={`text-lg font-medium ${
+                    isScrolled
+                      ? 'text-gray-700 dark:text-gray-300'
+                      : 'text-gray-900'
+                  } hover:text-primary`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Promo
+                </Link>
+                <Link
+                  href="/contact"
+                  className={`text-lg font-medium ${
+                    isScrolled
+                      ? 'text-gray-700 dark:text-gray-300'
+                      : 'text-gray-900'
+                  } hover:text-primary`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="/about"
+                  className={`text-lg font-medium ${
+                    isScrolled
+                      ? 'text-gray-700 dark:text-gray-300'
+                      : 'text-gray-900'
+                  } hover:text-primary`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  À Propos
+                </Link>
+              </div>
               <button
                 onClick={() => {
                   onOpenCart();

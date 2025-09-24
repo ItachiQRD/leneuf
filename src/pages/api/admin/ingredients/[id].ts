@@ -4,35 +4,9 @@ import formidable from 'formidable';
 import { withAdmin } from '@/utils/api';
 import dbConnect from '@/lib/dbConnect';
 import Ingredient from '@/models/Ingredient';
-import { IngredientSchema } from '@/types/ingredient';
-import { ZodError } from 'zod';
 import { imageService } from '@/services/imageService';
-import path from 'path';
-import fs from 'fs';
 
 export const config = { api: { bodyParser: false } };
-
-async function parseForm(req: NextApiRequest) {
-  // Créer le dossier d'upload s'il n'existe pas
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'ingredients');
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-
-  const form = formidable({
-    uploadDir,
-    keepExtensions: true,
-    maxFileSize: 5 * 1024 * 1024, // 5MB
-    filename: (name, ext) => `${Date.now()}${ext}`, // Nom de fichier unique
-  });
-
-  return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
-    });
-  });
-}
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
@@ -45,7 +19,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     switch (req.method) {
       case 'GET': {
-        const ingredient = await Ingredient.findOne({ _id: id, active: true });
+        const ingredient = await Ingredient.findById(id);
         if (!ingredient) {
           return res.status(404).json({ message: 'Ingrédient non trouvé' });
         }
@@ -53,86 +27,70 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       }
 
       case 'PUT': {
-        const { fields, files } = await parseForm(req) as any;
-        let ingredientData;
+        const form = formidable({
+          maxFileSize: 5 * 1024 * 1024, // 5MB
+        });
 
-        try {
-          const dataString = Array.isArray(fields.data) ? fields.data[0] : fields.data;
-          if (!dataString) {
-            return res.status(400).json({ message: 'Données manquantes' });
-          }
-          ingredientData = JSON.parse(dataString);
-        } catch (error) {
-          return res.status(400).json({ message: 'Données JSON invalides' });
-        }
-
-        let imageUrl = ingredientData.image;
-        if (files.image) {
-          try {
-            const uploadedFile = files.image[0] || files.image;
-            const fileName = path.basename(uploadedFile.filepath);
-            imageUrl = `/uploads/ingredients/${fileName}`;
-
-            // Supprimer l'ancienne image si elle existe
-            if (ingredientData.image) {
-              const oldImagePath = path.join(
-                process.cwd(),
-                'public',
-                ingredientData.image.replace(/^\//, '')
-              );
-              if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath);
-              }
-            }
-          } catch (error) {
-            console.error('Erreur lors du traitement de l\'image:', error);
-            return res.status(400).json({ message: 'Erreur lors du traitement de l\'image' });
-          }
-        }
-
-        try {
-          // Récupérer l'ingrédient existant
-          const existingIngredient = await Ingredient.findById(id);
-          if (!existingIngredient) {
-            return res.status(404).json({ message: 'Ingrédient non trouvé' });
-          }
-
-          // Valider les données avec le schema
-          const validatedData = IngredientSchema.parse({
-            name: ingredientData.name,
-            description: ingredientData.description || existingIngredient.description || '',
-            type: ingredientData.type,
-            price: ingredientData.price,
-            image: imageUrl || existingIngredient.image,
-            isAvailable: ingredientData.isAvailable ?? existingIngredient.isAvailable,
-            isSpicy: ingredientData.isSpicy ?? existingIngredient.isSpicy,
-            isVegetarian: ingredientData.isVegetarian ?? existingIngredient.isVegetarian,
-            allergens: ingredientData.allergens || existingIngredient.allergens,
-            orderIndex: ingredientData.orderIndex ?? existingIngredient.orderIndex
+        const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) reject(err);
+            resolve([fields, files]);
           });
+        });
 
-          // Mettre à jour l'ingrédient
-          const updatedIngredient = await Ingredient.findByIdAndUpdate(
-            id,
-            validatedData,
-            { new: true, runValidators: true }
-          );
-
-          return res.status(200).json(updatedIngredient);
-        } catch (error) {
-          if (error instanceof ZodError) {
-            console.error('Erreur de validation:', error.errors);
-            return res.status(400).json({
-              message: 'Données invalides',
-              errors: error.errors
-            });
-          }
-          throw error;
+        if (!fields.data) {
+          throw new Error('Données manquantes');
         }
+
+        let updateData;
+        try {
+          updateData = typeof fields.data === 'string'
+            ? JSON.parse(fields.data)
+            : JSON.parse(fields.data[0]);
+        } catch (error) {
+          throw new Error('Format de données invalide');
+        }
+
+        // Gérer l'image si une nouvelle image est fournie
+        if (files.image) {
+          const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+          try {
+            const imageUrl = await imageService.uploadToCloudinary(imageFile, 'ingredients', updateData.name);
+            updateData.image = imageUrl;
+          } catch (error) {
+            throw new Error('Erreur lors du traitement de l\'image');
+          }
+        }
+
+        // Nettoyer les données
+        const cleanData = {
+          ...updateData,
+          price: typeof updateData.price === 'string' ? parseFloat(updateData.price) : updateData.price,
+          orderIndex: typeof updateData.orderIndex === 'string' ? parseInt(updateData.orderIndex) : updateData.orderIndex || 0,
+          isAvailable: Boolean(updateData.isAvailable),
+          isSpicy: Boolean(updateData.isSpicy),
+          isVegetarian: Boolean(updateData.isVegetarian),
+          allergens: Array.isArray(updateData.allergens) ? updateData.allergens : []
+        };
+
+        // Validation et mise à jour
+        const updatedIngredient = await Ingredient.findByIdAndUpdate(
+          id,
+          cleanData,
+          { new: true, runValidators: true }
+        );
+
+        if (!updatedIngredient) {
+          return res.status(404).json({ message: 'Ingrédient non trouvé' });
+        }
+
+        return res.status(200).json(updatedIngredient);
       }
 
       case 'DELETE': {
+        // Récupérer l'ingrédient avant suppression pour obtenir l'URL de l'image
         const ingredient = await Ingredient.findById(id);
+        
         if (!ingredient) {
           return res.status(404).json({ message: 'Ingrédient non trouvé' });
         }
@@ -147,19 +105,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           }
         }
 
-        // Supprimer définitivement de la base de données
+        // Supprimer l'ingrédient de la base de données
         await Ingredient.findByIdAndDelete(id);
         return res.status(200).json({ message: 'Ingrédient supprimé avec succès' });
       }
 
       default:
         res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-        return res.status(405).json({ message: `Method ${req.method} not allowed` });
+        return res.status(405).json({ message: 'Méthode non autorisée' });
     }
   } catch (error) {
-    console.error('API Error:', error);
-    return res.status(500).json({ 
-      message: error instanceof Error ? error.message : 'Une erreur est survenue' 
+    console.error('Erreur API ingredients:', error);
+    return res.status(500).json({
+      message: 'Erreur serveur',
+      error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'
     });
   }
 }

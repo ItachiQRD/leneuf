@@ -737,7 +737,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
   const deleteSauce = useCallback(async (id: string) => {
     try {
-      const response = await fetch(`/api/admin/sauces?id=${id}`, {
+      const response = await fetch(`/api/admin/sauces/${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });

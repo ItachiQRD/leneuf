@@ -70,11 +70,13 @@ export default function IngredientsPage() {
   };
 
   const handleDelete = async (ingredient: Ingredient) => {
-    try {
-      await deleteIngredient(ingredient._id);
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      // L'erreur est déjà gérée par le ProductContext
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet ingrédient ?')) {
+      try {
+        await deleteIngredient(ingredient._id);
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+        // L'erreur est déjà gérée par le ProductContext
+      }
     }
   };
 

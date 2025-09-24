@@ -63,10 +63,17 @@ export default function CommanderPage() {
   };
 
   const handleAddToCart = (item: any) => {
+    // Pour les boissons, utiliser le prix de la taille par défaut
+    let price = item.price;
+    if (!price && item.sizes && item.sizes.length > 0) {
+      const defaultSize = item.sizes.find((s: any) => s.isDefault) || item.sizes[0];
+      price = defaultSize.price;
+    }
+
     const cartItem = {
       _id: item._id || item.id,
       name: item.name,
-      price: item.price,
+      price: price || 0,
       image: item.image,
       category: item.category,
       type: item.productType || 'food'
@@ -98,7 +105,7 @@ export default function CommanderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-20">
+    <div className="min-h-screen bg-gray-100">
       <div className="flex h-screen">
         {/* Menu de gauche */}
         <div className="w-64 bg-white shadow-lg">
@@ -190,7 +197,10 @@ export default function CommanderPage() {
                     
                     <div className="flex items-center space-x-4">
                       <span className="text-xl font-bold text-red-600">
-                        {item.price.toFixed(2)} €
+                        {item.price ? item.price.toFixed(2) : 
+                         item.sizes && item.sizes.length > 0 ? 
+                         `À partir de ${Math.min(...item.sizes.map((s: any) => s.price)).toFixed(2)} €` : 
+                         'Prix sur demande'} €
                       </span>
                       <button
                         onClick={() => handleAddToCart(item)}

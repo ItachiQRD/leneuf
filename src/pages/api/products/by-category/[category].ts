@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       case 'sandwichs':
         products = await Food.find({ 
-          type: 'sandwich',
+          type: 'sandwich_durum',
           available: true,
           active: true 
         }).select('name price image description category type baseIngredients nutritionalInfo');
@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       case 'assiettes':
         products = await Food.find({ 
-          type: 'plate',
+          type: 'plates',
           available: true,
           active: true 
         }).select('name price image description category type baseIngredients nutritionalInfo');
@@ -85,7 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       case 'paninis':
         products = await Food.find({ 
-          type: 'panini',
+          type: 'paninis',
           available: true,
           active: true 
         }).select('name price image description category type baseIngredients nutritionalInfo');
@@ -95,7 +95,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         products = await Drink.find({ 
           available: true,
           active: true 
-        }).select('name price image description category nutritionalInfo');
+        }).select('name image description category nutritionalInfo sizes type brand');
         break;
 
       case 'desserts':

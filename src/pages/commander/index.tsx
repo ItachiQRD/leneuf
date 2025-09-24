@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export default function CommanderPage() {
-  const { items, updateQuantity, removeItem, clearCart, getTotalPrice, getTotalItems } = useCart();
+  const { items, updateQuantity, removeItem, clearCart, total, itemCount } = useCart();
   const { isAuthenticated, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,7 +29,7 @@ export default function CommanderPage() {
     setIsLoading(true);
     try {
       // Ici on peut ajouter la logique de commande
-      console.log('Commande en cours...', { items, total: getTotalPrice() });
+      console.log('Commande en cours...', { items, total });
       
       // Simulation d'une commande
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -91,13 +91,13 @@ export default function CommanderPage() {
             <div className="lg:col-span-2">
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                  Articles ({getTotalItems()})
+                  Articles ({itemCount})
                 </h2>
                 
                 <div className="space-y-4">
                   {items.map((item) => (
                     <motion.div
-                      key={item.id}
+                      key={item._id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
@@ -125,7 +125,7 @@ export default function CommanderPage() {
                       
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                          onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
                           className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                         >
                           <Minus className="w-4 h-4" />
@@ -134,13 +134,13 @@ export default function CommanderPage() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                          onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
                           className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                         >
                           <Plus className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(item._id)}
                           className="p-2 rounded-full bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 text-red-600"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -162,7 +162,7 @@ export default function CommanderPage() {
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">Sous-total</span>
-                    <span className="font-medium">{getTotalPrice().toFixed(2)} €</span>
+                    <span className="font-medium">{total.toFixed(2)} €</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">Livraison</span>
@@ -171,7 +171,7 @@ export default function CommanderPage() {
                   <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                     <div className="flex justify-between text-lg font-bold">
                       <span>Total</span>
-                      <span className="text-green-600">{getTotalPrice().toFixed(2)} €</span>
+                      <span className="text-green-600">{total.toFixed(2)} €</span>
                     </div>
                   </div>
                 </div>

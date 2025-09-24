@@ -12,7 +12,7 @@ interface BasicFoodInfoProps {
 }
 
 export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
-  const { register, watch, setValue, trigger, formState: { errors } } = form;
+  const { register, watch, setValue, trigger, getValues, formState: { errors } } = form;
   const watchedImage = watch('image');
   const watchedType = watch('type');
 
@@ -122,8 +122,12 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
                 e.preventDefault();
                 const value = (e.target as HTMLInputElement).value.trim();
                 if (value) {
-                  const currentIngredients = watch('baseIngredients') || [];
-                  setValue('baseIngredients', [...currentIngredients, value]);
+                  const currentIngredients = getValues('baseIngredients') || [];
+                  const newIngredients = [...currentIngredients, value];
+                  console.log(' [BasicFoodInfo] Ajout ingrédient:', value);
+                  console.log(' [BasicFoodInfo] Ingrédients actuels (getValues):', currentIngredients);
+                  console.log(' [BasicFoodInfo] Nouveaux ingrédients:', newIngredients);
+                  setValue('baseIngredients', newIngredients, { shouldValidate: true, shouldDirty: true });
                   trigger('baseIngredients'); // Forcer la re-validation
                   (e.target as HTMLInputElement).value = '';
                 }
@@ -143,11 +147,11 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    const currentIngredients = watch('baseIngredients') || [];
-                    setValue(
-                      'baseIngredients',
-                      currentIngredients.filter((_, i) => i !== index)
-                    );
+                    const currentIngredients = getValues('baseIngredients') || [];
+                    const newIngredients = currentIngredients.filter((_, i) => i !== index);
+                    console.log(' [BasicFoodInfo] Suppression ingrédient à l\'index:', index);
+                    console.log(' [BasicFoodInfo] Nouveaux ingrédients après suppression:', newIngredients);
+                    setValue('baseIngredients', newIngredients, { shouldValidate: true, shouldDirty: true });
                     trigger('baseIngredients'); // Forcer la re-validation
                   }}
                   className="text-green-600 hover:text-green-800"

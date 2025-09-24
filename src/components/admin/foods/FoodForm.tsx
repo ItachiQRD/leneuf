@@ -75,6 +75,9 @@ export default function FoodForm({
     try {
       setIsSubmitting(true);
       console.log('Données du formulaire:', data);
+      console.log('baseIngredients dans les données:', data.baseIngredients);
+      console.log('Type de baseIngredients:', typeof data.baseIngredients);
+      console.log('Longueur de baseIngredients:', data.baseIngredients?.length);
 
       // Validation côté client
       if (!data.baseIngredients || data.baseIngredients.length === 0) {

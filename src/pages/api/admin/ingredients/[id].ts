@@ -6,6 +6,7 @@ import dbConnect from '@/lib/dbConnect';
 import Ingredient from '@/models/Ingredient';
 import { IngredientSchema } from '@/types/ingredient';
 import { ZodError } from 'zod';
+import { imageService } from '@/services/imageService';
 import path from 'path';
 import fs from 'fs';
 

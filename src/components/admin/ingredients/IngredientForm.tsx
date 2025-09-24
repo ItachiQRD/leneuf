@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ingredient, IngredientInput, IngredientSchema } from '@/types/ingredient';
-import { useToast } from '@/contexts/ProductContext';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/Buttons';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -35,7 +35,7 @@ const INGREDIENT_TYPES: SelectOption[] = [
 
 export default function IngredientForm({ initialData, onSubmit, onCancel, onDelete }: IngredientFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { showToast } = useToast();
+  const { toast } = useToast();
 
   const form = useForm<IngredientInput>({
     resolver: zodResolver(IngredientSchema),
@@ -81,7 +81,7 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
       
       // Validation de l'image
       if (!data.image) {
-        showToast({
+        toast({
           title: "Erreur",
           description: "L'image est requise",
           variant: "destructive"
@@ -102,7 +102,7 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
       await onSubmit(formattedData);
     } catch (error) {
       console.error('Erreur:', error);
-      showToast({
+      toast({
         title: "Erreur",
         description: error instanceof Error ? error.message : "Une erreur est survenue",
         variant: "destructive"

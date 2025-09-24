@@ -116,7 +116,7 @@ export default function CommanderPage() {
                           {item.name}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {item.category}
+                          {item.category || item.type}
                         </p>
                         <p className="text-lg font-semibold text-green-600">
                           {(item.price * item.quantity).toFixed(2)} €

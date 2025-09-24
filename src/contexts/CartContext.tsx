@@ -7,6 +7,7 @@ interface CartItem {
   price: number;
   quantity: number;
   type: 'food' | 'drink' | 'dessert' | 'side';
+  category?: string;
   image?: string;
 }
 

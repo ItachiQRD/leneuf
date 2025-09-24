@@ -65,7 +65,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           const cleanData = {
             ...updateData,
             price: typeof updateData.price === 'string' ? parseFloat(updateData.price) : updateData.price,
-            spicyLevel: typeof updateData.spicyLevel === 'string' ? parseInt(updateData.spicyLevel) : updateData.spicyLevel
+            nutritionalInfo: updateData.nutritionalInfo ? {
+              ...updateData.nutritionalInfo,
+              calories: typeof updateData.nutritionalInfo.calories === 'string' ? parseFloat(updateData.nutritionalInfo.calories) : updateData.nutritionalInfo.calories,
+              proteins: typeof updateData.nutritionalInfo.proteins === 'string' ? parseFloat(updateData.nutritionalInfo.proteins) : updateData.nutritionalInfo.proteins,
+              carbs: typeof updateData.nutritionalInfo.carbs === 'string' ? parseFloat(updateData.nutritionalInfo.carbs) : updateData.nutritionalInfo.carbs,
+              fats: typeof updateData.nutritionalInfo.fats === 'string' ? parseFloat(updateData.nutritionalInfo.fats) : updateData.nutritionalInfo.fats
+            } : updateData.nutritionalInfo
           };
 
           // Validation et mise à jour

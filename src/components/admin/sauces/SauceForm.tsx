@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Sauce, SauceInput, SAUCE_CATEGORIES, SPICY_LEVELS } from '@/types/sauce';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/contexts/ProductContext';
 import { isFile } from '@/utils/fileUtils';
 import { Button } from '@/components/ui/Buttons';
 import { motion } from 'framer-motion';
@@ -39,7 +39,7 @@ export default function SauceForm({
 }: SauceFormProps) {
   const [activeSection, setActiveSection] = useState('basic');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+  const { showToast } = useToast();
   const { createSauce, updateSauce } = useProducts();
 
   const form = useForm<SauceInput>({
@@ -71,7 +71,7 @@ export default function SauceForm({
       
       // Vérifier qu'une image est fournie
       if (!data.image || (typeof data.image === 'string' && data.image.trim() === '')) {
-        toast({
+        showToast({
           title: "Erreur",
           description: "Une image est requise pour la sauce",
           variant: "destructive"
@@ -104,7 +104,7 @@ export default function SauceForm({
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
       
-      toast({
+      showToast({
         title: "Erreur",
         description: error instanceof Error ? error.message : "Une erreur est survenue",
         variant: "destructive"

@@ -5,14 +5,18 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
+import TacosComposer from '@/components/commander/TacosComposer';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
   const { isAuthenticated, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('sandwichs');
+  const [products, setProducts] = useState<any[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [showTacosComposer, setShowTacosComposer] = useState(false);
 
-  // Données de menu simulées
+  // Données de menu
   const menuCategories = [
     { id: 'sandwichs', name: 'Sandwichs', active: true },
     { id: 'burgers', name: 'Burgers', active: false },
@@ -22,35 +26,33 @@ export default function CommanderPage() {
     { id: 'tacos', name: 'Tacos / Bowls', active: false },
     { id: 'paninis', name: 'Paninis', active: false },
     { id: 'boissons', name: 'Boissons', active: false },
+    { id: 'desserts', name: 'Desserts', active: false },
   ];
 
-  // Articles simulés
-  const menuItems = [
-    {
-      id: '1',
-      name: 'Sandwich Poulet',
-      price: 6.50,
-      image: '/images/sandwich-poulet.jpg',
-      category: 'sandwichs',
-      description: 'Poulet grillé, salade, tomate, oignon'
-    },
-    {
-      id: '2',
-      name: 'Sandwich Thon',
-      price: 5.50,
-      image: '/images/sandwich-thon.jpg',
-      category: 'sandwichs',
-      description: 'Thon, salade, tomate, cornichons'
-    },
-    {
-      id: '3',
-      name: 'Tacos / Bowls',
-      price: 5.50,
-      image: '/images/tacos-bowls.jpg',
-      category: 'tacos',
-      description: 'Tacos ou bowl au choix'
+  // Charger les produits quand la catégorie change
+  useEffect(() => {
+    if (selectedCategory === 'tacos') {
+      setProducts([]);
+      return;
     }
-  ];
+    
+    fetchProducts(selectedCategory);
+  }, [selectedCategory]);
+
+  const fetchProducts = async (category: string) => {
+    setLoadingProducts(true);
+    try {
+      const response = await fetch(`/api/products/by-category/${category}`);
+      const data = await response.json();
+      if (data.success) {
+        setProducts(data.products);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -62,14 +64,18 @@ export default function CommanderPage() {
 
   const handleAddToCart = (item: any) => {
     const cartItem = {
-      _id: item.id,
+      _id: item._id || item.id,
       name: item.name,
       price: item.price,
       image: item.image,
       category: item.category,
-      type: 'food' as const
+      type: item.productType || 'food'
     };
     addItem(cartItem);
+  };
+
+  const handleTacosClick = () => {
+    setShowTacosComposer(true);
   };
 
   const handleCheckout = async () => {
@@ -122,48 +128,82 @@ export default function CommanderPage() {
             {menuCategories.find(c => c.id === selectedCategory)?.name}
           </h1>
           
-          <div className="space-y-4">
-            {menuItems
-              .filter(item => item.category === selectedCategory)
-              .map((item) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
-                >
-                  <div className="relative w-24 h-24 flex-shrink-0">
-                    <Image
-                      src={item.image || '/images/placeholder-food.jpg'}
-                      alt={item.name}
-                      fill
-                      className="object-cover rounded-lg"
-                    />
-                  </div>
-                  
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {item.description}
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4">
-                    <span className="text-xl font-bold text-red-600">
-                      {item.price.toFixed(2)} €
-                    </span>
-                    <button
-                      onClick={() => handleAddToCart(item)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                    >
-                      Ajouter
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-          </div>
+          {selectedCategory === 'tacos' ? (
+            /* Interface spéciale pour les tacos */
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🌮</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Composez votre Tacos ou Bowl
+              </h2>
+              <p className="text-gray-600 mb-8">
+                Choisissez votre type, taille, viande, sauces et suppléments
+              </p>
+              <button
+                onClick={handleTacosClick}
+                className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors"
+              >
+                Commencer la composition
+              </button>
+            </div>
+          ) : (
+            /* Liste des produits normaux */
+            <div className="space-y-4">
+              {loadingProducts ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+                  <p className="mt-2 text-gray-600">Chargement des produits...</p>
+                </div>
+              ) : products.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
+                </div>
+              ) : (
+                products.map((item) => (
+                  <motion.div
+                    key={item._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
+                  >
+                    <div className="relative w-24 h-24 flex-shrink-0">
+                      <Image
+                        src={item.image || '/images/placeholder-food.jpg'}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded-lg"
+                      />
+                    </div>
+                    
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {item.name}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {item.description || 'Délicieux plat préparé avec soin'}
+                      </p>
+                      {item.baseIngredients && item.baseIngredients.length > 0 && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Ingrédients: {item.baseIngredients.join(', ')}
+                        </p>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center space-x-4">
+                      <span className="text-xl font-bold text-red-600">
+                        {item.price.toFixed(2)} €
+                      </span>
+                      <button
+                        onClick={() => handleAddToCart(item)}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                      >
+                        Ajouter
+                      </button>
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </div>
+          )}
         </div>
 
         {/* Panier de droite */}
@@ -247,6 +287,13 @@ export default function CommanderPage() {
           </div>
         </div>
       </div>
+
+      {/* Composant de composition des tacos */}
+      <TacosComposer
+        isOpen={showTacosComposer}
+        onClose={() => setShowTacosComposer(false)}
+        onAddToCart={handleAddToCart}
+      />
     </div>
   );
 }

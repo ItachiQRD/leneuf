@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FoodInputAPI, FOOD_TYPES, FOOD_CATEGORIES } from '@/types/food';
 import { Input } from '@/components/ui/Input';
@@ -15,6 +16,20 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
   const { register, watch, setValue, trigger, getValues, formState: { errors } } = form;
   const watchedImage = watch('image');
   const watchedType = watch('type');
+  const [ingredientInput, setIngredientInput] = useState('');
+
+  const addIngredient = (value: string) => {
+    if (value) {
+      const currentIngredients = getValues('baseIngredients') || [];
+      const newIngredients = [...currentIngredients, value];
+      console.log(' [BasicFoodInfo] Ajout ingrédient:', value);
+      console.log(' [BasicFoodInfo] Ingrédients actuels (getValues):', currentIngredients);
+      console.log(' [BasicFoodInfo] Nouveaux ingrédients:', newIngredients);
+      setValue('baseIngredients', newIngredients, { shouldValidate: true, shouldDirty: true });
+      trigger('baseIngredients'); // Forcer la re-validation
+      setIngredientInput(''); // Vider l'input
+    }
+  };
 
 
 
@@ -115,25 +130,28 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Ingrédients de base <span className="text-red-500">*</span>
           </label>
-          <Input
-            placeholder="Ajouter un ingrédient et appuyer sur Entrée"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                const value = (e.target as HTMLInputElement).value.trim();
-                if (value) {
-                  const currentIngredients = getValues('baseIngredients') || [];
-                  const newIngredients = [...currentIngredients, value];
-                  console.log(' [BasicFoodInfo] Ajout ingrédient:', value);
-                  console.log(' [BasicFoodInfo] Ingrédients actuels (getValues):', currentIngredients);
-                  console.log(' [BasicFoodInfo] Nouveaux ingrédients:', newIngredients);
-                  setValue('baseIngredients', newIngredients, { shouldValidate: true, shouldDirty: true });
-                  trigger('baseIngredients'); // Forcer la re-validation
-                  (e.target as HTMLInputElement).value = '';
+          <div className="flex gap-2">
+            <Input
+              value={ingredientInput}
+              onChange={(e) => setIngredientInput(e.target.value)}
+              placeholder="Ajouter un ingrédient"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addIngredient(ingredientInput.trim());
                 }
-              }
-            }}
-          />
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                addIngredient(ingredientInput.trim());
+              }}
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              Ajouter
+            </button>
+          </div>
           <p className="text-sm text-gray-500 mt-1">
             Ex: Pain brioche, Steak haché, Salade, Tomate, Oignon
           </p>

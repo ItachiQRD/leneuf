@@ -102,6 +102,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             baseIngredients: Array.isArray(data.baseIngredients) ? data.baseIngredients : (data.baseIngredients ? [data.baseIngredients] : [])
           };
 
+          console.log(' [API Foods] Données reçues:', JSON.stringify(data, null, 2));
+          console.log(' [API Foods] baseIngredients reçus:', data.baseIngredients);
+          console.log(' [API Foods] baseIngredients nettoyés:', cleanData.baseIngredients);
+
           // Vérifier que les champs obligatoires sont présents
           if (!cleanData.name) {
             return res.status(400).json({ message: 'Le nom est requis' });

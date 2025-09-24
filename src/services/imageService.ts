@@ -85,7 +85,15 @@ export class ImageService {
    */
   async deleteFromCloudinary(imageUrl: string): Promise<boolean> {
     try {
-      return await cloudinaryStorage.deleteImageByUrl(imageUrl);
+      // Vérifier si c'est une URL Cloudinary
+      if (imageUrl.includes('res.cloudinary.com')) {
+        console.log(`[ImageService] Suppression image Cloudinary: ${imageUrl}`);
+        return await cloudinaryStorage.deleteImageByUrl(imageUrl);
+      } else {
+        // C'est une URL locale, pas besoin de supprimer de Cloudinary
+        console.log(`[ImageService] URL locale détectée, pas de suppression Cloudinary: ${imageUrl}`);
+        return true;
+      }
     } catch (error) {
       console.error('Erreur suppression image Cloudinary:', error);
       return false;

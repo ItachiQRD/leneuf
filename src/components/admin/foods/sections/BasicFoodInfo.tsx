@@ -12,7 +12,7 @@ interface BasicFoodInfoProps {
 }
 
 export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
-  const { register, watch, setValue, formState: { errors } } = form;
+  const { register, watch, setValue, trigger, formState: { errors } } = form;
   const watchedImage = watch('image');
   const watchedType = watch('type');
 
@@ -124,6 +124,7 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
                 if (value) {
                   const currentIngredients = watch('baseIngredients') || [];
                   setValue('baseIngredients', [...currentIngredients, value]);
+                  trigger('baseIngredients'); // Forcer la re-validation
                   (e.target as HTMLInputElement).value = '';
                 }
               }
@@ -147,6 +148,7 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
                       'baseIngredients',
                       currentIngredients.filter((_, i) => i !== index)
                     );
+                    trigger('baseIngredients'); // Forcer la re-validation
                   }}
                   className="text-green-600 hover:text-green-800"
                 >

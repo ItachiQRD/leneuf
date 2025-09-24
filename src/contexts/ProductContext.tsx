@@ -191,10 +191,12 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         formData.append('image', food.image as File);
         const { image, ...restData } = food;
         console.log(' [ProductContext] Données JSON à envoyer:', restData);
+        console.log(' [ProductContext] baseIngredients dans restData:', restData.baseIngredients);
         formData.append('data', JSON.stringify(restData));
       } else {
         // Inclure l'image même si c'est une chaîne (URL existante)
         console.log(' [ProductContext] Données JSON à envoyer (avec image string):', food);
+        console.log(' [ProductContext] baseIngredients dans food:', food.baseIngredients);
         formData.append('data', JSON.stringify(food));
       }
 

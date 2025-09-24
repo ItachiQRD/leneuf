@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Food from '@/models/Food';
 import Drink from '@/models/Drink';
 import Side from '@/models/Side';
@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    await connectDB();
+    await dbConnect();
 
     const { category } = req.query;
 

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Ingredient from '@/models/Ingredient';
 import Sauce from '@/models/Sauce';
 
@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    await connectDB();
+    await dbConnect();
 
     // Récupérer les ingrédients (suppléments)
     const ingredients = await Ingredient.find({ 

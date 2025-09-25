@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import TacosComposer from '@/components/commander/TacosComposer';
 import MenuSelector from '@/components/commander/MenuSelector';
+import PaniniComposer from '@/components/commander/PaniniComposer';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -17,6 +18,7 @@ export default function CommanderPage() {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [showTacosComposer, setShowTacosComposer] = useState(false);
   const [showMenuSelector, setShowMenuSelector] = useState(false);
+  const [showPaniniComposer, setShowPaniniComposer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   // Données de menu
@@ -67,11 +69,17 @@ export default function CommanderPage() {
 
   const handleAddToCart = (item: any) => {
     // Vérifier si c'est un produit qui nécessite un menu selector
-    const needsMenuSelector = ['sandwichs', 'burgers', 'paninis'].includes(selectedCategory);
+    const needsMenuSelector = ['sandwichs', 'burgers'].includes(selectedCategory);
     
     if (needsMenuSelector) {
       setSelectedProduct(item);
       setShowMenuSelector(true);
+      return;
+    }
+
+    // Pour les paninis, ouvrir le composeur
+    if (selectedCategory === 'paninis') {
+      setShowPaniniComposer(true);
       return;
     }
 
@@ -323,6 +331,13 @@ export default function CommanderPage() {
         onClose={() => setShowMenuSelector(false)}
         onAddToCart={handleAddToCart}
         product={selectedProduct}
+      />
+
+      {/* Composant de composition de panini */}
+      <PaniniComposer
+        isOpen={showPaniniComposer}
+        onClose={() => setShowPaniniComposer(false)}
+        onAddToCart={handleAddToCart}
       />
     </div>
   );

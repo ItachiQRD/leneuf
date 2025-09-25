@@ -25,7 +25,7 @@ const ingredientSchema = new mongoose.Schema({
     type: String, 
     required: true 
   },
-  isAvailable: {
+  available: {
     type: Boolean,
     default: true
   },

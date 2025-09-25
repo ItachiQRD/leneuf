@@ -41,13 +41,6 @@ export default function SideForm({
       allergens: [],
       vegetarian: false,
       vegan: false,
-      nutritionalInfo: {
-        calories: 0,
-        proteins: 0,
-        carbs: 0,
-        fats: 0,
-        servingSize: '100g'
-      },
       preparationTime: 5,
       ...initialData
     }
@@ -65,11 +58,6 @@ export default function SideForm({
       id: 'sizes', 
       label: 'Tailles et prix',
       hasErrors: !!errors.sizes
-    },
-    { 
-      id: 'nutrition', 
-      label: 'Valeurs nutritionnelles',
-      hasErrors: !!errors.nutritionalInfo
     }
   ];
 

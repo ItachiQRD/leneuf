@@ -22,7 +22,7 @@ export const IngredientSchema = z.object({
   type: z.enum(['meat', 'cheese', 'vegetable', 'extra']),
   price: z.number().min(0, 'Le prix doit être positif'),
   image: z.union([z.string(), z.instanceof(File)]),
-  isAvailable: z.boolean().default(true),
+  available: z.boolean().default(true),
   isSpicy: z.boolean().default(false),
   isVegetarian: z.boolean().default(false),
   allergens: z.array(z.string()).default([]),
@@ -36,7 +36,7 @@ export interface Ingredient {
   type: IngredientType;
   price: number;
   image: string;
-  isAvailable: boolean;
+  available: boolean;
   isSpicy: boolean;
   isVegetarian: boolean;
   allergens: string[];

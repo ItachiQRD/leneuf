@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Buttons';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProducts } from '@/contexts/ProductContext';
 import BasicDrinkInfo from './sections/BasicDrinkInfo';
+import SizesSection from './sections/SizesSection';
 
 interface DrinkFormProps {
   initialData?: Partial<Drink>;
@@ -16,7 +17,8 @@ interface DrinkFormProps {
 }
 
 const sections = [
-  { id: 'basic', label: 'Informations de base' }
+  { id: 'basic', label: 'Informations de base' },
+  { id: 'sizes', label: 'Tailles et prix' }
 ];
 
 export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkFormProps) {
@@ -119,6 +121,7 @@ export default function DrinkForm({ initialData, onSubmit, onCancel }: DrinkForm
 
         <div className="space-y-6">
           {activeSection === 'basic' && <BasicDrinkInfo form={form} />}
+          {activeSection === 'sizes' && <SizesSection form={form} />}
         </div>
 
         <div className="mt-6 flex justify-end space-x-4">

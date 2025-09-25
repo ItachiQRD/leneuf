@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
 import TacosComposer from '@/components/commander/TacosComposer';
+import MenuSelector from '@/components/commander/MenuSelector';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -15,6 +16,8 @@ export default function CommanderPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [showTacosComposer, setShowTacosComposer] = useState(false);
+  const [showMenuSelector, setShowMenuSelector] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   // Données de menu
   const menuCategories = [
@@ -63,6 +66,15 @@ export default function CommanderPage() {
   };
 
   const handleAddToCart = (item: any) => {
+    // Vérifier si c'est un produit qui nécessite un menu selector
+    const needsMenuSelector = ['sandwichs', 'burgers', 'paninis'].includes(selectedCategory);
+    
+    if (needsMenuSelector) {
+      setSelectedProduct(item);
+      setShowMenuSelector(true);
+      return;
+    }
+
     // Pour les boissons, utiliser le prix de la taille par défaut
     let price = item.price;
     if (!price && item.sizes && item.sizes.length > 0) {
@@ -303,6 +315,14 @@ export default function CommanderPage() {
         isOpen={showTacosComposer}
         onClose={() => setShowTacosComposer(false)}
         onAddToCart={handleAddToCart}
+      />
+
+      {/* Composant de sélection de menu */}
+      <MenuSelector
+        isOpen={showMenuSelector}
+        onClose={() => setShowMenuSelector(false)}
+        onAddToCart={handleAddToCart}
+        product={selectedProduct}
       />
     </div>
   );

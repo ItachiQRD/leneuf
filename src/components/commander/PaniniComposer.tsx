@@ -55,7 +55,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
       const data = await response.json();
       
       if (data.success) {
-        setIngredients([...data.ingredients, ...data.sauces]);
+        setIngredients([...data.data.ingredients, ...data.data.sauces]);
       }
     } catch (error) {
       console.error('Erreur lors du chargement des ingrédients:', error);

@@ -44,12 +44,12 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       const data = await response.json();
       if (data.success) {
         // Filtrer les viandes disponibles dans les ingrédients
-        const meats = data.ingredients.filter((ing: any) => ing.type === 'meat');
+        const meats = data.data.ingredients.filter((ing: any) => ing.type === 'meat');
         setOptions({
           meats,
-          sauces: data.sauces,
-          ingredients: data.ingredients.filter((ing: any) => ing.type === 'vegetable' || ing.type === 'extra'),
-          sizes: [
+          sauces: data.data.sauces,
+          ingredients: data.data.ingredients.filter((ing: any) => ing.type === 'vegetable' || ing.type === 'extra'),
+          sizes: data.data.sizes || [
             { name: 'M', price: 6.50, description: 'Tacos Moyen' },
             { name: 'L', price: 7.50, description: 'Tacos Large' },
             { name: 'XL', price: 8.50, description: 'Tacos Extra Large' }

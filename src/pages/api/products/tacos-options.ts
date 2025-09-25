@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const ingredients = await Ingredient.find({ 
       available: true,
       active: true 
-    }).select('name price image description category');
+    }).select('name price image description category type isSpicy isVegetarian allergens');
 
     // Récupérer les sauces
     const sauces = await Sauce.find({ 

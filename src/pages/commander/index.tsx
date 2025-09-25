@@ -105,7 +105,7 @@ export default function CommanderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 pt-20">
       <div className="flex h-screen">
         {/* Menu de gauche */}
         <div className="w-64 bg-white shadow-lg">

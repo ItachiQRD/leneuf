@@ -23,7 +23,7 @@ export const useHeaderColor = (threshold = 100) => {
         // Calculer l'opacité en fonction du scroll
         const opacity = Math.min(scrollPosition / threshold, 0.9);
         setHeaderStyle({
-          backgroundColor: `bg-white/${Math.floor(opacity * 100)}`,
+          backgroundColor: opacity > 0.5 ? 'bg-white' : 'bg-transparent',
           textColor: scrollPosition > threshold / 2 ? 'text-gray-900' : 'text-white',
           borderColor: 'border-transparent',
           boxShadow: opacity > 0.5 ? 'shadow-md' : ''

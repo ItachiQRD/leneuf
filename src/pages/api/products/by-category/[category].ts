@@ -48,7 +48,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       case 'assiettes':
         products = await Food.find({ 
-          type: 'plates',
+          $or: [
+            { type: 'plates' },
+            { type: 'salad' }
+          ],
           available: true,
           active: true 
         }).select('name price image description category type baseIngredients nutritionalInfo');

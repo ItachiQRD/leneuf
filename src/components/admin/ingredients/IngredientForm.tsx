@@ -45,7 +45,7 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
       type: initialData?.type ?? 'meat',
       price: initialData?.price ?? 0,
       image: initialData?.image ?? '',
-      isAvailable: initialData?.isAvailable ?? true,
+      available: initialData?.available ?? true,
       isSpicy: initialData?.isSpicy ?? false,
       isVegetarian: initialData?.isVegetarian ?? false,
       allergens: initialData?.allergens ?? [],
@@ -211,8 +211,8 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
                       <Switch
-                        checked={watch('isAvailable')}
-                        onCheckedChange={(checked) => setValue('isAvailable', checked)}
+                        checked={watch('available')}
+                        onCheckedChange={(checked) => setValue('available', checked)}
                       />
                       <span className="text-sm text-gray-600 dark:text-gray-400">Disponible</span>
                     </div>

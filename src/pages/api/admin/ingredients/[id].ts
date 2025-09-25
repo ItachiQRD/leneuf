@@ -67,7 +67,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           ...updateData,
           price: typeof updateData.price === 'string' ? parseFloat(updateData.price) : updateData.price,
           orderIndex: typeof updateData.orderIndex === 'string' ? parseInt(updateData.orderIndex) : updateData.orderIndex || 0,
-          isAvailable: Boolean(updateData.isAvailable),
+          available: Boolean(updateData.available),
           isSpicy: Boolean(updateData.isSpicy),
           isVegetarian: Boolean(updateData.isVegetarian),
           allergens: Array.isArray(updateData.allergens) ? updateData.allergens : []

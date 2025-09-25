@@ -170,7 +170,7 @@ export default function TacosOrderForm() {
         const extrasStep = orderSteps.find(step => step.id === 'extras');
         if (extrasStep && ingredients) {
           const extraIngredients = ingredients
-            .filter(ingredient => ingredient.isAvailable)
+            .filter(ingredient => ingredient.available)
             .map(ingredient => ({
               id: ingredient._id,
               name: ingredient.name,

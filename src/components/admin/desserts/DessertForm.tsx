@@ -187,14 +187,14 @@ export default function DessertForm({
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
-      <div className="flex space-x-4 mb-6">
+      <div className="flex space-x-4 mb-6 overflow-x-auto pb-2">
         {SECTIONS.map(({ id, label }) => (
           <Button
             key={id}
             type="button"
             variant={activeSection === id ? 'default' : 'outline'}
             onClick={() => setActiveSection(id)}
-            className={hasErrors(id) ? 'border-red-500' : ''}
+            className={`whitespace-nowrap flex-shrink-0 ${hasErrors(id) ? 'border-red-500' : ''}`}
           >
             {label}
           </Button>

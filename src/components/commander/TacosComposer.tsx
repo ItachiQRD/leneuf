@@ -203,7 +203,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
 
   const canProceed = () => {
     switch (currentStep) {
-      case 0: return config.type !== '';
+      case 0: return config.type === 'tacos' || config.type === 'bowl';
       case 1: return config.type === 'bowl' || config.size !== '';
       case 2: return config.meats.length > 0;
       case 3: return config.sauces.length >= 1; // Minimum 1 sauce

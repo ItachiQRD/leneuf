@@ -97,17 +97,17 @@ export default function SideForm({
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6 overflow-hidden">
       <form onSubmit={handleSubmit(onFormSubmit)}>
         {/* Navigation des sections */}
         <div className="mb-6 border-b">
-          <nav className="flex space-x-4">
+          <nav className="flex space-x-4 overflow-x-auto pb-2">
             {sections.map(section => (
               <button
                 key={section.id}
                 type="button"
                 onClick={() => setActiveSection(section.id)}
-                className={`px-4 py-2 relative ${
+                className={`px-4 py-2 relative whitespace-nowrap flex-shrink-0 ${
                   activeSection === section.id
                     ? 'text-orange-600'
                     : 'text-gray-600 hover:text-orange-500'
@@ -150,7 +150,7 @@ export default function SideForm({
             )}
           </div>
           
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 overflow-x-auto pb-2">
             <Button
               type="button"
               variant="ghost"

@@ -127,7 +127,7 @@ export default function FoodForm({
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6 overflow-hidden">
       <form onSubmit={handleSubmit(onFormSubmit)}>
 
         {/* Contenu des sections */}
@@ -145,7 +145,7 @@ export default function FoodForm({
             )}
           </div>
           
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 overflow-x-auto pb-2">
             <Button
               type="button"
               variant="ghost"

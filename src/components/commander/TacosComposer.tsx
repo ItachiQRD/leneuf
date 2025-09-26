@@ -90,7 +90,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
         setOptions({
           meats,
           sauces: data.data.sauces,
-          ingredients: data.data.ingredients.filter((ing: any) => ing.type !== 'meat'), // Tous sauf les viandes (déjà dans meats)
+          ingredients: data.data.ingredients, // Tous les ingrédients
           sizes: [
             { name: 'M', price: 6.50, description: '1 tortilla - 1 viande', tortillas: 1, maxMeats: 1 },
             { name: 'L', price: 7.50, description: '1 tortilla - 2 viandes', tortillas: 1, maxMeats: 2 },
@@ -434,15 +434,16 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                           config.size === 'M' ? 1 : 
                           config.size === 'L' ? 2 : 3;
                         const canSelect = !isSelected && config.meats.length < maxMeats;
+                        const canDeselect = isSelected;
                         
                         return (
                           <motion.button
                             key={meat._id}
-                            whileHover={{ scale: canSelect ? 1.02 : 1 }}
-                            whileTap={{ scale: canSelect ? 0.98 : 1 }}
-                            onClick={() => canSelect && handleMeatToggle(meat)}
-                            disabled={!canSelect && !isSelected}
-                            className={`p-4 border-2 rounded-lg text-left transition-colors ${
+                            whileHover={{ scale: (canSelect || canDeselect) ? 1.02 : 1 }}
+                            whileTap={{ scale: (canSelect || canDeselect) ? 0.98 : 1 }}
+                            onClick={() => (canSelect || canDeselect) && handleMeatToggle(meat)}
+                            disabled={!canSelect && !canDeselect}
+                            className={`p-4 border-2 rounded-lg text-left transition-colors relative overflow-hidden ${
                               isSelected 
                                 ? 'border-orange-500 bg-orange-50' 
                                 : canSelect

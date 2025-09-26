@@ -36,7 +36,7 @@ export default function CommanderPage() {
 
   // Charger les produits quand la catégorie change
   useEffect(() => {
-    if (selectedCategory === 'tacos') {
+    if (selectedCategory === 'tacos' || selectedCategory === 'paninis') {
       setProducts([]);
       return;
     }
@@ -77,11 +77,6 @@ export default function CommanderPage() {
       return;
     }
 
-    // Pour les paninis, ouvrir le composeur
-    if (selectedCategory === 'paninis') {
-      setShowPaniniComposer(true);
-      return;
-    }
 
     // Pour les boissons, utiliser le prix de la taille par défaut
     let price = item.price;
@@ -103,6 +98,10 @@ export default function CommanderPage() {
 
   const handleTacosClick = () => {
     setShowTacosComposer(true);
+  };
+
+  const handlePaniniClick = () => {
+    setShowPaniniComposer(true);
   };
 
   const handleCheckout = async () => {
@@ -167,6 +166,23 @@ export default function CommanderPage() {
               </p>
               <button
                 onClick={handleTacosClick}
+                className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors"
+              >
+                Commencer la composition
+              </button>
+            </div>
+          ) : selectedCategory === 'paninis' ? (
+            /* Interface spéciale pour les paninis */
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🥪</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Composez votre Panini
+              </h2>
+              <p className="text-gray-600 mb-8">
+                Choisissez votre viande, fromage et suppléments
+              </p>
+              <button
+                onClick={handlePaniniClick}
                 className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors"
               >
                 Commencer la composition

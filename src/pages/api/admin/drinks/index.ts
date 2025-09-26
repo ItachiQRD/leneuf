@@ -70,10 +70,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         // Nettoyer les données
         const cleanData = {
           ...data,
-          price: typeof data.price === 'string' ? parseFloat(data.price) : data.price,
+          price: typeof data.price === 'string' ? parseFloat(data.price.replace(',', '.')) : data.price,
           sizes: data.sizes ? data.sizes.map((size: any) => ({
             ...size,
-            price: typeof size.price === 'string' ? parseFloat(size.price) : size.price
+            price: typeof size.price === 'string' ? parseFloat(size.price.replace(',', '.')) : size.price
           })) : data.sizes || []
         };
 

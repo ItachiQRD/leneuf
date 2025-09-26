@@ -74,18 +74,28 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
           }
 
+          // Nettoyer les données (convertir les strings en numbers)
+          const cleanData = {
+            ...updateData,
+            price: typeof updateData.price === 'string' ? parseFloat(updateData.price.replace(',', '.')) : updateData.price,
+            sizes: updateData.sizes ? updateData.sizes.map((size: any) => ({
+              ...size,
+              price: typeof size.price === 'string' ? parseFloat(size.price.replace(',', '.')) : size.price
+            })) : updateData.sizes
+          };
+
           // Validation des champs obligatoires
-          if (updateData.name && !updateData.name.trim()) {
+          if (cleanData.name && !cleanData.name.trim()) {
             return res.status(400).json({ message: 'Le nom ne peut pas être vide' });
           }
-          if (updateData.sizes && (!Array.isArray(updateData.sizes) || updateData.sizes.length === 0)) {
+          if (cleanData.sizes && (!Array.isArray(cleanData.sizes) || cleanData.sizes.length === 0)) {
             return res.status(400).json({ message: 'Au moins une taille est requise' });
           }
-          if (updateData.nutritionalInfo && (!updateData.nutritionalInfo.calories && updateData.nutritionalInfo.calories !== 0)) {
+          if (cleanData.nutritionalInfo && (!cleanData.nutritionalInfo.calories && cleanData.nutritionalInfo.calories !== 0)) {
             return res.status(400).json({ message: 'Les informations nutritionnelles sont requises' });
           }
 
-          const drink = await Drink.findByIdAndUpdate(id, updateData, { new: true });
+          const drink = await Drink.findByIdAndUpdate(id, cleanData, { new: true });
 
           if (!drink) {
             return res.status(404).json({ message: 'Boisson non trouvée' });

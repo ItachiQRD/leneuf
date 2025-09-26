@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowRight, ArrowLeft, Plus, Minus } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, Plus, Minus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
 import Image from 'next/image';
 

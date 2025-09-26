@@ -127,7 +127,8 @@ export default function SauceForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
+    <div className="max-h-[80vh] overflow-y-auto">
+      <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
       <div className="flex space-x-4 mb-6 overflow-x-auto pb-2">
         {SECTIONS.map(({ id, label }) => (
           <Button
@@ -170,6 +171,7 @@ export default function SauceForm({
           {isSubmitting ? 'Enregistrement...' : initialData?._id ? 'Modifier' : 'Créer'}
         </Button>
       </div>
-    </form>
+      </form>
+    </div>
   );
 }

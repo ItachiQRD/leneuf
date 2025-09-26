@@ -90,13 +90,29 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
         setOptions({
           meats,
           sauces: data.data.sauces,
-          ingredients: data.data.ingredients.filter((ing: any) => ing.type === 'vegetable' || ing.type === 'extra'),
+          ingredients: data.data.ingredients, // Tous les ingrédients
           sizes: [
             { name: 'M', price: 6.50, description: '1 tortilla - 1 viande', tortillas: 1, maxMeats: 1 },
             { name: 'L', price: 7.50, description: '1 tortilla - 2 viandes', tortillas: 1, maxMeats: 2 },
             { name: 'XL', price: 8.50, description: '2 tortillas - 3 viandes', tortillas: 2, maxMeats: 3 }
           ]
         });
+
+        // Ajouter fromagère par défaut
+        const fromagereSauce = data.data.sauces.find((sauce: any) => 
+          sauce.name.toLowerCase().includes('fromagère')
+        );
+        if (fromagereSauce) {
+          setConfig(prev => ({
+            ...prev,
+            sauces: [{
+              id: fromagereSauce._id,
+              name: fromagereSauce.name,
+              price: 0,
+              image: fromagereSauce.image
+            }]
+          }));
+        }
       }
     } catch (error) {
       console.error('Error fetching tacos options:', error);
@@ -126,6 +142,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       let newMeats = [...prev.meats];
       
       if (isSelected) {
+        // Décocher la viande
         newMeats = newMeats.filter(m => m.id !== meat._id);
       } else {
         // Vérifier la limite selon le type et la taille
@@ -137,7 +154,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
           newMeats.push({
             id: meat._id,
             name: meat.name,
-            price: 1.50, // Prix fixe pour les viandes
+            price: 0, // Les viandes sont gratuites
             image: meat.image
           });
         }
@@ -153,10 +170,15 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       let newSauces = [...prev.sauces];
       
       if (isSelected) {
+        // Ne pas permettre de décocher fromagère
+        if (sauce.name.toLowerCase().includes('fromagère')) {
+          return prev;
+        }
         newSauces = newSauces.filter(s => s.id !== sauce._id);
       } else {
-        // Maximum 3 sauces
-        if (newSauces.length < 3) {
+        // Maximum 3 sauces (plus fromagère par défaut)
+        const nonFromagereCount = newSauces.filter(s => !s.name.toLowerCase().includes('fromagère')).length;
+        if (nonFromagereCount < 2) { // 2 sauces max + fromagère
           newSauces.push({
             id: sauce._id,
             name: sauce.name,
@@ -176,8 +198,10 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       let newIngredients = [...prev.ingredients];
       
       if (isSelected) {
+        // Décocher l'ingrédient
         newIngredients = newIngredients.filter(i => i.id !== ingredient._id);
       } else {
+        // Ajouter l'ingrédient
         newIngredients.push({
           id: ingredient._id,
           name: ingredient.name,
@@ -275,7 +299,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+          className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[95vh] overflow-hidden flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -284,12 +308,18 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
               <h2 className="text-2xl font-bold text-gray-900">Composez votre {config.type === 'bowl' ? 'Bowl' : 'Tacos'}</h2>
               <p className="text-gray-600">{STEPS[currentStep].description}</p>
             </div>
-            <button
-              onClick={handleClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Prix total</p>
+                <p className="text-2xl font-bold text-orange-600">{calculatePrice()}€</p>
+              </div>
+              <button
+                onClick={handleClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
           </div>
 
           {/* Progress Bar */}
@@ -318,7 +348,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
           </div>
 
           {/* Content */}
-          <div className="p-6 overflow-y-auto max-h-[60vh]">
+          <div className="p-6 overflow-y-auto flex-1">
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
@@ -429,7 +459,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                               />
                             </div>
                             <h4 className="font-medium text-gray-900">{meat.name}</h4>
-                            <p className="text-sm text-gray-600">+1.50€</p>
+                            <p className="text-sm text-gray-600">Gratuit</p>
                             {isSelected && <Check className="w-5 h-5 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>
                         );

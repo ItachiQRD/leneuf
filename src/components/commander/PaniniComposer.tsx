@@ -19,14 +19,12 @@ interface Ingredient {
 }
 
 interface SelectedIngredients {
-  meat: Ingredient | null;
-  cheese: Ingredient | null;
+  baseIngredients: Ingredient[];
   supplements: Ingredient[];
 }
 
 const STEPS = [
-  { id: 'meat', title: 'Choisissez votre viande', description: 'Sélectionnez la viande de votre panini' },
-  { id: 'cheese', title: 'Choisissez votre fromage', description: 'Sélectionnez le fromage de votre panini' },
+  { id: 'ingredients', title: 'Choisissez vos ingrédients', description: 'Sélectionnez vos ingrédients de base' },
   { id: 'supplements', title: 'Suppléments (optionnel)', description: 'Ajoutez des suppléments pour 1€ chacun' },
   { id: 'summary', title: 'Récapitulatif', description: 'Vérifiez votre composition' }
 ];
@@ -36,8 +34,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedIngredients, setSelectedIngredients] = useState<SelectedIngredients>({
-    meat: null,
-    cheese: null,
+    baseIngredients: [],
     supplements: []
   });
 
@@ -64,22 +61,19 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
     }
   };
 
-  const meats = ingredients.filter(ing => ing.type === 'meat' && 
-    ['kebab', 'jambon', 'thon', 'saumon', 'poulet', 'viande hachée'].some(name => 
+  const baseIngredients = ingredients.filter(ing => 
+    (ing.type === 'meat' && ['kebab', 'jambon', 'thon', 'saumon', 'poulet', 'viande hachée'].some(name => 
       ing.name.toLowerCase().includes(name.toLowerCase())
-    )
-  );
-
-  const cheeses = ingredients.filter(ing => ing.type === 'cheese' && 
-    ['mozzarella', 'chèvre', 'miel'].some(name => 
+    )) ||
+    (ing.type === 'cheese' && ['mozzarella', 'chèvre', 'miel'].some(name => 
       ing.name.toLowerCase().includes(name.toLowerCase())
-    )
+    ))
   );
 
   const supplements = ingredients.filter(ing => ing.type === 'vegetable' || ing.type === 'extra');
 
   const handleNext = () => {
-    if (currentStep < STEPS.length - 1) {
+    if (canProceed() && currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -90,14 +84,21 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
     }
   };
 
-  const handleMeatSelect = (meat: Ingredient) => {
-    setSelectedIngredients(prev => ({ ...prev, meat }));
-    handleNext();
-  };
-
-  const handleCheeseSelect = (cheese: Ingredient) => {
-    setSelectedIngredients(prev => ({ ...prev, cheese }));
-    handleNext();
+  const handleBaseIngredientToggle = (ingredient: Ingredient) => {
+    setSelectedIngredients(prev => {
+      const isSelected = prev.baseIngredients.some(i => i._id === ingredient._id);
+      if (isSelected) {
+        return {
+          ...prev,
+          baseIngredients: prev.baseIngredients.filter(i => i._id !== ingredient._id)
+        };
+      } else {
+        return {
+          ...prev,
+          baseIngredients: [...prev.baseIngredients, ingredient]
+        };
+      }
+    });
   };
 
   const handleSupplementToggle = (supplement: Ingredient) => {
@@ -119,18 +120,28 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
 
   const calculatePrice = () => {
     let price = 0;
-    if (selectedIngredients.meat) price += selectedIngredients.meat.price;
-    if (selectedIngredients.cheese) price += selectedIngredients.cheese.price;
-    price += selectedIngredients.supplements.length; // 1€ par supplément
+    // Prix des ingrédients de base (viandes et fromages)
+    price += selectedIngredients.baseIngredients.reduce((sum, ing) => sum + ing.price, 0);
+    // Prix des suppléments (1€ chacun)
+    price += selectedIngredients.supplements.length;
     return price;
+  };
+
+  const canProceed = () => {
+    switch (currentStep) {
+      case 0: return selectedIngredients.baseIngredients.length > 0;
+      case 1: return true; // Les suppléments sont optionnels
+      case 2: return true;
+      default: return false;
+    }
   };
 
   const handleAddToCart = () => {
     const panini = {
       _id: `panini-${Date.now()}`,
-      name: `Panini ${selectedIngredients.meat?.name} ${selectedIngredients.cheese?.name}`,
+      name: `Panini ${selectedIngredients.baseIngredients.map(i => i.name).join(', ')}`,
       price: calculatePrice(),
-      image: selectedIngredients.meat?.image || '/images/panini-placeholder.jpg',
+      image: selectedIngredients.baseIngredients[0]?.image || '/images/panini-placeholder.jpg',
       category: 'paninis',
       type: 'food',
       customIngredients: selectedIngredients
@@ -143,8 +154,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
   const resetComposer = () => {
     setCurrentStep(0);
     setSelectedIngredients({
-      meat: null,
-      cheese: null,
+      baseIngredients: [],
       supplements: []
     });
   };
@@ -219,66 +229,45 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
               </div>
             ) : (
               <>
-                {/* Step 1: Meat Selection */}
+                {/* Step 1: Base Ingredients Selection */}
                 {currentStep === 0 && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Choisissez votre viande</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Choisissez vos ingrédients de base</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {meats.map((meat) => (
-                        <motion.button
-                          key={meat._id}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => handleMeatSelect(meat)}
-                          className="p-4 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors text-left"
-                        >
-                          <div className="relative w-full h-32 mb-3">
-                            <Image
-                              src={meat.image}
-                              alt={meat.name}
-                              fill
-                              className="object-cover rounded-md"
-                            />
-                          </div>
-                          <h4 className="font-medium text-gray-900">{meat.name}</h4>
-                          <p className="text-sm text-gray-600">{meat.price}€</p>
-                        </motion.button>
-                      ))}
+                      {baseIngredients.map((ingredient) => {
+                        const isSelected = selectedIngredients.baseIngredients.some(i => i._id === ingredient._id);
+                        return (
+                          <motion.button
+                            key={ingredient._id}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => handleBaseIngredientToggle(ingredient)}
+                            className={`p-4 border-2 rounded-lg text-left transition-colors ${
+                              isSelected 
+                                ? 'border-orange-500 bg-orange-50' 
+                                : 'border-gray-200 hover:border-orange-300'
+                            }`}
+                          >
+                            <div className="relative w-full h-32 mb-3">
+                              <Image
+                                src={ingredient.image}
+                                alt={ingredient.name}
+                                fill
+                                className="object-cover rounded-md"
+                              />
+                            </div>
+                            <h4 className="font-medium text-gray-900">{ingredient.name}</h4>
+                            <p className="text-sm text-gray-600">{ingredient.price}€</p>
+                            {isSelected && <Check className="w-5 h-5 text-orange-500 absolute top-2 right-2" />}
+                          </motion.button>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
 
-                {/* Step 2: Cheese Selection */}
+                {/* Step 2: Supplements */}
                 {currentStep === 1 && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Choisissez votre fromage</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {cheeses.map((cheese) => (
-                        <motion.button
-                          key={cheese._id}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => handleCheeseSelect(cheese)}
-                          className="p-4 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors text-left"
-                        >
-                          <div className="relative w-full h-32 mb-3">
-                            <Image
-                              src={cheese.image}
-                              alt={cheese.name}
-                              fill
-                              className="object-cover rounded-md"
-                            />
-                          </div>
-                          <h4 className="font-medium text-gray-900">{cheese.name}</h4>
-                          <p className="text-sm text-gray-600">{cheese.price}€</p>
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 3: Supplements */}
-                {currentStep === 2 && (
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Suppléments (1€ chacun)</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -313,26 +302,20 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                   </div>
                 )}
 
-                {/* Step 4: Summary */}
-                {currentStep === 3 && (
+                {/* Step 3: Summary */}
+                {currentStep === 2 && (
                   <div className="space-y-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Récapitulatif de votre panini</h3>
                     
                     <div className="bg-gray-50 rounded-lg p-4">
                       <h4 className="font-medium text-gray-900 mb-3">Composition :</h4>
                       <div className="space-y-2">
-                        {selectedIngredients.meat && (
-                          <div className="flex justify-between">
-                            <span>Viande : {selectedIngredients.meat.name}</span>
-                            <span>{selectedIngredients.meat.price}€</span>
+                        {selectedIngredients.baseIngredients.map((ingredient, index) => (
+                          <div key={index} className="flex justify-between">
+                            <span>{ingredient.name}</span>
+                            <span>{ingredient.price}€</span>
                           </div>
-                        )}
-                        {selectedIngredients.cheese && (
-                          <div className="flex justify-between">
-                            <span>Fromage : {selectedIngredients.cheese.name}</span>
-                            <span>{selectedIngredients.cheese.price}€</span>
-                          </div>
-                        )}
+                        ))}
                         {selectedIngredients.supplements.map((supplement, index) => (
                           <div key={index} className="flex justify-between">
                             <span>Supplément : {supplement.name}</span>
@@ -368,10 +351,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
               {currentStep < STEPS.length - 1 ? (
                 <Button
                   onClick={handleNext}
-                  disabled={
-                    (currentStep === 0 && !selectedIngredients.meat) ||
-                    (currentStep === 1 && !selectedIngredients.cheese)
-                  }
+                  disabled={!canProceed()}
                 >
                   Suivant
                   <ArrowRight className="w-4 h-4 ml-2" />

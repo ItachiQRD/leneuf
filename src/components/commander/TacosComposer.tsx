@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Minus, Check, ArrowRight, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
+import { Button } from '@/components/ui/Buttons';
 
 interface TacosComposerProps {
   isOpen: boolean;

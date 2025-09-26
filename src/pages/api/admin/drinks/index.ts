@@ -4,6 +4,8 @@ import Drink from '@/models/Drink';
 import { withAdmin } from '@/utils/api';
 import formidable from 'formidable';
 import { imageService } from '@/services/imageService';
+import { DrinkSchema } from '@/types/drink';
+import { ZodError } from 'zod';
 
 export const config = {
   api: {
@@ -76,8 +78,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         };
 
         // Validation et création
-        const drink = await Drink.create(cleanData);
-        res.status(201).json(drink);
+        try {
+          const validatedData = DrinkSchema.parse(cleanData);
+          const drink = await Drink.create(validatedData);
+          res.status(201).json(drink);
+        } catch (error) {
+          if (error instanceof ZodError) {
+            return res.status(400).json({
+              message: 'Erreur de validation',
+              errors: error.errors
+            });
+          }
+          throw error;
+        }
       } catch (error) {
         console.error('Erreur lors de la création de la boisson:', error);
         res.status(500).json({

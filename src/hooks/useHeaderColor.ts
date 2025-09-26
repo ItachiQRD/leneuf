@@ -20,13 +20,12 @@ export const useHeaderColor = (threshold = 100) => {
           boxShadow: 'shadow-md'
         });
       } else {
-        // Calculer l'opacité en fonction du scroll
-        const opacity = Math.min(scrollPosition / threshold, 0.9);
+        // En haut de page, utiliser un fond sombre semi-transparent
         setHeaderStyle({
-          backgroundColor: opacity > 0.5 ? 'bg-white' : 'bg-transparent',
-          textColor: scrollPosition > threshold / 2 ? 'text-gray-900' : 'text-white',
+          backgroundColor: 'bg-black bg-opacity-30',
+          textColor: 'text-white',
           borderColor: 'border-transparent',
-          boxShadow: opacity > 0.5 ? 'shadow-md' : ''
+          boxShadow: ''
         });
       }
     };

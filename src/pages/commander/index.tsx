@@ -20,6 +20,8 @@ export default function CommanderPage() {
   const [showMenuSelector, setShowMenuSelector] = useState(false);
   const [showPaniniComposer, setShowPaniniComposer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [showSizeSelector, setShowSizeSelector] = useState(false);
+  const [productForSize, setProductForSize] = useState<any>(null);
 
   // Données de menu
   const menuCategories = [
@@ -77,8 +79,28 @@ export default function CommanderPage() {
       return;
     }
 
+    // Pour les paninis, ouvrir le composeur
+    if (selectedCategory === 'paninis') {
+      setSelectedProduct(item);
+      setShowPaniniComposer(true);
+      return;
+    }
 
-    // Pour les boissons, utiliser le prix de la taille par défaut
+    // Pour les tacos, ouvrir le composeur
+    if (selectedCategory === 'tacos') {
+      setShowTacosComposer(true);
+      return;
+    }
+
+    // Pour les pizzas et boissons avec plusieurs tailles, ouvrir le sélecteur de taille
+    if ((selectedCategory === 'pizzas' || selectedCategory === 'boissons') && 
+        item.sizes && item.sizes.length > 1) {
+      setProductForSize(item);
+      setShowSizeSelector(true);
+      return;
+    }
+
+    // Pour les autres produits, ajouter directement au panier
     let price = item.price;
     if (!price && item.sizes && item.sizes.length > 0) {
       const defaultSize = item.sizes.find((s: any) => s.isDefault) || item.sizes[0];
@@ -102,6 +124,22 @@ export default function CommanderPage() {
 
   const handlePaniniClick = () => {
     setShowPaniniComposer(true);
+  };
+
+  const handleSizeSelect = (size: any) => {
+    if (productForSize) {
+      const cartItem = {
+        _id: `${productForSize._id || productForSize.id}-${size.name}`,
+        name: `${productForSize.name} (${size.name})`,
+        price: size.price,
+        image: productForSize.image,
+        category: productForSize.category,
+        type: productForSize.productType || 'food'
+      };
+      addItem(cartItem);
+    }
+    setShowSizeSelector(false);
+    setProductForSize(null);
   };
 
   const handleCheckout = async () => {
@@ -355,6 +393,48 @@ export default function CommanderPage() {
         onClose={() => setShowPaniniComposer(false)}
         onAddToCart={handleAddToCart}
       />
+
+      {/* Composant de sélection de taille */}
+      {showSizeSelector && productForSize && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Choisissez la taille pour {productForSize.name}
+            </h3>
+            
+            <div className="space-y-3">
+              {productForSize.sizes.map((size: any, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => handleSizeSelect(size)}
+                  className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{size.name}</h4>
+                      {size.description && (
+                        <p className="text-sm text-gray-600">{size.description}</p>
+                      )}
+                    </div>
+                    <span className="text-lg font-bold text-red-600">
+                      {size.price.toFixed(2)} €
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setShowSizeSelector(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

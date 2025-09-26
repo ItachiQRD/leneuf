@@ -11,13 +11,6 @@ export interface SideSize {
   isDefault?: boolean;
 }
 
-export interface SideNutritionalInfo {
-  calories: number;
-  proteins: number;
-  carbs: number;
-  fats: number;
-  servingSize: string; // ex: "100g"
-}
 
 // Interface principale
 export interface Side extends BaseProduct {
@@ -27,12 +20,6 @@ export interface Side extends BaseProduct {
   image: string | File;
   available: boolean;
   sizes: SideSize[];
-  ingredients: string[];
-  allergens: string[];
-  nutritionalInfo: SideNutritionalInfo;
-  spicyLevel?: 'mild' | 'medium' | 'hot';
-  vegetarian: boolean;
-  vegan: boolean;
   preparationTime: number;
   active: boolean;
 }
@@ -45,20 +32,12 @@ export interface SideInput extends Omit<Side, '_id' | 'createdAt' | 'updatedAt' 
   image: string | File;
   available: boolean;
   sizes: SideSize[];
-  ingredients: string[];
-  allergens: string[];
-  nutritionalInfo: SideNutritionalInfo;
-  spicyLevel?: 'mild' | 'medium' | 'hot';
-  vegetarian: boolean;
-  vegan: boolean;
   preparationTime: number;
 }
 
 // Interface pour les filtres de recherche
 export interface SideFilters {
   category?: SideCategory;
-  vegetarian?: boolean;
-  vegan?: boolean;
   available?: boolean;
   priceRange?: {
     min: number;
@@ -74,13 +53,6 @@ export const sizeSchema = z.object({
   isDefault: z.boolean().optional(),
 });
 
-export const nutritionalInfoSchema = z.object({
-  calories: z.number().min(0, "Les calories doivent être positives"),
-  proteins: z.number().min(0, "Les protéines doivent être positives"),
-  carbs: z.number().min(0, "Les glucides doivent être positifs"),
-  fats: z.number().min(0, "Les lipides doivent être positifs"),
-  servingSize: z.string().min(1, "La taille de la portion est requise"),
-});
 
 export const sideSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
@@ -89,9 +61,6 @@ export const sideSchema = z.object({
   image: z.union([z.string(), z.instanceof(File)]),
   available: z.boolean(),
   sizes: z.array(sizeSchema),
-  ingredients: z.array(z.string()),
-  nutritionalInfo: nutritionalInfoSchema,
-  spicyLevel: z.enum(['mild', 'medium', 'hot']).optional(),
   preparationTime: z.number().min(1, "Le temps de préparation est requis"),
 });
 

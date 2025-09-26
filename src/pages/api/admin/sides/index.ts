@@ -82,7 +82,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           throw new Error('Une image est requise');
         }
 
-        // Nettoyer les données (convertir les strings en numbers et supprimer les champs non nécessaires)
+        // Nettoyer les données (convertir les strings en numbers)
         const cleanData = {
           ...data,
           price: typeof data.price === 'string' ? parseFloat(data.price) : data.price,
@@ -92,9 +92,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             price: typeof size.price === 'string' ? parseFloat(size.price) : size.price
           }))
         };
-
-        // Supprimer les champs qui ne sont plus dans le modèle
-        delete cleanData.description;
 
         // Validation et création
         try {

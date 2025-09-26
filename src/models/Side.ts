@@ -27,28 +27,6 @@ const sizeSchema = new mongoose.Schema({
   }
 });
 
-const nutritionalInfoSchema = new mongoose.Schema({
-  calories: { 
-    type: Number, 
-    required: true 
-  },
-  proteins: { 
-    type: Number, 
-    required: true 
-  },
-  carbs: { 
-    type: Number, 
-    required: true 
-  },
-  fats: { 
-    type: Number, 
-    required: true 
-  },
-  servingSize: { 
-    type: String, 
-    required: true 
-  }
-});
 
 const sideSchema = createBaseSchema<SideType>({
   name: {
@@ -80,31 +58,6 @@ const sideSchema = createBaseSchema<SideType>({
     weight: { type: String, required: true },
     isDefault: { type: Boolean, default: false }
   }],
-  ingredients: [{
-    type: String,
-    required: true
-  }],
-  allergens: [String],
-  nutritionalInfo: {
-    calories: { type: Number, required: true },
-    proteins: { type: Number, required: true },
-    carbs: { type: Number, required: true },
-    fats: { type: Number, required: true },
-    servingSize: { type: String, required: true }
-  },
-  spicyLevel: {
-    type: String,
-    enum: ['mild', 'medium', 'hot'],
-    default: 'mild'
-  },
-  vegetarian: {
-    type: Boolean,
-    default: false
-  },
-  vegan: {
-    type: Boolean,
-    default: false
-  },
   preparationTime: {
     type: Number,
     required: true,
@@ -116,8 +69,6 @@ const sideSchema = createBaseSchema<SideType>({
 sideSchema.index({ category: 1, active: 1 });
 sideSchema.index({ available: 1 });
 sideSchema.index({ 'sizes.price': 1 });
-sideSchema.index({ vegetarian: 1 });
-sideSchema.index({ vegan: 1 });
 
 // Supprimer le modèle du cache s'il existe pour forcer la recompilation
 if (mongoose.models.Side) {

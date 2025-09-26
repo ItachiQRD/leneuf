@@ -37,10 +37,6 @@ export default function SideForm({
       image: initialData?.image || '',
       available: true,
       sizes: [],
-      ingredients: [],
-      allergens: [],
-      vegetarian: false,
-      vegan: false,
       preparationTime: 5,
       ...initialData
     }

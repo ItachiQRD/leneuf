@@ -70,7 +70,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
     ))
   );
 
-  const supplements = ingredients.filter(ing => ing.type === 'vegetable' || ing.type === 'extra');
+  const supplements = ingredients.filter(ing => ing.type !== 'meat' && ing.type !== 'cheese');
 
   const handleNext = () => {
     if (canProceed() && currentStep < STEPS.length - 1) {

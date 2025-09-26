@@ -90,7 +90,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
         setOptions({
           meats,
           sauces: data.data.sauces,
-          ingredients: data.data.ingredients, // Tous les ingrédients
+          ingredients: data.data.ingredients.filter((ing: any) => ing.type !== 'meat'), // Tous sauf les viandes (déjà dans meats)
           sizes: [
             { name: 'M', price: 6.50, description: '1 tortilla - 1 viande', tortillas: 1, maxMeats: 1 },
             { name: 'L', price: 7.50, description: '1 tortilla - 2 viandes', tortillas: 1, maxMeats: 2 },

@@ -147,22 +147,6 @@ export default function AdminSidesPage() {
                     )}
                   </div>
 
-                  {/* Allergènes */}
-                  {side.allergens && side.allergens.length > 0 && (
-                    <div className="mb-4">
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Allergènes:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {side.allergens.map((allergen, index) => (
-                          <span 
-                            key={index} 
-                            className="px-2 py-1 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 text-xs rounded-full"
-                          >
-                            {allergen}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                   {/* Actions */}
                   <div className="flex space-x-2">

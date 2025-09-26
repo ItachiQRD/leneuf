@@ -92,8 +92,15 @@ export default function CommanderPage() {
       return;
     }
 
-    // Pour les pizzas et boissons avec plusieurs tailles, ouvrir le sélecteur de taille
-    if ((selectedCategory === 'pizzas' || selectedCategory === 'boissons') && 
+    // Pour les pizzas, toujours ouvrir le sélecteur de taille
+    if (selectedCategory === 'pizzas') {
+      setProductForSize(item);
+      setShowSizeSelector(true);
+      return;
+    }
+
+    // Pour les boissons avec plusieurs tailles, ouvrir le sélecteur de taille
+    if (selectedCategory === 'boissons' && 
         item.sizes && item.sizes.length > 1) {
       setProductForSize(item);
       setShowSizeSelector(true);
@@ -128,10 +135,26 @@ export default function CommanderPage() {
 
   const handleSizeSelect = (size: any) => {
     if (productForSize) {
+      let price = size.price;
+      
+      // Pour les pizzas, utiliser les prix fixes
+      if (selectedCategory === 'pizzas') {
+        const isMargherita = productForSize.name.toLowerCase().includes('margherita') || 
+                            productForSize.name.toLowerCase().includes('margarita');
+        
+        if (isMargherita) {
+          // Margherita : 7€, 9€, 14€
+          price = size.name === 'Junior' ? 7 : size.name === 'Senior' ? 9 : 14;
+        } else {
+          // Autres pizzas : 9€, 13€, 17€
+          price = size.name === 'Junior' ? 9 : size.name === 'Senior' ? 13 : 17;
+        }
+      }
+      
       const cartItem = {
         _id: `${productForSize._id || productForSize.id}-${size.name}`,
         name: `${productForSize.name} (${size.name})`,
-        price: size.price,
+        price: price,
         image: productForSize.image,
         category: productForSize.category,
         type: productForSize.productType || 'food'
@@ -271,10 +294,20 @@ export default function CommanderPage() {
                     
                     <div className="flex items-center space-x-4">
                       <span className="text-xl font-bold text-red-600">
-                        {item.price ? item.price.toFixed(2) : 
-                         item.sizes && item.sizes.length > 0 ? 
-                         `À partir de ${Math.min(...item.sizes.map((s: any) => s.price)).toFixed(2)} €` : 
-                         'Prix sur demande'} €
+                        {selectedCategory === 'pizzas' ? (
+                          (() => {
+                            const isMargherita = item.name.toLowerCase().includes('margherita') || 
+                                                item.name.toLowerCase().includes('margarita');
+                            const minPrice = isMargherita ? 7 : 9;
+                            const maxPrice = isMargherita ? 14 : 17;
+                            return `${minPrice}€ - ${maxPrice}€`;
+                          })()
+                        ) : (
+                          item.price ? item.price.toFixed(2) : 
+                          item.sizes && item.sizes.length > 0 ? 
+                          `À partir de ${Math.min(...item.sizes.map((s: any) => s.price)).toFixed(2)} €` : 
+                          'Prix sur demande'
+                        )}
                       </span>
                       <button
                         onClick={() => handleAddToCart(item)}
@@ -403,25 +436,60 @@ export default function CommanderPage() {
             </h3>
             
             <div className="space-y-3">
-              {productForSize.sizes.map((size: any, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => handleSizeSelect(size)}
-                  className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h4 className="font-medium text-gray-900">{size.name}</h4>
-                      {size.description && (
-                        <p className="text-sm text-gray-600">{size.description}</p>
-                      )}
+              {selectedCategory === 'pizzas' ? (
+                // Tailles fixes pour les pizzas
+                [
+                  { name: 'Junior', description: '29cm', price: 0 },
+                  { name: 'Senior', description: '33cm', price: 0 },
+                  { name: 'Mega', description: '40cm', price: 0 }
+                ].map((size, index) => {
+                  const isMargherita = productForSize.name.toLowerCase().includes('margherita') || 
+                                      productForSize.name.toLowerCase().includes('margarita');
+                  
+                  const price = isMargherita 
+                    ? (size.name === 'Junior' ? 7 : size.name === 'Senior' ? 9 : 14)
+                    : (size.name === 'Junior' ? 9 : size.name === 'Senior' ? 13 : 17);
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleSizeSelect({ ...size, price })}
+                      className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="font-medium text-gray-900">{size.name}</h4>
+                          <p className="text-sm text-gray-600">{size.description}</p>
+                        </div>
+                        <span className="text-lg font-bold text-red-600">
+                          {price.toFixed(2)} €
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })
+              ) : (
+                // Tailles dynamiques pour les autres produits (boissons)
+                productForSize.sizes.map((size: any, index: number) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSizeSelect(size)}
+                    className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h4 className="font-medium text-gray-900">{size.name}</h4>
+                        {size.description && (
+                          <p className="text-sm text-gray-600">{size.description}</p>
+                        )}
+                      </div>
+                      <span className="text-lg font-bold text-red-600">
+                        {size.price.toFixed(2)} €
+                      </span>
                     </div>
-                    <span className="text-lg font-bold text-red-600">
-                      {size.price.toFixed(2)} €
-                    </span>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))
+              )}
             </div>
             
             <div className="flex justify-end mt-6">

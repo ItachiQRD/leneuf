@@ -22,6 +22,8 @@ export default function CommanderPage() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const [productForSize, setProductForSize] = useState<any>(null);
+  const [selectedSauce, setSelectedSauce] = useState<any>(null);
+  const [sauces, setSauces] = useState<any[]>([]);
 
   // Données de menu
   const menuCategories = [
@@ -54,6 +56,13 @@ export default function CommanderPage() {
     
     fetchProducts(selectedCategory);
   }, [selectedCategory]);
+
+  // Charger les sauces quand on ouvre le modal pour les accompagnements
+  useEffect(() => {
+    if (showSizeSelector && selectedCategory === 'accompagnements' && sauces.length === 0) {
+      fetchSauces();
+    }
+  }, [showSizeSelector, selectedCategory, sauces.length]);
 
   // Produits statiques basés sur le menu
   const getStaticProducts = (category: string) => {
@@ -198,6 +207,18 @@ export default function CommanderPage() {
     }
   };
 
+  const fetchSauces = async () => {
+    try {
+      const response = await fetch('/api/products/tacos-options');
+      const data = await response.json();
+      if (data.success) {
+        setSauces(data.data.sauces);
+      }
+    } catch (error) {
+      console.error('Error fetching sauces:', error);
+    }
+  };
+
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeItem(id);
@@ -239,6 +260,13 @@ export default function CommanderPage() {
     // Pour les boissons avec plusieurs tailles, ouvrir le sélecteur de taille
     if (selectedCategory === 'boissons' && 
         item.sizes && item.sizes.length > 1) {
+      setProductForSize(item);
+      setShowSizeSelector(true);
+      return;
+    }
+
+    // Pour les accompagnements, ouvrir le sélecteur de taille et sauce
+    if (selectedCategory === 'accompagnements') {
       setProductForSize(item);
       setShowSizeSelector(true);
       return;
@@ -287,6 +315,7 @@ export default function CommanderPage() {
   const handleSizeSelect = (size: any) => {
     if (productForSize) {
       let price = size.price;
+      let name = `${productForSize.name} (${size.name})`;
       
       // Pour les pizzas, utiliser les prix fixes
       if (selectedCategory === 'pizzas') {
@@ -302,9 +331,14 @@ export default function CommanderPage() {
         }
       }
       
+      // Pour les accompagnements, ajouter la sauce si sélectionnée
+      if (selectedCategory === 'accompagnements' && selectedSauce) {
+        name += ` + ${selectedSauce.name}`;
+      }
+      
       const cartItem = {
-        _id: `${productForSize._id || productForSize.id}-${size.name}`,
-        name: `${productForSize.name} (${size.name})`,
+        _id: `${productForSize._id || productForSize.id}-${size.name}${selectedSauce ? `-${selectedSauce._id}` : ''}`,
+        name: name,
         price: price,
         image: productForSize.image,
         category: productForSize.category,
@@ -314,6 +348,7 @@ export default function CommanderPage() {
     }
     setShowSizeSelector(false);
     setProductForSize(null);
+    setSelectedSauce(null);
   };
 
   const handleCheckout = async () => {
@@ -456,9 +491,9 @@ export default function CommanderPage() {
                             return `${minPrice}€ - ${maxPrice}€`;
                           })()
                         ) : (
-                          item.price ? item.price.toFixed(2) : 
+                          item.price ? `${item.price.toFixed(2)}€` : 
                           item.sizes && item.sizes.length > 0 ? 
-                          `À partir de ${Math.min(...item.sizes.map((s: any) => s.price)).toFixed(2)} €` : 
+                          `À partir de ${Math.min(...item.sizes.map((s: any) => s.price)).toFixed(2)}€` : 
                           'Prix sur demande'
                         )}
                       </span>
@@ -621,6 +656,52 @@ export default function CommanderPage() {
                     </button>
                   );
                 })
+              ) : selectedCategory === 'accompagnements' ? (
+                // Tailles pour les accompagnements avec sélection de sauce
+                productForSize.sizes.map((size: any, index: number) => (
+                  <div key={index} className="border-2 border-gray-200 rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <div>
+                        <h4 className="font-medium text-gray-900">{size.name}</h4>
+                        {size.description && (
+                          <p className="text-sm text-gray-600">{size.description}</p>
+                        )}
+                      </div>
+                      <span className="text-lg font-bold text-red-600">
+                        {size.price.toFixed(2)} €
+                      </span>
+                    </div>
+                    
+                    {/* Sélection de sauce */}
+                    <div className="mt-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Sauce (optionnelle)
+                      </label>
+                      <select
+                        value={selectedSauce?._id || ''}
+                        onChange={(e) => {
+                          const sauce = sauces.find(s => s._id === e.target.value);
+                          setSelectedSauce(sauce || null);
+                        }}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      >
+                        <option value="">Aucune sauce</option>
+                        {sauces.map((sauce) => (
+                          <option key={sauce._id} value={sauce._id}>
+                            {sauce.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <button
+                      onClick={() => handleSizeSelect(size)}
+                      className="w-full mt-3 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      Ajouter au panier
+                    </button>
+                  </div>
+                ))
               ) : (
                 // Tailles dynamiques pour les autres produits (boissons)
                 productForSize.sizes.map((size: any, index: number) => (
@@ -647,7 +728,11 @@ export default function CommanderPage() {
             
             <div className="flex justify-end mt-6">
               <button
-                onClick={() => setShowSizeSelector(false)}
+                onClick={() => {
+                  setShowSizeSelector(false);
+                  setProductForSize(null);
+                  setSelectedSauce(null);
+                }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
                 Annuler

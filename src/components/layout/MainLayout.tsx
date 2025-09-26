@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { usePerformanceMonitoring } from '@/utils/performance';
 import MainHeader from './MainHeader';
-import MainFooter from './MainFooter';
 import Cart from '@/components/cart/Cart';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
@@ -21,7 +20,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <main className="flex-grow">
         {children}
       </main>
-      <MainFooter />
       
       {/* Cart Overlay */}
       <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />

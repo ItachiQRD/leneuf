@@ -39,10 +39,10 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isOpen && isMenu) {
+    if (isOpen) {
       fetchSidesAndDrinks();
     }
-  }, [isOpen, isMenu]);
+  }, [isOpen]);
 
   const fetchSidesAndDrinks = async () => {
     setLoading(true);
@@ -71,18 +71,36 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
     let totalPrice = product.price;
     
     if (isMenu) {
-      totalPrice += 1.50; // Supplément menu
-      
+      // Menu complet : produit + accompagnement + boisson
       if (selectedSide) {
-        totalPrice += selectedSide.price;
+        // Frites gratuites, autres accompagnements : prix - 2€
+        if (selectedSide.name.toLowerCase().includes('frite')) {
+          totalPrice += 0; // Frites gratuites
+        } else {
+          totalPrice += Math.max(0, selectedSide.price - 2); // Prix - 2€ (minimum 0)
+        }
       }
       
       if (selectedDrink) {
-        // Pour les boissons, utiliser le prix de la taille par défaut
+        // Boissons à 1,50€ gratuites, autres : prix - 1,50€
         const drinkPrice = selectedDrink.price || 
           (selectedDrink.sizes && selectedDrink.sizes.length > 0 ? 
            (selectedDrink.sizes.find(s => s.isDefault) || selectedDrink.sizes[0]).price : 0);
-        totalPrice += drinkPrice;
+        
+        if (drinkPrice <= 1.50) {
+          totalPrice += 0; // Boissons à 1,50€ gratuites
+        } else {
+          totalPrice += Math.max(0, drinkPrice - 1.50); // Prix - 1,50€ (minimum 0)
+        }
+      }
+    } else {
+      // Produit seul + accompagnement (même logique de prix)
+      if (selectedSide) {
+        if (selectedSide.name.toLowerCase().includes('frite')) {
+          totalPrice += 0; // Frites gratuites
+        } else {
+          totalPrice += Math.max(0, selectedSide.price - 2); // Prix - 2€ (minimum 0)
+        }
       }
     }
     
@@ -93,7 +111,7 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
     let cartItem;
 
     if (isMenu) {
-      // Créer un item menu
+      // Menu complet : produit + accompagnement + boisson
       cartItem = {
         _id: `menu-${product._id}-${Date.now()}`,
         name: `Menu ${product.name}`,
@@ -110,15 +128,25 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
         }
       };
     } else {
-      // Produit seul
+      // Produit seul + accompagnement (si sélectionné)
+      let name = product.name;
+      if (selectedSide) {
+        name += ` + ${selectedSide.name}`;
+      }
+      
       cartItem = {
-        _id: product._id,
-        name: product.name,
-        price: product.price * quantity,
+        _id: `${product._id}${selectedSide ? `-${selectedSide._id}` : ''}`,
+        name: name,
+        price: calculatePrice(),
         image: product.image,
         category: product.category,
         type: 'food',
-        quantity
+        quantity,
+        config: {
+          mainProduct: product,
+          side: selectedSide,
+          quantity
+        }
       };
     }
 
@@ -234,14 +262,13 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
               </div>
             </div>
 
-            {/* Options du menu */}
-            {isMenu && (
-              <div className="space-y-6">
-                {/* Sélection accompagnement */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Choisissez votre accompagnement
-                  </h3>
+            {/* Options d'accompagnement */}
+            <div className="space-y-6">
+              {/* Sélection accompagnement */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Choisissez votre accompagnement {!isMenu && '(optionnel)'}
+                </h3>
                   {loading ? (
                     <div className="text-center py-4">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600 mx-auto"></div>
@@ -278,11 +305,12 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
                   )}
                 </div>
 
-                {/* Sélection boisson */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Choisissez votre boisson
-                  </h3>
+                {/* Sélection boisson - seulement pour les menus */}
+                {isMenu && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                      Choisissez votre boisson
+                    </h3>
                   {loading ? (
                     <div className="text-center py-4">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600 mx-auto"></div>
@@ -320,9 +348,8 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
                       ))}
                     </div>
                   )}
-                </div>
-              </div>
-            )}
+                  </div>
+                )}
 
             {/* Quantité */}
             <div className="mt-6">

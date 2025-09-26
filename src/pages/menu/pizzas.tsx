@@ -412,7 +412,7 @@ export default function PizzasPage() {
         </section>
 
         {/* Bouton flottant de commande */}
-        <Link href="/commande">
+        <Link href="/commander">
           <motion.button
             className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center"
             whileHover={{ scale: 1.1 }}

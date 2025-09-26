@@ -9,7 +9,16 @@ export type DrinkType = (typeof drinkTypes)[number];
 const DrinkSizeSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
   volume: z.string().min(1, "Le volume est requis"),
-  price: z.number().min(0, "Le prix doit être positif"),
+  price: z.union([
+    z.number().min(0, "Le prix doit être positif"),
+    z.string().transform((val) => {
+      const num = parseFloat(val.replace(',', '.'));
+      if (isNaN(num) || num < 0) {
+        throw new Error("Le prix doit être un nombre positif");
+      }
+      return num;
+    })
+  ]),
   isDefault: z.boolean()
 });
 
@@ -30,6 +39,16 @@ export const DrinkSchema = z.object({
     z.instanceof(File),
   ]).optional(),
   available: z.boolean(),
+  price: z.union([
+    z.number().min(0, "Le prix doit être positif"),
+    z.string().transform((val) => {
+      const num = parseFloat(val.replace(',', '.'));
+      if (isNaN(num) || num < 0) {
+        throw new Error("Le prix doit être un nombre positif");
+      }
+      return num;
+    })
+  ]).optional(),
   sizes: z.array(DrinkSizeSchema).min(1, "Au moins une taille est requise"),
   nutritionalInfo: nutritionalInfoSchema,
   allergens: z.array(z.string()).default([]),

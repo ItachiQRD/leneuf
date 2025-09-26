@@ -32,6 +32,9 @@ export default function CommanderPage() {
     { id: 'accompagnements', name: 'Accompagnements', active: false },
     { id: 'tacos', name: 'Tacos / Bowls', active: false },
     { id: 'paninis', name: 'Paninis', active: false },
+    { id: 'tex-mex', name: 'Tex Mex', active: false },
+    { id: 'ptite-faim', name: 'P\'tite Faim', active: false },
+    { id: 'menu-enfants', name: 'Menu Enfants', active: false },
     { id: 'boissons', name: 'Boissons', active: false },
     { id: 'desserts', name: 'Desserts', active: false },
   ];
@@ -43,8 +46,142 @@ export default function CommanderPage() {
       return;
     }
     
+    // Catégories avec produits statiques
+    if (selectedCategory === 'tex-mex' || selectedCategory === 'ptite-faim' || selectedCategory === 'menu-enfants') {
+      setProducts(getStaticProducts(selectedCategory));
+      return;
+    }
+    
     fetchProducts(selectedCategory);
   }, [selectedCategory]);
+
+  // Produits statiques basés sur le menu
+  const getStaticProducts = (category: string) => {
+    switch (category) {
+      case 'tex-mex':
+        return [
+          {
+            _id: 'tex-mex-7-pieces',
+            name: '7 pièces + Frite + boisson',
+            price: 8.5,
+            image: '/images/tex-mex-7-pieces.jpg',
+            description: '7 pièces au choix (Tenders, Hot Wings, Nuggets, Mozza Stick) + Frite + Boisson',
+            category: 'tex-mex',
+            type: 'combo'
+          },
+          {
+            _id: 'tex-mex-14-pieces',
+            name: '14 pièces + 2 frites + 2 boissons',
+            price: 14.9,
+            image: '/images/tex-mex-14-pieces.jpg',
+            description: '14 pièces au choix + 2 Frites + 2 Boissons',
+            category: 'tex-mex',
+            type: 'combo'
+          },
+          {
+            _id: 'tex-mex-20-pieces',
+            name: '20 pièces + 4 Frites + boisson 1,5L',
+            price: 20,
+            image: '/images/tex-mex-20-pieces.jpg',
+            description: '20 pièces au choix + 4 Frites + Boisson 1,5L',
+            category: 'tex-mex',
+            type: 'combo'
+          }
+        ];
+      
+      case 'ptite-faim':
+        return [
+          {
+            _id: 'ptite-faim-3-nuggets',
+            name: '3 Nuggets',
+            price: 2.5,
+            image: '/images/3-nuggets.jpg',
+            description: '3 Nuggets croustillants',
+            category: 'ptite-faim',
+            type: 'snack'
+          },
+          {
+            _id: 'ptite-faim-3-hot-wings',
+            name: '3 Hot Wings',
+            price: 2.5,
+            image: '/images/3-hot-wings.jpg',
+            description: '3 Ailes de poulet épicées',
+            category: 'ptite-faim',
+            type: 'snack'
+          },
+          {
+            _id: 'ptite-faim-2-tenders',
+            name: '2 Tenders',
+            price: 2.5,
+            image: '/images/2-tenders.jpg',
+            description: '2 Tenders de poulet',
+            category: 'ptite-faim',
+            type: 'snack'
+          },
+          {
+            _id: 'ptite-faim-petit-burger',
+            name: 'P\'tit Burger',
+            price: 2.5,
+            image: '/images/petit-burger.jpg',
+            description: 'Mini burger avec steak 45g',
+            category: 'ptite-faim',
+            type: 'snack'
+          },
+          {
+            _id: 'ptite-faim-3-mozza-sticks',
+            name: '3 Mozza Sticks',
+            price: 2.5,
+            image: '/images/3-mozza-sticks.jpg',
+            description: '3 Bâtonnets de mozzarella',
+            category: 'ptite-faim',
+            type: 'snack'
+          },
+          {
+            _id: 'ptite-faim-petite-salade',
+            name: 'P\'tite Salade',
+            price: 2.5,
+            image: '/images/petite-salade.jpg',
+            description: 'Salade tomate oignon',
+            category: 'ptite-faim',
+            type: 'snack'
+          }
+        ];
+      
+      case 'menu-enfants':
+        return [
+          {
+            _id: 'menu-enfants-5-nuggets',
+            name: '5 Nuggets + Frites',
+            price: 6,
+            image: '/images/menu-enfants-nuggets.jpg',
+            description: '5 Nuggets + Frites + 1 Caprisun + une surprise',
+            category: 'menu-enfants',
+            type: 'menu'
+          },
+          {
+            _id: 'menu-enfants-mini-kebab',
+            name: 'Mini Kebab + Frites',
+            price: 6,
+            image: '/images/menu-enfants-kebab.jpg',
+            description: 'Mini Kebab + Frites + 1 Caprisun + une surprise',
+            category: 'menu-enfants',
+            type: 'menu'
+          },
+          {
+            _id: 'menu-enfants-cheese-burger',
+            name: 'Cheese Burger + Frites',
+            price: 6,
+            image: '/images/menu-enfants-burger.jpg',
+            description: 'Cheese Burger + Frites + 1 Caprisun + une surprise',
+            category: 'menu-enfants',
+            type: 'menu'
+          }
+        ];
+      
+      default:
+        return [];
+    }
+  };
 
   const fetchProducts = async (category: string) => {
     setLoadingProducts(true);
@@ -104,6 +241,20 @@ export default function CommanderPage() {
         item.sizes && item.sizes.length > 1) {
       setProductForSize(item);
       setShowSizeSelector(true);
+      return;
+    }
+
+    // Pour les catégories statiques (Tex Mex, P'tite Faim, Menu Enfants), ajouter directement
+    if (['tex-mex', 'ptite-faim', 'menu-enfants'].includes(selectedCategory)) {
+      const cartItem = {
+        _id: item._id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        category: item.category,
+        type: item.type || 'food'
+      };
+      addItem(cartItem);
       return;
     }
 

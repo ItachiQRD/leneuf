@@ -33,7 +33,7 @@ export default function OrderButton({
       whileTap={{ scale: 0.95 }}
     >
       <Link
-        href="/commande"
+        href="/commander"
         className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       >
         <Zap className="w-5 h-5 mr-2" />

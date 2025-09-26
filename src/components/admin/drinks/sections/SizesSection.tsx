@@ -112,7 +112,7 @@ export default function SizesSection({ form }: SizesSectionProps) {
                   label="Volume"
                   {...register(`sizes.${index}.volume`)}
                   error={errors.sizes?.[index]?.volume?.message}
-                  placeholder="ex: 330ml"
+                  placeholder="ex: 330ml ou 1.5L"
                 />
               </div>
 

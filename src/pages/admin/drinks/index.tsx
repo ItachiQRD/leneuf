@@ -137,7 +137,7 @@ export default function AdminDrinksPage() {
                     <div className="space-y-2">
                       {drink.sizes.map((size, index) => (
                         <div key={index} className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">{size.name} ({size.volume}ml)</span>
+                          <span className="text-gray-600 dark:text-gray-400">{size.name} ({size.volume})</span>
                           <span className="font-bold text-cyan-600">{size.price}€</span>
                         </div>
                       ))}

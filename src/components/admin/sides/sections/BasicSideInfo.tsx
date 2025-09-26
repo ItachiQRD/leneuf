@@ -49,43 +49,6 @@ export default function BasicSideInfo({ form, category }: BasicSideInfoProps) {
           min="1"
         />
 
-        {/* Ingredients */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ingrédients
-          </label>
-          <div className="space-y-2">
-            {watch('ingredients')?.map((_, index) => (
-              <div key={index} className="flex gap-2">
-                <Input
-                  {...register(`ingredients.${index}`)}
-                  placeholder="Nom de l'ingrédient"
-                  error={errors.ingredients?.[index]?.message}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const ingredients = watch('ingredients').filter((_, i) => i !== index);
-                    setValue('ingredients', ingredients);
-                  }}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => {
-                const ingredients = watch('ingredients') || [];
-                setValue('ingredients', [...ingredients, '']);
-              }}
-              className="text-sm text-orange-600 hover:text-orange-700"
-            >
-              + Ajouter un ingrédient
-            </button>
-          </div>
-        </div>
       </div>
 
       <div className="flex items-center justify-between">

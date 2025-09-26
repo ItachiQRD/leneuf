@@ -393,6 +393,7 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
               {isMenu ? 'Ajouter le menu' : 'Ajouter au panier'}
             </button>
           </div>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>

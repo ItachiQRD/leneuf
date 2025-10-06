@@ -87,13 +87,10 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       if (data.success) {
         // Filtrer les viandes disponibles dans les ingrédients
         const meats = data.data.ingredients.filter((ing: any) => ing.type === 'meat');
-        // Filtrer les suppléments (tous les ingrédients sauf les viandes)
-        const supplements = data.data.ingredients.filter((ing: any) => ing.type !== 'meat');
-        
         setOptions({
           meats,
           sauces: data.data.sauces,
-          ingredients: supplements, // Seulement les suppléments (pas les viandes)
+          ingredients: data.data.ingredients, // Tous les ingrédients
           sizes: [
             { name: 'M', price: 6.50, description: '1 tortilla - 1 viande', tortillas: 1, maxMeats: 1 },
             { name: 'L', price: 7.50, description: '1 tortilla - 2 viandes', tortillas: 1, maxMeats: 2 },
@@ -208,7 +205,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
         newIngredients.push({
           id: ingredient._id,
           name: ingredient.name,
-          price: ingredient.price || 0.50, // Utiliser le prix de la base de données
+          price: ingredient.type === 'meat' ? 1.50 : 0.50, // Prix selon le type
           image: ingredient.image,
           type: ingredient.type
         });
@@ -527,7 +524,9 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Suppléments (optionnel)</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {options.ingredients.map((ingredient) => {
+                      {options.ingredients
+                        .filter(ingredient => ingredient.type !== 'meat') // Exclure les viandes déjà sélectionnées
+                        .map((ingredient) => {
                         const isSelected = config.ingredients.some(i => i.id === ingredient._id);
                         
                         return (
@@ -552,7 +551,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                             </div>
                             <h4 className="font-medium text-gray-900 text-sm">{ingredient.name}</h4>
                             <p className="text-xs text-gray-600">
-                              +{ingredient.price || 0.50}€
+                              +{ingredient.type === 'meat' ? '1.50€' : '0.50€'}
                             </p>
                             {isSelected && <Check className="w-4 h-4 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>

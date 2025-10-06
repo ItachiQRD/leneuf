@@ -23,8 +23,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       active: true 
     }).select('name price image description category spicyLevel');
 
-    // Récupérer les viandes depuis les ingrédients
-    const meats = ingredients.filter(ing => ing.type === 'meat');
+    // Options de viandes (hardcodées pour l'instant)
+    const meats = [
+      { id: 'poulet', name: 'Poulet', price: 0, image: '/images/meat-poulet.jpg' },
+      { id: 'boeuf', name: 'Bœuf', price: 0, image: '/images/meat-boeuf.jpg' },
+      { id: 'porc', name: 'Porc', price: 0, image: '/images/meat-porc.jpg' },
+      { id: 'agneau', name: 'Agneau', price: 1.5, image: '/images/meat-agneau.jpg' },
+      { id: 'poisson', name: 'Poisson', price: 2, image: '/images/meat-poisson.jpg' },
+      { id: 'vegetarien', name: 'Végétarien', price: 0, image: '/images/meat-vegetarien.jpg' }
+    ];
 
     // Options de tailles
     const sizes = [

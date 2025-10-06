@@ -11,27 +11,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await dbConnect();
 
-    // Récupérer les ingrédients (suppléments)
-    const ingredients = await Ingredient.find({ 
+    // Récupérer tous les ingrédients disponibles
+    const allIngredients = await Ingredient.find({ 
       available: true,
       active: true 
-    }).select('name price image description category type isSpicy isVegetarian allergens');
+    }).select('name price image description category type isSpicy isVegetarian allergens orderIndex').sort({ orderIndex: 1, name: 1 });
 
     // Récupérer les sauces
     const sauces = await Sauce.find({ 
       available: true,
       active: true 
-    }).select('name price image description category spicyLevel');
+    }).select('name price image description category spicyLevel').sort({ name: 1 });
 
-    // Options de viandes (hardcodées pour l'instant)
-    const meats = [
-      { id: 'poulet', name: 'Poulet', price: 0, image: '/images/meat-poulet.jpg' },
-      { id: 'boeuf', name: 'Bœuf', price: 0, image: '/images/meat-boeuf.jpg' },
-      { id: 'porc', name: 'Porc', price: 0, image: '/images/meat-porc.jpg' },
-      { id: 'agneau', name: 'Agneau', price: 1.5, image: '/images/meat-agneau.jpg' },
-      { id: 'poisson', name: 'Poisson', price: 2, image: '/images/meat-poisson.jpg' },
-      { id: 'vegetarien', name: 'Végétarien', price: 0, image: '/images/meat-vegetarien.jpg' }
-    ];
+    // Séparer les ingrédients par type
+    const meats = allIngredients.filter(ing => ing.type === 'meat');
+    const ingredients = allIngredients.filter(ing => ing.type !== 'meat');
 
     // Options de tailles
     const sizes = [
@@ -43,7 +37,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json({
       success: true,
       data: {
-        meats,
+        meats: meats.map(meat => ({
+          ...meat.toObject(),
+          productType: 'meat'
+        })),
         sauces: sauces.map(sauce => ({
           ...sauce.toObject(),
           productType: 'sauce'

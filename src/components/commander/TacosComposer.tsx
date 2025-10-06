@@ -85,12 +85,10 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       const response = await fetch('/api/products/tacos-options');
       const data = await response.json();
       if (data.success) {
-        // Filtrer les viandes disponibles dans les ingrédients
-        const meats = data.data.ingredients.filter((ing: any) => ing.type === 'meat');
         setOptions({
-          meats,
+          meats: data.data.meats, // Utiliser les viandes de l'API
           sauces: data.data.sauces,
-          ingredients: data.data.ingredients, // Tous les ingrédients
+          ingredients: data.data.ingredients, // Tous les ingrédients (suppléments)
           sizes: [
             { name: 'M', price: 6.50, description: '1 tortilla - 1 viande', tortillas: 1, maxMeats: 1 },
             { name: 'L', price: 7.50, description: '1 tortilla - 2 viandes', tortillas: 1, maxMeats: 2 },

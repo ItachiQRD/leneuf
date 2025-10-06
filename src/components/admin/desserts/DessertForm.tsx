@@ -178,7 +178,7 @@ export default function DessertForm({
       setIsSubmitting(false);
     }
   };
-
+//zbib
   const hasErrors = (sectionId: string) => {
     const section = SECTIONS.find(s => s.id === sectionId);
     if (!section) return false;

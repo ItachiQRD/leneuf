@@ -524,9 +524,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Suppléments (optionnel)</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {options.ingredients
-                        .filter(ingredient => ingredient.type !== 'meat') // Exclure les viandes déjà sélectionnées
-                        .map((ingredient) => {
+                      {options.ingredients.map((ingredient) => {
                         const isSelected = config.ingredients.some(i => i.id === ingredient._id);
                         
                         return (

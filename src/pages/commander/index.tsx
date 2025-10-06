@@ -73,7 +73,7 @@ export default function CommanderPage() {
             _id: 'tex-mex-7-pieces',
             name: '7 pièces + Frite + boisson',
             price: 8.5,
-            image: '/images/tex-mex/tex-mex-7-pieces.jpg',
+            image: '/images/tex-mex/tex-mex-7-pieces.jpeg',
             description: '7 pièces au choix (Tenders, Hot Wings, Nuggets, Mozza Stick) + Frite + Boisson',
             category: 'tex-mex',
             type: 'combo'
@@ -82,7 +82,7 @@ export default function CommanderPage() {
             _id: 'tex-mex-14-pieces',
             name: '14 pièces + 2 frites + 2 boissons',
             price: 14.9,
-            image: '/images/tex-mex/tex-mex-14-pieces.jpg',
+            image: '/images/tex-mex/tex-mex-14-pieces.jpeg',
             description: '14 pièces au choix + 2 Frites + 2 Boissons',
             category: 'tex-mex',
             type: 'combo'
@@ -91,7 +91,7 @@ export default function CommanderPage() {
             _id: 'tex-mex-20-pieces',
             name: '20 pièces + 4 Frites + boisson 1,5L',
             price: 20,
-            image: '/images/tex-mex/tex-mex-20-pieces.jpg',
+            image: '/images/tex-mex/tex-mex-20-pieces.png',
             description: '20 pièces au choix + 4 Frites + Boisson 1,5L',
             category: 'tex-mex',
             type: 'combo'

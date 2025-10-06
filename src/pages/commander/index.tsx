@@ -73,7 +73,7 @@ export default function CommanderPage() {
             _id: 'tex-mex-7-pieces',
             name: '7 pièces + Frite + boisson',
             price: 8.5,
-            image: '/images/tex-mex-7-pieces.jpg',
+            image: '/images/tex-mex/tex-mex-7-pieces.jpg',
             description: '7 pièces au choix (Tenders, Hot Wings, Nuggets, Mozza Stick) + Frite + Boisson',
             category: 'tex-mex',
             type: 'combo'
@@ -82,7 +82,7 @@ export default function CommanderPage() {
             _id: 'tex-mex-14-pieces',
             name: '14 pièces + 2 frites + 2 boissons',
             price: 14.9,
-            image: '/images/tex-mex-14-pieces.jpg',
+            image: '/images/tex-mex/tex-mex-14-pieces.jpg',
             description: '14 pièces au choix + 2 Frites + 2 Boissons',
             category: 'tex-mex',
             type: 'combo'
@@ -91,7 +91,7 @@ export default function CommanderPage() {
             _id: 'tex-mex-20-pieces',
             name: '20 pièces + 4 Frites + boisson 1,5L',
             price: 20,
-            image: '/images/tex-mex-20-pieces.jpg',
+            image: '/images/tex-mex/tex-mex-20-pieces.jpg',
             description: '20 pièces au choix + 4 Frites + Boisson 1,5L',
             category: 'tex-mex',
             type: 'combo'
@@ -104,7 +104,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-3-nuggets',
             name: '3 Nuggets',
             price: 2.5,
-            image: '/images/3-nuggets.jpg',
+            image: '/images/ptite-faim/3-nuggets.jpg',
             description: '3 Nuggets croustillants',
             category: 'ptite-faim',
             type: 'snack'
@@ -113,7 +113,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-3-hot-wings',
             name: '3 Hot Wings',
             price: 2.5,
-            image: '/images/3-hot-wings.jpg',
+            image: '/images/ptite-faim/3-hot-wings.jpg',
             description: '3 Ailes de poulet épicées',
             category: 'ptite-faim',
             type: 'snack'
@@ -122,7 +122,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-2-tenders',
             name: '2 Tenders',
             price: 2.5,
-            image: '/images/2-tenders.jpg',
+            image: '/images/ptite-faim/2-tenders.jpg',
             description: '2 Tenders de poulet',
             category: 'ptite-faim',
             type: 'snack'
@@ -131,7 +131,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-petit-burger',
             name: 'P\'tit Burger',
             price: 2.5,
-            image: '/images/petit-burger.jpg',
+            image: '/images/ptite-faim/petit-burger.jpg',
             description: 'Mini burger avec steak 45g',
             category: 'ptite-faim',
             type: 'snack'
@@ -140,7 +140,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-3-mozza-sticks',
             name: '3 Mozza Sticks',
             price: 2.5,
-            image: '/images/3-mozza-sticks.jpg',
+            image: '/images/ptite-faim/3-mozza-sticks.jpg',
             description: '3 Bâtonnets de mozzarella',
             category: 'ptite-faim',
             type: 'snack'
@@ -149,7 +149,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-petite-salade',
             name: 'P\'tite Salade',
             price: 2.5,
-            image: '/images/petite-salade.jpg',
+            image: '/images/ptite-faim/petite-salade.jpg',
             description: 'Salade tomate oignon',
             category: 'ptite-faim',
             type: 'snack'
@@ -162,7 +162,7 @@ export default function CommanderPage() {
             _id: 'menu-enfants-5-nuggets',
             name: '5 Nuggets + Frites',
             price: 6,
-            image: '/images/menu-enfants-nuggets.jpg',
+            image: '/images/menu-enfants/menu-enfants-nuggets.jpeg',
             description: '5 Nuggets + Frites + 1 Caprisun + une surprise',
             category: 'menu-enfants',
             type: 'menu'
@@ -171,7 +171,7 @@ export default function CommanderPage() {
             _id: 'menu-enfants-mini-kebab',
             name: 'Mini Kebab + Frites',
             price: 6,
-            image: '/images/menu-enfants-kebab.jpg',
+            image: '/images/menu-enfants/menu-enfants-kebab.jpeg',
             description: 'Mini Kebab + Frites + 1 Caprisun + une surprise',
             category: 'menu-enfants',
             type: 'menu'
@@ -180,7 +180,7 @@ export default function CommanderPage() {
             _id: 'menu-enfants-cheese-burger',
             name: 'Cheese Burger + Frites',
             price: 6,
-            image: '/images/menu-enfants-burger.jpg',
+            image: '/images/menu-enfants/menu-enfants-burger.jpeg',
             description: 'Cheese Burger + Frites + 1 Caprisun + une surprise',
             category: 'menu-enfants',
             type: 'menu'

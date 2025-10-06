@@ -88,9 +88,6 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
         // Filtrer les viandes disponibles dans les ingrédients
         const meats = data.data.ingredients.filter((ing: any) => ing.type === 'meat');
         
-        // Debug: afficher les types d'ingrédients disponibles
-        console.log('Types d\'ingrédients disponibles:', data.data.ingredients.map((ing: any) => ({ name: ing.name, type: ing.type })));
-        
         setOptions({
           meats,
           sauces: data.data.sauces,
@@ -484,14 +481,15 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                       {options.sauces.map((sauce) => {
                         const isSelected = config.sauces.some(s => s.id === sauce._id);
                         const canSelect = !isSelected && config.sauces.length < 3;
+                        const canDeselect = isSelected && !sauce.name.toLowerCase().includes('fromagère');
                         
                         return (
                           <motion.button
                             key={sauce._id}
-                            whileHover={{ scale: canSelect ? 1.02 : 1 }}
-                            whileTap={{ scale: canSelect ? 0.98 : 1 }}
-                            onClick={() => canSelect && handleSauceToggle(sauce)}
-                            disabled={!canSelect && !isSelected}
+                            whileHover={{ scale: (canSelect || canDeselect) ? 1.02 : 1 }}
+                            whileTap={{ scale: (canSelect || canDeselect) ? 0.98 : 1 }}
+                            onClick={() => (canSelect || canDeselect) && handleSauceToggle(sauce)}
+                            disabled={!canSelect && !canDeselect}
                             className={`p-4 border-2 rounded-lg text-left transition-colors ${
                               isSelected 
                                 ? 'border-orange-500 bg-orange-50' 

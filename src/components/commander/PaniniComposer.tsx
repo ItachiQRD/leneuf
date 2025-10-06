@@ -66,15 +66,16 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
     }
   };
 
-  // Ingrédients de base : viandes et fromages
   const baseIngredients = ingredients.filter(ing => 
-    ing.type === 'meat' || ing.type === 'cheese'
+    (ing.type === 'meat' && ['kebab', 'jambon', 'thon', 'saumon', 'poulet', 'viande hachée'].some(name => 
+      ing.name.toLowerCase().includes(name.toLowerCase())
+    )) ||
+    (ing.type === 'cheese' && ['mozzarella', 'chèvre', 'miel'].some(name => 
+      ing.name.toLowerCase().includes(name.toLowerCase())
+    ))
   );
 
-  // Suppléments : tous les autres ingrédients (légumes, extras, etc.)
-  const supplements = ingredients.filter(ing => 
-    ing.type !== 'meat' && ing.type !== 'cheese'
-  );
+  const supplements = ingredients.filter(ing => ing.type === 'vegetable' || ing.type === 'extra');
 
   const handleNext = () => {
     if (canProceed() && currentStep < STEPS.length - 1) {

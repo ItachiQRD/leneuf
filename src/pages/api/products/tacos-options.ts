@@ -11,21 +11,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await dbConnect();
 
-    // Récupérer tous les ingrédients disponibles
-    const allIngredients = await Ingredient.find({ 
+    // Récupérer les ingrédients (suppléments)
+    const ingredients = await Ingredient.find({ 
       available: true,
       active: true 
-    }).select('name price image description category type isSpicy isVegetarian allergens orderIndex').sort({ orderIndex: 1, name: 1 });
+    }).select('name price image description category type isSpicy isVegetarian allergens');
 
     // Récupérer les sauces
     const sauces = await Sauce.find({ 
       available: true,
       active: true 
-    }).select('name price image description category spicyLevel').sort({ name: 1 });
+    }).select('name price image description category spicyLevel');
 
-    // Séparer les ingrédients par type
-    const meats = allIngredients.filter(ing => ing.type === 'meat');
-    const ingredients = allIngredients.filter(ing => ing.type !== 'meat');
+    // Récupérer les viandes depuis les ingrédients
+    const meats = ingredients.filter(ing => ing.type === 'meat');
 
     // Options de tailles
     const sizes = [
@@ -37,10 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json({
       success: true,
       data: {
-        meats: meats.map(meat => ({
-          ...meat.toObject(),
-          productType: 'meat'
-        })),
+        meats,
         sauces: sauces.map(sauce => ({
           ...sauce.toObject(),
           productType: 'sauce'

@@ -87,6 +87,10 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       if (data.success) {
         // Filtrer les viandes disponibles dans les ingrédients
         const meats = data.data.ingredients.filter((ing: any) => ing.type === 'meat');
+        
+        // Debug: afficher les types d'ingrédients disponibles
+        console.log('Types d\'ingrédients disponibles:', data.data.ingredients.map((ing: any) => ({ name: ing.name, type: ing.type })));
+        
         setOptions({
           meats,
           sauces: data.data.sauces,
@@ -174,6 +178,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
         if (sauce.name.toLowerCase().includes('fromagère')) {
           return prev;
         }
+        // Permettre de décocher les autres sauces
         newSauces = newSauces.filter(s => s.id !== sauce._id);
       } else {
         // Maximum 3 sauces (plus fromagère par défaut)

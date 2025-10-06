@@ -75,7 +75,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
     ))
   );
 
-  const supplements = ingredients.filter(ing => ing.type !== 'meat' && ing.type !== 'cheese');
+  const supplements = ingredients.filter(ing => ing.type !== 'meat'); // Exclure seulement les viandes, garder fromages et légumes
 
   const handleNext = () => {
     if (canProceed() && currentStep < STEPS.length - 1) {

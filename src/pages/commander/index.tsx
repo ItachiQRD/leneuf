@@ -235,78 +235,41 @@ export default function CommanderPage() {
   };
 
   const handleAddToCart = (item: any) => {
-    // Vérifier si c'est un produit qui nécessite un menu selector
-    const needsMenuSelector = ['sandwichs', 'burgers'].includes(selectedCategory);
+    // Produits qui nécessitent une composition personnalisée
+    const needsCustomComposition = ['tacos', 'paninis'].includes(selectedCategory);
     
-    if (needsMenuSelector) {
-      setSelectedProduct(item);
-      setShowMenuSelector(true);
-      return;
+    if (needsCustomComposition) {
+      if (selectedCategory === 'paninis') {
+        setSelectedProduct(item);
+        setShowPaniniComposer(true);
+        return;
+      }
+      
+      if (selectedCategory === 'tacos') {
+        setShowTacosComposer(true);
+        return;
+      }
     }
 
-    // Pour les paninis, ouvrir le composeur
-    if (selectedCategory === 'paninis') {
-      setSelectedProduct(item);
-      setShowPaniniComposer(true);
-      return;
-    }
-
-    // Pour les tacos, ouvrir le composeur
-    if (selectedCategory === 'tacos') {
-      setShowTacosComposer(true);
-      return;
-    }
-
-    // Pour les pizzas, toujours ouvrir le sélecteur de taille
-    if (selectedCategory === 'pizzas') {
+    // Produits qui nécessitent un sélecteur de taille (pizzas, boissons avec tailles multiples)
+    const needsSizeSelector = (selectedCategory === 'pizzas') || 
+                             (selectedCategory === 'boissons' && item.sizes && item.sizes.length > 1);
+    
+    if (needsSizeSelector) {
       setProductForSize(item);
       setShowSizeSelector(true);
       return;
     }
 
-    // Pour les boissons avec plusieurs tailles, ouvrir le sélecteur de taille
-    if (selectedCategory === 'boissons' && 
-        item.sizes && item.sizes.length > 1) {
-      setProductForSize(item);
-      setShowSizeSelector(true);
-      return;
-    }
-
-    // Pour les accompagnements, ouvrir le sélecteur de taille et sauce
-    if (selectedCategory === 'accompagnements') {
-      setProductForSize(item);
-      setShowSizeSelector(true);
-      return;
-    }
-
-    // Pour les catégories statiques (Tex Mex, P'tite Faim, Menu Enfants), ajouter directement
-    if (['tex-mex', 'ptite-faim', 'menu-enfants'].includes(selectedCategory)) {
-      const cartItem = {
-        _id: item._id,
-        name: item.name,
-        price: item.price,
-        image: item.image,
-        category: item.category,
-        type: item.type || 'food'
-      };
-      addItem(cartItem);
-      return;
-    }
-
-    // Pour les autres produits, ajouter directement au panier
-    let price = item.price;
-    if (!price && item.sizes && item.sizes.length > 0) {
-      const defaultSize = item.sizes.find((s: any) => s.isDefault) || item.sizes[0];
-      price = defaultSize.price;
-    }
-
+    // Tous les autres produits sont ajoutés directement au panier
+    // Cela inclut : sandwichs, burgers, assiettes, accompagnements, tex-mex, ptite-faim, menu-enfants, boissons simples, desserts
     const cartItem = {
-      _id: item._id || item.id,
+      _id: item._id,
       name: item.name,
-      price: price || 0,
+      price: item.price,
       image: item.image,
-      category: item.category,
-      type: item.productType || 'food'
+      category: item.category || selectedCategory,
+      type: item.type || 'food'
     };
     addItem(cartItem);
   };

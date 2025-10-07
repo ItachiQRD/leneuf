@@ -132,7 +132,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
           >
-            L'histoire d'un bledard devenu Roi
+            Des saveurs authentiques qui vous transportent
           </motion.p>
 
           {/* CTA Principal */}

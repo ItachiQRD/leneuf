@@ -30,12 +30,7 @@ export default function CommanderPage() {
   const [selectedSauceForProduct, setSelectedSauceForProduct] = useState<any>(null);
   const [selectedMenuOption, setSelectedMenuOption] = useState<string>(''); // 'frites' ou 'frites-boisson'
   const [selectedDrinks, setSelectedDrinks] = useState<any[]>([]);
-
-  // Boissons disponibles pour Tex-Mex
-  const texMexDrinks = [
-    { id: 'boisson-33cl', name: 'Boisson 33cl', price: 0, image: '/images/boissons/boisson-33cl.jpg' },
-    { id: 'boisson-1.5L', name: 'Boisson 1.5L', price: 0, image: '/images/boissons/boisson-1.5L.jpg' }
-  ];
+  const [drinks, setDrinks] = useState<any[]>([]);
 
   // Données de menu
   const menuCategories = [
@@ -76,6 +71,13 @@ export default function CommanderPage() {
       fetchSauces();
     }
   }, [showSizeSelector, showCustomizationModal, selectedCategory, sauces.length]);
+
+  // Charger les boissons quand on ouvre le modal de personnalisation pour Tex-Mex
+  useEffect(() => {
+    if (showCustomizationModal && selectedCategory === 'tex-mex' && drinks.length === 0) {
+      fetchDrinks();
+    }
+  }, [showCustomizationModal, selectedCategory, drinks.length]);
 
   // Produits statiques basés sur le menu
   const getStaticProducts = (category: string) => {
@@ -239,6 +241,18 @@ export default function CommanderPage() {
     }
   };
 
+  const fetchDrinks = async () => {
+    try {
+      const response = await fetch('/api/products/boissons');
+      const data = await response.json();
+      if (data.success) {
+        setDrinks(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching drinks:', error);
+    }
+  };
+
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeItem(id);
@@ -366,9 +380,9 @@ export default function CommanderPage() {
 
   const handleDrinkToggle = (drink: any) => {
     setSelectedDrinks(prev => {
-      const isSelected = prev.some(d => d.id === drink.id);
+      const isSelected = prev.some(d => d._id === drink._id);
       if (isSelected) {
-        return prev.filter(d => d.id !== drink.id);
+        return prev.filter(d => d._id !== drink._id);
       } else {
         return [...prev, drink];
       }
@@ -385,12 +399,33 @@ export default function CommanderPage() {
   };
 
   const getDrinkOptionsForTexMex = () => {
-    const maxDrinks = getMaxDrinksForTexMex();
-    if (maxDrinks === 1) {
-      return texMexDrinks; // 7 pièces ou 21 pièces : choix entre 33cl ou 1.5L
-    } else if (maxDrinks === 2) {
-      return texMexDrinks.filter(d => d.id === 'boisson-33cl'); // 14 pièces : 2 boissons 33cl
+    if (drinks.length === 0) return [];
+    
+    const productName = productForCustomization?.name.toLowerCase() || '';
+    
+    if (productName.includes('7 pièces')) {
+      // 7 pièces : toutes les boissons (choix libre)
+      return drinks;
+    } else if (productName.includes('14 pièces')) {
+      // 14 pièces : seulement les boissons de 33cl
+      return drinks.filter(drink => 
+        drink.name.toLowerCase().includes('33cl') || 
+        drink.name.toLowerCase().includes('33 cl') ||
+        drink.name.toLowerCase().includes('33c') ||
+        drink.name.toLowerCase().includes('33 c')
+      );
+    } else if (productName.includes('21 pièces')) {
+      // 21 pièces : seulement les boissons de 1.5L
+      return drinks.filter(drink => 
+        drink.name.toLowerCase().includes('1.5l') || 
+        drink.name.toLowerCase().includes('1.5 l') ||
+        drink.name.toLowerCase().includes('1,5l') ||
+        drink.name.toLowerCase().includes('1,5 l') ||
+        drink.name.toLowerCase().includes('1.5l') ||
+        drink.name.toLowerCase().includes('1.5 l')
+      );
     }
+    
     return [];
   };
 
@@ -984,12 +1019,12 @@ export default function CommanderPage() {
                 </h4>
                 <div className="grid grid-cols-2 gap-3">
                   {getDrinkOptionsForTexMex().map((drink) => {
-                    const isSelected = selectedDrinks.some(d => d.id === drink.id);
+                    const isSelected = selectedDrinks.some(d => d._id === drink._id);
                     const canSelect = selectedDrinks.length < getMaxDrinksForTexMex() || isSelected;
                     const isDisabled = !canSelect && !isSelected;
                     
                     return (
-                      <label key={drink.id} className={`relative cursor-pointer ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                      <label key={drink._id} className={`relative cursor-pointer ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
                         <input
                           type="checkbox"
                           checked={isSelected}
@@ -1004,7 +1039,7 @@ export default function CommanderPage() {
                         } ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                           <div className="relative w-full h-16 mb-2">
                             <Image
-                              src={drink.image}
+                              src={drink.image || '/images/placeholder-drink.jpg'}
                               alt={drink.name}
                               fill
                               className="object-cover rounded-md"

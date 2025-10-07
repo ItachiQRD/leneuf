@@ -3,8 +3,36 @@ import dbConnect from '@/lib/dbConnect';
 import Order from '@/models/Order';
 import User from '@/models/User';
 
+// S'assurer que le modèle User est enregistré
+if (!User) {
+  console.error('User model not found');
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await dbConnect();
+  // Mode développement sans base de données
+  if (process.env.NODE_ENV === 'development' && !process.env.MONGODB_URI) {
+    console.log('Mode développement sans base de données - retour de données factices');
+    return res.status(200).json({
+      success: true,
+      data: [],
+      pagination: {
+        current: 1,
+        total: 0,
+        count: 0
+      }
+    });
+  }
+
+  try {
+    await dbConnect();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Erreur de connexion à la base de données',
+      error: 'MongoDB non configuré'
+    });
+  }
 
   switch (req.method) {
     case 'GET':
@@ -22,17 +50,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
         // Récupérer les commandes avec les informations utilisateur
         const orders = await Order.find(filter)
-          .populate('userId', 'name email phone')
           .sort({ createdAt: -1 })
           .skip(skip)
           .limit(Number(limit));
+
+        // Essayer de populer les informations utilisateur si possible
+        let populatedOrders = orders;
+        try {
+          populatedOrders = await Order.find(filter)
+            .populate('userId', 'name email phone')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(Number(limit));
+        } catch (populateError) {
+          console.warn('Could not populate user data:', populateError);
+          // Continuer avec les commandes sans les données utilisateur
+        }
 
         // Compter le total pour la pagination
         const total = await Order.countDocuments(filter);
 
         res.status(200).json({
           success: true,
-          data: orders,
+          data: populatedOrders,
           pagination: {
             current: Number(page),
             total: Math.ceil(total / Number(limit)),
@@ -68,7 +108,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           id,
           updateData,
           { new: true }
-        ).populate('userId', 'name email phone');
+        );
+
+        // Essayer de populer les informations utilisateur si possible
+        let populatedOrder = order;
+        try {
+          populatedOrder = await Order.findById(id).populate('userId', 'name email phone');
+        } catch (populateError) {
+          console.warn('Could not populate user data for update:', populateError);
+          // Continuer avec la commande sans les données utilisateur
+        }
 
         if (!order) {
           return res.status(404).json({
@@ -79,7 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.status(200).json({
           success: true,
-          data: order,
+          data: populatedOrder,
           message: 'Commande mise à jour avec succès'
         });
       } catch (error) {

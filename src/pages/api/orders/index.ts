@@ -3,9 +3,18 @@ import dbConnect from '@/lib/dbConnect';
 import Order from '@/models/Order';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    await dbConnect();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    return res.status(500).json({ 
+      error: 'Erreur de connexion à la base de données',
+      message: 'MongoDB non configuré'
+    });
+  }
+
   if (req.method === 'GET') {
     try {
-      await dbConnect();
       const orders = await Order.find({}).sort({ createdAt: -1 });
       res.status(200).json(orders);
     } catch (error) {
@@ -14,7 +23,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else if (req.method === 'POST') {
     try {
-      await dbConnect();
       const order = new Order(req.body);
       const savedOrder = await order.save();
       res.status(201).json(savedOrder);

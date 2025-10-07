@@ -484,7 +484,7 @@ function OrderDetailModal({
           <div className="space-y-4">
             <Select
               value={newStatus}
-              onChange={(e) => setNewStatus(e.target.value)}
+              onChange={(e) => setNewStatus(e.target.value as 'pending' | 'processing' | 'completed' | 'cancelled')}
             >
               <option value="pending">En attente</option>
               <option value="processing">En cours</option>

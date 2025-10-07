@@ -9,6 +9,7 @@ interface CartItem {
   type: 'food' | 'drink' | 'dessert' | 'side';
   category?: string;
   image?: string;
+  customIngredients?: any; // Pour les compositions personnalisées (tacos, paninis)
 }
 
 interface CartContextType {

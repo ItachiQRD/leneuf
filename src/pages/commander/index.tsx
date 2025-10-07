@@ -359,12 +359,52 @@ export default function CommanderPage() {
 
     setIsLoading(true);
     try {
-      console.log('Commande en cours...', { items, total });
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      clearCart();
-      window.location.href = '/commande-confirmee';
+      // Préparer les données de la commande
+      const orderData = {
+        userId: user?._id,
+        items: items.map(item => ({
+          productId: item._id,
+          quantity: item.quantity,
+          price: item.price,
+          options: (item as any).customIngredients ? [{
+            name: 'Composition personnalisée',
+            choice: {
+              name: 'Détails',
+              price: 0
+            }
+          }] : []
+        })),
+        total: total,
+        status: 'pending',
+        deliveryAddress: {
+          street: 'Adresse par défaut', // À remplacer par un formulaire d'adresse
+          city: 'Ville',
+          postalCode: '00000',
+          complement: ''
+        },
+        paymentStatus: 'pending',
+        paymentMethod: 'cash', // À remplacer par un sélecteur de méthode de paiement
+        notes: ''
+      };
+
+      // Envoyer la commande à l'API
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        clearCart();
+        window.location.href = '/commande-confirmee';
+      } else {
+        throw new Error('Erreur lors de l\'envoi de la commande');
+      }
     } catch (error) {
       console.error('Erreur lors de la commande:', error);
+      alert('Erreur lors de l\'envoi de la commande. Veuillez réessayer.');
     } finally {
       setIsLoading(false);
     }

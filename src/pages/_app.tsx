@@ -6,8 +6,6 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import MainLayout from '@/components/layout/MainLayout';
 import { useRouter } from 'next/router';
 import { Toaster } from '@/components/ui/Toaster';
-import { ToastProvider } from "@/components/ui/Toast";
-import { ProductProvider } from "@/contexts/ProductContext";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -42,14 +40,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ProviderWrapper>
-      <ToastProvider>
-        <ProductProvider>
-          <Layout>
-            <Component {...pageProps} />
-            <Toaster />
-          </Layout>
-        </ProductProvider>
-      </ToastProvider>
+      <Layout>
+        <Component {...pageProps} />
+        <Toaster />
+      </Layout>
     </ProviderWrapper>
   );
 }

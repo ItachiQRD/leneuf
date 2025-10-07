@@ -24,6 +24,11 @@ export default function CommanderPage() {
   const [productForSize, setProductForSize] = useState<any>(null);
   const [selectedSauce, setSelectedSauce] = useState<any>(null);
   const [sauces, setSauces] = useState<any[]>([]);
+  const [showCustomizationModal, setShowCustomizationModal] = useState(false);
+  const [productForCustomization, setProductForCustomization] = useState<any>(null);
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
+  const [selectedSauceForProduct, setSelectedSauceForProduct] = useState<any>(null);
+  const [selectedMenuOption, setSelectedMenuOption] = useState<string>(''); // 'frites' ou 'frites-boisson'
 
   // Données de menu
   const menuCategories = [
@@ -57,12 +62,13 @@ export default function CommanderPage() {
     fetchProducts(selectedCategory);
   }, [selectedCategory]);
 
-  // Charger les sauces quand on ouvre le modal pour les accompagnements
+  // Charger les sauces quand on ouvre le modal pour les accompagnements ou la personnalisation
   useEffect(() => {
-    if (showSizeSelector && selectedCategory === 'accompagnements' && sauces.length === 0) {
+    if ((showSizeSelector && selectedCategory === 'accompagnements' && sauces.length === 0) ||
+        (showCustomizationModal && sauces.length === 0)) {
       fetchSauces();
     }
-  }, [showSizeSelector, selectedCategory, sauces.length]);
+  }, [showSizeSelector, showCustomizationModal, selectedCategory, sauces.length]);
 
   // Produits statiques basés sur le menu
   const getStaticProducts = (category: string) => {
@@ -235,7 +241,7 @@ export default function CommanderPage() {
   };
 
   const handleAddToCart = (item: any) => {
-    // Produits qui nécessitent une composition personnalisée
+    // Produits qui nécessitent une composition personnalisée (tacos, paninis)
     const needsCustomComposition = ['tacos', 'paninis'].includes(selectedCategory);
     
     if (needsCustomComposition) {
@@ -251,6 +257,18 @@ export default function CommanderPage() {
       }
     }
 
+    // Produits qui nécessitent une personnalisation simple (burgers, sandwichs, accompagnements, assiettes, tex-mex, ptite-faim)
+    const needsCustomization = ['burgers', 'sandwichs', 'accompagnements', 'assiettes', 'tex-mex', 'ptite-faim'].includes(selectedCategory);
+    
+    if (needsCustomization) {
+      setProductForCustomization(item);
+      setSelectedIngredients([]);
+      setSelectedSauceForProduct(null);
+      setSelectedMenuOption('');
+      setShowCustomizationModal(true);
+      return;
+    }
+
     // Produits qui nécessitent un sélecteur de taille (pizzas, boissons avec tailles multiples)
     const needsSizeSelector = (selectedCategory === 'pizzas') || 
                              (selectedCategory === 'boissons' && item.sizes && item.sizes.length > 1);
@@ -262,7 +280,7 @@ export default function CommanderPage() {
     }
 
     // Tous les autres produits sont ajoutés directement au panier
-    // Cela inclut : sandwichs, burgers, assiettes, accompagnements, tex-mex, ptite-faim, menu-enfants, boissons simples, desserts
+    // Cela inclut : menu-enfants, boissons simples, desserts
     const cartItem = {
       _id: item._id,
       name: item.name,
@@ -319,6 +337,61 @@ export default function CommanderPage() {
     setShowSizeSelector(false);
     setProductForSize(null);
     setSelectedSauce(null);
+  };
+
+  // Fonctions pour la personnalisation des produits
+  const handleIngredientToggle = (ingredient: string) => {
+    setSelectedIngredients(prev => 
+      prev.includes(ingredient) 
+        ? prev.filter(ing => ing !== ingredient)
+        : [...prev, ingredient]
+    );
+  };
+
+  const handleSauceSelect = (sauce: any) => {
+    setSelectedSauceForProduct(sauce);
+  };
+
+  const handleMenuOptionSelect = (option: string) => {
+    setSelectedMenuOption(option);
+  };
+
+  const handleCustomizationConfirm = () => {
+    if (!productForCustomization) return;
+
+    // Calculer le prix total
+    let totalPrice = productForCustomization.price;
+    
+    // Ajouter le prix des options menu pour burgers et sandwichs
+    if (['burgers', 'sandwichs'].includes(selectedCategory)) {
+      if (selectedMenuOption === 'frites') {
+        totalPrice += 2; // Prix des frites
+      } else if (selectedMenuOption === 'frites-boisson') {
+        totalPrice += 4; // Prix des frites + boisson
+      }
+    }
+
+    // Créer l'item personnalisé
+    const cartItem = {
+      _id: productForCustomization._id,
+      name: productForCustomization.name,
+      price: totalPrice,
+      image: productForCustomization.image,
+      category: productForCustomization.category || selectedCategory,
+      type: productForCustomization.type || 'food',
+      customIngredients: selectedIngredients,
+      selectedSauce: selectedSauceForProduct,
+      menuOption: selectedMenuOption
+    };
+
+    addItem(cartItem);
+    
+    // Fermer le modal et réinitialiser
+    setShowCustomizationModal(false);
+    setProductForCustomization(null);
+    setSelectedIngredients([]);
+    setSelectedSauceForProduct(null);
+    setSelectedMenuOption('');
   };
 
   const handleCheckout = async () => {
@@ -751,6 +824,138 @@ export default function CommanderPage() {
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
                 Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de personnalisation des produits */}
+      {showCustomizationModal && productForCustomization && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Personnaliser {productForCustomization.name}
+            </h3>
+            
+            {/* Ingrédients (pour burgers et sandwichs) */}
+            {['burgers', 'sandwichs'].includes(selectedCategory) && (
+              <div className="mb-6">
+                <h4 className="text-lg font-medium text-gray-900 mb-3">Ingrédients</h4>
+                <div className="space-y-2">
+                  {['Salade', 'Tomate', 'Oignons'].map((ingredient) => (
+                    <label key={ingredient} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedIngredients.includes(ingredient)}
+                        onChange={() => handleIngredientToggle(ingredient)}
+                        className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                      />
+                      <span className="text-gray-700">{ingredient}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Choix des sauces */}
+            <div className="mb-6">
+              <h4 className="text-lg font-medium text-gray-900 mb-3">Sauce</h4>
+              <div className="space-y-2">
+                {sauces.map((sauce) => (
+                  <label key={sauce._id} className="flex items-center">
+                    <input
+                      type="radio"
+                      name="sauce"
+                      value={sauce._id}
+                      checked={selectedSauceForProduct?._id === sauce._id}
+                      onChange={() => handleSauceSelect(sauce)}
+                      className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+                    />
+                    <span className="text-gray-700">{sauce.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Options menu (pour burgers et sandwichs) */}
+            {['burgers', 'sandwichs'].includes(selectedCategory) && (
+              <div className="mb-6">
+                <h4 className="text-lg font-medium text-gray-900 mb-3">Options</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="menuOption"
+                      value=""
+                      checked={selectedMenuOption === ''}
+                      onChange={() => handleMenuOptionSelect('')}
+                      className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+                    />
+                    <span className="text-gray-700">Seul (+0€)</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="menuOption"
+                      value="frites"
+                      checked={selectedMenuOption === 'frites'}
+                      onChange={() => handleMenuOptionSelect('frites')}
+                      className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+                    />
+                    <span className="text-gray-700">Avec frites (+2€)</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="menuOption"
+                      value="frites-boisson"
+                      checked={selectedMenuOption === 'frites-boisson'}
+                      onChange={() => handleMenuOptionSelect('frites-boisson')}
+                      className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+                    />
+                    <span className="text-gray-700">Avec frites et boisson (+4€)</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* Prix total */}
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium text-gray-900">Prix total :</span>
+                <span className="text-xl font-bold text-red-600">
+                  {(() => {
+                    let total = productForCustomization.price;
+                    if (['burgers', 'sandwichs'].includes(selectedCategory)) {
+                      if (selectedMenuOption === 'frites') total += 2;
+                      else if (selectedMenuOption === 'frites-boisson') total += 4;
+                    }
+                    return total.toFixed(2);
+                  })()} €
+                </span>
+              </div>
+            </div>
+
+            {/* Boutons */}
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowCustomizationModal(false);
+                  setProductForCustomization(null);
+                  setSelectedIngredients([]);
+                  setSelectedSauceForProduct(null);
+                  setSelectedMenuOption('');
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleCustomizationConfirm}
+                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Ajouter au panier
               </button>
             </div>
           </div>

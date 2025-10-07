@@ -327,12 +327,12 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
                               : 'border-gray-300 hover:border-gray-400'
                           }`}
                         >
-                          <div className="relative w-10 h-10 flex-shrink-0">
+                          <div className="relative w-10 h-10 flex-shrink-0 bg-gray-50 rounded flex items-center justify-center">
                             <Image
                               src={drink.image || '/images/placeholder-drink.jpg'}
                               alt={drink.name}
                               fill
-                              className="object-cover rounded"
+                              className="object-contain rounded"
                             />
                           </div>
                           <div className="flex-1">

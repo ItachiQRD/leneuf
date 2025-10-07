@@ -457,12 +457,12 @@ export default function CommanderPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
                   >
-                    <div className="relative w-24 h-24 flex-shrink-0">
+                    <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
                       <Image
                         src={item.image || '/images/placeholder-food.jpg'}
                         alt={item.name}
                         fill
-                        className="object-cover rounded-lg"
+                        className={`rounded-lg ${selectedCategory === 'boissons' ? 'object-contain' : 'object-cover'}`}
                       />
                     </div>
                     

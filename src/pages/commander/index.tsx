@@ -266,16 +266,16 @@ export default function CommanderPage() {
     const needsCustomComposition = ['tacos', 'paninis'].includes(selectedCategory);
     
     if (needsCustomComposition) {
-    if (selectedCategory === 'paninis') {
-      setSelectedProduct(item);
-      setShowPaniniComposer(true);
-      return;
-    }
-
-    if (selectedCategory === 'tacos') {
-      setShowTacosComposer(true);
-      return;
-    }
+      if (selectedCategory === 'paninis') {
+        setSelectedProduct(item);
+        setShowPaniniComposer(true);
+        return;
+      }
+      
+      if (selectedCategory === 'tacos') {
+        setShowTacosComposer(true);
+        return;
+      }
     }
 
     // Produits qui nécessitent une personnalisation simple (burgers, sandwichs, accompagnements, assiettes, tex-mex, ptite-faim)

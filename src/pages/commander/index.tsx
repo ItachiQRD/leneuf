@@ -13,7 +13,7 @@ export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
   const { isAuthenticated, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('sandwichs');
+  const [selectedCategory, setSelectedCategory] = useState('ptite-faim');
   const [products, setProducts] = useState<any[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [showTacosComposer, setShowTacosComposer] = useState(false);

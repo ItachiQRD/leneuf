@@ -359,8 +359,13 @@ export default function CommanderPage() {
   };
 
   const handleCheckout = async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !user?._id) {
       window.location.href = '/auth/login?redirect=/commander';
+      return;
+    }
+
+    if (!items || items.length === 0) {
+      alert('Votre panier est vide');
       return;
     }
 
@@ -368,7 +373,7 @@ export default function CommanderPage() {
     try {
       // Préparer les données de la commande
       const orderData = {
-        userId: user?._id,
+        userId: user._id,
         items: items.map(item => ({
           productId: item._id,
           quantity: item.quantity,
@@ -492,7 +497,7 @@ export default function CommanderPage() {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
                   <p className="mt-2 text-gray-600">Chargement des produits...</p>
                 </div>
-              ) : products.length === 0 ? (
+              ) : !products || products.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
                 </div>
@@ -566,13 +571,13 @@ export default function CommanderPage() {
               <h2 className="text-xl font-bold text-gray-900">Panier</h2>
             </div>
             
-            {items.length === 0 ? (
+            {!items || items.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-500">Votre panier est vide</p>
               </div>
             ) : (
               <div className="space-y-4 mb-6">
-                {items.map((item) => (
+                {items && items.map((item) => (
                   <div key={item._id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                     <div className="relative w-12 h-12 flex-shrink-0">
                       <Image

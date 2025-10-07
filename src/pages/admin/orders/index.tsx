@@ -20,7 +20,6 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Modal } from '@/components/ui/Modal';
 import { useAuth } from '@/contexts/AuthContext';
-import ProtectedRoute from '@/components/common/ProtectedRoute';
 
 interface Order {
   _id: string;
@@ -195,9 +194,6 @@ export default function AdminOrdersPage() {
     return <Icon className="w-4 h-4" />;
   };
 
-  if (!isAuthenticated) {
-    return <ProtectedRoute />;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">

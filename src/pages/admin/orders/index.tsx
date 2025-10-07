@@ -132,7 +132,7 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const updateOrderStatus = async (orderId: string, newStatus: string, notes?: string) => {
+  const updateOrderStatus = async (orderId: string, newStatus: 'pending' | 'processing' | 'completed' | 'cancelled', notes?: string) => {
     try {
       setUpdating(true);
       const response = await fetch('/api/admin/orders', {
@@ -407,10 +407,10 @@ function OrderDetailModal({
   order: Order;
   isOpen: boolean;
   onClose: () => void;
-  onUpdateStatus: (orderId: string, status: string, notes?: string) => void;
+  onUpdateStatus: (orderId: string, status: 'pending' | 'processing' | 'completed' | 'cancelled', notes?: string) => void;
   updating: boolean;
 }) {
-  const [newStatus, setNewStatus] = useState(order.status);
+  const [newStatus, setNewStatus] = useState<'pending' | 'processing' | 'completed' | 'cancelled'>(order.status);
   const [notes, setNotes] = useState(order.notes || '');
 
   const handleUpdate = () => {

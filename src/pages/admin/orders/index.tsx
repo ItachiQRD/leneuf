@@ -283,7 +283,7 @@ export default function AdminOrdersPage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredOrders.map((order) => {
-                    const statusConfig = statusConfig[order.status as keyof typeof statusConfig];
+                    const orderStatusConfig = statusConfig[order.status as keyof typeof statusConfig];
                     const paymentConfig = paymentStatusConfig[order.paymentStatus as keyof typeof paymentStatusConfig];
                     
                     return (
@@ -310,9 +310,9 @@ export default function AdminOrdersPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge className={statusConfig.color}>
+                          <Badge className={orderStatusConfig.color}>
                             {getStatusIcon(order.status)}
-                            <span className="ml-1">{statusConfig.label}</span>
+                            <span className="ml-1">{orderStatusConfig.label}</span>
                           </Badge>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

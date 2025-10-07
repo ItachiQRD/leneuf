@@ -29,6 +29,13 @@ export default function CommanderPage() {
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [selectedSauceForProduct, setSelectedSauceForProduct] = useState<any>(null);
   const [selectedMenuOption, setSelectedMenuOption] = useState<string>(''); // 'frites' ou 'frites-boisson'
+  const [selectedDrinks, setSelectedDrinks] = useState<any[]>([]);
+
+  // Boissons disponibles pour Tex-Mex
+  const texMexDrinks = [
+    { id: 'boisson-33cl', name: 'Boisson 33cl', price: 0, image: '/images/boissons/boisson-33cl.jpg' },
+    { id: 'boisson-1.5L', name: 'Boisson 1.5L', price: 0, image: '/images/boissons/boisson-1.5L.jpg' }
+  ];
 
   // Données de menu
   const menuCategories = [
@@ -207,10 +214,10 @@ export default function CommanderPage() {
         setProducts(getStaticProducts(category));
       } else {
         // Récupérer depuis l'API pour les autres catégories
-        const response = await fetch(`/api/products/by-category/${category}`);
-        const data = await response.json();
-        if (data.success) {
-          setProducts(data.products);
+      const response = await fetch(`/api/products/by-category/${category}`);
+      const data = await response.json();
+      if (data.success) {
+        setProducts(data.products);
         }
       }
     } catch (error) {
@@ -245,16 +252,16 @@ export default function CommanderPage() {
     const needsCustomComposition = ['tacos', 'paninis'].includes(selectedCategory);
     
     if (needsCustomComposition) {
-      if (selectedCategory === 'paninis') {
-        setSelectedProduct(item);
-        setShowPaniniComposer(true);
-        return;
-      }
-      
-      if (selectedCategory === 'tacos') {
-        setShowTacosComposer(true);
-        return;
-      }
+    if (selectedCategory === 'paninis') {
+      setSelectedProduct(item);
+      setShowPaniniComposer(true);
+      return;
+    }
+
+    if (selectedCategory === 'tacos') {
+      setShowTacosComposer(true);
+      return;
+    }
     }
 
     // Produits qui nécessitent une personnalisation simple (burgers, sandwichs, accompagnements, assiettes, tex-mex, ptite-faim)
@@ -265,6 +272,7 @@ export default function CommanderPage() {
       setSelectedIngredients([]);
       setSelectedSauceForProduct(null);
       setSelectedMenuOption('');
+      setSelectedDrinks([]);
       setShowCustomizationModal(true);
       return;
     }
@@ -281,13 +289,13 @@ export default function CommanderPage() {
 
     // Tous les autres produits sont ajoutés directement au panier
     // Cela inclut : menu-enfants, boissons simples, desserts
-    const cartItem = {
-      _id: item._id,
-      name: item.name,
-      price: item.price,
-      image: item.image,
+      const cartItem = {
+        _id: item._id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
       category: item.category || selectedCategory,
-      type: item.type || 'food'
+        type: item.type || 'food'
     };
     addItem(cartItem);
   };
@@ -356,6 +364,36 @@ export default function CommanderPage() {
     setSelectedMenuOption(option);
   };
 
+  const handleDrinkToggle = (drink: any) => {
+    setSelectedDrinks(prev => {
+      const isSelected = prev.some(d => d.id === drink.id);
+      if (isSelected) {
+        return prev.filter(d => d.id !== drink.id);
+      } else {
+        return [...prev, drink];
+      }
+    });
+  };
+
+  const getMaxDrinksForTexMex = () => {
+    if (!productForCustomization) return 0;
+    const productName = productForCustomization.name.toLowerCase();
+    if (productName.includes('7 pièces')) return 1;
+    if (productName.includes('14 pièces')) return 2;
+    if (productName.includes('21 pièces')) return 1; // 1 boisson 1.5L
+    return 0;
+  };
+
+  const getDrinkOptionsForTexMex = () => {
+    const maxDrinks = getMaxDrinksForTexMex();
+    if (maxDrinks === 1) {
+      return texMexDrinks; // 7 pièces ou 21 pièces : choix entre 33cl ou 1.5L
+    } else if (maxDrinks === 2) {
+      return texMexDrinks.filter(d => d.id === 'boisson-33cl'); // 14 pièces : 2 boissons 33cl
+    }
+    return [];
+  };
+
   const handleCustomizationConfirm = () => {
     if (!productForCustomization) return;
 
@@ -381,7 +419,8 @@ export default function CommanderPage() {
       type: productForCustomization.type || 'food',
       customIngredients: selectedIngredients,
       selectedSauce: selectedSauceForProduct,
-      menuOption: selectedMenuOption
+      menuOption: selectedMenuOption,
+      selectedDrinks: selectedDrinks
     };
 
     addItem(cartItem);
@@ -392,6 +431,7 @@ export default function CommanderPage() {
     setSelectedIngredients([]);
     setSelectedSauceForProduct(null);
     setSelectedMenuOption('');
+    setSelectedDrinks([]);
   };
 
   const handleCheckout = async () => {
@@ -445,8 +485,8 @@ export default function CommanderPage() {
       });
 
       if (response.ok) {
-        clearCart();
-        window.location.href = '/commande-confirmee';
+      clearCart();
+      window.location.href = '/commande-confirmee';
       } else {
         throw new Error('Erreur lors de l\'envoi de la commande');
       }
@@ -854,25 +894,41 @@ export default function CommanderPage() {
                       <span className="text-gray-700">{ingredient}</span>
                     </label>
                   ))}
-                </div>
+    </div>
               </div>
             )}
 
             {/* Choix des sauces */}
             <div className="mb-6">
               <h4 className="text-lg font-medium text-gray-900 mb-3">Sauce</h4>
-              <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-3">
                 {sauces.map((sauce) => (
-                  <label key={sauce._id} className="flex items-center">
+                  <label key={sauce._id} className="relative cursor-pointer">
                     <input
                       type="radio"
                       name="sauce"
                       value={sauce._id}
                       checked={selectedSauceForProduct?._id === sauce._id}
                       onChange={() => handleSauceSelect(sauce)}
-                      className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+                      className="sr-only"
                     />
-                    <span className="text-gray-700">{sauce.name}</span>
+                    <div className={`p-3 border-2 rounded-lg transition-all ${
+                      selectedSauceForProduct?._id === sauce._id 
+                        ? 'border-red-500 bg-red-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}>
+                      <div className="relative w-full h-16 mb-2">
+                        <Image
+                          src={sauce.image}
+                          alt={sauce.name}
+                          fill
+                          className="object-cover rounded-md"
+                        />
+                      </div>
+                      <p className="text-sm font-medium text-gray-900 text-center">
+                        {sauce.name}
+                      </p>
+                    </div>
                   </label>
                 ))}
               </div>
@@ -920,6 +976,61 @@ export default function CommanderPage() {
               </div>
             )}
 
+            {/* Choix des boissons (pour Tex-Mex) */}
+            {selectedCategory === 'tex-mex' && getDrinkOptionsForTexMex().length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-lg font-medium text-gray-900 mb-3">
+                  Boissons incluses ({getMaxDrinksForTexMex()} boisson{getMaxDrinksForTexMex() > 1 ? 's' : ''})
+                </h4>
+                <div className="grid grid-cols-2 gap-3">
+                  {getDrinkOptionsForTexMex().map((drink) => {
+                    const isSelected = selectedDrinks.some(d => d.id === drink.id);
+                    const canSelect = selectedDrinks.length < getMaxDrinksForTexMex() || isSelected;
+                    const isDisabled = !canSelect && !isSelected;
+                    
+                    return (
+                      <label key={drink.id} className={`relative cursor-pointer ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleDrinkToggle(drink)}
+                          disabled={isDisabled}
+                          className="sr-only"
+                        />
+                        <div className={`p-3 border-2 rounded-lg transition-all ${
+                          isSelected 
+                            ? 'border-red-500 bg-red-50' 
+                            : 'border-gray-200 hover:border-gray-300'
+                        } ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                          <div className="relative w-full h-16 mb-2">
+                            <Image
+                              src={drink.image}
+                              alt={drink.name}
+                              fill
+                              className="object-cover rounded-md"
+                            />
+                          </div>
+                          <p className="text-sm font-medium text-gray-900 text-center">
+                            {drink.name}
+                          </p>
+                          {isSelected && (
+                            <p className="text-xs text-red-600 text-center mt-1">
+                              Sélectionné
+                            </p>
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+                {selectedDrinks.length > 0 && (
+                  <p className="text-sm text-gray-600 mt-2">
+                    {selectedDrinks.length} boisson{selectedDrinks.length > 1 ? 's' : ''} sélectionnée{selectedDrinks.length > 1 ? 's' : ''}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Prix total */}
             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
               <div className="flex justify-between items-center">
@@ -946,6 +1057,7 @@ export default function CommanderPage() {
                   setSelectedIngredients([]);
                   setSelectedSauceForProduct(null);
                   setSelectedMenuOption('');
+                  setSelectedDrinks([]);
                 }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >

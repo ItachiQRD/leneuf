@@ -104,7 +104,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-3-nuggets',
             name: '3 Nuggets',
             price: 2.5,
-            image: '/images/ptite-faim/3-nuggets.jpg',
+            image: '/images/ptite-faim/3-nuggets.jpeg',
             description: '3 Nuggets croustillants',
             category: 'ptite-faim',
             type: 'snack'
@@ -113,7 +113,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-3-hot-wings',
             name: '3 Hot Wings',
             price: 2.5,
-            image: '/images/ptite-faim/3-hot-wings.jpg',
+            image: '/images/ptite-faim/3-hot-wings.jpeg',
             description: '3 Ailes de poulet épicées',
             category: 'ptite-faim',
             type: 'snack'
@@ -122,7 +122,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-2-tenders',
             name: '2 Tenders',
             price: 2.5,
-            image: '/images/ptite-faim/2-tenders.jpg',
+            image: '/images/ptite-faim/2-tenders.jpeg',
             description: '2 Tenders de poulet',
             category: 'ptite-faim',
             type: 'snack'
@@ -131,7 +131,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-petit-burger',
             name: 'P\'tit Burger',
             price: 2.5,
-            image: '/images/ptite-faim/petit-burger.jpg',
+            image: '/images/ptite-faim/petit-burger.jpeg',
             description: 'Mini burger avec steak 45g',
             category: 'ptite-faim',
             type: 'snack'
@@ -140,7 +140,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-3-mozza-sticks',
             name: '3 Mozza Sticks',
             price: 2.5,
-            image: '/images/ptite-faim/3-mozza-sticks.jpg',
+            image: '/images/ptite-faim/3-mozza-sticks.jpeg',
             description: '3 Bâtonnets de mozzarella',
             category: 'ptite-faim',
             type: 'snack'
@@ -149,7 +149,7 @@ export default function CommanderPage() {
             _id: 'ptite-faim-petite-salade',
             name: 'P\'tite Salade',
             price: 2.5,
-            image: '/images/ptite-faim/petite-salade.jpg',
+            image: '/images/ptite-faim/petite-salade.jpeg',
             description: 'Salade tomate oignon',
             category: 'ptite-faim',
             type: 'snack'

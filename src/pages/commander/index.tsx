@@ -245,9 +245,7 @@ export default function CommanderPage() {
     try {
       const response = await fetch('/api/products/boissons');
       const data = await response.json();
-      console.log('API Response:', data);
       if (data.success) {
-        console.log('Boissons reçues:', data.data);
         setDrinks(data.data);
       }
     } catch (error) {
@@ -396,7 +394,7 @@ export default function CommanderPage() {
     const productName = productForCustomization.name.toLowerCase();
     if (productName.includes('7 pièces')) return 1;
     if (productName.includes('14 pièces')) return 2;
-    if (productName.includes('21 pièces')) return 1; // 1 boisson 1.5L
+    if (productName.includes('20 pièces')) return 1; // 1 boisson 1.5L
     return 0;
   };
 
@@ -404,27 +402,22 @@ export default function CommanderPage() {
     if (drinks.length === 0) return [];
     
     const productName = productForCustomization?.name.toLowerCase() || '';
-    console.log('Tex-Mex product name:', productName);
-    console.log('Available drinks:', drinks.map(d => d.name));
     
     if (productName.includes('7 pièces')) {
       // 7 pièces : toutes les boissons (choix libre)
-      console.log('7 pièces - returning all drinks');
       return drinks;
     } else if (productName.includes('14 pièces')) {
       // 14 pièces : boissons de petite taille (33cl, 25cl)
-      const filtered = drinks.filter(drink => {
+      return drinks.filter(drink => {
         const drinkName = drink.name.toLowerCase();
         return drinkName.includes('33cl') || 
                drinkName.includes('25cl') ||
                drinkName.includes('33 cl') ||
                drinkName.includes('25 cl');
       });
-      console.log('14 pièces - filtered drinks:', filtered.map(d => d.name));
-      return filtered;
-    } else if (productName.includes('21 pièces')) {
-      // 21 pièces : boissons de grande taille (50cl, 1.5L)
-      const filtered = drinks.filter(drink => {
+    } else if (productName.includes('20 pièces')) {
+      // 20 pièces : boissons de grande taille (50cl, 1.5L)
+      return drinks.filter(drink => {
         const drinkName = drink.name.toLowerCase();
         return drinkName.includes('50cl') || 
                drinkName.includes('1.5l') ||
@@ -433,11 +426,8 @@ export default function CommanderPage() {
                drinkName.includes('1,5l') ||
                drinkName.includes('1,5 l');
       });
-      console.log('21 pièces - filtered drinks:', filtered.map(d => d.name));
-      return filtered;
     }
     
-    console.log('No matching product - returning empty array');
     return [];
   };
 
@@ -1049,12 +1039,12 @@ export default function CommanderPage() {
                             ? 'border-red-500 bg-red-50' 
                             : 'border-gray-200 hover:border-gray-300'
                         } ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                          <div className="relative w-full h-16 mb-2">
+                          <div className="relative w-full h-16 mb-2 bg-gray-50 rounded-md flex items-center justify-center">
                             <Image
                               src={drink.image || '/images/placeholder-drink.jpg'}
                               alt={drink.name}
                               fill
-                              className="object-cover rounded-md"
+                              className="object-contain rounded-md"
                             />
                           </div>
                           <p className="text-sm font-medium text-gray-900 text-center">

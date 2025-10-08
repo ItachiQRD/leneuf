@@ -19,13 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       // Essayer d'abord le modèle Product
       let drinks = await Product.find({ category: 'boissons' }).sort({ name: 1 });
-      console.log('Boissons trouvées dans Product:', drinks.length);
       
       // Si aucune boisson trouvée, essayer le modèle Drink
       if (drinks.length === 0) {
-        console.log('Aucune boisson dans Product, essai avec Drink...');
         const drinkData = await Drink.find({}).sort({ name: 1 });
-        console.log('Boissons trouvées dans Drink:', drinkData.length);
         
         // Convertir le format Drink vers le format Product
         drinks = drinkData.map(drink => ({
@@ -41,7 +38,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       
       // Si toujours aucune boisson, utiliser les données de fallback
       if (drinks.length === 0) {
-        console.log('Aucune boisson trouvée, utilisation des données de fallback');
         drinks = [
           {
             _id: 'coca-33cl',
@@ -85,8 +81,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         ];
       }
-      
-      console.log('Noms des boissons finales:', drinks.map(d => d.name));
       
       res.status(200).json({
         success: true,

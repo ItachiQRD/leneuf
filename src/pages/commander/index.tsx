@@ -676,7 +676,7 @@ export default function CommanderPage() {
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen">
         {/* Menu de gauche */}
-        <div className="w-64 bg-white shadow-lg flex flex-col">
+        <div className="w-64 bg-white shadow-lg flex flex-col flex-shrink-0">
           <div className="p-6 flex-shrink-0">
             <h2 className="text-2xl font-bold text-red-600 mb-6">Menu</h2>
           </div>
@@ -814,7 +814,7 @@ export default function CommanderPage() {
         </div>
 
         {/* Panier de droite */}
-        <div className="w-80 bg-white shadow-lg">
+        <div className="w-80 bg-white shadow-lg flex-shrink-0 hidden lg:block">
           <div className="p-6">
             <div className="flex items-center mb-6">
               <ShoppingCart className="w-6 h-6 text-gray-600 mr-2" />

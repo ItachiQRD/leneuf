@@ -43,7 +43,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else if (req.method === 'POST') {
     try {
       console.log('Order data received:', JSON.stringify(req.body, null, 2));
-      const order = new Order(req.body);
+      
+      // Valider les données de la commande
+      const { userId, items, total, status, deliveryAddress, paymentStatus, paymentMethod, notes } = req.body;
+      
+      if (!userId || !items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ 
+          error: 'Données de commande invalides',
+          details: 'userId et items sont requis'
+        });
+      }
+      
+      // Créer la commande avec validation
+      const orderData = {
+        userId,
+        items: items.map((item: any) => ({
+          productId: item.productId || 'custom-product',
+          productName: item.productName || 'Produit personnalisé',
+          quantity: item.quantity || 1,
+          price: item.price || 0,
+          options: item.options || []
+        })),
+        total: total || 0,
+        status: status || 'pending',
+        deliveryAddress: deliveryAddress || {
+          street: 'Adresse par défaut',
+          city: 'Ville',
+          postalCode: '00000',
+          complement: ''
+        },
+        paymentStatus: paymentStatus || 'pending',
+        paymentMethod: paymentMethod || 'cash',
+        notes: notes || ''
+      };
+      
+      const order = new Order(orderData);
       const savedOrder = await order.save();
       console.log('Order saved successfully:', savedOrder._id);
       res.status(201).json(savedOrder);

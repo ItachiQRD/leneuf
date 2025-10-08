@@ -499,18 +499,92 @@ export default function CommanderPage() {
       // Préparer les données de la commande
       const orderData = {
         userId: user._id,
-        items: items.map(item => ({
-          productId: item._id,
-          quantity: item.quantity,
-          price: item.price,
-          options: (item as any).customIngredients ? [{
-            name: 'Composition personnalisée',
-            choice: {
-              name: 'Détails',
-              price: 0
+        items: items.map(item => {
+          // Pour les produits personnalisés (tacos, paninis), utiliser un ID spécial
+          const isCustomProduct = (item as any).customIngredients || (item as any).config;
+          const productId = isCustomProduct ? 'custom-product' : item._id;
+          
+          // Préparer les options selon le type de produit
+          let options = [];
+          if ((item as any).customIngredients) {
+            // Tacos et Paninis
+            const custom = (item as any).customIngredients;
+            if (custom.meats && custom.meats.length > 0) {
+              options.push({
+                name: 'Viandes',
+                choice: {
+                  name: custom.meats.map((m: any) => m.name).join(', '),
+                  price: 0
+                }
+              });
             }
-          }] : []
-        })),
+            if (custom.sauces && custom.sauces.length > 0) {
+              options.push({
+                name: 'Sauces',
+                choice: {
+                  name: custom.sauces.map((s: any) => s.name).join(', '),
+                  price: 0
+                }
+              });
+            }
+            if (custom.ingredients && custom.ingredients.length > 0) {
+              options.push({
+                name: 'Suppléments',
+                choice: {
+                  name: custom.ingredients.map((i: any) => i.name).join(', '),
+                  price: custom.ingredients.reduce((sum: number, i: any) => sum + (i.price || 0), 0)
+                }
+              });
+            }
+            if (custom.baseIngredients && custom.baseIngredients.length > 0) {
+              options.push({
+                name: 'Ingrédients de base',
+                choice: {
+                  name: custom.baseIngredients.map((i: any) => i.name).join(', '),
+                  price: custom.baseIngredients.reduce((sum: number, i: any) => sum + (i.price || 0), 0)
+                }
+              });
+            }
+            if (custom.supplements && custom.supplements.length > 0) {
+              options.push({
+                name: 'Suppléments',
+                choice: {
+                  name: custom.supplements.map((s: any) => s.name).join(', '),
+                  price: custom.supplements.reduce((sum: number, s: any) => sum + (s.price || 0), 0)
+                }
+              });
+            }
+          } else if ((item as any).config) {
+            // Menus et produits avec configuration
+            const config = (item as any).config;
+            if (config.side) {
+              options.push({
+                name: 'Accompagnement',
+                choice: {
+                  name: config.side.name,
+                  price: config.side.price || 0
+                }
+              });
+            }
+            if (config.drink) {
+              options.push({
+                name: 'Boisson',
+                choice: {
+                  name: config.drink.name,
+                  price: config.drink.price || 0
+                }
+              });
+            }
+          }
+          
+          return {
+            productId: productId,
+            productName: item.name, // Ajouter le nom du produit
+            quantity: item.quantity,
+            price: item.price,
+            options: options
+          };
+        }),
         total: total,
         status: 'pending',
         deliveryAddress: {

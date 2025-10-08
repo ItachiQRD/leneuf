@@ -10,8 +10,11 @@ const orderSchema = createBaseSchema<OrderModel>({
   },
   items: [{
     productId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
+      type: String, // Peut être un ObjectId ou 'custom-product'
+      required: true
+    },
+    productName: {
+      type: String,
       required: true
     },
     quantity: {

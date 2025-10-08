@@ -49,10 +49,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(201).json(savedOrder);
     } catch (error) {
       console.error('Error creating order:', error);
-      console.error('Error details:', error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error details:', errorMessage);
       res.status(500).json({ 
         error: 'Failed to create order',
-        details: error.message 
+        details: errorMessage 
       });
     }
   } else {

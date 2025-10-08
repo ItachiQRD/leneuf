@@ -187,7 +187,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
 
   const handleAddToCart = () => {
     const menuOption = MENU_OPTIONS.find(opt => opt.id === config.menuOption);
-    const productName = `${product.name} (${menuOption?.name})`;
+    const productName = `${product.name} (${menuOption?.name || 'Menu'})`;
     
     const cartItem = {
       _id: `tex-mex-${Date.now()}`,
@@ -401,15 +401,17 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                   
                   {(() => {
                     const menuOption = MENU_OPTIONS.find(opt => opt.id === config.menuOption);
+                    if (!menuOption) return null;
+                    
                     return (
                       <div className="mb-4 p-3 bg-blue-50 rounded-lg">
                         <p className="text-sm text-blue-800">
-                          <strong>{menuOption?.name}</strong><br />
-                          Sélectionnez {menuOption?.maxDrinks} boisson{menuOption?.maxDrinks && menuOption.maxDrinks > 1 ? 's' : ''} 
-                          {menuOption?.drinkSize !== 'any' && ` (${menuOption.drinkSize})`}
+                          <strong>{menuOption.name}</strong><br />
+                          Sélectionnez {menuOption.maxDrinks} boisson{menuOption.maxDrinks > 1 ? 's' : ''} 
+                          {menuOption.drinkSize !== 'any' && ` (${menuOption.drinkSize})`}
                         </p>
                         <p className="text-xs text-blue-600 mt-1">
-                          {config.selectedDrinks.length} / {menuOption?.maxDrinks} sélectionnée{menuOption?.maxDrinks && menuOption.maxDrinks > 1 ? 's' : ''}
+                          {config.selectedDrinks.length} / {menuOption.maxDrinks} sélectionnée{menuOption.maxDrinks > 1 ? 's' : ''}
                         </p>
                       </div>
                     );

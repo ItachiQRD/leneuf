@@ -82,8 +82,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Sidebar */}
-      <aside className="w-64 h-full bg-[#1e2632] text-white">
+      {/* Sidebar - Desktop */}
+      <aside className="hidden lg:flex w-64 h-full bg-[#1e2632] text-white flex-col">
         <div className="h-full flex flex-col">
           <div className="h-16 flex items-center px-4 border-b border-gray-700">
             <Link href="/" className="font-bold text-xl">Le9 Admin</Link>
@@ -143,7 +143,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
           {children}
         </main>
       </div>

@@ -59,8 +59,8 @@ export default function AdminDrinksPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header avec gradient */}
-        <div className="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-2xl p-8 mb-8 text-white">
+        {/* Header avec gradient - Desktop */}
+        <div className="hidden lg:block bg-gradient-to-r from-cyan-600 to-blue-600 rounded-2xl p-8 mb-8 text-white">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-2 flex items-center">
@@ -74,6 +74,22 @@ export default function AdminDrinksPage() {
                 <Star className="h-5 w-5" />
                 <span className="text-lg font-semibold">{drinks.length} boissons</span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Header avec gradient - Mobile */}
+        <div className="lg:hidden bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl p-4 mb-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold flex items-center">
+                <Droplets className="mr-2 h-6 w-6" />
+                Boissons
+              </h1>
+              <p className="text-cyan-100 text-sm">{drinks.length} boissons</p>
+            </div>
+            <div className="flex items-center space-x-2 text-cyan-100">
+              <Star className="h-4 w-4" />
             </div>
           </div>
         </div>
@@ -102,9 +118,9 @@ export default function AdminDrinksPage() {
           </div>
         )}
 
-        {/* Grille des boissons */}
+        {/* Grille des boissons - Desktop */}
         {!isCreating && !editingDrink && drinks && drinks.length > 0 && (
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="hidden lg:grid gap-6 grid-cols-3 xl:grid-cols-4">
             {drinks.map((drink) => (
               <div
                 key={drink._id}
@@ -174,6 +190,85 @@ export default function AdminDrinksPage() {
             </div>
           ))}
         </div>
+        )}
+
+        {/* Grille des boissons - Mobile */}
+        {!isCreating && !editingDrink && drinks && drinks.length > 0 && (
+          <div className="lg:hidden space-y-4">
+            {drinks.map((drink) => (
+              <div
+                key={drink._id}
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700"
+              >
+                <div className="flex">
+                  {/* Image */}
+                  {drink.image && typeof drink.image === 'string' && (
+                    <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 flex items-center justify-center">
+                      <img
+                        src={drink.image}
+                        alt={drink.name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Contenu */}
+                  <div className="flex-1 p-4 min-w-0">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 truncate">
+                      {drink.name}
+                    </h3>
+                    
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                      {drink.brand && `${drink.brand} - `}{drink.type}
+                    </p>
+                    
+                    {/* Tailles et prix */}
+                    <div className="mb-3">
+                      <div className="space-y-1">
+                        {drink.sizes.slice(0, 2).map((size, index) => (
+                          <div key={index} className="flex justify-between text-xs">
+                            <span className="text-gray-600 dark:text-gray-400">{size.name}</span>
+                            <span className="font-bold text-cyan-600">{size.price}€</span>
+                          </div>
+                        ))}
+                        {drink.sizes.length > 2 && (
+                          <div className="text-xs text-gray-500">
+                            +{drink.sizes.length - 2} autres tailles
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(drink)}
+                        className="flex-1 text-xs"
+                      >
+                        <Edit className="h-3 w-3 mr-1" />
+                        Modifier
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={async () => {
+                          if (window.confirm('Êtes-vous sûr de vouloir supprimer cette boisson ?')) {
+                            await deleteDrink(drink._id);
+                          }
+                        }}
+                        className="flex-1 text-xs"
+                      >
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Supprimer
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
 
         {/* État vide */}

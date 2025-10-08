@@ -73,8 +73,8 @@ export default function AdminFoodsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header avec gradient */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 mb-8 text-white">
+        {/* Header avec gradient - Desktop */}
+        <div className="hidden lg:block bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 mb-8 text-white">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-2 flex items-center">
@@ -88,6 +88,22 @@ export default function AdminFoodsPage() {
                 <Star className="h-5 w-5" />
                 <span className="text-lg font-semibold">{filteredFoods.length} plats</span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Header avec gradient - Mobile */}
+        <div className="lg:hidden bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-4 mb-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold flex items-center">
+                <ChefHat className="mr-2 h-6 w-6" />
+                Plats
+              </h1>
+              <p className="text-blue-100 text-sm">{filteredFoods.length} plats</p>
+            </div>
+            <div className="flex items-center space-x-2 text-blue-100">
+              <Star className="h-4 w-4" />
             </div>
           </div>
         </div>
@@ -131,9 +147,9 @@ export default function AdminFoodsPage() {
           </div>
         )}
 
-        {/* Grille des plats */}
+        {/* Grille des plats - Desktop */}
         {!isCreating && !editingFood && filteredFoods && filteredFoods.length > 0 && (
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="hidden lg:grid gap-6 grid-cols-3 xl:grid-cols-4">
             {filteredFoods.map((food) => (
               <div
                 key={food._id?.toString() || ''}
@@ -256,6 +272,101 @@ export default function AdminFoodsPage() {
           ))}
         </div>
       )}
+
+        {/* Grille des plats - Mobile */}
+        {!isCreating && !editingFood && filteredFoods && filteredFoods.length > 0 && (
+          <div className="lg:hidden space-y-4">
+            {filteredFoods.map((food) => (
+              <div
+                key={food._id?.toString() || ''}
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700"
+              >
+                <div className="flex">
+                  {/* Image */}
+                  {typeof food.image === 'string' && (
+                    <div className="relative w-24 h-24 flex-shrink-0">
+                      <img
+                        src={food.image}
+                        alt={food.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          food.category === 'bestseller' ? 'bg-yellow-400 text-yellow-900' :
+                          food.category === 'new' ? 'bg-green-400 text-green-900' :
+                          'bg-gray-400 text-gray-900'
+                        }`}>
+                          {food.category === 'bestseller' ? '⭐' :
+                           food.category === 'new' ? '🆕' : '•'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Contenu */}
+                  <div className="flex-1 p-4 min-w-0">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 truncate">
+                      {food.name}
+                    </h3>
+                    
+                    {/* Prix */}
+                    <div className="mb-2">
+                      {food.price ? (
+                        <span className="text-lg font-bold text-blue-600">{food.price}€</span>
+                      ) : food.type === 'pizza' && food.pizzaSizes ? (
+                        <div className="text-sm">
+                          <span className="text-gray-600 dark:text-gray-400">À partir de </span>
+                          <span className="font-bold text-blue-600">
+                            {Math.min(...food.pizzaSizes.map(s => s.price))}€
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-500">Prix selon taille</span>
+                      )}
+                    </div>
+
+                    {/* Infos */}
+                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
+                      <div className="flex items-center">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {food.preparationTimeMinutes}min
+                      </div>
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-medium">
+                        {food.type}
+                      </span>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(food)}
+                        className="flex-1 text-xs"
+                      >
+                        <Edit className="h-3 w-3 mr-1" />
+                        Modifier
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          if (window.confirm('Êtes-vous sûr de vouloir supprimer ce plat ?')) {
+                            food._id && deleteFood(food._id.toString());
+                          }
+                        }}
+                        className="flex-1 text-xs"
+                      >
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Supprimer
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* État vide */}
         {!isCreating && !editingFood && (!filteredFoods || filteredFoods.length === 0) && (

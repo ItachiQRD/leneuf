@@ -90,8 +90,8 @@ export default function AdminDessertsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header avec gradient */}
-        <div className="bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl p-8 mb-8 text-white">
+        {/* Header avec gradient - Desktop */}
+        <div className="hidden lg:block bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl p-8 mb-8 text-white">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-2 flex items-center">
@@ -105,6 +105,22 @@ export default function AdminDessertsPage() {
                 <Star className="h-5 w-5" />
                 <span className="text-lg font-semibold">{desserts.length} desserts</span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Header avec gradient - Mobile */}
+        <div className="lg:hidden bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl p-4 mb-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold flex items-center">
+                <Cake className="mr-2 h-6 w-6" />
+                Desserts
+              </h1>
+              <p className="text-pink-100 text-sm">{desserts.length} desserts</p>
+            </div>
+            <div className="flex items-center space-x-2 text-pink-100">
+              <Star className="h-4 w-4" />
             </div>
           </div>
         </div>
@@ -134,9 +150,9 @@ export default function AdminDessertsPage() {
           </div>
         )}
 
-        {/* Grille des desserts */}
+        {/* Grille des desserts - Desktop */}
         {!isCreating && !editingDessert && desserts && desserts.length > 0 && (
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="hidden lg:grid gap-6 grid-cols-3 xl:grid-cols-4">
             {desserts.map((dessert) => {
               // Utiliser soit _id soit id
               const dessertId = dessert._id || dessert.id;
@@ -200,6 +216,73 @@ export default function AdminDessertsPage() {
             );
           })}
         </div>
+        )}
+
+        {/* Grille des desserts - Mobile */}
+        {!isCreating && !editingDessert && desserts && desserts.length > 0 && (
+          <div className="lg:hidden space-y-4">
+            {desserts.map((dessert) => {
+              const dessertId = dessert._id || dessert.id;
+              if (!dessertId) return null;
+
+              return (
+                <div
+                  key={dessertId}
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700"
+                >
+                  <div className="flex">
+                    {/* Image */}
+                    {dessert.image && (
+                      <div className="relative w-24 h-24 flex-shrink-0">
+                        <img
+                          src={dessert.image}
+                          alt={dessert.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Contenu */}
+                    <div className="flex-1 p-4 min-w-0">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 truncate">
+                        {dessert.name}
+                      </h3>
+                      
+                      <div className="mb-2">
+                        <span className="text-lg font-bold text-pink-600">{dessert.price}€</span>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(dessert)}
+                          className="flex-1 text-xs"
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          Modifier
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={async () => {
+                            if (window.confirm('Êtes-vous sûr de vouloir supprimer ce dessert ?')) {
+                              await deleteDessert(dessertId);
+                            }
+                          }}
+                          className="flex-1 text-xs"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Supprimer
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
 
         {/* État vide */}

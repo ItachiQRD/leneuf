@@ -8,6 +8,8 @@ import Image from 'next/image';
 import TacosComposer from '@/components/commander/TacosComposer';
 import MenuSelector from '@/components/commander/MenuSelector';
 import PaniniComposer from '@/components/commander/PaniniComposer';
+import BurgerSandwichComposer from '@/components/commander/BurgerSandwichComposer';
+import TexMexComposer from '@/components/commander/TexMexComposer';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -19,6 +21,8 @@ export default function CommanderPage() {
   const [showTacosComposer, setShowTacosComposer] = useState(false);
   const [showMenuSelector, setShowMenuSelector] = useState(false);
   const [showPaniniComposer, setShowPaniniComposer] = useState(false);
+  const [showBurgerSandwichComposer, setShowBurgerSandwichComposer] = useState(false);
+  const [showTexMexComposer, setShowTexMexComposer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const [productForSize, setProductForSize] = useState<any>(null);
@@ -283,8 +287,25 @@ export default function CommanderPage() {
     }
     }
 
-    // Produits qui nécessitent une personnalisation simple (burgers, sandwichs, accompagnements, assiettes, tex-mex, ptite-faim)
-    const needsCustomization = ['burgers', 'sandwichs', 'accompagnements', 'assiettes', 'tex-mex', 'ptite-faim'].includes(selectedCategory);
+    // Produits qui nécessitent une composition avec étapes (burgers, sandwichs, tex-mex)
+    const needsStepComposition = ['burgers', 'sandwichs', 'tex-mex'].includes(selectedCategory);
+    
+    if (needsStepComposition) {
+      if (selectedCategory === 'burgers' || selectedCategory === 'sandwichs') {
+        setSelectedProduct(item);
+        setShowBurgerSandwichComposer(true);
+        return;
+      }
+      
+      if (selectedCategory === 'tex-mex') {
+        setSelectedProduct(item);
+        setShowTexMexComposer(true);
+        return;
+      }
+    }
+
+    // Produits qui nécessitent une personnalisation simple (accompagnements, assiettes, ptite-faim)
+    const needsCustomization = ['accompagnements', 'assiettes', 'ptite-faim'].includes(selectedCategory);
     
     if (needsCustomization) {
       setProductForCustomization(item);
@@ -892,6 +913,23 @@ export default function CommanderPage() {
         isOpen={showPaniniComposer}
         onClose={() => setShowPaniniComposer(false)}
         onAddToCart={handleAddCustomToCart}
+      />
+
+      {/* Composant de composition burger/sandwich */}
+      <BurgerSandwichComposer
+        isOpen={showBurgerSandwichComposer}
+        onClose={() => setShowBurgerSandwichComposer(false)}
+        onAddToCart={handleAddCustomToCart}
+        product={selectedProduct}
+        type={selectedCategory === 'burgers' ? 'burger' : 'sandwich'}
+      />
+
+      {/* Composant de composition Tex-Mex */}
+      <TexMexComposer
+        isOpen={showTexMexComposer}
+        onClose={() => setShowTexMexComposer(false)}
+        onAddToCart={handleAddCustomToCart}
+        product={selectedProduct}
       />
 
       {/* Composant de sélection de taille */}

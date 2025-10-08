@@ -613,6 +613,22 @@ export default function CommanderPage() {
       if (response.ok) {
         const responseData = await response.json();
         console.log('Order created successfully:', responseData);
+        
+        // Sauvegarder les données de la commande dans localStorage
+        const orderSummary = {
+          orderId: responseData._id,
+          total: total,
+          items: items.map(item => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            options: (item as any).customIngredients || (item as any).config || null
+          })),
+          timestamp: new Date().toISOString(),
+          deliveryAddress: orderData.deliveryAddress
+        };
+        
+        localStorage.setItem('lastOrder', JSON.stringify(orderSummary));
         clearCart();
         window.location.href = '/commande-confirmee';
       } else {

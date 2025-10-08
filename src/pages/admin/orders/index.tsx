@@ -21,6 +21,39 @@ import { Select } from '@/components/ui/Select';
 import { Modal } from '@/components/ui/Modal';
 import { useAuth } from '@/contexts/AuthContext';
 
+// Fonction utilitaire pour formater les noms de produits
+const formatProductName = (item: any) => {
+  if (item.productName && item.productName !== 'Produit personnalisé') {
+    return item.productName;
+  }
+  
+  // Pour les produits personnalisés, créer un nom basé sur les options
+  if (item.options && item.options.length > 0) {
+    const mainOption = item.options.find((opt: any) => 
+      opt.name === 'Viandes' || opt.name === 'Ingrédients de base'
+    );
+    if (mainOption) {
+      return `${mainOption.choice.name} (Personnalisé)`;
+    }
+  }
+  
+  return 'Produit personnalisé';
+};
+
+// Fonction utilitaire pour formater les options
+const formatOptionName = (option: any) => {
+  const nameMap: { [key: string]: string } = {
+    'Viandes': 'Viandes',
+    'Sauces': 'Sauces',
+    'Suppléments': 'Suppléments',
+    'Ingrédients de base': 'Ingrédients',
+    'Accompagnement': 'Accompagnement',
+    'Boisson': 'Boisson'
+  };
+  
+  return nameMap[option.name] || option.name;
+};
+
 interface Order {
   _id: string;
   userId: {
@@ -31,6 +64,7 @@ interface Order {
   };
   items: Array<{
     productId: string;
+    productName: string;
     quantity: number;
     price: number;
     options?: Array<{
@@ -311,6 +345,10 @@ export default function AdminOrdersPage() {
                           <div className="text-sm text-gray-500">
                             {order.items.length} article{order.items.length > 1 ? 's' : ''}
                           </div>
+                          <div className="text-xs text-gray-400 mt-1 max-w-xs truncate">
+                            {order.items.slice(0, 2).map(item => formatProductName(item)).join(', ')}
+                            {order.items.length > 2 && ` +${order.items.length - 2} autres`}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
@@ -468,16 +506,40 @@ function OrderDetailModal({
           <h3 className="text-lg font-medium text-gray-900 mb-3">Articles commandés</h3>
           <div className="space-y-2">
             {order.items.map((item, index) => (
-              <div key={index} className="flex justify-between items-center bg-gray-50 rounded-lg p-3">
-                <div>
-                  <div className="font-medium">Article {index + 1}</div>
-                  <div className="text-sm text-gray-600">
-                    Quantité: {item.quantity} × {item.price.toFixed(2)} €
+              <div key={index} className="bg-gray-50 rounded-lg p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900 mb-1">
+                      {formatProductName(item)}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Quantité: {item.quantity} × {item.price.toFixed(2)} €
+                    </div>
+                  </div>
+                  <div className="font-medium text-lg">
+                    {(item.quantity * item.price).toFixed(2)} €
                   </div>
                 </div>
-                <div className="font-medium">
-                  {(item.quantity * item.price).toFixed(2)} €
-                </div>
+                
+                {/* Options du produit */}
+                {item.options && item.options.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <div className="text-sm font-medium text-gray-700 mb-2">Personnalisations :</div>
+                    <div className="space-y-1">
+                      {item.options.map((option, optionIndex) => (
+                        <div key={optionIndex} className="flex justify-between items-center text-sm">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-gray-600 font-medium">{formatOptionName(option)}:</span>
+                            <span className="font-medium text-gray-900">{option.choice.name}</span>
+                          </div>
+                          {option.choice.price > 0 && (
+                            <span className="text-gray-600 font-medium">+{option.choice.price.toFixed(2)} €</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
             <div className="border-t pt-2">

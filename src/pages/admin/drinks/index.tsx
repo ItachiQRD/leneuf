@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useProducts } from '@/contexts/ProductContext';
 import { Plus, Edit, Trash2, Clock, Star, Droplets } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
+import AdminMobileMenu from '@/components/ui/AdminMobileMenu';
 import DrinkForm from '@/components/admin/drinks/DrinkForm';
 import { Drink } from '@/types/drink';
 
@@ -90,6 +91,7 @@ export default function AdminDrinksPage() {
             </div>
             <div className="flex items-center space-x-2 text-cyan-100">
               <Star className="h-4 w-4" />
+              <AdminMobileMenu currentPath="/admin/drinks" />
             </div>
           </div>
         </div>

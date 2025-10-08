@@ -3,6 +3,7 @@ import { useProducts } from '@/contexts/ProductContext';
 import { Plus, Edit, Trash2, Clock, Star, Filter, ChefHat, Flame } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
 import { Select } from '@/components/ui/Select';
+import AdminMobileMenu from '@/components/ui/AdminMobileMenu';
 import FoodForm from '@/components/admin/foods/FoodForm';
 import { Food, FoodType, FOOD_TYPES } from '@/types/food';
 
@@ -104,6 +105,7 @@ export default function AdminFoodsPage() {
             </div>
             <div className="flex items-center space-x-2 text-blue-100">
               <Star className="h-4 w-4" />
+              <AdminMobileMenu currentPath="/admin/foods" />
             </div>
           </div>
         </div>

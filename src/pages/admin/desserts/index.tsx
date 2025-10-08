@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useProducts } from '@/contexts/ProductContext';
 import { Plus, Edit, Trash2, Clock, Star, Cake } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
+import AdminMobileMenu from '@/components/ui/AdminMobileMenu';
 import DessertForm from '@/components/admin/desserts/DessertForm';
 import { Dessert } from '@/types/dessert';
 import { useToast } from '@/hooks/use-toast';
@@ -121,6 +122,7 @@ export default function AdminDessertsPage() {
             </div>
             <div className="flex items-center space-x-2 text-pink-100">
               <Star className="h-4 w-4" />
+              <AdminMobileMenu currentPath="/admin/desserts" />
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import MenuSelector from '@/components/commander/MenuSelector';
 import PaniniComposer from '@/components/commander/PaniniComposer';
 import BurgerSandwichComposer from '@/components/commander/BurgerSandwichComposer';
 import TexMexComposer from '@/components/commander/TexMexComposer';
+import MobileMenu from '@/components/ui/MobileMenu';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -896,30 +897,18 @@ export default function CommanderPage() {
 
       {/* Mobile Layout */}
       <div className="lg:hidden">
-        {/* Header mobile avec sélection de catégorie */}
+        {/* Header mobile avec menu hamburger */}
         <div className="bg-white shadow-sm border-b sticky top-20 z-40">
           <div className="px-4 py-3">
-            <h1 className="text-xl font-bold text-gray-900 mb-3">
-              {menuCategories.find(c => c.id === selectedCategory)?.name}
-            </h1>
-            
-            {/* Sélecteur de catégorie mobile */}
-            <div className="overflow-x-auto">
-              <div className="flex space-x-2 pb-2">
-                {menuCategories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      selectedCategory === category.id
-                        ? 'bg-red-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {category.name}
-                  </button>
-                ))}
-              </div>
+            <div className="flex items-center justify-between mb-3">
+              <h1 className="text-xl font-bold text-gray-900">
+                {menuCategories.find(c => c.id === selectedCategory)?.name}
+              </h1>
+              <MobileMenu
+                categories={menuCategories}
+                selectedCategory={selectedCategory}
+                onCategorySelect={setSelectedCategory}
+              />
             </div>
           </div>
         </div>

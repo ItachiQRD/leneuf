@@ -699,7 +699,7 @@ export default function CommanderPage() {
       {/* Interface mobile */}
       <div className="flex flex-col h-screen">
         {/* Navigation des catégories mobile - horizontale */}
-        <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="bg-white border-b border-gray-200 px-4 py-3 mt-2">
           <div className="flex space-x-2 overflow-x-auto pb-2">
             {menuCategories.map((category) => (
               <button

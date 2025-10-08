@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card } from '@/components/ui/Card';
-import AdminMobileMenu from '@/components/ui/AdminMobileMenu';
 import {
   BarChart,
   ShoppingBag,
@@ -43,13 +42,8 @@ export default function AdminDashboardPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Tableau de bord</h1>
-              <p className="text-gray-600 dark:text-gray-400">Vue d'ensemble de votre restaurant</p>
-            </div>
-            <AdminMobileMenu currentPath="/admin" />
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Tableau de bord</h1>
+          <p className="text-gray-600 dark:text-gray-400">Vue d'ensemble de votre restaurant</p>
         </div>
 
         {/* Stats Grid - Desktop */}

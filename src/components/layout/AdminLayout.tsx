@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import AdminMobileMenu from '@/components/ui/AdminMobileMenu';
 import {
   LayoutDashboard,
   ChefHat,
@@ -143,6 +144,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header mobile avec menu hamburger */}
+        <div className="lg:hidden bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
+          <div className="px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Link href="/" className="font-bold text-xl text-gray-900 dark:text-white">Le9 Admin</Link>
+              </div>
+              <AdminMobileMenu currentPath={router.pathname} />
+            </div>
+          </div>
+        </div>
+        
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
           {children}
         </main>

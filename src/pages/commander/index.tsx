@@ -245,7 +245,9 @@ export default function CommanderPage() {
     try {
       const response = await fetch('/api/products/boissons');
       const data = await response.json();
+      console.log('API Response:', data);
       if (data.success) {
+        console.log('Boissons reçues:', data.data);
         setDrinks(data.data);
       }
     } catch (error) {
@@ -402,38 +404,40 @@ export default function CommanderPage() {
     if (drinks.length === 0) return [];
     
     const productName = productForCustomization?.name.toLowerCase() || '';
+    console.log('Tex-Mex product name:', productName);
+    console.log('Available drinks:', drinks.map(d => d.name));
     
     if (productName.includes('7 pièces')) {
       // 7 pièces : toutes les boissons (choix libre)
+      console.log('7 pièces - returning all drinks');
       return drinks;
     } else if (productName.includes('14 pièces')) {
-      // 14 pièces : seulement les boissons de 33cl
-      return drinks.filter(drink => {
+      // 14 pièces : boissons de petite taille (33cl, 25cl)
+      const filtered = drinks.filter(drink => {
         const drinkName = drink.name.toLowerCase();
         return drinkName.includes('33cl') || 
+               drinkName.includes('25cl') ||
                drinkName.includes('33 cl') ||
-               drinkName.includes('33c') ||
-               drinkName.includes('33 c') ||
-               drinkName.includes('33ml') ||
-               drinkName.includes('33 ml');
+               drinkName.includes('25 cl');
       });
+      console.log('14 pièces - filtered drinks:', filtered.map(d => d.name));
+      return filtered;
     } else if (productName.includes('21 pièces')) {
-      // 21 pièces : seulement les boissons de 1.5L
-      return drinks.filter(drink => {
+      // 21 pièces : boissons de grande taille (50cl, 1.5L)
+      const filtered = drinks.filter(drink => {
         const drinkName = drink.name.toLowerCase();
-        return drinkName.includes('1.5l') || 
+        return drinkName.includes('50cl') || 
+               drinkName.includes('1.5l') ||
+               drinkName.includes('50 cl') ||
                drinkName.includes('1.5 l') ||
                drinkName.includes('1,5l') ||
-               drinkName.includes('1,5 l') ||
-               drinkName.includes('1.5l') ||
-               drinkName.includes('1.5 l') ||
-               drinkName.includes('1500ml') ||
-               drinkName.includes('1500 ml') ||
-               drinkName.includes('1l5') ||
-               drinkName.includes('1 l 5');
+               drinkName.includes('1,5 l');
       });
+      console.log('21 pièces - filtered drinks:', filtered.map(d => d.name));
+      return filtered;
     }
     
+    console.log('No matching product - returning empty array');
     return [];
   };
 

@@ -11,14 +11,6 @@ interface TexMexComposerProps {
   product: any;
 }
 
-interface MenuOption {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  maxDrinks: number;
-  drinkSize: string;
-}
 
 interface Drink {
   _id: string;
@@ -33,48 +25,27 @@ interface Drink {
 }
 
 const STEPS = [
-  { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
-  { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
+  { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
   { id: 'drink', title: 'Boisson', description: 'Sélectionnez vos boissons' },
   { id: 'summary', title: 'Récapitulatif', description: 'Vérifiez votre commande' }
 ];
 
-const MENU_OPTIONS: MenuOption[] = [
-  {
-    id: '7-pieces',
-    name: '7 pièces + Frite + boisson',
-    price: 0,
-    description: '7 pièces de poulet + frites + 1 boisson au choix',
-    maxDrinks: 1,
-    drinkSize: 'any'
-  },
-  {
-    id: '14-pieces',
-    name: '14 pièces + 2 frites + 2 boissons',
-    price: 0,
-    description: '14 pièces de poulet + 2 frites + 2 boissons 33cl',
-    maxDrinks: 2,
-    drinkSize: '33cl'
-  },
-  {
-    id: '20-pieces',
-    name: '20 pièces + boisson',
-    price: 0,
-    description: '20 pièces de poulet + 1 boisson 1.5L',
-    maxDrinks: 1,
-    drinkSize: '1.5L'
-  }
-];
+interface Sauce {
+  _id: string;
+  name: string;
+  price: number;
+  image: string;
+}
 
 export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }: TexMexComposerProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [drinks, setDrinks] = useState<Drink[]>([]);
+  const [sauces, setSauces] = useState<Sauce[]>([]);
   const [loading, setLoading] = useState(false);
   
   // Configuration du produit
   const [config, setConfig] = useState({
-    menuOption: '7-pieces' as string,
-    withFries: true,
+    selectedSauce: null as Sauce | null,
     selectedDrinks: [] as Drink[],
     quantity: 1
   });
@@ -84,12 +55,12 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
     if (isOpen) {
       setCurrentStep(0);
       setConfig({
-        menuOption: '7-pieces',
-        withFries: true,
+        selectedSauce: null,
         selectedDrinks: [],
         quantity: 1
       });
       fetchDrinks();
+      fetchSauces();
     }
   }, [isOpen]);
 
@@ -105,20 +76,25 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
     }
   };
 
-  const getDrinkOptions = () => {
-    const menuOption = MENU_OPTIONS.find(opt => opt.id === config.menuOption);
-    if (!menuOption) return [];
+  const fetchSauces = async () => {
+    try {
+      const response = await fetch('/api/products/tacos-options');
+      const data = await response.json();
+      if (data.success) {
+        setSauces(data.data.sauces);
+      }
+    } catch (error) {
+      console.error('Error fetching sauces:', error);
+    }
+  };
 
-    if (menuOption.drinkSize === 'any') {
+  const getDrinkOptions = () => {
+    // Pour Tex-Mex, on filtre selon le nom du produit
+    const productName = product?.name.toLowerCase() || '';
+    
+    if (productName.includes('7 pièces') || productName.includes('14 pièces')) {
       return drinks; // Toutes les boissons
-    } else if (menuOption.drinkSize === '33cl') {
-      return drinks.filter(drink => 
-        drink.sizes.some(size => 
-          size.volume.toLowerCase().includes('33cl') || 
-          size.volume.toLowerCase().includes('33 cl')
-        )
-      );
-    } else if (menuOption.drinkSize === '1.5L') {
+    } else if (productName.includes('20 pièces')) {
       return drinks.filter(drink => 
         drink.sizes.some(size => 
           size.volume.toLowerCase().includes('1.5l') || 
@@ -137,20 +113,14 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
     return price * config.quantity;
   };
 
-  const handleMenuSelect = (menuId: string) => {
-    const menuOption = MENU_OPTIONS.find(opt => opt.id === menuId);
+  const handleSauceSelect = (sauce: Sauce) => {
     setConfig(prev => ({
       ...prev,
-      menuOption: menuId,
-      withFries: menuId !== '20-pieces', // 20 pièces n'a pas de frites
-      selectedDrinks: [] // Reset drinks when changing menu
+      selectedSauce: sauce
     }));
   };
 
   const handleDrinkToggle = (drink: Drink) => {
-    const menuOption = MENU_OPTIONS.find(opt => opt.id === config.menuOption);
-    if (!menuOption) return;
-
     setConfig(prev => {
       const isSelected = prev.selectedDrinks.some(d => d._id === drink._id);
       
@@ -161,14 +131,11 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
           selectedDrinks: prev.selectedDrinks.filter(d => d._id !== drink._id)
         };
       } else {
-        // Ajouter la boisson si on n'a pas atteint la limite
-        if (prev.selectedDrinks.length < menuOption.maxDrinks) {
-          return {
-            ...prev,
-            selectedDrinks: [...prev.selectedDrinks, drink]
-          };
-        }
-        return prev;
+        // Ajouter la boisson
+        return {
+          ...prev,
+          selectedDrinks: [...prev.selectedDrinks, drink]
+        };
       }
     });
   };
@@ -186,19 +153,15 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
   };
 
   const handleAddToCart = () => {
-    const menuOption = MENU_OPTIONS.find(opt => opt.id === config.menuOption);
-    const productName = `${product.name} (${menuOption?.name || 'Menu'})`;
-    
     const cartItem = {
       _id: `tex-mex-${Date.now()}`,
-      name: productName,
+      name: product.name,
       price: calculatePrice(),
       image: product.image,
       category: 'tex-mex',
       type: 'food',
       customIngredients: {
-        menuOption: config.menuOption,
-        withFries: config.withFries,
+        sauce: config.selectedSauce,
         drinks: config.selectedDrinks,
         quantity: config.quantity
       }
@@ -211,8 +174,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
   const handleClose = () => {
     setCurrentStep(0);
     setConfig({
-      menuOption: '7-pieces',
-      withFries: true,
+      selectedSauce: null,
       selectedDrinks: [],
       quantity: 1
     });
@@ -221,11 +183,8 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
 
   const canProceed = () => {
     switch (currentStep) {
-      case 0: return config.menuOption !== '';
-      case 1: return true; // Les frites sont optionnelles
-      case 2: 
-        const menuOption = MENU_OPTIONS.find(opt => opt.id === config.menuOption);
-        return !menuOption || config.selectedDrinks.length === menuOption.maxDrinks;
+      case 0: return true; // Les sauces sont optionnelles
+      case 1: return true; // Les boissons sont optionnelles
       default: return true;
     }
   };
@@ -284,44 +243,64 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
           </div>
 
           {/* Content */}
-          <div className="p-6 overflow-y-auto max-h-[60vh]">
+          <div className="p-6 overflow-y-auto max-h-[50vh]">
             <AnimatePresence mode="wait">
-              {/* Étape 1: Menu */}
+              {/* Étape 1: Sauce */}
               {currentStep === 0 && (
                 <motion.div
-                  key="menu"
+                  key="sauce"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-4"
                 >
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                    Choisissez votre option menu
+                    Sauce (optionnel)
                   </h3>
-                  <div className="grid gap-4">
-                    {MENU_OPTIONS.map((option) => (
+                  
+                  {/* Option "Aucune" */}
+                  <div
+                    onClick={() => setConfig(prev => ({ ...prev, selectedSauce: null }))}
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      !config.selectedSauce
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
+                        <X className="w-6 h-6 text-gray-500" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Sans sauce</h4>
+                        <p className="text-sm text-gray-600">Pas de sauce</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sauces disponibles */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {sauces.map((sauce) => (
                       <div
-                        key={option.id}
-                        onClick={() => handleMenuSelect(option.id)}
+                        key={sauce._id}
+                        onClick={() => handleSauceSelect(sauce)}
                         className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                          config.menuOption === option.id
+                          config.selectedSauce?._id === sauce._id
                             ? 'border-green-500 bg-green-50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h4 className="font-medium text-gray-900">{option.name}</h4>
-                            <p className="text-sm text-gray-600">{option.description}</p>
-                            <p className="text-xs text-blue-600 mt-1">
-                              {option.maxDrinks} boisson{option.maxDrinks > 1 ? 's' : ''} {option.drinkSize !== 'any' ? `(${option.drinkSize})` : ''}
-                            </p>
+                        <div className="text-center">
+                          <div className="w-16 h-16 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <Image
+                              src={sauce.image || '/images/placeholder-sauce.jpg'}
+                              alt={sauce.name}
+                              width={48}
+                              height={48}
+                              className="object-contain rounded-lg"
+                            />
                           </div>
-                          <div className="text-right">
-                            <div className="text-lg font-semibold text-gray-900">
-                              Inclus
-                            </div>
-                          </div>
+                          <h4 className="font-medium text-gray-900">{sauce.name}</h4>
                         </div>
                       </div>
                     ))}
@@ -329,65 +308,8 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                 </motion.div>
               )}
 
-              {/* Étape 2: Frites */}
+              {/* Étape 2: Boisson */}
               {currentStep === 1 && (
-                <motion.div
-                  key="fries"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-4"
-                >
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                    Frites
-                  </h3>
-                  
-                  <div className="grid gap-4">
-                    {/* Option "Aucune" */}
-                    <div
-                      onClick={() => setConfig(prev => ({ ...prev, withFries: false }))}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                        !config.withFries
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
-                          <X className="w-6 h-6 text-gray-500" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-gray-900">Sans frites</h4>
-                          <p className="text-sm text-gray-600">Pas de frites</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Option "Avec frites" */}
-                    <div
-                      onClick={() => setConfig(prev => ({ ...prev, withFries: true }))}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                        config.withFries
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
-                          <div className="w-6 h-6 bg-yellow-500 rounded-sm"></div>
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-gray-900">Avec frites</h4>
-                          <p className="text-sm text-gray-600">Portion de frites</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Étape 3: Boisson */}
-              {currentStep === 2 && (
                 <motion.div
                   key="drink"
                   initial={{ opacity: 0, x: 20 }}
@@ -396,27 +318,30 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                   className="space-y-4"
                 >
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                    Sélectionnez vos boissons
+                    Boisson (optionnel)
                   </h3>
                   
-                  {(() => {
-                    const menuOption = MENU_OPTIONS.find(opt => opt.id === config.menuOption);
-                    if (!menuOption) return null;
-                    
-                    return (
-                      <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-                        <p className="text-sm text-blue-800">
-                          <strong>{menuOption.name}</strong><br />
-                          Sélectionnez {menuOption.maxDrinks} boisson{menuOption.maxDrinks > 1 ? 's' : ''} 
-                          {menuOption.drinkSize !== 'any' && ` (${menuOption.drinkSize})`}
-                        </p>
-                        <p className="text-xs text-blue-600 mt-1">
-                          {config.selectedDrinks.length} / {menuOption.maxDrinks} sélectionnée{menuOption.maxDrinks > 1 ? 's' : ''}
-                        </p>
+                  {/* Option "Aucune" */}
+                  <div
+                    onClick={() => setConfig(prev => ({ ...prev, selectedDrinks: [] }))}
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      config.selectedDrinks.length === 0
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
+                        <X className="w-6 h-6 text-gray-500" />
                       </div>
-                    );
-                  })()}
+                      <div>
+                        <h4 className="font-medium text-gray-900">Sans boisson</h4>
+                        <p className="text-sm text-gray-600">Pas de boisson</p>
+                      </div>
+                    </div>
+                  </div>
 
+                  {/* Boissons disponibles */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {getDrinkOptions().map((drink) => (
                       <div
@@ -440,7 +365,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                           </div>
                           <h4 className="font-medium text-gray-900">{drink.name}</h4>
                           <p className="text-sm text-gray-600">
-                            {config.menuOption === '20-pieces' ? '1.5L' : '33cl'}
+                            {product?.name.toLowerCase().includes('20 pièces') ? '1.5L' : '33cl'}
                           </p>
                         </div>
                       </div>
@@ -449,8 +374,8 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                 </motion.div>
               )}
 
-              {/* Étape 4: Récapitulatif */}
-              {currentStep === 3 && (
+              {/* Étape 3: Récapitulatif */}
+              {currentStep === 2 && (
                 <motion.div
                   key="summary"
                   initial={{ opacity: 0, x: 20 }}
@@ -479,13 +404,8 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
 
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span>Menu:</span>
-                        <span>{MENU_OPTIONS.find(opt => opt.id === config.menuOption)?.name}</span>
-                      </div>
-                      
-                      <div className="flex justify-between">
-                        <span>Frites:</span>
-                        <span>{config.withFries ? 'Oui' : 'Non'}</span>
+                        <span>Sauce:</span>
+                        <span>{config.selectedSauce ? config.selectedSauce.name : 'Aucune'}</span>
                       </div>
                       
                       <div className="flex justify-between">

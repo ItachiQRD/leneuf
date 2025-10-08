@@ -38,32 +38,34 @@ interface Drink {
   }>;
 }
 
+interface Sauce {
+  _id: string;
+  name: string;
+  price: number;
+  image: string;
+}
+
 const STEPS = [
   { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
-  { id: 'ingredients', title: 'Ingrédients', description: 'Salade, tomate, oignons ou rien' },
+  { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
   { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
+  { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
   { id: 'drink', title: 'Boisson', description: 'Sélectionnez votre boisson' },
   { id: 'summary', title: 'Récapitulatif', description: 'Vérifiez votre commande' }
 ];
 
 const MENU_OPTIONS: MenuOption[] = [
   {
-    id: 'seul',
-    name: 'Seul',
-    price: 0,
-    description: 'Produit seul sans accompagnement'
-  },
-  {
     id: 'avec-frites',
     name: 'Avec frites',
-    price: 2,
-    description: 'Produit + frites'
+    price: 0,
+    description: 'Produit + frites (inclus)'
   },
   {
     id: 'avec-frites-boisson',
     name: 'Avec frites + boisson',
-    price: 4,
-    description: 'Produit + frites + boisson (33cl)'
+    price: 0,
+    description: 'Produit + frites + boisson (inclus)'
   }
 ];
 
@@ -71,13 +73,15 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   const [currentStep, setCurrentStep] = useState(0);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [drinks, setDrinks] = useState<Drink[]>([]);
+  const [sauces, setSauces] = useState<Sauce[]>([]);
   const [loading, setLoading] = useState(false);
   
   // Configuration du produit
   const [config, setConfig] = useState({
-    menuOption: 'seul' as string,
+    menuOption: 'avec-frites' as string,
     selectedIngredients: [] as Ingredient[],
-    withFries: false,
+    withFries: true,
+    selectedSauce: null as Sauce | null,
     selectedDrink: null as Drink | null,
     quantity: 1
   });
@@ -87,14 +91,16 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     if (isOpen) {
       setCurrentStep(0);
       setConfig({
-        menuOption: 'seul',
+        menuOption: 'avec-frites',
         selectedIngredients: [],
-        withFries: false,
+        withFries: true,
+        selectedSauce: null,
         selectedDrink: null,
         quantity: 1
       });
       fetchIngredients();
       fetchDrinks();
+      fetchSauces();
     }
   }, [isOpen]);
 
@@ -128,16 +134,22 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     }
   };
 
+  const fetchSauces = async () => {
+    try {
+      const response = await fetch('/api/products/tacos-options');
+      const data = await response.json();
+      if (data.success) {
+        setSauces(data.data.sauces);
+      }
+    } catch (error) {
+      console.error('Error fetching sauces:', error);
+    }
+  };
+
   const calculatePrice = () => {
     let price = product.price;
     
-    // Ajouter le prix du menu
-    const menuOption = MENU_OPTIONS.find(opt => opt.id === config.menuOption);
-    if (menuOption) {
-      price += menuOption.price;
-    }
-    
-    // Si pas de boisson dans le menu, réduire de 1€
+    // Si menu "avec frites" (sans boisson), réduire de 1€
     if (config.menuOption === 'avec-frites') {
       price -= 1;
     }
@@ -149,7 +161,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     setConfig(prev => ({
       ...prev,
       menuOption: menuId,
-      withFries: menuId === 'avec-frites' || menuId === 'avec-frites-boisson',
+      withFries: true, // Toujours avec frites maintenant
       selectedDrink: menuId === 'avec-frites-boisson' ? prev.selectedDrink : null
     }));
   };
@@ -160,6 +172,13 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       selectedIngredients: prev.selectedIngredients.some(ing => ing._id === ingredient._id)
         ? prev.selectedIngredients.filter(ing => ing._id !== ingredient._id)
         : [...prev.selectedIngredients, ingredient]
+    }));
+  };
+
+  const handleSauceSelect = (sauce: Sauce) => {
+    setConfig(prev => ({
+      ...prev,
+      selectedSauce: sauce
     }));
   };
 
@@ -197,6 +216,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
         menuOption: config.menuOption,
         ingredients: config.selectedIngredients,
         withFries: config.withFries,
+        sauce: config.selectedSauce,
         drink: config.selectedDrink,
         quantity: config.quantity
       }
@@ -209,9 +229,10 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   const handleClose = () => {
     setCurrentStep(0);
     setConfig({
-      menuOption: 'seul',
+      menuOption: 'avec-frites',
       selectedIngredients: [],
-      withFries: false,
+      withFries: true,
+      selectedSauce: null,
       selectedDrink: null,
       quantity: 1
     });
@@ -221,9 +242,10 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   const canProceed = () => {
     switch (currentStep) {
       case 0: return config.menuOption !== '';
-      case 1: return true; // Les ingrédients sont optionnels
-      case 2: return true; // Les frites sont optionnelles
-      case 3: return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
+      case 1: return true; // Les crudités sont optionnelles
+      case 2: return true; // Les frites sont toujours incluses
+      case 3: return true; // Les sauces sont optionnelles
+      case 4: return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
       default: return true;
     }
   };
@@ -282,7 +304,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
           </div>
 
           {/* Content */}
-          <div className="p-6 overflow-y-auto max-h-[60vh]">
+          <div className="p-6 overflow-y-auto max-h-[50vh]">
             <AnimatePresence mode="wait">
               {/* Étape 1: Menu */}
               {currentStep === 0 && (
@@ -311,14 +333,14 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                           <div>
                             <h4 className="font-medium text-gray-900">{option.name}</h4>
                             <p className="text-sm text-gray-600">{option.description}</p>
+                            {option.id === 'avec-frites' && (
+                              <div className="text-xs text-green-600 mt-1">-1€ sans boisson</div>
+                            )}
                           </div>
                           <div className="text-right">
                             <div className="text-lg font-semibold text-gray-900">
-                              {option.price === 0 ? 'Inclus' : `+${option.price}€`}
+                              Inclus
                             </div>
-                            {option.id === 'avec-frites' && (
-                              <div className="text-xs text-green-600">-1€ sans boisson</div>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -327,17 +349,17 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 2: Ingrédients */}
+              {/* Étape 2: Crudités */}
               {currentStep === 1 && (
                 <motion.div
-                  key="ingredients"
+                  key="vegetables"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-4"
                 >
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                    Ingrédients (optionnel)
+                    Crudités (optionnel)
                   </h3>
                   
                   {/* Option "Aucun" */}
@@ -400,55 +422,88 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   className="space-y-4"
                 >
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                    Frites (optionnel)
+                    Frites (incluses)
                   </h3>
                   
-                  <div className="grid gap-4">
-                    {/* Option "Aucune" */}
-                    <div
-                      onClick={() => setConfig(prev => ({ ...prev, withFries: false }))}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                        !config.withFries
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
-                          <X className="w-6 h-6 text-gray-500" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-gray-900">Sans frites</h4>
-                          <p className="text-sm text-gray-600">Pas de frites</p>
-                        </div>
+                  <div className="p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                        <div className="w-6 h-6 bg-yellow-500 rounded-sm"></div>
                       </div>
-                    </div>
-
-                    {/* Option "Avec frites" */}
-                    <div
-                      onClick={() => setConfig(prev => ({ ...prev, withFries: true }))}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                        config.withFries
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
-                          <div className="w-6 h-6 bg-yellow-500 rounded-sm"></div>
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-gray-900">Avec frites</h4>
-                          <p className="text-sm text-gray-600">Portion de frites</p>
-                        </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Avec frites</h4>
+                        <p className="text-sm text-gray-600">Portion de frites incluse</p>
                       </div>
                     </div>
                   </div>
                 </motion.div>
               )}
 
-              {/* Étape 4: Boisson */}
+              {/* Étape 4: Sauce */}
               {currentStep === 3 && (
+                <motion.div
+                  key="sauce"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-4"
+                >
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    Sauce (optionnel)
+                  </h3>
+                  
+                  {/* Option "Aucune" */}
+                  <div
+                    onClick={() => setConfig(prev => ({ ...prev, selectedSauce: null }))}
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      !config.selectedSauce
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
+                        <X className="w-6 h-6 text-gray-500" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Sans sauce</h4>
+                        <p className="text-sm text-gray-600">Pas de sauce</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sauces disponibles */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {sauces.map((sauce) => (
+                      <div
+                        key={sauce._id}
+                        onClick={() => handleSauceSelect(sauce)}
+                        className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                          config.selectedSauce?._id === sauce._id
+                            ? 'border-green-500 bg-green-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="w-16 h-16 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <Image
+                              src={sauce.image || '/images/placeholder-sauce.jpg'}
+                              alt={sauce.name}
+                              width={48}
+                              height={48}
+                              className="object-contain rounded-lg"
+                            />
+                          </div>
+                          <h4 className="font-medium text-gray-900">{sauce.name}</h4>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Étape 5: Boisson */}
+              {currentStep === 4 && (
                 <motion.div
                   key="drink"
                   initial={{ opacity: 0, x: 20 }}
@@ -543,8 +598,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 5: Récapitulatif */}
-              {currentStep === 4 && (
+              {/* Étape 6: Récapitulatif */}
+              {currentStep === 5 && (
                 <motion.div
                   key="summary"
                   initial={{ opacity: 0, x: 20 }}
@@ -579,14 +634,19 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                       
                       {config.selectedIngredients.length > 0 && (
                         <div className="flex justify-between">
-                          <span>Ingrédients:</span>
+                          <span>Crudités:</span>
                           <span>{config.selectedIngredients.map(ing => ing.name).join(', ')}</span>
                         </div>
                       )}
                       
                       <div className="flex justify-between">
                         <span>Frites:</span>
-                        <span>{config.withFries ? 'Oui' : 'Non'}</span>
+                        <span>Oui (incluses)</span>
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <span>Sauce:</span>
+                        <span>{config.selectedSauce ? config.selectedSauce.name : 'Aucune'}</span>
                       </div>
                       
                       <div className="flex justify-between">

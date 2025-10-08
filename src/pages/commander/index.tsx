@@ -525,6 +525,7 @@ export default function CommanderPage() {
       };
 
       // Envoyer la commande à l'API
+      console.log('Sending order data:', orderData);
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
@@ -532,12 +533,18 @@ export default function CommanderPage() {
         },
         body: JSON.stringify(orderData),
       });
-
+      
+      console.log('Response status:', response.status);
+      
       if (response.ok) {
-      clearCart();
-      window.location.href = '/commande-confirmee';
+        const responseData = await response.json();
+        console.log('Order created successfully:', responseData);
+        clearCart();
+        window.location.href = '/commande-confirmee';
       } else {
-        throw new Error('Erreur lors de l\'envoi de la commande');
+        const errorData = await response.json();
+        console.error('Order creation failed:', errorData);
+        throw new Error(`Erreur lors de l'envoi de la commande: ${errorData.details || errorData.error}`);
       }
     } catch (error) {
       console.error('Erreur lors de la commande:', error);

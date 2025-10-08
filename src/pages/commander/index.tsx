@@ -242,11 +242,15 @@ export default function CommanderPage() {
   };
 
   const fetchDrinks = async () => {
+    console.log('fetchDrinks called');
     try {
       const response = await fetch('/api/products/boissons');
+      console.log('fetchDrinks response:', response);
       const data = await response.json();
+      console.log('fetchDrinks data:', data);
       if (data.success) {
         setDrinks(data.data);
+        console.log('Drinks set:', data.data);
       }
     } catch (error) {
       console.error('Error fetching drinks:', error);
@@ -399,33 +403,55 @@ export default function CommanderPage() {
   };
 
   const getDrinkOptionsForTexMex = () => {
-    if (drinks.length === 0) return [];
+    console.log('getDrinkOptionsForTexMex called');
+    console.log('drinks.length:', drinks.length);
+    console.log('productForCustomization:', productForCustomization);
+    
+    if (drinks.length === 0) {
+      console.log('No drinks available');
+      return [];
+    }
     
     const productName = productForCustomization?.name.toLowerCase() || '';
+    console.log('productName:', productName);
     
     if (productName.includes('7 pièces')) {
       // 7 pièces : toutes les boissons (choix libre)
+      console.log('7 pièces - returning all drinks:', drinks);
       return drinks;
     } else if (productName.includes('14 pièces')) {
       // 14 pièces : seulement les boissons de 33cl
-      return drinks.filter(drink => 
-        drink.name.toLowerCase().includes('33cl') || 
-        drink.name.toLowerCase().includes('33 cl') ||
-        drink.name.toLowerCase().includes('33c') ||
-        drink.name.toLowerCase().includes('33 c')
-      );
+      const filtered = drinks.filter(drink => {
+        const drinkName = drink.name.toLowerCase();
+        return drinkName.includes('33cl') || 
+               drinkName.includes('33 cl') ||
+               drinkName.includes('33c') ||
+               drinkName.includes('33 c') ||
+               drinkName.includes('33ml') ||
+               drinkName.includes('33 ml');
+      });
+      console.log('14 pièces - filtered drinks:', filtered);
+      return filtered;
     } else if (productName.includes('21 pièces')) {
       // 21 pièces : seulement les boissons de 1.5L
-      return drinks.filter(drink => 
-        drink.name.toLowerCase().includes('1.5l') || 
-        drink.name.toLowerCase().includes('1.5 l') ||
-        drink.name.toLowerCase().includes('1,5l') ||
-        drink.name.toLowerCase().includes('1,5 l') ||
-        drink.name.toLowerCase().includes('1.5l') ||
-        drink.name.toLowerCase().includes('1.5 l')
-      );
+      const filtered = drinks.filter(drink => {
+        const drinkName = drink.name.toLowerCase();
+        return drinkName.includes('1.5l') || 
+               drinkName.includes('1.5 l') ||
+               drinkName.includes('1,5l') ||
+               drinkName.includes('1,5 l') ||
+               drinkName.includes('1.5l') ||
+               drinkName.includes('1.5 l') ||
+               drinkName.includes('1500ml') ||
+               drinkName.includes('1500 ml') ||
+               drinkName.includes('1l5') ||
+               drinkName.includes('1 l 5');
+      });
+      console.log('21 pièces - filtered drinks:', filtered);
+      return filtered;
     }
     
+    console.log('No matching product - returning empty array');
     return [];
   };
 

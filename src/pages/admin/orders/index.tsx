@@ -242,27 +242,55 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header mobile */}
-      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-        <div className="px-4 py-3">
-          <h1 className="text-lg font-bold text-gray-900">Commandes</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            {filteredOrders.length} commande{filteredOrders.length > 1 ? 's' : ''}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Gestion des commandes</h1>
+          <p className="mt-2 text-gray-600">
+            Gérez et suivez toutes les commandes de vos clients
           </p>
         </div>
-      </div>
 
-      <div className="p-4">
-        {/* Filtres et recherche mobile */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <div className="space-y-3">
+        {/* Filtres et recherche - Desktop */}
+        <div className="hidden lg:block bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Rechercher par nom, email ou ID de commande..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div className="sm:w-48">
+              <Select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                options={[
+                  { value: 'all', label: 'Tous les statuts' },
+                  { value: 'pending', label: 'En attente' },
+                  { value: 'processing', label: 'En cours' },
+                  { value: 'completed', label: 'Terminées' },
+                  { value: 'cancelled', label: 'Annulées' }
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Filtres et recherche - Mobile */}
+        <div className="lg:hidden bg-white rounded-lg shadow-sm p-4 mb-4">
+          <div className="space-y-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Rechercher..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 text-sm"
+                className="pl-10"
               />
             </div>
             <Select
@@ -279,8 +307,8 @@ export default function AdminOrdersPage() {
           </div>
         </div>
 
-        {/* Liste des commandes */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        {/* Liste des commandes - Desktop */}
+        <div className="hidden lg:block bg-white rounded-lg shadow-sm overflow-hidden">
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
@@ -298,59 +326,169 @@ export default function AdminOrdersPage() {
               <p className="text-gray-500">Aucune commande trouvée</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {filteredOrders.map((order) => {
-                const orderStatusConfig = statusConfig[order.status as keyof typeof statusConfig];
-                const paymentConfig = paymentStatusConfig[order.paymentStatus as keyof typeof paymentStatusConfig];
-                
-                return (
-                  <motion.div
-                    key={order._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-lg shadow-sm p-4"
-                  >
-                    {/* Header de la commande */}
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center">
-                        <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                          <Package className="h-4 w-4 text-red-600" />
-                        </div>
-                        <div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Commande
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Client
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Statut
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Paiement
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Total
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredOrders.map((order) => {
+                    const orderStatusConfig = statusConfig[order.status as keyof typeof statusConfig];
+                    const paymentConfig = paymentStatusConfig[order.paymentStatus as keyof typeof paymentStatusConfig];
+                    
+                    return (
+                      <motion.tr
+                        key={order._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="hover:bg-gray-50"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
                             #{order._id.slice(-8)}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-sm text-gray-500">
                             {order.items.length} article{order.items.length > 1 ? 's' : ''}
                           </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-bold text-gray-900">
+                          <div className="text-xs text-gray-400 mt-1 max-w-xs truncate">
+                            {order.items.slice(0, 2).map(item => formatProductName(item)).join(', ')}
+                            {order.items.length > 2 && ` +${order.items.length - 2} autres`}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            {order.userId.name}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {order.userId.email}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Badge className={orderStatusConfig.color}>
+                            {getStatusIcon(order.status)}
+                            <span className="ml-1">{orderStatusConfig.label}</span>
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Badge className={paymentConfig.color}>
+                            {paymentConfig.label}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {order.total.toFixed(2)} €
-                        </div>
-                        <div className="text-xs text-gray-500">
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDate(order.createdAt)}
-                        </div>
-                      </div>
-                    </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex justify-end space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setShowOrderModal(true);
+                              }}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
-                    {/* Client */}
-                    <div className="mb-3">
-                      <div className="text-sm text-gray-900">{order.userId.name}</div>
-                      <div className="text-xs text-gray-500">{order.userId.email}</div>
+        {/* Liste des commandes - Mobile */}
+        <div className="lg:hidden space-y-4">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-600">{error}</p>
+              <Button onClick={fetchOrders} className="mt-4">
+                Réessayer
+              </Button>
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            <div className="text-center py-12">
+              <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">Aucune commande trouvée</p>
+            </div>
+          ) : (
+            filteredOrders.map((order) => {
+              const orderStatusConfig = statusConfig[order.status as keyof typeof statusConfig];
+              const paymentConfig = paymentStatusConfig[order.paymentStatus as keyof typeof paymentStatusConfig];
+              
+              return (
+                <motion.div
+                  key={order._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-lg shadow-sm p-4"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        #{order._id.slice(-8)}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {order.items.length} article{order.items.length > 1 ? 's' : ''}
+                      </p>
                     </div>
-
-                    {/* Produits */}
-                    <div className="mb-3">
-                      <div className="text-xs text-gray-400">
-                        {order.items.slice(0, 2).map(item => formatProductName(item)).join(', ')}
-                        {order.items.length > 2 && ` +${order.items.length - 2} autres`}
-                      </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-gray-900">
+                        {order.total.toFixed(2)} €
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatDate(order.createdAt)}
+                      </p>
                     </div>
+                  </div>
 
-                    {/* Statuts */}
-                    <div className="flex items-center justify-between mb-3">
+                  <div className="mb-3">
+                    <p className="text-sm text-gray-600 mb-1">
+                      <strong>Client:</strong> {order.userId.name}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      <strong>Email:</strong> {order.userId.email}
+                    </p>
+                    <p className="text-xs text-gray-500 line-clamp-2">
+                      {order.items.slice(0, 2).map(item => formatProductName(item)).join(', ')}
+                      {order.items.length > 2 && ` +${order.items.length - 2} autres`}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex space-x-2">
                       <Badge className={orderStatusConfig.color}>
                         {getStatusIcon(order.status)}
                         <span className="ml-1">{orderStatusConfig.label}</span>
@@ -359,62 +497,48 @@ export default function AdminOrdersPage() {
                         {paymentConfig.label}
                       </Badge>
                     </div>
+                  </div>
 
-                    {/* Actions */}
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedOrder(order);
-                          setShowOrderModal(true);
-                        }}
-                        className="text-xs"
-                      >
-                        <Eye className="w-3 h-3 mr-1" />
-                        Voir détails
-                      </Button>
-                      <Select
-                        value={order.status}
-                        onChange={(e) => updateOrderStatus(order._id, e.target.value as any)}
-                        options={[
-                          { value: 'pending', label: 'En attente' },
-                          { value: 'processing', label: 'En cours' },
-                          { value: 'completed', label: 'Terminée' },
-                          { value: 'cancelled', label: 'Annulée' }
-                        ]}
-                        className="w-32 text-xs"
-                      />
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+                  <div className="flex justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedOrder(order);
+                        setShowOrderModal(true);
+                      }}
+                      className="w-full"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Voir les détails
+                    </Button>
+                  </div>
+                </motion.div>
+              );
+            })
           )}
         </div>
 
-        {/* Pagination mobile */}
+        {/* Pagination */}
         {totalPages > 1 && (
-          <div className="mt-4">
-            <div className="text-xs text-gray-700 text-center mb-3">
-              Page {currentPage} sur {totalPages} • {filteredOrders.length} commandes
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-6 space-y-4 sm:space-y-0">
+            <div className="text-sm text-gray-700">
+              Page {currentPage} sur {totalPages}
             </div>
-            <div className="flex justify-center space-x-2">
+            <div className="flex space-x-2">
               <Button
                 variant="outline"
-                size="sm"
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="text-xs"
+                className="w-full sm:w-auto"
               >
                 Précédent
               </Button>
               <Button
                 variant="outline"
-                size="sm"
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
-                className="text-xs"
+                className="w-full sm:w-auto"
               >
                 Suivant
               </Button>

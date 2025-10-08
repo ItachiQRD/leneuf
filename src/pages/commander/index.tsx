@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Plus, Minus, Trash2, Clock, MapPin, Phone, Menu } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, Clock, MapPin, Phone, Menu, X } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
@@ -35,21 +35,22 @@ export default function CommanderPage() {
   const [selectedMenuOption, setSelectedMenuOption] = useState<string>(''); // 'frites' ou 'frites-boisson'
   const [selectedDrinks, setSelectedDrinks] = useState<any[]>([]);
   const [drinks, setDrinks] = useState<any[]>([]);
+  const [showCart, setShowCart] = useState(false);
 
   // Données de menu
   const menuCategories = [
-    { id: 'sandwichs', name: 'Sandwichs', active: true },
-    { id: 'burgers', name: 'Burgers', active: false },
-    { id: 'pizzas', name: 'Pizzas', active: false },
-    { id: 'assiettes', name: 'Assiettes', active: false },
-    { id: 'accompagnements', name: 'Accompagnements', active: false },
-    { id: 'tacos', name: 'Tacos / Bowls', active: false },
-    { id: 'paninis', name: 'Paninis', active: false },
-    { id: 'tex-mex', name: 'Tex Mex', active: false },
-    { id: 'ptite-faim', name: 'P\'tite Faim', active: false },
-    { id: 'menu-enfants', name: 'Menu Enfants', active: false },
-    { id: 'boissons', name: 'Boissons', active: false },
-    { id: 'desserts', name: 'Desserts', active: false },
+    { id: 'sandwichs', name: 'Sandwichs', icon: '🥪', active: true },
+    { id: 'burgers', name: 'Burgers', icon: '🍔', active: false },
+    { id: 'pizzas', name: 'Pizzas', icon: '🍕', active: false },
+    { id: 'assiettes', name: 'Assiettes', icon: '🍽️', active: false },
+    { id: 'accompagnements', name: 'Accompagnements', icon: '🍟', active: false },
+    { id: 'tacos', name: 'Tacos / Bowls', icon: '🌮', active: false },
+    { id: 'paninis', name: 'Paninis', icon: '🥪', active: false },
+    { id: 'tex-mex', name: 'Tex Mex', icon: '🌯', active: false },
+    { id: 'ptite-faim', name: 'P\'tite Faim', icon: '🍱', active: false },
+    { id: 'menu-enfants', name: 'Menu Enfants', icon: '👶', active: false },
+    { id: 'boissons', name: 'Boissons', icon: '🥤', active: false },
+    { id: 'desserts', name: 'Desserts', icon: '🍰', active: false },
   ];
 
   // Charger les produits quand la catégorie change
@@ -671,83 +672,103 @@ export default function CommanderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-20">
-      <div className="flex h-screen">
-        {/* Menu de gauche */}
-        <div className="w-64 bg-white shadow-lg flex flex-col">
-          <div className="p-6 flex-shrink-0">
-            <h2 className="text-2xl font-bold text-red-600 mb-6">Menu</h2>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header mobile fixe */}
+      <div className="sticky top-0 z-40 bg-white shadow-sm border-b border-gray-200">
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-bold text-gray-900">Commander</h1>
+            <div className="flex items-center space-x-3">
+              {/* Panier mobile */}
+              <button
+                onClick={() => setShowCart(!showCart)}
+                className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
-          <div className="flex-1 overflow-y-auto px-6 pb-6">
-            <nav className="space-y-2">
-              {menuCategories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
-                    selectedCategory === category.id
-                      ? 'bg-red-600 text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </nav>
+        </div>
+      </div>
+
+      {/* Interface mobile */}
+      <div className="flex flex-col h-screen">
+        {/* Navigation des catégories mobile - horizontale */}
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="flex space-x-2 overflow-x-auto pb-2">
+            {menuCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === category.id
+                    ? 'bg-red-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <span className="mr-2">{category.icon}</span>
+                {category.name}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Contenu central - Articles */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+        {/* Contenu principal mobile */}
+        <div className="flex-1 overflow-y-auto p-4">
+          <h1 className="text-xl font-bold text-gray-900 mb-4">
             {menuCategories.find(c => c.id === selectedCategory)?.name}
           </h1>
           
           {selectedCategory === 'tacos' ? (
-            /* Interface spéciale pour les tacos */
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🌮</div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            /* Interface spéciale pour les tacos - Mobile */
+            <div className="text-center py-8">
+              <div className="text-5xl mb-4">🌮</div>
+              <h2 className="text-xl font-bold text-gray-900 mb-3">
                 Composez votre Tacos ou Bowl
               </h2>
-              <p className="text-gray-600 mb-8">
+              <p className="text-gray-600 mb-6 text-sm">
                 Choisissez votre type, taille, viande, sauces et suppléments
               </p>
               <button
                 onClick={handleTacosClick}
-                className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors"
+                className="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold text-base transition-colors"
               >
                 Commencer la composition
               </button>
             </div>
           ) : selectedCategory === 'paninis' ? (
-            /* Interface spéciale pour les paninis */
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🥪</div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            /* Interface spéciale pour les paninis - Mobile */
+            <div className="text-center py-8">
+              <div className="text-5xl mb-4">🥪</div>
+              <h2 className="text-xl font-bold text-gray-900 mb-3">
                 Composez votre Panini
               </h2>
-              <p className="text-gray-600 mb-8">
+              <p className="text-gray-600 mb-6 text-sm">
                 Choisissez votre viande, fromage et suppléments
               </p>
               <button
                 onClick={handlePaniniClick}
-                className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors"
+                className="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold text-base transition-colors"
               >
                 Commencer la composition
               </button>
             </div>
           ) : (
-            /* Liste des produits normaux */
-            <div className="space-y-4">
+            /* Liste des produits normaux - Mobile */
+            <div className="space-y-3">
               {loadingProducts ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
-                  <p className="mt-2 text-gray-600">Chargement des produits...</p>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600 mx-auto"></div>
+                  <p className="mt-2 text-gray-600 text-sm">Chargement...</p>
                 </div>
               ) : !products || products.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
+                  <p className="text-gray-500 text-sm">Aucun produit disponible</p>
                 </div>
               ) : (
                 products.map((item) => (
@@ -755,54 +776,57 @@ export default function CommanderPage() {
                     key={item._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
+                    className="bg-white rounded-lg shadow-sm p-3"
                   >
-                    <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
-                      <Image
-                        src={item.image || '/images/placeholder-food.jpg'}
-                        alt={item.name}
-                        fill
-                        className={`rounded-lg ${selectedCategory === 'boissons' ? 'object-contain' : 'object-cover'}`}
-                      />
-                    </div>
-                    
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {item.name}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {item.description || 'Délicieux plat préparé avec soin'}
-                      </p>
-                      {item.baseIngredients && item.baseIngredients.length > 0 && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Ingrédients: {item.baseIngredients.join(', ')}
+                    <div className="flex items-start space-x-3">
+                      <div className="relative w-16 h-16 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
+                        <Image
+                          src={item.image || '/images/placeholder-food.jpg'}
+                          alt={item.name}
+                          fill
+                          className={`rounded-lg ${selectedCategory === 'boissons' ? 'object-contain' : 'object-cover'}`}
+                        />
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-semibold text-gray-900 truncate">
+                          {item.name}
+                        </h3>
+                        <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                          {item.description || 'Délicieux plat préparé avec soin'}
                         </p>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center space-x-4">
-                      <span className="text-xl font-bold text-red-600">
-                        {selectedCategory === 'pizzas' ? (
-                          (() => {
-                            const isMargherita = item.name.toLowerCase().includes('margherita') || 
-                                                item.name.toLowerCase().includes('margarita');
-                            const minPrice = isMargherita ? 7 : 9;
-                            const maxPrice = isMargherita ? 14 : 17;
-                            return `${minPrice}€ - ${maxPrice}€`;
-                          })()
-                        ) : (
-                          item.price ? `${item.price.toFixed(2)}€` : 
-                          item.sizes && item.sizes.length > 0 ? 
-                          `À partir de ${Math.min(...item.sizes.map((s: any) => s.price)).toFixed(2)}€` : 
-                          'Prix sur demande'
+                        {item.baseIngredients && item.baseIngredients.length > 0 && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {item.baseIngredients.slice(0, 2).join(', ')}
+                            {item.baseIngredients.length > 2 && '...'}
+                          </p>
                         )}
-                      </span>
-                      <button
-                        onClick={() => handleAddToCart(item)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                      >
-                        Ajouter
-                      </button>
+                      </div>
+                      
+                      <div className="flex flex-col items-end space-y-2">
+                        <span className="text-lg font-bold text-red-600">
+                          {selectedCategory === 'pizzas' ? (
+                            (() => {
+                              const isMargherita = item.name.toLowerCase().includes('margherita') || 
+                                                  item.name.toLowerCase().includes('margarita');
+                              const minPrice = isMargherita ? 7 : 9;
+                              const maxPrice = isMargherita ? 14 : 17;
+                              return `${minPrice}€ - ${maxPrice}€`;
+                            })()
+                          ) : (
+                            item.price ? `${item.price.toFixed(2)}€` : 
+                            item.sizes && item.sizes.length > 0 ? 
+                            `À partir de ${Math.min(...item.sizes.map((s: any) => s.price)).toFixed(2)}€` : 
+                            'Prix sur demande'
+                          )}
+                        </span>
+                        <button
+                          onClick={() => handleAddToCart(item)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                        >
+                          Ajouter
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 ))
@@ -810,88 +834,104 @@ export default function CommanderPage() {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Panier de droite */}
-        <div className="w-80 bg-white shadow-lg">
-          <div className="p-6">
-            <div className="flex items-center mb-6">
-              <ShoppingCart className="w-6 h-6 text-gray-600 mr-2" />
-              <h2 className="text-xl font-bold text-gray-900">Panier</h2>
-            </div>
-            
-            {!items || items.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-500">Votre panier est vide</p>
+      {/* Panier mobile - Modal plein écran */}
+        {showCart && (
+          <div className="fixed inset-0 z-50 bg-white">
+            <div className="flex flex-col h-full">
+              {/* Header du panier mobile */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h2 className="text-lg font-bold text-gray-900">Panier ({itemCount})</h2>
+                <button
+                  onClick={() => setShowCart(false)}
+                  className="p-2 text-gray-600 hover:text-gray-900"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-            ) : (
-              <div className="space-y-4 mb-6">
-                {items && items.map((item) => (
-                  <div key={item._id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <div className="relative w-12 h-12 flex-shrink-0">
-                      <Image
-                        src={item.image || '/images/placeholder-food.jpg'}
-                        alt={item.name}
-                        fill
-                        className="object-cover rounded"
-                      />
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium text-gray-900 truncate">
-                        {item.name}
-                      </h4>
-                      <p className="text-xs text-gray-500">
-                        {(item.price * item.quantity).toFixed(2)} €
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                        className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="w-6 text-center text-sm font-medium">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                        className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                    </div>
+
+              {/* Contenu du panier mobile */}
+              <div className="flex-1 overflow-y-auto p-4">
+                {!items || items.length === 0 ? (
+                  <div className="text-center py-12">
+                    <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg">Votre panier est vide</p>
+                    <p className="text-gray-400 text-sm mt-2">Ajoutez des produits pour commencer</p>
                   </div>
-                ))}
+                ) : (
+                  <div className="space-y-3 mb-6">
+                    {items && items.map((item) => (
+                      <div key={item._id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="relative w-12 h-12 flex-shrink-0">
+                          <Image
+                            src={item.image || '/images/placeholder-food.jpg'}
+                            alt={item.name}
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium text-gray-900 truncate">
+                            {item.name}
+                          </h4>
+                          <p className="text-xs text-gray-500">
+                            {(item.price * item.quantity).toFixed(2)} €
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                            className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="w-6 text-center text-sm font-medium">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                            className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-            
-            <div className="border-t pt-4">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-lg font-semibold text-gray-900">Total</span>
-                <span className="text-lg font-bold text-gray-900">
-                  {total.toFixed(2)} €
-                </span>
-              </div>
-              
-              <button
-                onClick={handleCheckout}
-                disabled={isLoading || items.length === 0}
-                className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-              >
-                {isLoading ? 'Commande en cours...' : 'Commander'}
-              </button>
-              
-              {!isAuthenticated && (
-                <p className="text-xs text-gray-500 mt-2 text-center">
-                  Vous devez être connecté pour commander
-                </p>
+
+              {/* Footer du panier mobile */}
+              {items && items.length > 0 && (
+                <div className="border-t border-gray-200 p-4 bg-white">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-lg font-semibold text-gray-900">Total</span>
+                    <span className="text-lg font-bold text-gray-900">
+                      {total.toFixed(2)} €
+                    </span>
+                  </div>
+                  
+                  <button
+                    onClick={handleCheckout}
+                    disabled={isLoading || items.length === 0}
+                    className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                  >
+                    {isLoading ? 'Commande en cours...' : 'Commander'}
+                  </button>
+                  
+                  {!isAuthenticated && (
+                    <p className="text-xs text-gray-500 mt-2 text-center">
+                      Vous devez être connecté pour commander
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
       {/* Composant de composition des tacos */}
       <TacosComposer

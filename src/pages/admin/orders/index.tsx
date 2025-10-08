@@ -242,42 +242,40 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Gestion des commandes</h1>
-          <p className="mt-2 text-gray-600">
-            Gérez et suivez toutes les commandes de vos clients
+      {/* Header mobile */}
+      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
+        <div className="px-4 py-3">
+          <h1 className="text-lg font-bold text-gray-900">Commandes</h1>
+          <p className="text-sm text-gray-600 mt-1">
+            {filteredOrders.length} commande{filteredOrders.length > 1 ? 's' : ''}
           </p>
         </div>
+      </div>
 
-        {/* Filtres et recherche */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Rechercher par nom, email ou ID de commande..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <div className="sm:w-48">
-              <Select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                options={[
-                  { value: 'all', label: 'Tous les statuts' },
-                  { value: 'pending', label: 'En attente' },
-                  { value: 'processing', label: 'En cours' },
-                  { value: 'completed', label: 'Terminées' },
-                  { value: 'cancelled', label: 'Annulées' }
-                ]}
+      <div className="p-4">
+        {/* Filtres et recherche mobile */}
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Rechercher..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 text-sm"
               />
             </div>
+            <Select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              options={[
+                { value: 'all', label: 'Tous les statuts' },
+                { value: 'pending', label: 'En attente' },
+                { value: 'processing', label: 'En cours' },
+                { value: 'completed', label: 'Terminées' },
+                { value: 'cancelled', label: 'Annulées' }
+              ]}
+            />
           </div>
         </div>
 
@@ -300,123 +298,123 @@ export default function AdminOrdersPage() {
               <p className="text-gray-500">Aucune commande trouvée</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Commande
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Client
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Statut
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Paiement
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Total
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredOrders.map((order) => {
-                    const orderStatusConfig = statusConfig[order.status as keyof typeof statusConfig];
-                    const paymentConfig = paymentStatusConfig[order.paymentStatus as keyof typeof paymentStatusConfig];
-                    
-                    return (
-                      <motion.tr
-                        key={order._id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="hover:bg-gray-50"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
+            <div className="space-y-3">
+              {filteredOrders.map((order) => {
+                const orderStatusConfig = statusConfig[order.status as keyof typeof statusConfig];
+                const paymentConfig = paymentStatusConfig[order.paymentStatus as keyof typeof paymentStatusConfig];
+                
+                return (
+                  <motion.div
+                    key={order._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white rounded-lg shadow-sm p-4"
+                  >
+                    {/* Header de la commande */}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center">
+                        <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                          <Package className="h-4 w-4 text-red-600" />
+                        </div>
+                        <div>
                           <div className="text-sm font-medium text-gray-900">
                             #{order._id.slice(-8)}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-xs text-gray-500">
                             {order.items.length} article{order.items.length > 1 ? 's' : ''}
                           </div>
-                          <div className="text-xs text-gray-400 mt-1 max-w-xs truncate">
-                            {order.items.slice(0, 2).map(item => formatProductName(item)).join(', ')}
-                            {order.items.length > 2 && ` +${order.items.length - 2} autres`}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {order.userId.name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {order.userId.email}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge className={orderStatusConfig.color}>
-                            {getStatusIcon(order.status)}
-                            <span className="ml-1">{orderStatusConfig.label}</span>
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge className={paymentConfig.color}>
-                            {paymentConfig.label}
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-bold text-gray-900">
                           {order.total.toFixed(2)} €
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        </div>
+                        <div className="text-xs text-gray-500">
                           {formatDate(order.createdAt)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex justify-end space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedOrder(order);
-                                setShowOrderModal(true);
-                              }}
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </motion.tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Client */}
+                    <div className="mb-3">
+                      <div className="text-sm text-gray-900">{order.userId.name}</div>
+                      <div className="text-xs text-gray-500">{order.userId.email}</div>
+                    </div>
+
+                    {/* Produits */}
+                    <div className="mb-3">
+                      <div className="text-xs text-gray-400">
+                        {order.items.slice(0, 2).map(item => formatProductName(item)).join(', ')}
+                        {order.items.length > 2 && ` +${order.items.length - 2} autres`}
+                      </div>
+                    </div>
+
+                    {/* Statuts */}
+                    <div className="flex items-center justify-between mb-3">
+                      <Badge className={orderStatusConfig.color}>
+                        {getStatusIcon(order.status)}
+                        <span className="ml-1">{orderStatusConfig.label}</span>
+                      </Badge>
+                      <Badge className={paymentConfig.color}>
+                        {paymentConfig.label}
+                      </Badge>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          setShowOrderModal(true);
+                        }}
+                        className="text-xs"
+                      >
+                        <Eye className="w-3 h-3 mr-1" />
+                        Voir détails
+                      </Button>
+                      <Select
+                        value={order.status}
+                        onChange={(e) => updateOrderStatus(order._id, e.target.value as any)}
+                        options={[
+                          { value: 'pending', label: 'En attente' },
+                          { value: 'processing', label: 'En cours' },
+                          { value: 'completed', label: 'Terminée' },
+                          { value: 'cancelled', label: 'Annulée' }
+                        ]}
+                        className="w-32 text-xs"
+                      />
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           )}
         </div>
 
-        {/* Pagination */}
+        {/* Pagination mobile */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-6">
-            <div className="text-sm text-gray-700">
-              Page {currentPage} sur {totalPages}
+          <div className="mt-4">
+            <div className="text-xs text-gray-700 text-center mb-3">
+              Page {currentPage} sur {totalPages} • {filteredOrders.length} commandes
             </div>
-            <div className="flex space-x-2">
+            <div className="flex justify-center space-x-2">
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
+                className="text-xs"
               >
                 Précédent
               </Button>
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
+                className="text-xs"
               >
                 Suivant
               </Button>

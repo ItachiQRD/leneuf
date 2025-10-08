@@ -40,68 +40,63 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (drinks.length === 0) {
         drinks = [
           {
-            _id: 'coca-33cl',
-            name: 'Coca-Cola 33cl',
+            _id: 'coca-cola',
+            name: 'Coca-Cola',
             price: 2.50,
-            image: '/images/boissons/coca-33cl.jpg',
+            image: '/images/boissons/coca-cola.jpg',
             category: 'boissons',
-            type: 'drink'
+            type: 'drink',
+            sizes: [
+              { name: '33cl', price: 2.50, volume: '33cl', isDefault: true },
+              { name: '50cl', price: 3.50, volume: '50cl', isDefault: false },
+              { name: '1.5L', price: 4.50, volume: '1.5L', isDefault: false }
+            ]
           },
           {
-            _id: 'coca-50cl',
-            name: 'Coca-Cola 50cl',
-            price: 3.50,
-            image: '/images/boissons/coca-50cl.jpg',
-            category: 'boissons',
-            type: 'drink'
-          },
-          {
-            _id: 'coca-1.5l',
-            name: 'Coca-Cola 1.5L',
-            price: 4.50,
-            image: '/images/boissons/coca-1.5l.jpg',
-            category: 'boissons',
-            type: 'drink'
-          },
-          {
-            _id: 'eau-50cl',
-            name: 'Eau 50cl',
+            _id: 'eau',
+            name: 'Eau',
             price: 2.00,
-            image: '/images/boissons/eau-50cl.jpg',
+            image: '/images/boissons/eau.jpg',
             category: 'boissons',
-            type: 'drink'
+            type: 'drink',
+            sizes: [
+              { name: '50cl', price: 2.00, volume: '50cl', isDefault: true },
+              { name: '1.5L', price: 3.00, volume: '1.5L', isDefault: false }
+            ]
           },
           {
-            _id: 'eau-1.5l',
-            name: 'Eau 1.5L',
-            price: 3.00,
-            image: '/images/boissons/eau-1.5l.jpg',
-            category: 'boissons',
-            type: 'drink'
-          },
-          {
-            _id: 'jus-orange-25cl',
-            name: 'Jus d\'Orange 25cl',
+            _id: 'jus-orange',
+            name: 'Jus d\'Orange',
             price: 2.80,
-            image: '/images/boissons/jus-orange-25cl.jpg',
+            image: '/images/boissons/jus-orange.jpg',
             category: 'boissons',
-            type: 'drink'
+            type: 'drink',
+            sizes: [
+              { name: '25cl', price: 2.80, volume: '25cl', isDefault: true }
+            ]
           },
           {
-            _id: 'jus-pomme-25cl',
-            name: 'Jus de Pomme 25cl',
+            _id: 'jus-pomme',
+            name: 'Jus de Pomme',
             price: 2.80,
-            image: '/images/boissons/jus-pomme-25cl.jpg',
+            image: '/images/boissons/jus-pomme.jpg',
             category: 'boissons',
-            type: 'drink'
+            type: 'drink',
+            sizes: [
+              { name: '25cl', price: 2.80, volume: '25cl', isDefault: true }
+            ]
           },
           {
-            _id: 'fanta-1.5l',
-            name: 'Fanta 1.5L',
-            price: 4.50,
-            image: '/images/boissons/fanta-1.5l.jpg',
+            _id: 'fanta',
+            name: 'Fanta',
+            price: 2.50,
+            image: '/images/boissons/fanta.jpg',
             category: 'boissons',
-            type: 'drink'
+            type: 'drink',
+            sizes: [
+              { name: '33cl', price: 2.50, volume: '33cl', isDefault: true },
+              { name: '1.5L', price: 4.50, volume: '1.5L', isDefault: false }
+            ]
           }
         ];
       }

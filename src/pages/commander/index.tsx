@@ -412,6 +412,22 @@ export default function CommanderPage() {
     } else if (productName.includes('20 pièces')) {
       // 20 pièces : seulement les boissons 1.5L
       return drinks.filter(drink => {
+        // Vérifier si la boisson a une taille 1.5L dans le champ sizes
+        if (drink.sizes && Array.isArray(drink.sizes)) {
+          return drink.sizes.some((size: any) => {
+            const volume = size.volume?.toLowerCase() || '';
+            return volume.includes('1.5l') ||
+                   volume.includes('1.5 l') ||
+                   volume.includes('1,5l') ||
+                   volume.includes('1,5 l') ||
+                   volume.includes('1500ml') ||
+                   volume.includes('1500 ml') ||
+                   volume.includes('1l5') ||
+                   volume.includes('1 l 5');
+          });
+        }
+        
+        // Fallback : vérifier dans le nom si pas de sizes
         const drinkName = drink.name.toLowerCase();
         return drinkName.includes('1.5l') ||
                drinkName.includes('1.5 l') ||

@@ -242,15 +242,11 @@ export default function CommanderPage() {
   };
 
   const fetchDrinks = async () => {
-    console.log('fetchDrinks called');
     try {
       const response = await fetch('/api/products/boissons');
-      console.log('fetchDrinks response:', response);
       const data = await response.json();
-      console.log('fetchDrinks data:', data);
       if (data.success) {
         setDrinks(data.data);
-        console.log('Drinks set:', data.data);
       }
     } catch (error) {
       console.error('Error fetching drinks:', error);
@@ -270,16 +266,16 @@ export default function CommanderPage() {
     const needsCustomComposition = ['tacos', 'paninis'].includes(selectedCategory);
     
     if (needsCustomComposition) {
-      if (selectedCategory === 'paninis') {
-        setSelectedProduct(item);
-        setShowPaniniComposer(true);
-        return;
-      }
-      
-      if (selectedCategory === 'tacos') {
-        setShowTacosComposer(true);
-        return;
-      }
+    if (selectedCategory === 'paninis') {
+      setSelectedProduct(item);
+      setShowPaniniComposer(true);
+      return;
+    }
+
+    if (selectedCategory === 'tacos') {
+      setShowTacosComposer(true);
+      return;
+    }
     }
 
     // Produits qui nécessitent une personnalisation simple (burgers, sandwichs, accompagnements, assiettes, tex-mex, ptite-faim)
@@ -403,25 +399,16 @@ export default function CommanderPage() {
   };
 
   const getDrinkOptionsForTexMex = () => {
-    console.log('getDrinkOptionsForTexMex called');
-    console.log('drinks.length:', drinks.length);
-    console.log('productForCustomization:', productForCustomization);
-    
-    if (drinks.length === 0) {
-      console.log('No drinks available');
-      return [];
-    }
+    if (drinks.length === 0) return [];
     
     const productName = productForCustomization?.name.toLowerCase() || '';
-    console.log('productName:', productName);
     
     if (productName.includes('7 pièces')) {
       // 7 pièces : toutes les boissons (choix libre)
-      console.log('7 pièces - returning all drinks:', drinks);
       return drinks;
     } else if (productName.includes('14 pièces')) {
       // 14 pièces : seulement les boissons de 33cl
-      const filtered = drinks.filter(drink => {
+      return drinks.filter(drink => {
         const drinkName = drink.name.toLowerCase();
         return drinkName.includes('33cl') || 
                drinkName.includes('33 cl') ||
@@ -430,11 +417,9 @@ export default function CommanderPage() {
                drinkName.includes('33ml') ||
                drinkName.includes('33 ml');
       });
-      console.log('14 pièces - filtered drinks:', filtered);
-      return filtered;
     } else if (productName.includes('21 pièces')) {
       // 21 pièces : seulement les boissons de 1.5L
-      const filtered = drinks.filter(drink => {
+      return drinks.filter(drink => {
         const drinkName = drink.name.toLowerCase();
         return drinkName.includes('1.5l') || 
                drinkName.includes('1.5 l') ||
@@ -447,11 +432,8 @@ export default function CommanderPage() {
                drinkName.includes('1l5') ||
                drinkName.includes('1 l 5');
       });
-      console.log('21 pièces - filtered drinks:', filtered);
-      return filtered;
     }
     
-    console.log('No matching product - returning empty array');
     return [];
   };
 

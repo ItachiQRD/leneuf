@@ -269,13 +269,14 @@ export default function AdminOrdersPage() {
               <Select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-              >
-                <option value="all">Tous les statuts</option>
-                <option value="pending">En attente</option>
-                <option value="processing">En cours</option>
-                <option value="completed">Terminées</option>
-                <option value="cancelled">Annulées</option>
-              </Select>
+                options={[
+                  { value: 'all', label: 'Tous les statuts' },
+                  { value: 'pending', label: 'En attente' },
+                  { value: 'processing', label: 'En cours' },
+                  { value: 'completed', label: 'Terminées' },
+                  { value: 'cancelled', label: 'Annulées' }
+                ]}
+              />
             </div>
           </div>
         </div>
@@ -558,12 +559,13 @@ function OrderDetailModal({
             <Select
               value={newStatus}
               onChange={(e) => setNewStatus(e.target.value as 'pending' | 'processing' | 'completed' | 'cancelled')}
-            >
-              <option value="pending">En attente</option>
-              <option value="processing">En cours</option>
-              <option value="completed">Terminée</option>
-              <option value="cancelled">Annulée</option>
-            </Select>
+              options={[
+                { value: 'pending', label: 'En attente' },
+                { value: 'processing', label: 'En cours' },
+                { value: 'completed', label: 'Terminée' },
+                { value: 'cancelled', label: 'Annulée' }
+              ]}
+            />
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

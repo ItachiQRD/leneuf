@@ -56,10 +56,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             type: 'drink'
           },
           {
+            _id: 'coca-1.5l',
+            name: 'Coca-Cola 1.5L',
+            price: 4.50,
+            image: '/images/boissons/coca-1.5l.jpg',
+            category: 'boissons',
+            type: 'drink'
+          },
+          {
             _id: 'eau-50cl',
             name: 'Eau 50cl',
             price: 2.00,
             image: '/images/boissons/eau-50cl.jpg',
+            category: 'boissons',
+            type: 'drink'
+          },
+          {
+            _id: 'eau-1.5l',
+            name: 'Eau 1.5L',
+            price: 3.00,
+            image: '/images/boissons/eau-1.5l.jpg',
             category: 'boissons',
             type: 'drink'
           },
@@ -76,6 +92,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             name: 'Jus de Pomme 25cl',
             price: 2.80,
             image: '/images/boissons/jus-pomme-25cl.jpg',
+            category: 'boissons',
+            type: 'drink'
+          },
+          {
+            _id: 'fanta-1.5l',
+            name: 'Fanta 1.5L',
+            price: 4.50,
+            image: '/images/boissons/fanta-1.5l.jpg',
             category: 'boissons',
             type: 'drink'
           }

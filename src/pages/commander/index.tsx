@@ -407,24 +407,20 @@ export default function CommanderPage() {
       // 7 pièces : toutes les boissons (choix libre)
       return drinks;
     } else if (productName.includes('14 pièces')) {
-      // 14 pièces : boissons de petite taille (33cl, 25cl)
-      return drinks.filter(drink => {
-        const drinkName = drink.name.toLowerCase();
-        return drinkName.includes('33cl') || 
-               drinkName.includes('25cl') ||
-               drinkName.includes('33 cl') ||
-               drinkName.includes('25 cl');
-      });
+      // 14 pièces : toutes les boissons (choix libre)
+      return drinks;
     } else if (productName.includes('20 pièces')) {
-      // 20 pièces : boissons de grande taille (50cl, 1.5L)
+      // 20 pièces : seulement les boissons 1.5L
       return drinks.filter(drink => {
         const drinkName = drink.name.toLowerCase();
-        return drinkName.includes('50cl') || 
-               drinkName.includes('1.5l') ||
-               drinkName.includes('50 cl') ||
+        return drinkName.includes('1.5l') ||
                drinkName.includes('1.5 l') ||
                drinkName.includes('1,5l') ||
-               drinkName.includes('1,5 l');
+               drinkName.includes('1,5 l') ||
+               drinkName.includes('1500ml') ||
+               drinkName.includes('1500 ml') ||
+               drinkName.includes('1l5') ||
+               drinkName.includes('1 l 5');
       });
     }
     

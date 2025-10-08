@@ -261,6 +261,11 @@ export default function CommanderPage() {
     }
   };
 
+  // Fonction pour ajouter les produits personnalisés au panier (tacos, paninis)
+  const handleAddCustomToCart = (item: any) => {
+    addItem(item);
+  };
+
   const handleAddToCart = (item: any) => {
     // Produits qui nécessitent une composition personnalisée (tacos, paninis)
     const needsCustomComposition = ['tacos', 'paninis'].includes(selectedCategory);
@@ -871,7 +876,7 @@ export default function CommanderPage() {
       <TacosComposer
         isOpen={showTacosComposer}
         onClose={() => setShowTacosComposer(false)}
-        onAddToCart={handleAddToCart}
+        onAddToCart={handleAddCustomToCart}
       />
 
       {/* Composant de sélection de menu */}
@@ -886,7 +891,7 @@ export default function CommanderPage() {
       <PaniniComposer
         isOpen={showPaniniComposer}
         onClose={() => setShowPaniniComposer(false)}
-        onAddToCart={handleAddToCart}
+        onAddToCart={handleAddCustomToCart}
       />
 
       {/* Composant de sélection de taille */}

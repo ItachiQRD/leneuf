@@ -1040,6 +1040,46 @@ export default function CommanderPage() {
               </span>
             </div>
             
+            {/* Liste des articles mobile */}
+            {items && items.length > 0 && (
+              <div className="max-h-32 overflow-y-auto mb-3 space-y-2">
+                {items.map((item) => (
+                  <div key={`${item._id}-${item.size || 'default'}`} className="flex items-center justify-between text-sm">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 truncate">
+                        {item.name}
+                        {item.size && ` (${item.size})`}
+                      </p>
+                      <p className="text-gray-500">
+                        {item.quantity}x {item.price.toFixed(2)}€
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => updateQuantity(item._id, item.quantity - 1, item.size)}
+                        className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="w-6 text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item._id, item.quantity + 1, item.size)}
+                        className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={() => removeItem(item._id, item.size)}
+                        className="w-6 h-6 bg-red-100 hover:bg-red-200 text-red-600 rounded-full flex items-center justify-center"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
             <button
               onClick={handleCheckout}
               disabled={isLoading || !items || items.length === 0}

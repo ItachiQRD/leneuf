@@ -615,10 +615,10 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
             <Button
               variant="outline"
               onClick={currentStep === 0 ? handleClose : handlePrevious}
-              className="text-sm lg:text-base px-3 lg:px-4 py-2 lg:py-2"
+              className="text-sm lg:text-base px-2 lg:px-4 py-2 lg:py-2"
             >
-              <ArrowLeft className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-2" />
-              {currentStep === 0 ? 'Annuler' : 'Précédent'}
+              <ArrowLeft className="w-3 h-3 lg:w-4 lg:h-4 lg:mr-2" />
+              <span className="hidden lg:inline">{currentStep === 0 ? 'Annuler' : 'Précédent'}</span>
             </Button>
 
             <div className="flex items-center space-x-2 lg:space-x-4">
@@ -626,14 +626,15 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed()}
-                  className="text-sm lg:text-base px-3 lg:px-4 py-2 lg:py-2"
+                  className="text-sm lg:text-base px-2 lg:px-4 py-2 lg:py-2"
                 >
-                  Suivant
-                  <ArrowRight className="w-3 h-3 lg:w-4 lg:h-4 ml-1 lg:ml-2" />
+                  <span className="hidden lg:inline">Suivant</span>
+                  <ArrowRight className="w-3 h-3 lg:w-4 lg:h-4 lg:ml-2" />
                 </Button>
               ) : (
-                <Button onClick={handleAddToCart} className="text-sm lg:text-base px-3 lg:px-4 py-2 lg:py-2">
-                  Ajouter au panier ({calculatePrice()}€)
+                <Button onClick={handleAddToCart} className="text-sm lg:text-base px-2 lg:px-4 py-2 lg:py-2">
+                  <span className="hidden lg:inline">Ajouter au panier ({calculatePrice()}€)</span>
+                  <span className="lg:hidden">+ {calculatePrice()}€</span>
                 </Button>
               )}
             </div>

@@ -1,6 +1,10 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { X } from 'lucide-react';
+import { X, Plus, Minus, Trash2 } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface CartProps {
   isOpen: boolean;
@@ -8,6 +12,26 @@ interface CartProps {
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
+  const { items, updateQuantity, removeItem, clearCart, total, itemCount } = useCart();
+  const { isAuthenticated } = useAuth();
+
+  const handleQuantityChange = (id: string, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      removeItem(id);
+    } else {
+      updateQuantity(id, newQuantity);
+    }
+  };
+
+  const handleCheckout = () => {
+    if (!isAuthenticated) {
+      alert('Vous devez être connecté pour commander');
+      return;
+    }
+    // Rediriger vers la page de commande
+    window.location.href = '/commander';
+  };
+
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog onClose={onClose} className="relative z-50">
@@ -57,41 +81,91 @@ export default function Cart({ isOpen, onClose }: CartProps) {
 
                       <div className="mt-8">
                         <div className="flow-root">
-                          {/* Contenu du panier ici */}
-                          <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                            Votre panier est vide
-                          </p>
+                          {!items || items.length === 0 ? (
+                            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                              Votre panier est vide
+                            </p>
+                          ) : (
+                            <div className="space-y-4">
+                              {items.map((item) => (
+                                <div key={item._id} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                  <div className="relative w-16 h-16 flex-shrink-0">
+                                    <Image
+                                      src={item.image || '/images/placeholder-food.jpg'}
+                                      alt={item.name}
+                                      fill
+                                      className="object-cover rounded"
+                                    />
+                                  </div>
+                                  
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                      {item.name}
+                                    </h4>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                      {(item.price * item.quantity).toFixed(2)} €
+                                    </p>
+                                  </div>
+                                  
+                                  <div className="flex items-center space-x-2">
+                                    <button
+                                      onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                                      className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center"
+                                    >
+                                      <Minus className="w-4 h-4" />
+                                    </button>
+                                    <span className="w-8 text-center text-sm font-medium">
+                                      {item.quantity}
+                                    </span>
+                                    <button
+                                      onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                                      className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center"
+                                    >
+                                      <Plus className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      onClick={() => removeItem(item._id)}
+                                      className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 flex items-center justify-center text-red-600 dark:text-red-400"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
 
                     <div className="border-t border-gray-200 dark:border-gray-800 px-4 py-6 sm:px-6">
                       <div className="flex justify-between text-base font-medium text-gray-900 dark:text-white">
-                        <p>Total</p>
-                        <p>0.00 €</p>
+                        <p>Total ({itemCount} article{itemCount > 1 ? 's' : ''})</p>
+                        <p>{total.toFixed(2)} €</p>
                       </div>
                       <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
                         Livraison calculée à la commande.
                       </p>
                       <div className="mt-6">
                         <button
-                          className="w-full rounded-md border border-transparent bg-primary px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-primary-600"
-                          onClick={onClose}
+                          className="w-full rounded-md border border-transparent bg-red-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-red-700 disabled:bg-gray-400"
+                          onClick={handleCheckout}
+                          disabled={!items || items.length === 0}
                         >
-                          Commander
+                          {isAuthenticated ? 'Commander' : 'Se connecter pour commander'}
                         </button>
                       </div>
                       <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                         <p>
                           ou{' '}
-                          <button
-                            type="button"
-                            className="font-medium text-primary hover:text-primary-600"
+                          <Link
+                            href="/commander"
+                            className="font-medium text-red-600 hover:text-red-700"
                             onClick={onClose}
                           >
                             Continuer mes achats
                             <span aria-hidden="true"> &rarr;</span>
-                          </button>
+                          </Link>
                         </p>
                       </div>
                     </div>

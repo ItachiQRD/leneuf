@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import { Sun, Moon, User, LogOut, Shield } from 'lucide-react';
 import Image from 'next/image';
 
@@ -15,6 +16,7 @@ interface MainHeaderProps {
 
 export default function MainHeader({ onOpenCart }: MainHeaderProps) {
   const router = useRouter();
+  const { itemCount } = useCart();
   const { backgroundColor, textColor, borderColor, boxShadow } = useHeaderColor();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -175,10 +177,15 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             {/* Cart Button */}
             <button
               onClick={onOpenCart}
-              className={`p-2 hover:bg-gray-100/10 rounded-lg ${textColor}`}
+              className={`relative p-2 hover:bg-gray-100/10 rounded-lg ${textColor}`}
               aria-label="Panier"
             >
               <ShoppingCart className="w-6 h-6" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  {itemCount}
+                </span>
+              )}
             </button>
           </div>
 

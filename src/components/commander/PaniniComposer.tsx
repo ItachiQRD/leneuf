@@ -208,48 +208,48 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[95vh] overflow-hidden flex flex-col"
+          className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[95vh] overflow-hidden flex flex-col lg:max-w-5xl lg:max-h-[95vh] lg:rounded-lg"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">Composez votre Panini</h2>
-              <p className="text-gray-600">{STEPS[currentStep].description}</p>
+          <div className="flex items-center justify-between p-4 lg:p-6 border-b">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg lg:text-2xl font-bold text-gray-900 truncate">Composez votre Panini</h2>
+              <p className="text-sm lg:text-base text-gray-600 truncate">{STEPS[currentStep].description}</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 lg:space-x-4 flex-shrink-0">
               <div className="text-right">
-                <p className="text-sm text-gray-500">Prix total</p>
-                <p className="text-2xl font-bold text-orange-600">{calculatePrice()}€</p>
+                <p className="text-xs lg:text-sm text-gray-500">Prix total</p>
+                <p className="text-lg lg:text-2xl font-bold text-orange-600">{calculatePrice()}€</p>
               </div>
               <button
                 onClick={handleClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 lg:w-6 lg:h-6" />
               </button>
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="px-6 py-4 bg-gray-50">
-            <div className="flex items-center justify-between">
+          <div className="px-4 lg:px-6 py-3 lg:py-4 bg-gray-50">
+            <div className="flex items-center justify-between overflow-x-auto">
               {STEPS.map((step, index) => (
-                <div key={step.id} className="flex items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                <div key={step.id} className="flex items-center flex-shrink-0">
+                  <div className={`w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-xs lg:text-sm font-medium ${
                     index <= currentStep 
                       ? 'bg-orange-500 text-white' 
                       : 'bg-gray-200 text-gray-600'
                   }`}>
                     {index + 1}
                   </div>
-                  <span className={`ml-2 text-sm ${
+                  <span className={`ml-1 lg:ml-2 text-xs lg:text-sm whitespace-nowrap ${
                     index <= currentStep ? 'text-orange-600 font-medium' : 'text-gray-500'
                   }`}>
                     {step.title}
                   </span>
                   {index < STEPS.length - 1 && (
-                    <ArrowRight className="w-4 h-4 mx-4 text-gray-400" />
+                    <ArrowRight className="w-3 h-3 lg:w-4 lg:h-4 mx-2 lg:mx-4 text-gray-400 flex-shrink-0" />
                   )}
                 </div>
               ))}
@@ -257,7 +257,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
           </div>
 
           {/* Content */}
-          <div className="p-6 overflow-y-auto flex-1">
+          <div className="p-4 lg:p-6 overflow-y-auto flex-1">
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
@@ -267,8 +267,8 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                 {/* Step 1: Base Ingredients Selection */}
                 {currentStep === 0 && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Choisissez vos ingrédients de base</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Choisissez vos ingrédients de base</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
                       {baseIngredients.map((ingredient) => {
                         const isSelected = selectedIngredients.baseIngredients.some(i => i._id === ingredient._id);
                         return (
@@ -277,13 +277,13 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleBaseIngredientToggle(ingredient)}
-                            className={`p-4 border-2 rounded-lg text-left transition-colors ${
+                            className={`p-3 lg:p-4 border-2 rounded-lg text-left transition-colors ${
                               isSelected 
                                 ? 'border-orange-500 bg-orange-50' 
                                 : 'border-gray-200 hover:border-orange-300'
                             }`}
                           >
-                            <div className="relative w-full h-32 mb-3">
+                            <div className="relative w-full h-24 lg:h-32 mb-2 lg:mb-3">
                               <Image
                                 src={ingredient.image}
                                 alt={ingredient.name}
@@ -291,9 +291,9 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                                 className="object-cover rounded-md"
                               />
                             </div>
-                            <h4 className="font-medium text-gray-900">{ingredient.name}</h4>
-                            <p className="text-sm text-gray-600">{ingredient.price}€</p>
-                            {isSelected && <Check className="w-5 h-5 text-orange-500 absolute top-2 right-2" />}
+                            <h4 className="font-medium text-gray-900 text-sm lg:text-base">{ingredient.name}</h4>
+                            <p className="text-xs lg:text-sm text-gray-600">{ingredient.price}€</p>
+                            {isSelected && <Check className="w-4 h-4 lg:w-5 lg:h-5 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>
                         );
                       })}
@@ -304,8 +304,8 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                 {/* Step 2: Sauce */}
                 {currentStep === 1 && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Choisissez votre sauce (1 maximum)</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Choisissez votre sauce (1 maximum)</h3>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                       {sauces.map((sauce) => {
                         const isSelected = selectedIngredients.sauce?._id === sauce._id;
                         return (
@@ -314,13 +314,13 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleSauceToggle(sauce)}
-                            className={`p-4 border-2 rounded-lg text-left transition-colors relative overflow-hidden ${
+                            className={`p-3 lg:p-4 border-2 rounded-lg text-left transition-colors relative overflow-hidden ${
                               isSelected 
                                 ? 'border-orange-500 bg-orange-50' 
                                 : 'border-gray-200 hover:border-orange-300'
                             }`}
                           >
-                            <div className="relative w-full h-32 mb-3">
+                            <div className="relative w-full h-24 lg:h-32 mb-2 lg:mb-3">
                               <Image
                                 src={sauce.image}
                                 alt={sauce.name}
@@ -328,9 +328,9 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                                 className="object-cover rounded-md"
                               />
                             </div>
-                            <h4 className="font-medium text-gray-900">{sauce.name}</h4>
-                            <p className="text-sm text-gray-600">Gratuit</p>
-                            {isSelected && <Check className="w-5 h-5 text-orange-500 absolute top-2 right-2" />}
+                            <h4 className="font-medium text-gray-900 text-sm lg:text-base">{sauce.name}</h4>
+                            <p className="text-xs lg:text-sm text-gray-600">Gratuit</p>
+                            {isSelected && <Check className="w-4 h-4 lg:w-5 lg:h-5 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>
                         );
                       })}
@@ -341,8 +341,8 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                 {/* Step 3: Supplements */}
                 {currentStep === 2 && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Suppléments (1€ chacun)</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Suppléments (1€ chacun)</h3>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                       {supplements.map((supplement) => {
                         const isSelected = selectedIngredients.supplements.some(s => s._id === supplement._id);
                         return (
@@ -351,13 +351,13 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleSupplementToggle(supplement)}
-                            className={`p-4 border rounded-lg transition-colors text-left ${
+                            className={`p-3 lg:p-4 border rounded-lg transition-colors text-left ${
                               isSelected 
                                 ? 'border-orange-500 bg-orange-50' 
                                 : 'border-gray-200 hover:border-orange-300'
                             }`}
                           >
-                            <div className="relative w-full h-24 mb-2">
+                            <div className="relative w-full h-20 lg:h-24 mb-2">
                               <Image
                                 src={supplement.image}
                                 alt={supplement.name}
@@ -365,7 +365,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                                 className="object-cover rounded-md"
                               />
                             </div>
-                            <h4 className="font-medium text-gray-900 text-sm">{supplement.name}</h4>
+                            <h4 className="font-medium text-gray-900 text-xs lg:text-sm">{supplement.name}</h4>
                             <p className="text-xs text-gray-600">+1€</p>
                           </motion.button>
                         );
@@ -376,8 +376,8 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
 
                 {/* Step 4: Summary */}
                 {currentStep === 3 && (
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Récapitulatif de votre panini</h3>
+                  <div className="space-y-4 lg:space-y-6">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Récapitulatif de votre panini</h3>
                     
                     <div className="bg-gray-50 rounded-lg p-4">
                       <h4 className="font-medium text-gray-900 mb-3">Composition :</h4>
@@ -416,26 +416,28 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-6 border-t bg-gray-50">
+          <div className="flex items-center justify-between p-4 lg:p-6 border-t bg-gray-50">
             <Button
               variant="outline"
               onClick={currentStep === 0 ? handleClose : handlePrevious}
+              className="text-sm lg:text-base px-3 lg:px-4 py-2 lg:py-2"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-2" />
               {currentStep === 0 ? 'Annuler' : 'Précédent'}
             </Button>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 lg:space-x-4">
               {currentStep < STEPS.length - 1 ? (
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed()}
+                  className="text-sm lg:text-base px-3 lg:px-4 py-2 lg:py-2"
                 >
                   Suivant
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="w-3 h-3 lg:w-4 lg:h-4 ml-1 lg:ml-2" />
                 </Button>
               ) : (
-                <Button onClick={handleAddToCart}>
+                <Button onClick={handleAddToCart} className="text-sm lg:text-base px-3 lg:px-4 py-2 lg:py-2">
                   Ajouter au panier ({calculatePrice()}€)
                 </Button>
               )}

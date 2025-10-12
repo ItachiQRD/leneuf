@@ -301,48 +301,48 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[95vh] overflow-hidden flex flex-col"
+          className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[95vh] overflow-hidden flex flex-col lg:max-w-5xl lg:max-h-[95vh] lg:rounded-lg"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">Composez votre {config.type === 'bowl' ? 'Bowl' : 'Tacos'}</h2>
-              <p className="text-gray-600">{STEPS[currentStep].description}</p>
+          <div className="flex items-center justify-between p-4 lg:p-6 border-b">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg lg:text-2xl font-bold text-gray-900 truncate">Composez votre {config.type === 'bowl' ? 'Bowl' : 'Tacos'}</h2>
+              <p className="text-sm lg:text-base text-gray-600 truncate">{STEPS[currentStep].description}</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 lg:space-x-4 flex-shrink-0">
               <div className="text-right">
-                <p className="text-sm text-gray-500">Prix total</p>
-                <p className="text-2xl font-bold text-orange-600">{calculatePrice()}€</p>
+                <p className="text-xs lg:text-sm text-gray-500">Prix total</p>
+                <p className="text-lg lg:text-2xl font-bold text-orange-600">{calculatePrice()}€</p>
               </div>
               <button
                 onClick={handleClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 lg:w-6 lg:h-6" />
               </button>
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="px-6 py-4 bg-gray-50">
-            <div className="flex items-center justify-between">
+          <div className="px-4 lg:px-6 py-3 lg:py-4 bg-gray-50">
+            <div className="flex items-center justify-between overflow-x-auto">
               {STEPS.map((step, index) => (
-                <div key={step.id} className="flex items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                <div key={step.id} className="flex items-center flex-shrink-0">
+                  <div className={`w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-xs lg:text-sm font-medium ${
                     index <= currentStep 
                       ? 'bg-orange-500 text-white' 
                       : 'bg-gray-200 text-gray-600'
                   }`}>
                     {index + 1}
                   </div>
-                  <span className={`ml-2 text-sm ${
+                  <span className={`ml-1 lg:ml-2 text-xs lg:text-sm whitespace-nowrap ${
                     index <= currentStep ? 'text-orange-600 font-medium' : 'text-gray-500'
                   }`}>
                     {step.title}
                   </span>
                   {index < STEPS.length - 1 && (
-                    <ArrowRight className="w-4 h-4 mx-4 text-gray-400" />
+                    <ArrowRight className="w-3 h-3 lg:w-4 lg:h-4 mx-2 lg:mx-4 text-gray-400 flex-shrink-0" />
                   )}
                 </div>
               ))}
@@ -350,7 +350,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
           </div>
 
           {/* Content */}
-          <div className="p-6 overflow-y-auto flex-1">
+          <div className="p-4 lg:p-6 overflow-y-auto flex-1">
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
@@ -360,36 +360,36 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                 {/* Step 1: Type Selection */}
                 {currentStep === 0 && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Choisissez votre type</h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Choisissez votre type</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleTypeChange('tacos')}
-                        className={`p-6 border-2 rounded-lg text-center transition-colors ${
+                        className={`p-4 lg:p-6 border-2 rounded-lg text-center transition-colors ${
                           config.type === 'tacos' 
                             ? 'border-orange-500 bg-orange-50' 
                             : 'border-gray-200 hover:border-orange-300'
                         }`}
                       >
-                        <div className="text-4xl mb-2">🌮</div>
-                        <h4 className="font-semibold text-lg">Tacos</h4>
-                        <p className="text-sm text-gray-600">À partir de 6.50€</p>
+                        <div className="text-3xl lg:text-4xl mb-2">🌮</div>
+                        <h4 className="font-semibold text-base lg:text-lg">Tacos</h4>
+                        <p className="text-xs lg:text-sm text-gray-600">À partir de 6.50€</p>
                       </motion.button>
                       
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleTypeChange('bowl')}
-                        className={`p-6 border-2 rounded-lg text-center transition-colors ${
+                        className={`p-4 lg:p-6 border-2 rounded-lg text-center transition-colors ${
                           config.type === 'bowl' 
                             ? 'border-orange-500 bg-orange-50' 
                             : 'border-gray-200 hover:border-orange-300'
                         }`}
                       >
-                        <div className="text-4xl mb-2">🥗</div>
-                        <h4 className="font-semibold text-lg">Bowl</h4>
-                        <p className="text-sm text-gray-600">7.50€ - 1 viande, 2 sauces max</p>
+                        <div className="text-3xl lg:text-4xl mb-2">🥗</div>
+                        <h4 className="font-semibold text-base lg:text-lg">Bowl</h4>
+                        <p className="text-xs lg:text-sm text-gray-600">7.50€ - 1 viande, 2 sauces max</p>
                       </motion.button>
                     </div>
                   </div>
@@ -398,23 +398,23 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                 {/* Step 2: Size Selection (only for tacos) */}
                 {currentStep === 1 && config.type === 'tacos' && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Choisissez la taille</h3>
-                    <div className="grid grid-cols-3 gap-4">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Choisissez la taille</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
                       {options.sizes.map((size) => (
                         <motion.button
                           key={size.name}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleSizeChange(size.name)}
-                          className={`p-4 border-2 rounded-lg text-center transition-colors ${
+                          className={`p-3 lg:p-4 border-2 rounded-lg text-center transition-colors ${
                             config.size === size.name 
                               ? 'border-orange-500 bg-orange-50' 
                               : 'border-gray-200 hover:border-orange-300'
                           }`}
                         >
-                          <h4 className="font-semibold text-lg">{size.name}</h4>
-                          <p className="text-sm text-gray-600">{size.description}</p>
-                          <p className="font-semibold text-orange-600">{size.price}€</p>
+                          <h4 className="font-semibold text-base lg:text-lg">{size.name}</h4>
+                          <p className="text-xs lg:text-sm text-gray-600">{size.description}</p>
+                          <p className="font-semibold text-orange-600 text-sm lg:text-base">{size.price}€</p>
                         </motion.button>
                       ))}
                     </div>
@@ -424,12 +424,12 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                 {/* Step 3: Meat Selection */}
                 {currentStep === 2 && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">
                       Choisissez vos viandes
-                      {config.type === 'bowl' && <span className="text-sm text-gray-600 ml-2">(1 maximum)</span>}
-                      {config.type === 'tacos' && <span className="text-sm text-gray-600 ml-2">({config.size === 'M' ? '1' : config.size === 'L' ? '2' : '3'} maximum)</span>}
+                      {config.type === 'bowl' && <span className="text-xs lg:text-sm text-gray-600 ml-2">(1 maximum)</span>}
+                      {config.type === 'tacos' && <span className="text-xs lg:text-sm text-gray-600 ml-2">({config.size === 'M' ? '1' : config.size === 'L' ? '2' : '3'} maximum)</span>}
                     </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
                       {options.meats.map((meat) => {
                         const isSelected = config.meats.some(m => m.id === meat._id);
                         const maxMeats = config.type === 'bowl' ? 1 : 
@@ -445,7 +445,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                             whileTap={{ scale: (canSelect || canDeselect) ? 0.98 : 1 }}
                             onClick={() => (canSelect || canDeselect) && handleMeatToggle(meat)}
                             disabled={!canSelect && !canDeselect}
-                            className={`p-4 border-2 rounded-lg text-left transition-colors relative overflow-hidden ${
+                            className={`p-3 lg:p-4 border-2 rounded-lg text-left transition-colors relative overflow-hidden ${
                               isSelected 
                                 ? 'border-orange-500 bg-orange-50' 
                                 : canSelect
@@ -453,7 +453,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                                   : 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
                             }`}
                           >
-                            <div className="relative w-full h-24 mb-2">
+                            <div className="relative w-full h-20 lg:h-24 mb-2">
                               <Image
                                 src={meat.image}
                                 alt={meat.name}
@@ -461,9 +461,9 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                                 className="object-cover rounded-md"
                               />
                             </div>
-                            <h4 className="font-medium text-gray-900">{meat.name}</h4>
-                            <p className="text-sm text-gray-600">Gratuit</p>
-                            {isSelected && <Check className="w-5 h-5 text-orange-500 absolute top-2 right-2" />}
+                            <h4 className="font-medium text-gray-900 text-sm lg:text-base">{meat.name}</h4>
+                            <p className="text-xs lg:text-sm text-gray-600">Gratuit</p>
+                            {isSelected && <Check className="w-4 h-4 lg:w-5 lg:h-5 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>
                         );
                       })}
@@ -474,10 +474,10 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                 {/* Step 4: Sauce Selection */}
                 {currentStep === 3 && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">
                       Choisissez vos sauces (1 minimum, 3 maximum)
                     </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                       {options.sauces.map((sauce) => {
                         const isSelected = config.sauces.some(s => s.id === sauce._id);
                         const canSelect = !isSelected && config.sauces.length < 3;
@@ -490,7 +490,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                             whileTap={{ scale: (canSelect || canDeselect) ? 0.98 : 1 }}
                             onClick={() => (canSelect || canDeselect) && handleSauceToggle(sauce)}
                             disabled={!canSelect && !canDeselect}
-                            className={`p-4 border-2 rounded-lg text-left transition-colors ${
+                            className={`p-3 lg:p-4 border-2 rounded-lg text-left transition-colors ${
                               isSelected 
                                 ? 'border-orange-500 bg-orange-50' 
                                 : canSelect
@@ -498,7 +498,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                                   : 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
                             }`}
                           >
-                            <div className="relative w-full h-20 mb-2">
+                            <div className="relative w-full h-16 lg:h-20 mb-2">
                               <Image
                                 src={sauce.image}
                                 alt={sauce.name}
@@ -506,9 +506,9 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                                 className="object-cover rounded-md"
                               />
                             </div>
-                            <h4 className="font-medium text-gray-900 text-sm">{sauce.name}</h4>
+                            <h4 className="font-medium text-gray-900 text-xs lg:text-sm">{sauce.name}</h4>
                             <p className="text-xs text-gray-600">Gratuit</p>
-                            {isSelected && <Check className="w-4 h-4 text-orange-500 absolute top-2 right-2" />}
+                            {isSelected && <Check className="w-3 h-3 lg:w-4 lg:h-4 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>
                         );
                       })}
@@ -525,8 +525,8 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                 {/* Step 5: Supplements */}
                 {currentStep === 4 && (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Suppléments (optionnel)</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Suppléments (optionnel)</h3>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                       {options.ingredients.map((ingredient) => {
                         const isSelected = config.ingredients.some(i => i.id === ingredient._id);
                         
@@ -536,13 +536,13 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => handleIngredientToggle(ingredient)}
-                            className={`p-4 border-2 rounded-lg text-left transition-colors ${
+                            className={`p-3 lg:p-4 border-2 rounded-lg text-left transition-colors ${
                               isSelected 
                                 ? 'border-orange-500 bg-orange-50' 
                                 : 'border-gray-200 hover:border-orange-300'
                             }`}
                           >
-                            <div className="relative w-full h-20 mb-2">
+                            <div className="relative w-full h-16 lg:h-20 mb-2">
                               <Image
                                 src={ingredient.image}
                                 alt={ingredient.name}
@@ -550,11 +550,11 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                                 className="object-cover rounded-md"
                               />
                             </div>
-                            <h4 className="font-medium text-gray-900 text-sm">{ingredient.name}</h4>
+                            <h4 className="font-medium text-gray-900 text-xs lg:text-sm">{ingredient.name}</h4>
                             <p className="text-xs text-gray-600">
                               +{ingredient.type === 'meat' ? '1.50€' : '0.50€'}
                             </p>
-                            {isSelected && <Check className="w-4 h-4 text-orange-500 absolute top-2 right-2" />}
+                            {isSelected && <Check className="w-3 h-3 lg:w-4 lg:h-4 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>
                         );
                       })}
@@ -564,8 +564,8 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
 
                 {/* Step 6: Summary */}
                 {currentStep === 5 && (
-                  <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Récapitulatif de votre commande</h3>
+                  <div className="space-y-4 lg:space-y-6">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Récapitulatif de votre commande</h3>
                     
                     <div className="bg-gray-50 rounded-lg p-4">
                       <h4 className="font-medium text-gray-900 mb-3">Composition :</h4>
@@ -611,26 +611,28 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-6 border-t bg-gray-50">
+          <div className="flex items-center justify-between p-4 lg:p-6 border-t bg-gray-50">
             <Button
               variant="outline"
               onClick={currentStep === 0 ? handleClose : handlePrevious}
+              className="text-sm lg:text-base px-3 lg:px-4 py-2 lg:py-2"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-2" />
               {currentStep === 0 ? 'Annuler' : 'Précédent'}
             </Button>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 lg:space-x-4">
               {currentStep < STEPS.length - 1 ? (
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed()}
+                  className="text-sm lg:text-base px-3 lg:px-4 py-2 lg:py-2"
                 >
                   Suivant
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="w-3 h-3 lg:w-4 lg:h-4 ml-1 lg:ml-2" />
                 </Button>
               ) : (
-                <Button onClick={handleAddToCart}>
+                <Button onClick={handleAddToCart} className="text-sm lg:text-base px-3 lg:px-4 py-2 lg:py-2">
                   Ajouter au panier ({calculatePrice()}€)
                 </Button>
               )}

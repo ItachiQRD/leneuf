@@ -1040,39 +1040,44 @@ export default function CommanderPage() {
               </span>
             </div>
             
-            {/* Liste des articles mobile */}
+            {/* Liste des articles dans le panier mobile */}
             {items && items.length > 0 && (
               <div className="max-h-32 overflow-y-auto mb-3 space-y-2">
                 {items.map((item) => (
-                  <div key={`${item._id}-${item.size || 'default'}`} className="flex items-center justify-between text-sm">
+                  <div key={item._id} className="flex items-center space-x-2 p-2 bg-gray-50 rounded-lg">
+                    <div className="relative w-8 h-8 flex-shrink-0">
+                      <Image
+                        src={item.image || '/images/placeholder-food.jpg'}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded"
+                      />
+                    </div>
+                    
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 truncate">
+                      <h4 className="text-xs font-medium text-gray-900 truncate">
                         {item.name}
-                        {item.size && ` (${item.size})`}
-                      </p>
-                      <p className="text-gray-500">
-                        {item.quantity}x {item.price.toFixed(2)}€
+                      </h4>
+                      <p className="text-xs text-gray-500">
+                        {(item.price * item.quantity).toFixed(2)} €
                       </p>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    
+                    <div className="flex items-center space-x-1">
                       <button
-                        onClick={() => updateQuantity(item._id, item.quantity - 1, item.size)}
-                        className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center"
+                        onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                        className="w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
                       >
-                        <Minus className="w-3 h-3" />
+                        <Minus className="w-2 h-2" />
                       </button>
-                      <span className="w-6 text-center">{item.quantity}</span>
+                      <span className="w-4 text-center text-xs font-medium">
+                        {item.quantity}
+                      </span>
                       <button
-                        onClick={() => updateQuantity(item._id, item.quantity + 1, item.size)}
-                        className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center"
+                        onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                        className="w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
                       >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => removeItem(item._id, item.size)}
-                        className="w-6 h-6 bg-red-100 hover:bg-red-200 text-red-600 rounded-full flex items-center justify-center"
-                      >
-                        <X className="w-3 h-3" />
+                        <Plus className="w-2 h-2" />
                       </button>
                     </div>
                   </div>

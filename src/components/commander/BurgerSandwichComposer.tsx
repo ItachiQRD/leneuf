@@ -689,17 +689,17 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 variant="outline"
                 onClick={() => setConfig(prev => ({ ...prev, quantity: Math.max(1, prev.quantity - 1) }))}
                 disabled={config.quantity <= 1}
-                className="p-1 lg:p-2"
+                className="p-2 lg:p-2"
               >
                 <Minus className="w-3 h-3 lg:w-4 lg:h-4" />
               </Button>
-              <span className="px-2 lg:px-4 py-2 bg-white border rounded-lg text-sm lg:text-base">
+              <span className="px-3 lg:px-4 py-2 bg-white border rounded-lg text-sm lg:text-base">
                 {config.quantity}
               </span>
               <Button
                 variant="outline"
                 onClick={() => setConfig(prev => ({ ...prev, quantity: prev.quantity + 1 }))}
-                className="p-1 lg:p-2"
+                className="p-2 lg:p-2"
               >
                 <Plus className="w-3 h-3 lg:w-4 lg:h-4" />
               </Button>

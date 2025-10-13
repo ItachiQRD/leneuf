@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/dbConnect';
 import Promo from '@/models/Promo';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    await connectDB();
+    await dbConnect();
 
     switch (req.method) {
       case 'GET':

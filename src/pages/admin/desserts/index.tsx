@@ -220,7 +220,7 @@ export default function AdminDessertsPage() {
 
         {/* Grille des desserts - Mobile */}
         {!isCreating && !editingDessert && desserts && desserts.length > 0 && (
-          <div className="lg:hidden space-y-4">
+          <div className="lg:hidden grid gap-4 grid-cols-1">
             {desserts.map((dessert) => {
               const dessertId = dessert._id || dessert.id;
               if (!dessertId) return null;
@@ -228,55 +228,55 @@ export default function AdminDessertsPage() {
               return (
                 <div
                   key={dessertId}
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700"
+                  className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-600"
                 >
-                  <div className="flex">
-                    {/* Image */}
-                    {dessert.image && (
-                      <div className="relative w-24 h-24 flex-shrink-0">
-                        <img
-                          src={dessert.image}
-                          alt={dessert.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+                  {/* Image avec overlay */}
+                  {dessert.image && (
+                    <div className="relative h-32 overflow-hidden">
+                      <img
+                        src={dessert.image}
+                        alt={dessert.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                  )}
+                  
+                  {/* Contenu de la card */}
+                  <div className="p-4">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                      {dessert.name}
+                    </h3>
                     
-                    {/* Contenu */}
-                    <div className="flex-1 p-4 min-w-0">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 truncate">
-                        {dessert.name}
-                      </h3>
-                      
-                      <div className="mb-2">
-                        <span className="text-lg font-bold text-pink-600">{dessert.price}€</span>
-                      </div>
+                    {/* Prix */}
+                    <div className="mb-4">
+                      <span className="text-xl font-bold text-pink-600">{dessert.price}€</span>
+                    </div>
 
-                      {/* Actions */}
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(dessert)}
-                          className="flex-1 text-xs"
-                        >
-                          <Edit className="h-3 w-3 mr-1" />
-                          Modifier
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={async () => {
-                            if (window.confirm('Êtes-vous sûr de vouloir supprimer ce dessert ?')) {
-                              await deleteDessert(dessertId);
-                            }
-                          }}
-                          className="flex-1 text-xs"
-                        >
-                          <Trash2 className="h-3 w-3 mr-1" />
-                          Supprimer
-                        </Button>
-                      </div>
+                    {/* Actions */}
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(dessert)}
+                        className="flex-1 text-xs bg-pink-50 hover:bg-pink-100 dark:bg-pink-900 dark:hover:bg-pink-800 text-pink-700 dark:text-pink-300 border-pink-200 dark:border-pink-700"
+                      >
+                        <Edit className="h-3 w-3 mr-1" />
+                        Modifier
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={async () => {
+                          if (window.confirm('Êtes-vous sûr de vouloir supprimer ce dessert ?')) {
+                            await deleteDessert(dessertId);
+                          }
+                        }}
+                        className="flex-1 text-xs"
+                      >
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Supprimer
+                      </Button>
                     </div>
                   </div>
                 </div>

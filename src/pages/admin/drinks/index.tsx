@@ -194,76 +194,75 @@ export default function AdminDrinksPage() {
 
         {/* Grille des boissons - Mobile */}
         {!isCreating && !editingDrink && drinks && drinks.length > 0 && (
-          <div className="lg:hidden space-y-4">
+          <div className="lg:hidden grid gap-4 grid-cols-1">
             {drinks.map((drink) => (
               <div
                 key={drink._id}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700"
+                className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-cyan-300 dark:hover:border-cyan-600"
               >
-                <div className="flex">
-                  {/* Image */}
-                  {drink.image && typeof drink.image === 'string' && (
-                    <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 flex items-center justify-center">
-                      <img
-                        src={drink.image}
-                        alt={drink.name}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                  )}
+                {/* Image avec overlay */}
+                {drink.image && typeof drink.image === 'string' && (
+                  <div className="relative h-32 overflow-hidden bg-gray-50 flex items-center justify-center">
+                    <img
+                      src={drink.image}
+                      alt={drink.name}
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                )}
+                
+                {/* Contenu de la card */}
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                    {drink.name}
+                  </h3>
                   
-                  {/* Contenu */}
-                  <div className="flex-1 p-4 min-w-0">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 truncate">
-                      {drink.name}
-                    </h3>
-                    
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                      {drink.brand && `${drink.brand} - `}{drink.type}
-                    </p>
-                    
-                    {/* Tailles et prix */}
-                    <div className="mb-3">
-                      <div className="space-y-1">
-                        {drink.sizes.slice(0, 2).map((size, index) => (
-                          <div key={index} className="flex justify-between text-xs">
-                            <span className="text-gray-600 dark:text-gray-400">{size.name}</span>
-                            <span className="font-bold text-cyan-600">{size.price}€</span>
-                          </div>
-                        ))}
-                        {drink.sizes.length > 2 && (
-                          <div className="text-xs text-gray-500">
-                            +{drink.sizes.length - 2} autres tailles
-                          </div>
-                        )}
-                      </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                    {drink.brand && `${drink.brand} - `}{drink.type}
+                  </p>
+                  
+                  {/* Tailles et prix */}
+                  <div className="mb-4">
+                    <div className="space-y-1">
+                      {drink.sizes.slice(0, 3).map((size, index) => (
+                        <div key={index} className="flex justify-between text-sm">
+                          <span className="text-gray-600 dark:text-gray-400">{size.name}</span>
+                          <span className="font-bold text-cyan-600">{size.price}€</span>
+                        </div>
+                      ))}
+                      {drink.sizes.length > 3 && (
+                        <div className="text-xs text-gray-500">
+                          +{drink.sizes.length - 3} autres tailles
+                        </div>
+                      )}
                     </div>
+                  </div>
 
-                    {/* Actions */}
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(drink)}
-                        className="flex-1 text-xs"
-                      >
-                        <Edit className="h-3 w-3 mr-1" />
-                        Modifier
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={async () => {
-                          if (window.confirm('Êtes-vous sûr de vouloir supprimer cette boisson ?')) {
-                            await deleteDrink(drink._id);
-                          }
-                        }}
-                        className="flex-1 text-xs"
-                      >
-                        <Trash2 className="h-3 w-3 mr-1" />
-                        Supprimer
-                      </Button>
-                    </div>
+                  {/* Actions */}
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(drink)}
+                      className="flex-1 text-xs"
+                    >
+                      <Edit className="h-3 w-3 mr-1" />
+                      Modifier
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={async () => {
+                        if (window.confirm('Êtes-vous sûr de vouloir supprimer cette boisson ?')) {
+                          await deleteDrink(drink._id);
+                        }
+                      }}
+                      className="flex-1 text-xs"
+                    >
+                      <Trash2 className="h-3 w-3 mr-1" />
+                      Supprimer
+                    </Button>
                   </div>
                 </div>
               </div>

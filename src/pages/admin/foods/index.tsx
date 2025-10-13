@@ -275,92 +275,112 @@ export default function AdminFoodsPage() {
 
         {/* Grille des plats - Mobile */}
         {!isCreating && !editingFood && filteredFoods && filteredFoods.length > 0 && (
-          <div className="lg:hidden space-y-4">
+          <div className="lg:hidden grid gap-4 grid-cols-1">
             {filteredFoods.map((food) => (
               <div
                 key={food._id?.toString() || ''}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700"
+                className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
               >
-                <div className="flex">
-                  {/* Image */}
-                  {typeof food.image === 'string' && (
-                    <div className="relative w-24 h-24 flex-shrink-0">
-                      <img
-                        src={food.image}
-                        alt={food.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          food.category === 'bestseller' ? 'bg-yellow-400 text-yellow-900' :
-                          food.category === 'new' ? 'bg-green-400 text-green-900' :
-                          'bg-gray-400 text-gray-900'
-                        }`}>
-                          {food.category === 'bestseller' ? '⭐' :
-                           food.category === 'new' ? '🆕' : '•'}
+                {/* Image avec overlay */}
+                {typeof food.image === 'string' && (
+                  <div className="relative h-32 overflow-hidden">
+                    <img
+                      src={food.image}
+                      alt={food.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute top-3 right-3">
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        food.category === 'bestseller' ? 'bg-yellow-400 text-yellow-900' :
+                        food.category === 'new' ? 'bg-green-400 text-green-900' :
+                        'bg-gray-400 text-gray-900'
+                      }`}>
+                        {food.category === 'bestseller' ? '⭐ Best-seller' :
+                         food.category === 'new' ? '🆕 Nouveau' : 'Regular'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Contenu de la card */}
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {food.name}
+                  </h3>
+                  
+                  {/* Prix */}
+                  <div className="mb-3">
+                    {food.price ? (
+                      <span className="text-xl font-bold text-blue-600">{food.price}€</span>
+                    ) : food.type === 'pizza' && food.pizzaSizes ? (
+                      <div className="text-sm">
+                        <span className="text-gray-600 dark:text-gray-400">À partir de </span>
+                        <span className="font-bold text-blue-600">
+                          {Math.min(...food.pizzaSizes.map(s => s.price))}€
                         </span>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-gray-500">Prix selon taille</span>
+                    )}
+                  </div>
+
+                  {/* Infos */}
+                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    <div className="flex items-center">
+                      <Clock className="h-4 w-4 mr-1" />
+                      {food.preparationTimeMinutes}min
+                    </div>
+                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-medium">
+                      {food.type}
+                    </span>
+                  </div>
+
+                  {/* Ingrédients */}
+                  {food.baseIngredients && food.baseIngredients.length > 0 && (
+                    <div className="mb-4">
+                      <div className="flex flex-wrap gap-1">
+                        {food.baseIngredients.slice(0, 3).map((ingredient, index) => (
+                          <span 
+                            key={index} 
+                            className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
+                          >
+                            {ingredient}
+                          </span>
+                        ))}
+                        {food.baseIngredients.length > 3 && (
+                          <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
+                            +{food.baseIngredients.length - 3}
+                          </span>
+                        )}
                       </div>
                     </div>
                   )}
-                  
-                  {/* Contenu */}
-                  <div className="flex-1 p-4 min-w-0">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 truncate">
-                      {food.name}
-                    </h3>
-                    
-                    {/* Prix */}
-                    <div className="mb-2">
-                      {food.price ? (
-                        <span className="text-lg font-bold text-blue-600">{food.price}€</span>
-                      ) : food.type === 'pizza' && food.pizzaSizes ? (
-                        <div className="text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">À partir de </span>
-                          <span className="font-bold text-blue-600">
-                            {Math.min(...food.pizzaSizes.map(s => s.price))}€
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-sm text-gray-500">Prix selon taille</span>
-                      )}
-                    </div>
 
-                    {/* Infos */}
-                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
-                      <div className="flex items-center">
-                        <Clock className="h-3 w-3 mr-1" />
-                        {food.preparationTimeMinutes}min
-                      </div>
-                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-medium">
-                        {food.type}
-                      </span>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(food)}
-                        className="flex-1 text-xs"
-                      >
-                        <Edit className="h-3 w-3 mr-1" />
-                        Modifier
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => {
-                          if (window.confirm('Êtes-vous sûr de vouloir supprimer ce plat ?')) {
-                            food._id && deleteFood(food._id.toString());
-                          }
-                        }}
-                        className="flex-1 text-xs"
-                      >
-                        <Trash2 className="h-3 w-3 mr-1" />
-                        Supprimer
-                      </Button>
-                    </div>
+                  {/* Actions */}
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(food)}
+                      className="flex-1 text-xs bg-blue-50 hover:bg-blue-100 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700"
+                    >
+                      <Edit className="h-3 w-3 mr-1" />
+                      Modifier
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        if (window.confirm('Êtes-vous sûr de vouloir supprimer ce plat ?')) {
+                          food._id && deleteFood(food._id.toString());
+                        }
+                      }}
+                      className="flex-1 text-xs"
+                    >
+                      <Trash2 className="h-3 w-3 mr-1" />
+                      Supprimer
+                    </Button>
                   </div>
                 </div>
               </div>

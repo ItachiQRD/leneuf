@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
-import { Sun, Moon, User, LogOut, Shield } from 'lucide-react';
 import Image from 'next/image';
 
 interface MainHeaderProps {

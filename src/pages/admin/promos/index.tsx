@@ -14,7 +14,7 @@ import {
   XCircle,
   AlertCircle
 } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Buttons';
 import PromoForm from '@/components/admin/PromoForm';
 
 interface Promo {

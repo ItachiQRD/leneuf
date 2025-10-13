@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Calendar, Percent, Euro, Image as ImageIcon } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Buttons';
 
 interface PromoFormProps {
   promo?: {

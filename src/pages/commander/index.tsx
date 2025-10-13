@@ -10,7 +10,6 @@ import MenuSelector from '@/components/commander/MenuSelector';
 import PaniniComposer from '@/components/commander/PaniniComposer';
 import BurgerSandwichComposer from '@/components/commander/BurgerSandwichComposer';
 import TexMexComposer from '@/components/commander/TexMexComposer';
-import MobileMenu from '@/components/ui/MobileMenu';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -897,18 +896,28 @@ export default function CommanderPage() {
 
       {/* Mobile Layout */}
       <div className="lg:hidden">
-        {/* Header mobile avec menu hamburger */}
+        {/* Menu horizontal fixe */}
         <div className="bg-white shadow-sm border-b sticky top-20 z-40">
           <div className="px-4 py-3">
-            <div className="flex items-center justify-between mb-3">
-              <h1 className="text-xl font-bold text-gray-900">
-                {menuCategories.find(c => c.id === selectedCategory)?.name}
-              </h1>
-              <MobileMenu
-                categories={menuCategories}
-                selectedCategory={selectedCategory}
-                onCategorySelect={setSelectedCategory}
-              />
+            <h1 className="text-xl font-bold text-gray-900 mb-3">
+              {menuCategories.find(c => c.id === selectedCategory)?.name}
+            </h1>
+            
+            {/* Menu horizontal des catégories */}
+            <div className="flex space-x-2 overflow-x-auto pb-2">
+              {menuCategories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    selectedCategory === category.id
+                      ? 'bg-red-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {category.name}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -1025,81 +1034,6 @@ export default function CommanderPage() {
           )}
         </div>
 
-        {/* Panier mobile fixé en bas */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-50">
-          <div className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center">
-                <ShoppingCart className="w-5 h-5 text-gray-600 mr-2" />
-                <span className="font-semibold text-gray-900">
-                  Panier ({itemCount})
-                </span>
-              </div>
-              <span className="text-lg font-bold text-red-600">
-                {total.toFixed(2)} €
-              </span>
-            </div>
-            
-            {/* Liste des articles dans le panier mobile */}
-            {items && items.length > 0 && (
-              <div className="max-h-32 overflow-y-auto mb-3 space-y-2">
-                {items.map((item) => (
-                  <div key={item._id} className="flex items-center space-x-2 p-2 bg-gray-50 rounded-lg">
-                    <div className="relative w-8 h-8 flex-shrink-0">
-                      <Image
-                        src={item.image || '/images/placeholder-food.jpg'}
-                        alt={item.name}
-                        fill
-                        className="object-cover rounded"
-                      />
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-medium text-gray-900 truncate">
-                        {item.name}
-                      </h4>
-                      <p className="text-xs text-gray-500">
-                        {(item.price * item.quantity).toFixed(2)} €
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-center space-x-1">
-                      <button
-                        onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                        className="w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                      >
-                        <Minus className="w-2 h-2" />
-                      </button>
-                      <span className="w-4 text-center text-xs font-medium">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                        className="w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                      >
-                        <Plus className="w-2 h-2" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            <button
-              onClick={handleCheckout}
-              disabled={isLoading || !items || items.length === 0}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-            >
-              {isLoading ? 'Commande en cours...' : 'Commander'}
-            </button>
-            
-            {!isAuthenticated && (
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                Vous devez être connecté pour commander
-              </p>
-            )}
-          </div>
-        </div>
       </div>
 
       {/* Composant de composition des tacos */}

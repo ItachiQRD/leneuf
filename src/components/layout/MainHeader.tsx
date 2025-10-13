@@ -108,72 +108,18 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </Link>
           </nav>
 
+          {/* Bouton Commander au centre */}
+          <div className="flex-1 flex justify-center">
+            <Link
+              href="/commander"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
+            >
+              Commander
+            </Link>
+          </div>
+
           {/* Actions à droite */}
           <div className="flex items-center space-x-4">
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-lg hover:bg-gray-100/10 transition-colors ${textColor}`}
-              aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
-
-            {/* Auth */}
-            {isAuthenticated ? (
-              <div className="relative group">
-                <button 
-                  className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
-                >
-                  <User className="w-5 h-5" />
-                  <span className={`${textColor} text-sm font-medium`}>
-                    {user?.name || 'Profil'}
-                  </span>
-                </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <div className="py-1">
-                    <Link
-                      href="/profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <User className="w-4 h-4 mr-2" />
-                      Mon Profil
-                    </Link>
-                    {user?.isAdmin && (
-                      <Link
-                        href="/admin"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <Shield className="w-4 h-4 mr-2" />
-                        Administration
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Déconnexion
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <Link
-                href="/auth/login"
-                className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
-              >
-                <User className="w-5 h-5" />
-                <span className={`${textColor} text-sm font-medium`}>
-                  Connexion
-                </span>
-              </Link>
-            )}
-
             {/* Cart Button */}
             <button
               onClick={onOpenCart}

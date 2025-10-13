@@ -904,7 +904,7 @@ export default function CommanderPage() {
             </h1>
             
             {/* Menu horizontal des catégories */}
-            <div className="flex space-x-2 overflow-x-auto pb-2">
+            <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
               {menuCategories.map((category) => (
                 <button
                   key={category.id}

@@ -178,7 +178,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                   Menu
                 </Link>
                 <Link
-                  href="/promo"
+                  href="/promos"
                   className={`text-lg font-medium ${
                     isScrolled
                       ? 'text-gray-700 dark:text-gray-300'
@@ -186,7 +186,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                   } hover:text-primary`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Promo
+                  Promos
                 </Link>
                 <Link
                   href="/contact"
@@ -198,17 +198,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Contact
-                </Link>
-                <Link
-                  href="/about"
-                  className={`text-lg font-medium ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300'
-                      : 'text-gray-900'
-                  } hover:text-primary`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  À Propos
                 </Link>
               </div>
               <button

@@ -22,7 +22,8 @@ import {
   Package,
   Moon,
   Sun,
-  LogOut
+  LogOut,
+  Percent
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -70,6 +71,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { href: '/admin/desserts', label: 'Desserts', icon: IceCream },
         { href: '/admin/sauces', label: 'Sauces', icon: Droplet },
         { href: '/admin/ingredients', label: 'Ingrédients', icon: Package },
+      ]
+    },
+    {
+      title: "MARKETING",
+      items: [
+        { href: '/admin/promos', label: 'Promotions', icon: Percent },
       ]
     },
     {

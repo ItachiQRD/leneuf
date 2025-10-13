@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ShoppingCart, Menu } from 'lucide-react';
+import { ShoppingCart, Menu, User, Shield, LogOut, Sun, Moon } from 'lucide-react';
 import { useHeaderColor } from '@/hooks/useHeaderColor';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
@@ -108,18 +108,72 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </Link>
           </nav>
 
-          {/* Bouton Commander au centre */}
-          <div className="flex-1 flex justify-center">
-            <Link
-              href="/commander"
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
-            >
-              Commander
-            </Link>
-          </div>
-
           {/* Actions à droite */}
           <div className="flex items-center space-x-4">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-lg hover:bg-gray-100/10 transition-colors ${textColor}`}
+              aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </button>
+
+            {/* Auth */}
+            {isAuthenticated ? (
+              <div className="relative group">
+                <button 
+                  className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
+                >
+                  <User className="w-5 h-5" />
+                  <span className={`${textColor} text-sm font-medium`}>
+                    {user?.name || 'Profil'}
+                  </span>
+                </button>
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="py-1">
+                    <Link
+                      href="/profile"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <User className="w-4 h-4 mr-2" />
+                      Mon Profil
+                    </Link>
+                    {user?.isAdmin && (
+                      <Link
+                        href="/admin"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <Shield className="w-4 h-4 mr-2" />
+                        Administration
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Déconnexion
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Link
+                href="/auth/login"
+                className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
+              >
+                <User className="w-5 h-5" />
+                <span className={`${textColor} text-sm font-medium`}>
+                  Connexion
+                </span>
+              </Link>
+            )}
+
             {/* Cart Button */}
             <button
               onClick={onOpenCart}
@@ -165,39 +219,48 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 🍔 Commander
               </Link>
               
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
                 <Link
                   href="/menu"
-                  className={`text-lg font-medium ${
+                  className={`flex items-center space-x-3 text-lg font-medium ${
                     isScrolled
                       ? 'text-gray-700 dark:text-gray-300'
                       : 'text-gray-900'
                   } hover:text-primary`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Menu
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                  <span>Menu</span>
                 </Link>
                 <Link
                   href="/promos"
-                  className={`text-lg font-medium ${
+                  className={`flex items-center space-x-3 text-lg font-medium ${
                     isScrolled
                       ? 'text-gray-700 dark:text-gray-300'
                       : 'text-gray-900'
                   } hover:text-primary`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Promos
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                  <span>Promos</span>
                 </Link>
                 <Link
                   href="/contact"
-                  className={`text-lg font-medium ${
+                  className={`flex items-center space-x-3 text-lg font-medium ${
                     isScrolled
                       ? 'text-gray-700 dark:text-gray-300'
                       : 'text-gray-900'
                   } hover:text-primary`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Contact
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span>Contact</span>
                 </Link>
               </div>
               <button

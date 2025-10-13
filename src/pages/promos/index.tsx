@@ -38,10 +38,14 @@ export default function PromosPage() {
       const response = await fetch('/api/promos');
       const data = await response.json();
       if (data.success) {
-        setPromos(data.data);
+        setPromos(data.data || []);
+      } else {
+        console.error('Error fetching promos:', data.error);
+        setPromos([]);
       }
     } catch (error) {
       console.error('Error fetching promos:', error);
+      setPromos([]);
     } finally {
       setIsLoading(false);
     }
@@ -116,6 +120,19 @@ export default function PromosPage() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <MainHeader onOpenCart={() => setIsCartOpen(true)} />
+        
+        {/* Hero Section */}
+        <div className="bg-gradient-to-r from-red-600 to-red-700 text-white py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              Promotions & Offres
+            </h1>
+            <p className="text-xl md:text-2xl text-red-100 mb-8">
+              Découvrez nos meilleures offres et économisez sur vos commandes
+            </p>
+          </div>
+        </div>
+
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
@@ -162,12 +179,20 @@ export default function PromosPage() {
             <p className="text-gray-600 dark:text-gray-400 mb-8">
               Revenez bientôt pour découvrir nos nouvelles offres !
             </p>
-            <a
-              href="/commander"
-              className="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
-            >
-              Voir le menu
-            </a>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="/commander"
+                className="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+              >
+                Voir le menu
+              </a>
+              <a
+                href="/menu"
+                className="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg transition-colors"
+              >
+                Découvrir nos plats
+              </a>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

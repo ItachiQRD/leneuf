@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { X, Plus, Minus, Trash2 } from 'lucide-react';
+import { X, Plus, Minus, Trash2, UserPlus } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
@@ -24,12 +24,8 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   };
 
   const handleCheckout = () => {
-    if (!isAuthenticated) {
-      alert('Vous devez être connecté pour commander');
-      return;
-    }
-    // Rediriger vers la page de commande
-    window.location.href = '/commander';
+    // Rediriger vers la page de checkout
+    window.location.href = '/checkout';
   };
 
   return (
@@ -146,14 +142,26 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                       <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
                         Livraison calculée à la commande.
                       </p>
+                      {/* Message d'incitation à créer un compte */}
+                      <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <div className="flex items-start">
+                          <UserPlus className="w-4 h-4 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
+                          <div className="flex-1">
+                            <p className="text-xs text-blue-800 dark:text-blue-200">
+                              <strong>Créez un compte gratuit</strong> pour des commandes plus rapides et des offres exclusives !
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
                       <div className="mt-6">
-                        <button
-                          className="w-full rounded-md border border-transparent bg-red-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-red-700 disabled:bg-gray-400"
-                          onClick={handleCheckout}
-                          disabled={!items || items.length === 0}
-                        >
-                          {isAuthenticated ? 'Commander' : 'Se connecter pour commander'}
-                        </button>
+                <button
+                  className="w-full rounded-md border border-transparent bg-red-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-red-700 disabled:bg-gray-400"
+                  onClick={handleCheckout}
+                  disabled={!items || items.length === 0}
+                >
+                  Commander
+                </button>
                       </div>
                       <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                         <p>

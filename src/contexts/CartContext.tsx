@@ -10,6 +10,7 @@ interface CartItem {
   category?: string;
   image?: string;
   customIngredients?: any; // Pour les compositions personnalisées (tacos, paninis)
+  options?: any[]; // Pour les options sélectionnées (sauces, boissons, etc.)
 }
 
 interface CartContextType {

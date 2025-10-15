@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, MapPin, Phone, ArrowLeft } from 'lucide-react';
+import { CheckCircle, Clock, MapPin, Phone, ArrowLeft, CreditCard, Banknote, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -10,17 +10,20 @@ interface OrderItem {
   options?: any;
 }
 
+interface CustomerData {
+  name: string;
+  phone: string;
+  address: string;
+  paymentMethod: 'card' | 'cash';
+  deliveryInstructions?: string;
+}
+
 interface OrderSummary {
   orderId: string;
   total: number;
   items: OrderItem[];
+  customer: CustomerData;
   timestamp: string;
-  deliveryAddress: {
-    street: string;
-    city: string;
-    postalCode: string;
-    complement?: string;
-  };
 }
 
 export default function CommandeConfirmeePage() {
@@ -29,13 +32,13 @@ export default function CommandeConfirmeePage() {
 
   useEffect(() => {
     // Récupérer les données de la commande depuis localStorage
-    const savedOrder = localStorage.getItem('lastOrder');
+    const savedOrder = localStorage.getItem('orderSummary');
     if (savedOrder) {
       try {
         const order = JSON.parse(savedOrder);
         setOrderData(order);
         // Nettoyer le localStorage après utilisation
-        localStorage.removeItem('lastOrder');
+        localStorage.removeItem('orderSummary');
       } catch (error) {
         console.error('Error parsing order data:', error);
       }
@@ -148,6 +151,78 @@ export default function CommandeConfirmeePage() {
             </div>
           </motion.div>
 
+          {/* Customer Information */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8"
+          >
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              Informations de livraison
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4">
+                    <span className="text-blue-600 dark:text-blue-400 font-bold text-sm">
+                      {orderData.customer.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Nom</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{orderData.customer.name}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <Phone className="w-5 h-5 text-gray-400 mr-4" />
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Téléphone</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{orderData.customer.phone}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <MapPin className="w-5 h-5 text-gray-400 mr-4 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Adresse</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{orderData.customer.address}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  {orderData.customer.paymentMethod === 'card' ? (
+                    <CreditCard className="w-5 h-5 text-gray-400 mr-4" />
+                  ) : (
+                    <Banknote className="w-5 h-5 text-gray-400 mr-4" />
+                  )}
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Paiement</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {orderData.customer.paymentMethod === 'card' ? 'Carte bancaire' : 'Espèces'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {orderData.customer.deliveryInstructions && (
+              <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div className="flex items-start">
+                  <MessageSquare className="w-5 h-5 text-gray-400 mr-3 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Instructions de livraison</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{orderData.customer.deliveryInstructions}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </motion.div>
+
           {/* Articles commandés */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -205,14 +280,14 @@ export default function CommandeConfirmeePage() {
               <div className="flex items-center">
                 <MapPin className="w-5 h-5 text-blue-600 mr-3" />
                 <span className="text-blue-800 dark:text-blue-200">
-                  Adresse de livraison : {orderData.deliveryAddress.street}, {orderData.deliveryAddress.city} {orderData.deliveryAddress.postalCode}
+                  Adresse de livraison : {orderData.customer.address}
                 </span>
               </div>
               
               <div className="flex items-center">
                 <Phone className="w-5 h-5 text-blue-600 mr-3" />
                 <span className="text-blue-800 dark:text-blue-200">
-                  Contact : 01 23 45 67 89
+                  Contact : {orderData.customer.phone}
                 </span>
               </div>
             </div>

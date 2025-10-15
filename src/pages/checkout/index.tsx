@@ -44,61 +44,9 @@ export default function CheckoutPage() {
   }
 
   const handleOrderSubmit = async (data: CustomerData) => {
-    setIsLoading(true);
-    
-    try {
-      // Préparer les données de la commande
-      const orderData = {
-        customer: data,
-        items: items.map(item => ({
-          productId: item._id,
-          productName: item.name,
-          quantity: item.quantity,
-          price: item.price,
-          image: item.image,
-          options: item.options || []
-        })),
-        total: total,
-        status: 'pending',
-        createdAt: new Date().toISOString()
-      };
-
-      // Envoyer la commande à l'API
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        
-        // Sauvegarder le résumé de la commande
-        localStorage.setItem('orderSummary', JSON.stringify({
-          orderId: result.data._id,
-          total: total,
-          items: items,
-          customer: data,
-          timestamp: new Date().toISOString()
-        }));
-
-        // Vider le panier
-        clearCart();
-        
-        // Rediriger vers la page de confirmation
-        router.push('/commande-confirmee');
-      } else {
-        const errorData = await response.json();
-        alert(`Erreur lors de la commande: ${errorData.error || 'Erreur inconnue'}`);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la commande:', error);
-      alert('Erreur lors de la commande. Veuillez réessayer.');
-    } finally {
-      setIsLoading(false);
-    }
+    // Sauvegarder les données client et rediriger vers la page de formulaire
+    localStorage.setItem('customerData', JSON.stringify(data));
+    router.push('/commande-formulaire');
   };
 
   return (

@@ -74,10 +74,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               Menu
             </Link>
             <Link
-              href="/promo"
+              href="/promos"
               className={`${textColor} hover:text-primary transition-colors font-medium`}
             >
-              Promo
+              Promos
             </Link>
           </nav>
 

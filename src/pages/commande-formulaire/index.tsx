@@ -63,7 +63,7 @@ export default function CommandeFormulairePage() {
       const orderData = {
         customer: customerData,
         items: items.map(item => ({
-          productId: item._id,
+          productId: item._id || 'custom-product',
           productName: item.name,
           quantity: item.quantity,
           price: item.price,
@@ -89,7 +89,7 @@ export default function CommandeFormulairePage() {
         
         // Sauvegarder le résumé de la commande
         localStorage.setItem('orderSummary', JSON.stringify({
-          orderId: result.data._id,
+          orderId: result._id,
           total: total,
           items: items,
           customer: customerData,

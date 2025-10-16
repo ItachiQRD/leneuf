@@ -877,6 +877,32 @@ export default function CommanderPage() {
           )}
         </div>
 
+        {/* Bouton Commander flottant pour mobile */}
+        {itemCount > 0 && (
+          <div className="fixed bottom-4 left-4 right-4 z-50 lg:hidden">
+            <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-2">
+                  <ShoppingCart className="w-5 h-5 text-red-600" />
+                  <span className="text-sm font-medium text-gray-700">
+                    {itemCount} article{itemCount > 1 ? 's' : ''}
+                  </span>
+                </div>
+                <span className="text-lg font-bold text-red-600">
+                  {total.toFixed(2)} €
+                </span>
+              </div>
+              <button
+                onClick={handleCheckout}
+                disabled={isLoading}
+                className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+              >
+                {isLoading ? 'Commande en cours...' : 'Commander'}
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* Composant de composition des tacos */}

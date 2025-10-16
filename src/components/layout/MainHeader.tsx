@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ShoppingCart, Menu, User, Shield, LogOut, Sun, Moon, X, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Menu, User, Shield, LogOut, Sun, Moon } from 'lucide-react';
 import { useHeaderColor } from '@/hooks/useHeaderColor';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -19,7 +19,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
   const { backgroundColor, textColor, borderColor, boxShadow } = useHeaderColor();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated, logout } = useAuth();
 
@@ -34,520 +33,273 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
   const menuItems = [
     { href: '/', label: 'Accueil' },
     { href: '/menu', label: 'Menu' },
-    { href: '/contact', label: 'Contact' },
   ];
 
   const handleLogout = () => {
     logout();
-    setShowProfileMenu(false);
   };
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled 
-          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-2xl border-b border-gray-200/20 dark:border-gray-700/20' 
-          : 'bg-transparent'
-      }`}
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${backgroundColor} ${borderColor} ${boxShadow}`}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo / Home Link */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
           <Link 
             href="/"
-              className="flex items-center group"
+            className="flex items-center hover:opacity-80 transition-opacity"
           >
-              <div className="relative">
             <Image
               src="/images/logo.png"
               alt="Le 9 Logo"
               width={60}
               height={60}
-                  className="transition-all duration-300 group-hover:drop-shadow-lg"
+              className=""
               style={{ width: 'auto', height: 'auto' }}
             />
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-full blur-xl"
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
           </Link>
-          </motion.div>
 
           {/* Navigation - Desktop */}
-          <nav className="hidden lg:flex items-center space-x-1">
-            {menuItems.map((item, index) => (
-              <motion.div
-                key={item.href}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-              >
+          <nav className="hidden md:flex items-center space-x-12">
+            {/* Menu à gauche */}
             <Link
-                  href={item.href}
-                  className={`relative px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 group ${
-                    router.pathname === item.href
-                      ? 'text-red-600 dark:text-red-400'
-                      : isScrolled
-                        ? 'text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400'
-                        : 'text-white hover:text-red-200'
-                  }`}
-                >
-                  <span className="relative z-10">{item.label}</span>
-                  <motion.div
-                    className={`absolute inset-0 rounded-lg ${
-                      router.pathname === item.href
-                        ? 'bg-red-100 dark:bg-red-900/30'
-                        : 'bg-transparent group-hover:bg-white/10 dark:group-hover:bg-gray-800/50'
-                    }`}
-                    layoutId={`nav-${item.href}`}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                  />
-                </Link>
-              </motion.div>
-            ))}
-            
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              href="/menu"
+              className="group relative px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
-            <Link
-                href="/promos"
-                className={`relative px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 group ${
-                  router.pathname === '/promos'
-                    ? 'text-red-600 dark:text-red-400'
-                    : isScrolled
-                      ? 'text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400'
-                      : 'text-white hover:text-red-200'
-                }`}
-              >
-                <span className="relative z-10">Promos</span>
-                <motion.div
-                  className={`absolute inset-0 rounded-lg ${
-                    router.pathname === '/promos'
-                      ? 'bg-red-100 dark:bg-red-900/30'
-                      : 'bg-transparent group-hover:bg-white/10 dark:group-hover:bg-gray-800/50'
-                  }`}
-                  layoutId="nav-promos"
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                />
+              <span className="flex items-center">
+                <Menu className="w-5 h-5 mr-2" />
+                Menu
+              </span>
+              <div className="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
             </Link>
-            </motion.div>
-          </nav>
 
-          {/* Bouton Commander au centre */}
-          <motion.div 
-            className="hidden lg:flex"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4, type: "spring", stiffness: 200 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+            {/* Bouton Commander au centre */}
             <Link
               href="/commander"
-              className="relative group"
+              className="group relative px-8 py-4 rounded-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold text-xl shadow-xl hover:shadow-2xl transform hover:scale-110 transition-all duration-200"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-3 rounded-full font-bold text-lg shadow-2xl transition-all duration-300 group-hover:shadow-red-500/25">
-                <span className="flex items-center space-x-2">
-                  <motion.span
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                  >
-                    🍔
-                  </motion.span>
-                  <span>Commander</span>
-                </span>
-          </div>
+              <span className="flex items-center">
+                🍔 Commander
+              </span>
+              <div className="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-200"></div>
             </Link>
-          </motion.div>
+
+            {/* Promos à droite */}
+            <Link
+              href="/promos"
+              className="group relative px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            >
+              <span className="flex items-center">
+                <span className="text-xl mr-2">🎉</span>
+                Promos
+              </span>
+              <div className="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
+            </Link>
+          </nav>
 
           {/* Actions à droite */}
-          <div className="hidden lg:flex items-center space-x-4">
-            {/* Panier */}
-            <motion.button
-              onClick={onOpenCart}
-              className={`relative p-3 rounded-full transition-all duration-300 group ${
-                isScrolled
-                  ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
-                  : 'bg-white/10 hover:bg-white/20'
-              }`}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <ShoppingCart className={`w-5 h-5 transition-colors duration-300 ${
-                isScrolled
-                  ? 'text-gray-700 dark:text-gray-300 group-hover:text-red-600'
-                  : 'text-white group-hover:text-red-200'
-              }`} />
-              {itemCount > 0 && (
-                <motion.div
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 500 }}
-                >
-                  {itemCount}
-                </motion.div>
-              )}
-            </motion.button>
-
+          <div className="flex items-center space-x-4">
             {/* Theme Toggle */}
-            <motion.button
+            <button
               onClick={toggleTheme}
-              className={`p-3 rounded-full transition-all duration-300 group ${
-                isScrolled
-                  ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
-                  : 'bg-white/10 hover:bg-white/20'
-              }`}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              className={`p-2 rounded-lg hover:bg-gray-100/10 transition-colors ${textColor}`}
+              aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
             >
               {theme === 'dark' ? (
-                <Sun className={`w-5 h-5 transition-colors duration-300 ${
-                  isScrolled
-                    ? 'text-gray-700 dark:text-gray-300 group-hover:text-yellow-500'
-                    : 'text-white group-hover:text-yellow-200'
-                }`} />
+                <Sun className="w-5 h-5" />
               ) : (
-                <Moon className={`w-5 h-5 transition-colors duration-300 ${
-                  isScrolled
-                    ? 'text-gray-700 dark:text-gray-300 group-hover:text-blue-500'
-                    : 'text-white group-hover:text-blue-200'
-                }`} />
+                <Moon className="w-5 h-5" />
               )}
-            </motion.button>
+            </button>
 
-            {/* Profile Menu */}
+            {/* Auth */}
             {isAuthenticated ? (
-              <motion.div
-                className="relative"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-              >
-                <motion.button
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                  className={`flex items-center space-x-2 p-3 rounded-full transition-all duration-300 group ${
-                    isScrolled
-                      ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
-                      : 'bg-white/10 hover:bg-white/20'
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+              <div className="relative group">
+                <button 
+                  className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
                 >
-                  <User className={`w-5 h-5 transition-colors duration-300 ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300 group-hover:text-red-600'
-                      : 'text-white group-hover:text-red-200'
-                  }`} />
-                  <span className={`font-medium text-sm transition-colors duration-300 ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300 group-hover:text-red-600'
-                      : 'text-white group-hover:text-red-200'
-                  }`}>
+                  <User className="w-5 h-5" />
+                  <span className={`${textColor} text-sm font-medium`}>
                     {user?.name || 'Profil'}
                   </span>
-                  <ChevronDown className={`w-4 h-4 transition-colors duration-300 ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300 group-hover:text-red-600'
-                      : 'text-white group-hover:text-red-200'
-                  }`} />
-                </motion.button>
-
-                <AnimatePresence>
-                  {showProfileMenu && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+                </button>
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="py-1">
+                    <Link
+                      href="/profile"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
-                      <div className="py-2">
-                        <Link
-                          href="/profile"
-                          className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                          onClick={() => setShowProfileMenu(false)}
-                        >
-                          <User className="w-4 h-4 mr-3" />
-                          Mon profil
+                      <User className="w-4 h-4 mr-2" />
+                      Mon Profil
                     </Link>
+                    {user?.isAdmin && (
                       <Link
                         href="/admin"
-                          className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                          onClick={() => setShowProfileMenu(false)}
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
-                          <Shield className="w-4 h-4 mr-3" />
+                        <Shield className="w-4 h-4 mr-2" />
                         Administration
                       </Link>
+                    )}
                     <button
                       onClick={handleLogout}
-                          className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
-                          <LogOut className="w-4 h-4 mr-3" />
-                          Se déconnecter
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Déconnexion
                     </button>
                   </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                </div>
+              </div>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
               <Link
                 href="/auth/login"
-                    className={`px-6 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
-                      isScrolled
-                        ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl'
-                        : 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm'
-                    }`}
-                  >
-                    Se connecter
+                className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
+              >
+                <User className="w-5 h-5" />
+                <span className={`${textColor} text-sm font-medium`}>
+                  Connexion
+                </span>
               </Link>
-                </motion.div>
-              </motion.div>
             )}
+
+            {/* Cart Button */}
+            <button
+              onClick={onOpenCart}
+              className={`relative p-2 hover:bg-gray-100/10 rounded-lg ${textColor}`}
+              aria-label="Panier"
+            >
+              <ShoppingCart className="w-6 h-6" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  {itemCount}
+                </span>
+              )}
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <motion.button
+          <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden p-3 rounded-full transition-all duration-300 ${
-              isScrolled
-                ? 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
-                : 'bg-white/10 hover:bg-white/20'
-            }`}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
           >
-            <AnimatePresence mode="wait">
             {isMobileMenuOpen ? (
-                <motion.div
-                  key="close"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <X className={`w-6 h-6 ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300'
-                      : 'text-white'
-                  }`} />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Menu className={`w-6 h-6 ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300'
-                      : 'text-white'
-                  }`} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.button>
+              <Menu className="w-7 h-7" />
+            ) : (
+              <Menu className="w-7 h-7" />
+            )}
+          </button>
         </div>
 
         {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="lg:hidden overflow-hidden"
-            >
-              <div className={`py-6 space-y-4 ${
-                    isScrolled
-                  ? 'bg-white dark:bg-gray-900' 
-                  : 'bg-white/95 backdrop-blur-md'
-              }`}>
-                {/* Bouton Commander en mobile */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
+        {isMobileMenuOpen && (
+          <div className="md:hidden absolute top-20 right-0 w-full max-w-sm">
+            <nav className={`flex flex-col space-y-4 p-6 rounded-bl-xl shadow-lg ${
+              isScrolled 
+                ? 'bg-white dark:bg-gray-900' 
+                : 'bg-white/95 backdrop-blur-sm'
+            }`}>
+              {/* Bouton Commander en mobile */}
+              <Link
+                href="/commander"
+                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-4 rounded-full font-bold text-xl text-center shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🍔 Commander
+              </Link>
+              
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
+                <Link
+                  href="/menu"
+                  className="group flex items-center space-x-3 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-700 font-semibold text-lg transition-all duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
+                  <Menu className="w-5 h-5" />
+                  <span>Menu</span>
+                </Link>
+                <Link
+                  href="/promos"
+                  className="group flex items-center space-x-3 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 text-orange-700 font-semibold text-lg transition-all duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="text-xl">🎉</span>
+                  <span>Promos</span>
+                </Link>
+              </div>
+              <button
+                onClick={() => {
+                  onOpenCart();
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`flex items-center space-x-2 text-lg font-medium ${
+                  isScrolled
+                    ? 'text-gray-700 dark:text-gray-300'
+                    : 'text-gray-900'
+                } hover:text-primary`}
+              >
+                <ShoppingCart className="w-5 h-5" />
+                <span>Panier</span>
+              </button>
+              {isAuthenticated ? (
+                <>
                   <Link
-                    href="/commander"
-                    className="block bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-4 rounded-2xl font-bold text-lg text-center shadow-2xl hover:shadow-red-500/25 transform hover:scale-105 transition-all duration-300"
+                    href="/profile"
+                    className={`flex items-center space-x-2 text-lg font-medium ${
+                      isScrolled
+                        ? 'text-gray-700 dark:text-gray-300'
+                        : 'text-gray-900'
+                    } hover:text-primary`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <span className="flex items-center justify-center space-x-2">
-                      <motion.span
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                      >
-                        🍔
-                      </motion.span>
-                      <span>Commander</span>
-                    </span>
+                    <User className="w-5 h-5" />
+                    <span>Mon Profil</span>
                   </Link>
-                </motion.div>
-                
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
-                  {menuItems.map((item, index) => (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
-                    >
-                      <Link
-                        href={item.href}
-                        className={`flex items-center space-x-3 text-lg font-medium px-4 py-3 rounded-xl transition-all duration-300 ${
-                          router.pathname === item.href
-                            ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
-                            : isScrolled
-                              ? 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-red-600'
-                              : 'text-gray-900 hover:bg-gray-100 hover:text-red-600'
-                        }`}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <div className="w-2 h-2 bg-red-500 rounded-full" />
-                        <span>{item.label}</span>
-                      </Link>
-                    </motion.div>
-                  ))}
-                  
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.5 }}
-                  >
+                  {user?.isAdmin && (
                     <Link
-                      href="/promos"
-                      className={`flex items-center space-x-3 text-lg font-medium px-4 py-3 rounded-xl transition-all duration-300 ${
-                        router.pathname === '/promos'
-                          ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
-                          : isScrolled
-                            ? 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-red-600'
-                            : 'text-gray-900 hover:bg-gray-100 hover:text-red-600'
-                      }`}
+                      href="/admin"
+                      className={`flex items-center space-x-2 text-lg font-medium ${
+                        isScrolled
+                          ? 'text-gray-700 dark:text-gray-300'
+                          : 'text-gray-900'
+                      } hover:text-primary`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <div className="w-2 h-2 bg-orange-500 rounded-full" />
-                      <span>Promos</span>
+                      <Shield className="w-5 h-5" />
+                      <span>Administration</span>
                     </Link>
-                  </motion.div>
-                </div>
-
-                {/* Actions mobile */}
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
-                  <motion.button
+                  )}
+                  <button
                     onClick={() => {
-                      onOpenCart();
+                      logout();
                       setIsMobileMenuOpen(false);
                     }}
-                    className={`flex items-center space-x-3 text-lg font-medium px-4 py-3 rounded-xl transition-all duration-300 w-full ${
-                      isScrolled
-                        ? 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-red-600'
-                        : 'text-gray-900 hover:bg-gray-100 hover:text-red-600'
-                    }`}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.6 }}
+                    className="flex items-center space-x-2 text-lg font-medium text-red-600 hover:text-red-700"
                   >
-                    <ShoppingCart className="w-5 h-5" />
-                    <span>Panier</span>
-                    {itemCount > 0 && (
-                      <motion.span
-                        className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 500 }}
-                      >
-                        {itemCount}
-                      </motion.span>
-                    )}
-                  </motion.button>
-
-                  {isAuthenticated ? (
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: 0.7 }}
-                      className="space-y-2"
-                    >
+                    <LogOut className="w-5 h-5" />
+                    <span>Déconnexion</span>
+                  </button>
+                </>
+              ) : (
                 <Link
-                        href="/profile"
-                        className={`flex items-center space-x-3 text-lg font-medium px-4 py-3 rounded-xl transition-all duration-300 ${
+                  href="/login"
+                  className={`flex items-center space-x-2 text-lg font-medium ${
                     isScrolled
-                            ? 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-red-600'
-                            : 'text-gray-900 hover:bg-gray-100 hover:text-red-600'
+                      ? 'text-primary hover:text-primary-600'
+                      : 'text-primary hover:text-primary-700'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <User className="w-5 h-5" />
-                        <span>Mon profil</span>
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center space-x-3 text-lg font-medium px-4 py-3 rounded-xl transition-all duration-300 w-full text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      >
-                        <LogOut className="w-5 h-5" />
-                        <span>Se déconnecter</span>
-                      </button>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: 0.7 }}
-                    >
-                      <Link
-                        href="/auth/login"
-                        className="block bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold text-center transition-all duration-300"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        Se connecter
+                  <span>Connexion</span>
                 </Link>
-                    </motion.div>
               )}
-                </div>
+            </nav>
           </div>
-            </motion.div>
         )}
-        </AnimatePresence>
       </div>
     </motion.header>
   );

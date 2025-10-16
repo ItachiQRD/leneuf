@@ -171,9 +171,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             <div className="md:hidden">
               <Link
                 href="/commander"
-                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 rounded-full font-bold text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2"
               >
-                🍔 Commander
+                <span className="text-lg">🍔</span>
+                <span>Commander</span>
               </Link>
             </div>
 

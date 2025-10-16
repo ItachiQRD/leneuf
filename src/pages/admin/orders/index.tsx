@@ -12,7 +12,9 @@ import {
   User,
   MapPin,
   CreditCard,
-  Package
+  Package,
+  Phone,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
 import { Badge } from '@/components/ui/Badge';
@@ -347,6 +349,12 @@ export default function AdminOrdersPage() {
                       Client
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Contact
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Statut
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -391,8 +399,33 @@ export default function AdminOrdersPage() {
                           <div className="text-sm font-medium text-gray-900">
                             {order.userId?.name || order.customer?.name || 'N/A'}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-xs text-gray-500">
+                            {order.userId ? 'Compte' : 'Invité'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
                             {order.userId?.email || order.customer?.phone || 'N/A'}
+                          </div>
+                          {order.customer?.address && (
+                            <div className="text-xs text-gray-500 truncate max-w-32">
+                              {order.customer.address}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            {order.userId ? (
+                              <Badge className="bg-blue-100 text-blue-800">
+                                <User className="w-3 h-3 mr-1" />
+                                Compte
+                              </Badge>
+                            ) : (
+                              <Badge className="bg-orange-100 text-orange-800">
+                                <Package className="w-3 h-3 mr-1" />
+                                Invité
+                              </Badge>
+                            )}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -484,17 +517,65 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
 
+                  {/* Informations client améliorées */}
+                  <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center">
+                        <User className="w-4 h-4 text-gray-400 mr-2" />
+                        <span className="font-medium text-gray-900">
+                          {order.userId?.name || order.customer?.name || 'N/A'}
+                        </span>
+                      </div>
+                      {order.userId ? (
+                        <Badge className="bg-blue-100 text-blue-800 text-xs">
+                          <User className="w-3 h-3 mr-1" />
+                          Compte
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-orange-100 text-orange-800 text-xs">
+                          <Package className="w-3 h-3 mr-1" />
+                          Invité
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-600">
+                        <strong>Contact:</strong> {order.userId?.email || order.customer?.phone || 'N/A'}
+                      </p>
+                      {order.customer?.address && (
+                        <p className="text-sm text-gray-600">
+                          <strong>Adresse:</strong> {order.customer.address}
+                        </p>
+                      )}
+                      {order.customer?.deliveryInstructions && (
+                        <p className="text-sm text-gray-600">
+                          <strong>Instructions:</strong> {order.customer.deliveryInstructions}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Articles commandés */}
                   <div className="mb-3">
-                    <p className="text-sm text-gray-600 mb-1">
-                      <strong>Client:</strong> {order.userId?.name || order.customer?.name || 'N/A'}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-2">
-                      <strong>Contact:</strong> {order.userId?.email || order.customer?.phone || 'N/A'}
-                    </p>
-                    <p className="text-xs text-gray-500 line-clamp-2">
-                      {order.items.slice(0, 2).map(item => formatProductName(item)).join(', ')}
-                      {order.items.length > 2 && ` +${order.items.length - 2} autres`}
-                    </p>
+                    <p className="text-sm font-medium text-gray-700 mb-2">Articles commandés:</p>
+                    <div className="space-y-1">
+                      {order.items.slice(0, 3).map((item, index) => (
+                        <div key={index} className="flex justify-between text-sm">
+                          <span className="text-gray-600">
+                            {item.quantity}x {formatProductName(item)}
+                          </span>
+                          <span className="font-medium">
+                            {(item.price * item.quantity).toFixed(2)} €
+                          </span>
+                        </div>
+                      ))}
+                      {order.items.length > 3 && (
+                        <p className="text-xs text-gray-500">
+                          +{order.items.length - 3} autres articles
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between mb-3">
@@ -600,31 +681,52 @@ function OrderDetailModal({
       <div className="space-y-6">
         {/* Informations client */}
         <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-3">Informations client</h3>
-          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-medium text-gray-900">Informations client</h3>
+            {order.userId ? (
+              <Badge className="bg-blue-100 text-blue-800">
+                <User className="w-3 h-3 mr-1" />
+                Compte utilisateur
+              </Badge>
+            ) : (
+              <Badge className="bg-orange-100 text-orange-800">
+                <Package className="w-3 h-3 mr-1" />
+                Commande invité
+              </Badge>
+            )}
+          </div>
+          
+          <div className="bg-gray-50 rounded-lg p-4 space-y-3">
             <div className="flex items-center">
-              <User className="w-4 h-4 text-gray-400 mr-2" />
-              <span className="font-medium">
-                {order.userId?.name || order.customer?.name || 'N/A'}
-              </span>
+              <User className="w-4 h-4 text-gray-400 mr-3" />
+              <div>
+                <span className="font-medium text-gray-900">
+                  {order.userId?.name || order.customer?.name || 'N/A'}
+                </span>
+                <div className="text-sm text-gray-600">
+                  {order.userId?.email || order.customer?.phone || 'N/A'}
+                </div>
+              </div>
             </div>
-            <div className="flex items-center">
-              <span className="text-sm text-gray-600">
-                {order.userId?.email || order.customer?.phone || 'N/A'}
-              </span>
-            </div>
+            
             {(order.userId?.phone || order.customer?.phone) && (
               <div className="flex items-center">
+                <Phone className="w-4 h-4 text-gray-400 mr-3" />
                 <span className="text-sm text-gray-600">
                   {order.userId?.phone || order.customer?.phone}
                 </span>
               </div>
             )}
+            
             {order.customer?.deliveryInstructions && (
-              <div className="flex items-center">
-                <span className="text-sm text-gray-600">
-                  Instructions: {order.customer.deliveryInstructions}
-                </span>
+              <div className="flex items-start">
+                <MessageSquare className="w-4 h-4 text-gray-400 mr-3 mt-0.5" />
+                <div>
+                  <span className="text-sm font-medium text-gray-700">Instructions de livraison:</span>
+                  <div className="text-sm text-gray-600 mt-1">
+                    {order.customer.deliveryInstructions}
+                  </div>
+                </div>
               </div>
             )}
           </div>

@@ -42,7 +42,14 @@ export interface UserModel extends BaseModel {
 
 // Types pour les commandes
 export interface OrderModel extends BaseModel {
-  userId: MongoId;
+  userId?: MongoId; // Optionnel pour les commandes sans compte
+  customer?: {
+    name: string;
+    phone: string;
+    address: string;
+    paymentMethod: PaymentMethod;
+    deliveryInstructions?: string;
+  };
   items: OrderItem[];
   total: number;
   status: OrderStatus;

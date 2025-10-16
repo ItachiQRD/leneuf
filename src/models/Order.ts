@@ -6,7 +6,30 @@ const orderSchema = createBaseSchema<OrderModel>({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false // Optionnel pour les commandes sans compte
+  },
+  customer: {
+    name: {
+      type: String,
+      required: false
+    },
+    phone: {
+      type: String,
+      required: false
+    },
+    address: {
+      type: String,
+      required: false
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['card', 'cash'],
+      required: false
+    },
+    deliveryInstructions: {
+      type: String,
+      required: false
+    }
   },
   items: [{
     productId: {

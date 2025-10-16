@@ -509,165 +509,14 @@ export default function CommanderPage() {
     setSelectedDrinks([]);
   };
 
-  const handleCheckout = async () => {
-    if (!isAuthenticated || !user?._id) {
-      window.location.href = '/auth/login?redirect=/commander';
-      return;
-    }
-
+  const handleCheckout = () => {
     if (!items || items.length === 0) {
       alert('Votre panier est vide');
       return;
     }
 
-    setIsLoading(true);
-    try {
-      // Préparer les données de la commande
-      const orderData = {
-        userId: user._id,
-        items: items.map(item => {
-          // Pour les produits personnalisés (tacos, paninis), utiliser un ID spécial
-          const isCustomProduct = (item as any).customIngredients || (item as any).config;
-          const productId = isCustomProduct ? 'custom-product' : item._id;
-          
-          // Préparer les options selon le type de produit
-          let options = [];
-          if ((item as any).customIngredients) {
-            // Tacos et Paninis
-            const custom = (item as any).customIngredients;
-            if (custom.meats && custom.meats.length > 0) {
-              options.push({
-                name: 'Viandes',
-                choice: {
-                  name: custom.meats.map((m: any) => m.name).join(', '),
-                  price: 0
-                }
-              });
-            }
-            if (custom.sauces && custom.sauces.length > 0) {
-              options.push({
-                name: 'Sauces',
-                choice: {
-                  name: custom.sauces.map((s: any) => s.name).join(', '),
-                  price: 0
-                }
-              });
-            }
-            if (custom.ingredients && custom.ingredients.length > 0) {
-              options.push({
-                name: 'Suppléments',
-                choice: {
-                  name: custom.ingredients.map((i: any) => i.name).join(', '),
-                  price: custom.ingredients.reduce((sum: number, i: any) => sum + (i.price || 0), 0)
-                }
-              });
-            }
-            if (custom.baseIngredients && custom.baseIngredients.length > 0) {
-              options.push({
-                name: 'Ingrédients de base',
-                choice: {
-                  name: custom.baseIngredients.map((i: any) => i.name).join(', '),
-                  price: custom.baseIngredients.reduce((sum: number, i: any) => sum + (i.price || 0), 0)
-                }
-              });
-            }
-            if (custom.supplements && custom.supplements.length > 0) {
-              options.push({
-                name: 'Suppléments',
-                choice: {
-                  name: custom.supplements.map((s: any) => s.name).join(', '),
-                  price: custom.supplements.reduce((sum: number, s: any) => sum + (s.price || 0), 0)
-                }
-              });
-            }
-          } else if ((item as any).config) {
-            // Menus et produits avec configuration
-            const config = (item as any).config;
-            if (config.side) {
-              options.push({
-                name: 'Accompagnement',
-                choice: {
-                  name: config.side.name,
-                  price: config.side.price || 0
-                }
-              });
-            }
-            if (config.drink) {
-              options.push({
-                name: 'Boisson',
-                choice: {
-                  name: config.drink.name,
-                  price: config.drink.price || 0
-                }
-              });
-            }
-          }
-          
-          return {
-            productId: productId,
-            productName: item.name, // Ajouter le nom du produit
-            quantity: item.quantity,
-            price: item.price,
-            options: options
-          };
-        }),
-        total: total,
-        status: 'pending',
-        deliveryAddress: {
-          street: 'Adresse par défaut', // À remplacer par un formulaire d'adresse
-          city: 'Ville',
-          postalCode: '00000',
-          complement: ''
-        },
-        paymentStatus: 'pending',
-        paymentMethod: 'cash', // À remplacer par un sélecteur de méthode de paiement
-        notes: ''
-      };
-
-      // Envoyer la commande à l'API
-      console.log('Sending order data:', orderData);
-      const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-      });
-      
-      console.log('Response status:', response.status);
-      
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log('Order created successfully:', responseData);
-        
-        // Sauvegarder les données de la commande dans localStorage
-        const orderSummary = {
-          orderId: responseData._id,
-          total: total,
-          items: items.map(item => ({
-            name: item.name,
-            quantity: item.quantity,
-            price: item.price,
-            options: (item as any).customIngredients || (item as any).config || null
-          })),
-          timestamp: new Date().toISOString(),
-          deliveryAddress: orderData.deliveryAddress
-        };
-        
-        localStorage.setItem('lastOrder', JSON.stringify(orderSummary));
-      clearCart();
-      window.location.href = '/commande-confirmee';
-      } else {
-        const errorData = await response.json();
-        console.error('Order creation failed:', errorData);
-        throw new Error(`Erreur lors de l'envoi de la commande: ${errorData.details || errorData.error}`);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la commande:', error);
-      alert('Erreur lors de l\'envoi de la commande. Veuillez réessayer.');
-    } finally {
-      setIsLoading(false);
-    }
+    // Rediriger vers la page de checkout
+    window.location.href = '/checkout';
   };
 
   return (
@@ -883,12 +732,6 @@ export default function CommanderPage() {
               >
                 {isLoading ? 'Commande en cours...' : 'Commander'}
               </button>
-              
-              {!isAuthenticated && (
-                <p className="text-xs text-gray-500 mt-2 text-center">
-                  Vous devez être connecté pour commander
-                </p>
-              )}
             </div>
           </div>
         </div>

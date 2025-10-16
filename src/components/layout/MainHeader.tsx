@@ -49,55 +49,44 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       transition={{ duration: 0.5 }}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo et Navigation à gauche */}
-          <div className="flex items-center space-x-8">
-            {/* Logo / Home Link */}
-            <Link 
-              href="/"
-              className="flex items-center hover:opacity-80 transition-opacity"
-            >
-              <Image
-                src="/images/logo.png"
-                alt="Le 9 Logo"
-                width={60}
-                height={60}
-                className=""
-                style={{ width: 'auto', height: 'auto' }}
-              />
-            </Link>
+        <div className="flex items-center h-20">
+          {/* Logo / Home Link */}
+          <Link 
+            href="/"
+            className="flex items-center hover:opacity-80 transition-opacity mr-8"
+          >
+            <Image
+              src="/images/logo.png"
+              alt="Le 9 Logo"
+              width={60}
+              height={60}
+              className=""
+              style={{ width: 'auto', height: 'auto' }}
+            />
+          </Link>
 
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
-              <Link
-                href="/menu"
-                className={`${textColor} hover:text-primary transition-colors font-medium`}
-              >
-                Menu
-              </Link>
-              <Link
-                href="/promos"
-                className={`${textColor} hover:text-primary transition-colors font-medium`}
-              >
-                Promos
-              </Link>
-              <Link
-                href="/a-propos"
-                className={`${textColor} hover:text-primary transition-colors font-medium`}
-              >
-                À propos
-              </Link>
-              <Link
-                href="/contact"
-                className={`${textColor} hover:text-primary transition-colors font-medium`}
-              >
-                Contact
-              </Link>
-            </nav>
+          {/* Contact à gauche */}
+          <div className="hidden md:flex mr-8">
+            <Link
+              href="/contact"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
+            >
+              Contact
+            </Link>
+          </div>
+
+          {/* Menu à gauche de Commander */}
+          <div className="hidden md:flex mr-4">
+            <Link
+              href="/menu"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
+            >
+              Menu
+            </Link>
           </div>
 
           {/* Bouton Commander au centre */}
-          <div className="hidden md:flex">
+          <div className="hidden md:flex mx-4">
             <Link
               href="/commander"
               className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
@@ -106,8 +95,28 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </Link>
           </div>
 
+          {/* Promos à droite de Commander */}
+          <div className="hidden md:flex ml-4">
+            <Link
+              href="/promos"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
+            >
+              Promos
+            </Link>
+          </div>
+
+          {/* À propos à droite */}
+          <div className="hidden md:flex ml-8">
+            <Link
+              href="/a-propos"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
+            >
+              À propos
+            </Link>
+          </div>
+
           {/* Actions à droite */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 ml-auto">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -219,6 +228,20 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
                 <Link
+                  href="/contact"
+                  className={`flex items-center space-x-3 text-lg font-medium ${
+                    isScrolled
+                      ? 'text-gray-700 dark:text-gray-300'
+                      : 'text-gray-900'
+                  } hover:text-primary`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span>Contact</span>
+                </Link>
+                <Link
                   href="/menu"
                   className={`flex items-center space-x-3 text-lg font-medium ${
                     isScrolled
@@ -259,20 +282,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <span>À propos</span>
-                </Link>
-                <Link
-                  href="/contact"
-                  className={`flex items-center space-x-3 text-lg font-medium ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300'
-                      : 'text-gray-900'
-                  } hover:text-primary`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span>Contact</span>
                 </Link>
               </div>
               <button

@@ -132,8 +132,8 @@ export default function ContactPage() {
                       Adresse
                     </h3>
                     <p className="text-gray-600">
-                      123 Rue de la Gastronomie<br />
-                      75001 Paris, France
+                      9 route de Bétheny<br />
+                      51100 Reims, France
                     </p>
                   </div>
                 </div>
@@ -148,8 +148,8 @@ export default function ContactPage() {
                       Téléphone
                     </h3>
                     <p className="text-gray-600">
-                      <a href="tel:+33123456789" className="hover:text-red-600 transition-colors">
-                        +33 1 23 45 67 89
+                      <a href="tel:0326407967" className="hover:text-red-600 transition-colors">
+                        03 26 40 79 67
                       </a>
                     </p>
                   </div>
@@ -182,25 +182,30 @@ export default function ContactPage() {
                       Horaires d'Ouverture
                     </h3>
                     <div className="text-gray-600 space-y-1">
-                      <p>Lundi - Jeudi: 11h00 - 22h00</p>
-                      <p>Vendredi - Samedi: 11h00 - 23h00</p>
-                      <p>Dimanche: 12h00 - 21h00</p>
+                      <p>Lun - Jeu : 11h - 14h30 & 18h - 23h</p>
+                      <p>Ven - Dim : 18h - 23h</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Carte (placeholder) */}
+              {/* Carte */}
               <div className="mt-8">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Nous Trouver
                 </h3>
-                <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <MapPin className="w-12 h-12 mx-auto mb-2" />
-                    <p>Carte interactive</p>
-                    <p className="text-sm">123 Rue de la Gastronomie, Paris</p>
-                  </div>
+                <div className="w-full h-64 rounded-lg overflow-hidden">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2620.3!2d4.025!3d49.25!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e9744c5c1c5c1f%3A0x40c14484fb61e60!2s9%20Route%20de%20B%C3%A9theny%2C%2051100%20Reims%2C%20France!5e0!3m2!1sfr!2sfr!4v1640000000000!5m2!1sfr!2sfr"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="rounded-lg"
+                    title="Localisation Le 9 Restaurant - 9 route de Bétheny, 51100 Reims"
+                  />
                 </div>
               </div>
             </motion.div>

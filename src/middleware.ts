@@ -21,11 +21,19 @@ const publicRoutes = [
   '/menu/sides',
   '/menu/desserts',
   '/menu/sauces',
+  '/commander',
+  '/a-propos',
   '/about',
   '/contact',
+  '/promos',
+  '/checkout',
+  '/commande-formulaire',
+  '/commande-confirmee',
   '/api/public',
   '/api/menu',
-  '/api/products'
+  '/api/products',
+  '/api/promos',
+  '/api/orders'
 ];
 
 // Routes qui nécessitent des droits d'administrateur

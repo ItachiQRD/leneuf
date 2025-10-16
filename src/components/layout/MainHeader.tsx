@@ -101,10 +101,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
 
           {/* Actions à droite */}
           <div className="flex items-center space-x-4">
-            {/* Theme Toggle */}
+            {/* Theme Toggle - Desktop only */}
             <button
               onClick={toggleTheme}
-              className={`p-2 rounded-lg hover:bg-gray-100/10 transition-colors ${textColor}`}
+              className={`hidden md:block p-2 rounded-lg hover:bg-gray-100/10 transition-colors ${textColor}`}
               aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
             >
               {theme === 'dark' ? (
@@ -113,6 +113,23 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 <Moon className="w-5 h-5" />
               )}
             </button>
+
+            {/* Logo - Mobile only */}
+            <div className="md:hidden">
+              <Link 
+                href="/"
+                className="flex items-center hover:opacity-80 transition-opacity"
+              >
+                <Image
+                  src="/images/logo.png"
+                  alt="Le 9 Logo"
+                  width={40}
+                  height={40}
+                  className=""
+                  style={{ width: 'auto', height: 'auto' }}
+                />
+              </Link>
+            </div>
 
             {/* Auth - Desktop only */}
             <div className="hidden md:block">

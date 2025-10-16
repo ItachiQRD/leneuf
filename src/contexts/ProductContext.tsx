@@ -138,20 +138,24 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   // Chargement initial des données
   useEffect(() => {
     const loadData = async () => {
-      if (!isAuthenticated) {
-        setLoading(false);
-        return;
-      }
-
       setLoading(true);
       setError(null);
       try {
         console.log(' [ProductContext] Chargement des données...');
         
         // Charger les données une par une pour éviter les erreurs en cascade
-        const loadDataSafely = async (endpoint: string, setter: (data: any) => void, name: string) => {
+        const loadDataSafely = async (endpoint: string, setter: (data: any) => void, name: string, isPublic = false) => {
           try {
-            const data = await fetchWithAuth(endpoint);
+            let data;
+            if (isPublic) {
+              // Utiliser l'API publique pour les utilisateurs non authentifiés
+              const publicEndpoint = endpoint.replace('/api/admin/', '/api/');
+              const response = await fetch(publicEndpoint);
+              data = await parseResponse(response);
+            } else {
+              // Utiliser l'API admin pour les utilisateurs authentifiés
+              data = await fetchWithAuth(endpoint);
+            }
             setter(data || []);
             console.log(`✅ [ProductContext] ${name} chargés:`, data?.length || 0);
           } catch (error) {
@@ -160,14 +164,27 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
           }
         };
 
-        await Promise.all([
-          loadDataSafely('/api/admin/foods', setFoods, 'plats'),
-          loadDataSafely('/api/admin/drinks', setDrinks, 'boissons'),
-          loadDataSafely('/api/admin/desserts', setDesserts, 'desserts'),
-          loadDataSafely('/api/admin/sauces', setSauces, 'sauces'),
-          loadDataSafely('/api/admin/sides', setSides, 'accompagnements'),
-          loadDataSafely('/api/admin/ingredients', setIngredients, 'ingrédients')
-        ]);
+        if (isAuthenticated) {
+          // Charger toutes les données admin si authentifié
+          await Promise.all([
+            loadDataSafely('/api/admin/foods', setFoods, 'plats'),
+            loadDataSafely('/api/admin/drinks', setDrinks, 'boissons'),
+            loadDataSafely('/api/admin/desserts', setDesserts, 'desserts'),
+            loadDataSafely('/api/admin/sauces', setSauces, 'sauces'),
+            loadDataSafely('/api/admin/sides', setSides, 'accompagnements'),
+            loadDataSafely('/api/admin/ingredients', setIngredients, 'ingrédients')
+          ]);
+        } else {
+          // Charger seulement les données publiques si non authentifié
+          await Promise.all([
+            loadDataSafely('/api/admin/foods', setFoods, 'plats', true),
+            loadDataSafely('/api/admin/drinks', setDrinks, 'boissons', true),
+            loadDataSafely('/api/admin/desserts', setDesserts, 'desserts', true),
+            loadDataSafely('/api/admin/sauces', setSauces, 'sauces', true),
+            loadDataSafely('/api/admin/sides', setSides, 'accompagnements', true),
+            loadDataSafely('/api/admin/ingredients', setIngredients, 'ingrédients', true)
+          ]);
+        }
         
         console.log(' [ProductContext] Données chargées avec succès');
       } catch (error) {

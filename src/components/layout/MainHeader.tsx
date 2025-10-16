@@ -49,61 +49,62 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       transition={{ duration: 0.5 }}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center h-20">
-          {/* Logo / Home Link */}
-          <Link 
-            href="/"
-            className="flex items-center hover:opacity-80 transition-opacity"
-          >
-            <Image
-              src="/images/logo.png"
-              alt="Le 9 Logo"
-              width={60}
-              height={60}
-              className=""
-              style={{ width: 'auto', height: 'auto' }}
-            />
-          </Link>
+        <div className="flex items-center justify-between h-20">
+          {/* Logo et Navigation à gauche */}
+          <div className="flex items-center space-x-8">
+            {/* Logo / Home Link */}
+            <Link 
+              href="/"
+              className="flex items-center hover:opacity-80 transition-opacity"
+            >
+              <Image
+                src="/images/logo.png"
+                alt="Le 9 Logo"
+                width={60}
+                height={60}
+                className=""
+                style={{ width: 'auto', height: 'auto' }}
+              />
+            </Link>
 
-          {/* Espace pour centrer le bouton Commander */}
-          <div className="flex-1 flex justify-center">
-            <div className="hidden md:flex">
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center space-x-6">
               <Link
-                href="/commander"
-                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                href="/menu"
+                className={`${textColor} hover:text-primary transition-colors font-medium`}
               >
-                🍔 Commander
+                Menu
               </Link>
-            </div>
+              <Link
+                href="/promos"
+                className={`${textColor} hover:text-primary transition-colors font-medium`}
+              >
+                Promos
+              </Link>
+              <Link
+                href="/a-propos"
+                className={`${textColor} hover:text-primary transition-colors font-medium`}
+              >
+                À propos
+              </Link>
+              <Link
+                href="/contact"
+                className={`${textColor} hover:text-primary transition-colors font-medium`}
+              >
+                Contact
+              </Link>
+            </nav>
           </div>
 
-          {/* Navigation à droite */}
-          <nav className="hidden md:flex items-center space-x-6">
+          {/* Bouton Commander au centre */}
+          <div className="hidden md:flex">
             <Link
-              href="/menu"
-              className={`${textColor} hover:text-primary transition-colors font-medium`}
+              href="/commander"
+              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
-              Menu
+              🍔 Commander
             </Link>
-            <Link
-              href="/promos"
-              className={`${textColor} hover:text-primary transition-colors font-medium`}
-            >
-              Promos
-            </Link>
-            <Link
-              href="/a-propos"
-              className={`${textColor} hover:text-primary transition-colors font-medium`}
-            >
-              À propos
-            </Link>
-            <Link
-              href="/contact"
-              className={`${textColor} hover:text-primary transition-colors font-medium`}
-            >
-              Contact
-            </Link>
-          </nav>
+          </div>
 
           {/* Actions à droite */}
           <div className="flex items-center space-x-4">

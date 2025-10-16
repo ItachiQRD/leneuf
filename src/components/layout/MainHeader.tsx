@@ -33,6 +33,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
   const menuItems = [
     { href: '/', label: 'Accueil' },
     { href: '/menu', label: 'Menu' },
+    { href: '/a-propos', label: 'À propos' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   const handleLogout = () => {
@@ -47,7 +49,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       transition={{ duration: 0.5 }}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center h-20">
           {/* Logo / Home Link */}
           <Link 
             href="/"
@@ -63,40 +65,44 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             />
           </Link>
 
-          {/* Navigation - Desktop */}
-          <nav className="hidden md:flex items-center justify-center flex-1">
-            <div className="flex items-center space-x-8">
-              {/* Menu */}
-              <Link
-                href="/menu"
-                className="group relative px-6 py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium text-base transition-all duration-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600"
-              >
-                <span className="flex items-center">
-                  <Menu className="w-4 h-4 mr-2" />
-                  Menu
-                </span>
-              </Link>
-
-              {/* Bouton Commander au centre */}
+          {/* Espace pour centrer le bouton Commander */}
+          <div className="flex-1 flex justify-center">
+            <div className="hidden md:flex">
               <Link
                 href="/commander"
-                className="group relative px-8 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold text-base rounded-md hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-200 shadow-sm hover:shadow-md"
+                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
-                <span className="flex items-center">
-                  Commander
-                </span>
-              </Link>
-
-              {/* Promos */}
-              <Link
-                href="/promos"
-                className="group relative px-6 py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium text-base transition-all duration-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600"
-              >
-                <span className="flex items-center">
-                  Promos
-                </span>
+                🍔 Commander
               </Link>
             </div>
+          </div>
+
+          {/* Navigation à droite */}
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link
+              href="/menu"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
+            >
+              Menu
+            </Link>
+            <Link
+              href="/promos"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
+            >
+              Promos
+            </Link>
+            <Link
+              href="/a-propos"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
+            >
+              À propos
+            </Link>
+            <Link
+              href="/contact"
+              className={`${textColor} hover:text-primary transition-colors font-medium`}
+            >
+              Contact
+            </Link>
           </nav>
 
           {/* Actions à droite */}
@@ -204,27 +210,68 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               {/* Bouton Commander en mobile */}
               <Link
                 href="/commander"
-                className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-8 py-3 rounded-md font-semibold text-lg text-center shadow-sm hover:shadow-md transition-all duration-200"
+                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Commander
+                🍔 Commander
               </Link>
               
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
                 <Link
                   href="/menu"
-                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md font-medium transition-all duration-200"
+                  className={`flex items-center space-x-3 text-lg font-medium ${
+                    isScrolled
+                      ? 'text-gray-700 dark:text-gray-300'
+                      : 'text-gray-900'
+                  } hover:text-primary`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Menu className="w-5 h-5" />
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
                   <span>Menu</span>
                 </Link>
                 <Link
                   href="/promos"
-                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md font-medium transition-all duration-200"
+                  className={`flex items-center space-x-3 text-lg font-medium ${
+                    isScrolled
+                      ? 'text-gray-700 dark:text-gray-300'
+                      : 'text-gray-900'
+                  } hover:text-primary`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
                   <span>Promos</span>
+                </Link>
+                <Link
+                  href="/a-propos"
+                  className={`flex items-center space-x-3 text-lg font-medium ${
+                    isScrolled
+                      ? 'text-gray-700 dark:text-gray-300'
+                      : 'text-gray-900'
+                  } hover:text-primary`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>À propos</span>
+                </Link>
+                <Link
+                  href="/contact"
+                  className={`flex items-center space-x-3 text-lg font-medium ${
+                    isScrolled
+                      ? 'text-gray-700 dark:text-gray-300'
+                      : 'text-gray-900'
+                  } hover:text-primary`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span>Contact</span>
                 </Link>
               </div>
               <button

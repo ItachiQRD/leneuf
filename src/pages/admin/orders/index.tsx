@@ -56,11 +56,18 @@ const formatOptionName = (option: any) => {
 
 interface Order {
   _id: string;
-  userId: {
+  userId?: {
     _id: string;
     name: string;
     email: string;
     phone?: string;
+  };
+  customer?: {
+    name: string;
+    phone: string;
+    address: string;
+    paymentMethod: 'card' | 'cash';
+    deliveryInstructions?: string;
   };
   items: Array<{
     productId: string;
@@ -204,9 +211,12 @@ export default function AdminOrdersPage() {
   };
 
   const filteredOrders = orders.filter(order => {
+    const customerName = order.userId?.name || order.customer?.name || '';
+    const customerContact = order.userId?.email || order.customer?.phone || '';
+    
     const matchesSearch = 
-      order.userId.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.userId.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customerContact.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order._id.toLowerCase().includes(searchTerm.toLowerCase());
     
     return matchesSearch;
@@ -379,10 +389,10 @@ export default function AdminOrdersPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
-                            {order.userId.name}
+                            {order.userId?.name || order.customer?.name || 'N/A'}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {order.userId.email}
+                            {order.userId?.email || order.customer?.phone || 'N/A'}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -476,10 +486,10 @@ export default function AdminOrdersPage() {
 
                   <div className="mb-3">
                     <p className="text-sm text-gray-600 mb-1">
-                      <strong>Client:</strong> {order.userId.name}
+                      <strong>Client:</strong> {order.userId?.name || order.customer?.name || 'N/A'}
                     </p>
                     <p className="text-sm text-gray-600 mb-2">
-                      <strong>Email:</strong> {order.userId.email}
+                      <strong>Contact:</strong> {order.userId?.email || order.customer?.phone || 'N/A'}
                     </p>
                     <p className="text-xs text-gray-500 line-clamp-2">
                       {order.items.slice(0, 2).map(item => formatProductName(item)).join(', ')}
@@ -594,14 +604,27 @@ function OrderDetailModal({
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
             <div className="flex items-center">
               <User className="w-4 h-4 text-gray-400 mr-2" />
-              <span className="font-medium">{order.userId.name}</span>
+              <span className="font-medium">
+                {order.userId?.name || order.customer?.name || 'N/A'}
+              </span>
             </div>
             <div className="flex items-center">
-              <span className="text-sm text-gray-600">{order.userId.email}</span>
+              <span className="text-sm text-gray-600">
+                {order.userId?.email || order.customer?.phone || 'N/A'}
+              </span>
             </div>
-            {order.userId.phone && (
+            {(order.userId?.phone || order.customer?.phone) && (
               <div className="flex items-center">
-                <span className="text-sm text-gray-600">{order.userId.phone}</span>
+                <span className="text-sm text-gray-600">
+                  {order.userId?.phone || order.customer?.phone}
+                </span>
+              </div>
+            )}
+            {order.customer?.deliveryInstructions && (
+              <div className="flex items-center">
+                <span className="text-sm text-gray-600">
+                  Instructions: {order.customer.deliveryInstructions}
+                </span>
               </div>
             )}
           </div>
@@ -720,3 +743,4 @@ function OrderDetailModal({
     </Modal>
   );
 }
+

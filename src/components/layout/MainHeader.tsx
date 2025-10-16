@@ -49,11 +49,11 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       transition={{ duration: 0.5 }}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center h-20">
+        <div className="flex items-center justify-between h-20">
           {/* Logo / Home Link */}
           <Link 
             href="/"
-            className="flex items-center hover:opacity-80 transition-opacity mr-8"
+            className="flex items-center hover:opacity-80 transition-opacity"
           >
             <Image
               src="/images/logo.png"
@@ -65,48 +65,32 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             />
           </Link>
 
-          {/* Contact à gauche */}
-          <div className="hidden md:flex mr-8">
+          {/* Navigation centrée */}
+          <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/contact"
               className={`${textColor} hover:text-primary transition-colors font-medium`}
             >
               Contact
             </Link>
-          </div>
-
-          {/* Menu à gauche de Commander */}
-          <div className="hidden md:flex mr-4">
             <Link
               href="/menu"
               className={`${textColor} hover:text-primary transition-colors font-medium`}
             >
               Menu
             </Link>
-          </div>
-
-          {/* Bouton Commander au centre */}
-          <div className="hidden md:flex mx-4">
             <Link
               href="/commander"
               className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
               🍔 Commander
             </Link>
-          </div>
-
-          {/* Promos à droite de Commander */}
-          <div className="hidden md:flex ml-4">
             <Link
               href="/promos"
               className={`${textColor} hover:text-primary transition-colors font-medium`}
             >
               Promos
             </Link>
-          </div>
-
-          {/* À propos à droite */}
-          <div className="hidden md:flex ml-8">
             <Link
               href="/a-propos"
               className={`${textColor} hover:text-primary transition-colors font-medium`}
@@ -116,7 +100,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Actions à droite */}
-          <div className="flex items-center space-x-4 ml-auto">
+          <div className="flex items-center space-x-4">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -196,6 +180,16 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </button>
           </div>
 
+          {/* Bouton Commander au centre - Mobile */}
+          <div className="md:hidden">
+            <Link
+              href="/commander"
+              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            >
+              🍔 Commander
+            </Link>
+          </div>
+
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -217,14 +211,61 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 ? 'bg-white dark:bg-gray-900' 
                 : 'bg-white/95 backdrop-blur-sm'
             }`}>
-              {/* Bouton Commander en mobile */}
-              <Link
-                href="/commander"
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🍔 Commander
-              </Link>
+              {/* Connexion/Profil en mobile */}
+              {isAuthenticated ? (
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {user?.name || 'Mon compte'}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Connecté
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Link
+                      href="/profile"
+                      className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <User className="w-5 h-5" />
+                      <span>Mon Profil</span>
+                    </Link>
+                    {user?.isAdmin && (
+                      <Link
+                        href="/admin"
+                        className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Shield className="w-5 h-5" />
+                        <span>Administration</span>
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center space-x-3 text-lg font-medium text-red-600 hover:text-red-700 w-full text-left"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      <span>Déconnexion</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href="/auth/login"
+                  className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <User className="w-5 h-5" />
+                  <span>Connexion</span>
+                </Link>
+              )}
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
                 <Link

@@ -114,56 +114,68 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               )}
             </button>
 
-            {/* Auth */}
-            {isAuthenticated ? (
-              <div className="relative group">
-                <button 
+            {/* Auth - Desktop only */}
+            <div className="hidden md:block">
+              {isAuthenticated ? (
+                <div className="relative group">
+                  <button 
+                    className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
+                  >
+                    <User className="w-5 h-5" />
+                    <span className={`${textColor} text-sm font-medium`}>
+                      {user?.name || 'Profil'}
+                    </span>
+                  </button>
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    <div className="py-1">
+                      <Link
+                        href="/profile"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <User className="w-4 h-4 mr-2" />
+                        Mon Profil
+                      </Link>
+                      {user?.isAdmin && (
+                        <Link
+                          href="/admin"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          <Shield className="w-4 h-4 mr-2" />
+                          Administration
+                        </Link>
+                      )}
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Déconnexion
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href="/auth/login"
                   className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
                 >
                   <User className="w-5 h-5" />
                   <span className={`${textColor} text-sm font-medium`}>
-                    {user?.name || 'Profil'}
+                    Connexion
                   </span>
-                </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <div className="py-1">
-                    <Link
-                      href="/profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <User className="w-4 h-4 mr-2" />
-                      Mon Profil
-                    </Link>
-                    {user?.isAdmin && (
-                      <Link
-                        href="/admin"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <Shield className="w-4 h-4 mr-2" />
-                        Administration
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Déconnexion
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
+                </Link>
+              )}
+            </div>
+
+            {/* Commander - Mobile only */}
+            <div className="md:hidden">
               <Link
-                href="/auth/login"
-                className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
+                href="/commander"
+                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
-                <User className="w-5 h-5" />
-                <span className={`${textColor} text-sm font-medium`}>
-                  Connexion
-                </span>
+                🍔 Commander
               </Link>
-            )}
+            </div>
 
             {/* Cart Button */}
             <button
@@ -202,14 +214,61 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 ? 'bg-white dark:bg-gray-900' 
                 : 'bg-white/95 backdrop-blur-sm'
             }`}>
-              {/* Bouton Commander en mobile */}
-              <Link
-                href="/commander"
-                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🍔 Commander
-              </Link>
+              {/* Connexion/Profil en mobile */}
+              {isAuthenticated ? (
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {user?.name || 'Mon compte'}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Connecté
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Link
+                      href="/profile"
+                      className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <User className="w-5 h-5" />
+                      <span>Mon Profil</span>
+                    </Link>
+                    {user?.isAdmin && (
+                      <Link
+                        href="/admin"
+                        className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Shield className="w-5 h-5" />
+                        <span>Administration</span>
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center space-x-3 text-lg font-medium text-red-600 hover:text-red-700 w-full text-left"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      <span>Déconnexion</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href="/auth/login"
+                  className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <User className="w-5 h-5" />
+                  <span>Connexion</span>
+                </Link>
+              )}
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
                 <Link

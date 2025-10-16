@@ -66,34 +66,34 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </Link>
 
           {/* Navigation centrée */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-12">
             <Link
               href="/contact"
-              className={`${textColor} hover:text-primary transition-colors font-medium`}
+              className={`${textColor} hover:text-primary transition-colors font-medium text-sm`}
             >
               Contact
             </Link>
             <Link
               href="/menu"
-              className={`${textColor} hover:text-primary transition-colors font-medium`}
+              className={`${textColor} hover:text-primary transition-colors font-bold text-xl`}
             >
               Menu
             </Link>
             <Link
               href="/commander"
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-full font-bold text-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
               🍔 Commander
             </Link>
             <Link
               href="/promos"
-              className={`${textColor} hover:text-primary transition-colors font-medium`}
+              className={`${textColor} hover:text-primary transition-colors font-bold text-xl`}
             >
               Promos
             </Link>
             <Link
               href="/a-propos"
-              className={`${textColor} hover:text-primary transition-colors font-medium`}
+              className={`${textColor} hover:text-primary transition-colors font-medium text-sm`}
             >
               À propos
             </Link>

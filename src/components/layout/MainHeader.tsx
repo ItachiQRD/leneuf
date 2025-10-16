@@ -64,41 +64,39 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </Link>
 
           {/* Navigation - Desktop */}
-          <nav className="hidden md:flex items-center space-x-12">
-            {/* Menu à gauche */}
-            <Link
-              href="/menu"
-              className="group relative px-6 py-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-            >
-              <span className="flex items-center">
-                <Menu className="w-5 h-5 mr-2" />
-                Menu
-              </span>
-              <div className="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
-            </Link>
+          <nav className="hidden md:flex items-center justify-center flex-1">
+            <div className="flex items-center space-x-8">
+              {/* Menu */}
+              <Link
+                href="/menu"
+                className="group relative px-6 py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium text-base transition-all duration-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+              >
+                <span className="flex items-center">
+                  <Menu className="w-4 h-4 mr-2" />
+                  Menu
+                </span>
+              </Link>
 
-            {/* Bouton Commander au centre */}
-            <Link
-              href="/commander"
-              className="group relative px-8 py-4 rounded-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold text-xl shadow-xl hover:shadow-2xl transform hover:scale-110 transition-all duration-200"
-            >
-              <span className="flex items-center">
-                🍔 Commander
-              </span>
-              <div className="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-200"></div>
-            </Link>
+              {/* Bouton Commander au centre */}
+              <Link
+                href="/commander"
+                className="group relative px-8 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold text-base rounded-md hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-200 shadow-sm hover:shadow-md"
+              >
+                <span className="flex items-center">
+                  Commander
+                </span>
+              </Link>
 
-            {/* Promos à droite */}
-            <Link
-              href="/promos"
-              className="group relative px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-            >
-              <span className="flex items-center">
-                <span className="text-xl mr-2">🎉</span>
-                Promos
-              </span>
-              <div className="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200"></div>
-            </Link>
+              {/* Promos */}
+              <Link
+                href="/promos"
+                className="group relative px-6 py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium text-base transition-all duration-200 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+              >
+                <span className="flex items-center">
+                  Promos
+                </span>
+              </Link>
+            </div>
           </nav>
 
           {/* Actions à droite */}
@@ -206,16 +204,16 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               {/* Bouton Commander en mobile */}
               <Link
                 href="/commander"
-                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-4 rounded-full font-bold text-xl text-center shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
+                className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-8 py-3 rounded-md font-semibold text-lg text-center shadow-sm hover:shadow-md transition-all duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                🍔 Commander
+                Commander
               </Link>
               
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
                 <Link
                   href="/menu"
-                  className="group flex items-center space-x-3 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-700 font-semibold text-lg transition-all duration-200"
+                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md font-medium transition-all duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Menu className="w-5 h-5" />
@@ -223,10 +221,9 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 </Link>
                 <Link
                   href="/promos"
-                  className="group flex items-center space-x-3 px-4 py-3 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 text-orange-700 font-semibold text-lg transition-all duration-200"
+                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md font-medium transition-all duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <span className="text-xl">🎉</span>
                   <span>Promos</span>
                 </Link>
               </div>

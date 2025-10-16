@@ -180,15 +180,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </button>
           </div>
 
-          {/* Bouton Commander au centre - Mobile */}
-          <div className="md:hidden">
-            <Link
-              href="/commander"
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-            >
-              🍔 Commander
-            </Link>
-          </div>
 
           {/* Mobile Menu Button */}
           <button
@@ -211,61 +202,14 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 ? 'bg-white dark:bg-gray-900' 
                 : 'bg-white/95 backdrop-blur-sm'
             }`}>
-              {/* Connexion/Profil en mobile */}
-              {isAuthenticated ? (
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {user?.name || 'Mon compte'}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Connecté
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Link
-                      href="/profile"
-                      className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <User className="w-5 h-5" />
-                      <span>Mon Profil</span>
-                    </Link>
-                    {user?.isAdmin && (
-                      <Link
-                        href="/admin"
-                        className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <Shield className="w-5 h-5" />
-                        <span>Administration</span>
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="flex items-center space-x-3 text-lg font-medium text-red-600 hover:text-red-700 w-full text-left"
-                    >
-                      <LogOut className="w-5 h-5" />
-                      <span>Déconnexion</span>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <Link
-                  href="/auth/login"
-                  className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <User className="w-5 h-5" />
-                  <span>Connexion</span>
-                </Link>
-              )}
+              {/* Bouton Commander en mobile */}
+              <Link
+                href="/commander"
+                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🍔 Commander
+              </Link>
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
                 <Link

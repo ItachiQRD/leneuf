@@ -23,8 +23,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const path = router.pathname;
     
+    // Routes publiques qui ne nécessitent pas d'authentification
+    const publicRoutes = [
+      '/',
+      '/menu',
+      '/commander',
+      '/contact',
+      '/a-propos',
+      '/promos',
+      '/checkout',
+      '/commande-formulaire',
+      '/commande-confirmee'
+    ];
+    
+    // Vérifier si la route actuelle est publique
+    const isPublicRoute = publicRoutes.some(route => path.startsWith(route));
+    
     // Rediriger vers login si non authentifié (sauf routes publiques)
-    if (!user && !path.startsWith('/auth/') && !path.startsWith('/api/') && path !== '/') {
+    if (!user && !path.startsWith('/auth/') && !path.startsWith('/api/') && !isPublicRoute) {
       router.replace('/auth/login');
       return;
     }

@@ -44,6 +44,7 @@ export function ImageUpload({ value, onChange, error, label }: ImageUploadProps)
       toast({
         title: "Succès",
         description: "Image sélectionnée avec succès",
+        variant: "success",
       });
     } catch (error) {
       console.error('Erreur:', error);

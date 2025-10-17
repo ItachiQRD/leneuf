@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import AdminMobileMenu from '@/components/ui/AdminMobileMenu';
+import { Toaster } from '@/components/ui/Toaster';
 import {
   LayoutDashboard,
   ChefHat,
@@ -167,6 +168,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {children}
         </main>
       </div>
+      <Toaster />
     </div>
   );
 }

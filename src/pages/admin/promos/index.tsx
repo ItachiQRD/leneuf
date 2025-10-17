@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
 import PromoForm from '@/components/admin/PromoForm';
+import { useToast } from '@/hooks/use-toast';
 
 interface Promo {
   _id: string;
@@ -40,6 +41,7 @@ interface Promo {
 export default function AdminPromosPage() {
   const { isAuthenticated, user } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [promos, setPromos] = useState<Promo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -87,12 +89,25 @@ export default function AdminPromosPage() {
 
       if (response.ok) {
         setPromos(promos.filter(promo => promo._id !== id));
+        toast({
+          title: 'Succès',
+          description: 'Promotion supprimée avec succès',
+          variant: 'success',
+        });
       } else {
-        alert('Erreur lors de la suppression');
+        toast({
+          title: 'Erreur',
+          description: 'Erreur lors de la suppression',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Error deleting promo:', error);
-      alert('Erreur lors de la suppression');
+      toast({
+        title: 'Erreur',
+        description: 'Erreur lors de la suppression',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -113,12 +128,25 @@ export default function AdminPromosPage() {
         setPromos(promos.map(p => 
           p._id === promo._id ? { ...p, isActive: !p.isActive } : p
         ));
+        toast({
+          title: 'Succès',
+          description: `Promotion ${promo.isActive ? 'désactivée' : 'activée'} avec succès`,
+          variant: 'success',
+        });
       } else {
-        alert('Erreur lors de la mise à jour');
+        toast({
+          title: 'Erreur',
+          description: 'Erreur lors de la mise à jour',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Error updating promo:', error);
-      alert('Erreur lors de la mise à jour');
+      toast({
+        title: 'Erreur',
+        description: 'Erreur lors de la mise à jour',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -144,13 +172,26 @@ export default function AdminPromosPage() {
         }
         setIsCreating(false);
         setEditingPromo(null);
+        toast({
+          title: 'Succès',
+          description: editingPromo ? 'Promotion modifiée avec succès' : 'Promotion créée avec succès',
+          variant: 'success',
+        });
       } else {
         const errorData = await response.json();
-        alert(`Erreur: ${errorData.error || 'Erreur lors de la sauvegarde'}`);
+        toast({
+          title: 'Erreur',
+          description: errorData.error || 'Erreur lors de la sauvegarde',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Error saving promo:', error);
-      alert('Erreur lors de la sauvegarde');
+      toast({
+        title: 'Erreur',
+        description: 'Erreur lors de la sauvegarde',
+        variant: 'destructive',
+      });
     }
   };
 

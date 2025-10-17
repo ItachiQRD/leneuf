@@ -257,7 +257,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       _id: `tacos-${Date.now()}`,
       name: `${config.type === 'bowl' ? 'Bowl' : `Tacos ${config.size}`} ${config.meats.map(m => m.name).join(', ')}`,
       price: calculatePrice(),
-      image: config.type === 'bowl' ? '/images/menu/format-bowl.jpg' : '/images/menu/tacos.jpg',
+      image: config.type === 'bowl' ? '/images/bowl.jpeg' : '/images/tacos.jpg',
       category: 'tacos',
       type: 'food',
       customIngredients: {

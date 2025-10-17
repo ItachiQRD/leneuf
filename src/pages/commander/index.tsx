@@ -641,7 +641,7 @@ export default function CommanderPage() {
                             return `${minPrice}€ - ${maxPrice}€`;
                           })()
                         ) : (
-                          item.price ? `${item.price.toFixed(2)}€` : 
+                          item.price && !isNaN(item.price) ? `${item.price.toFixed(2)}€` : 
                           item.sizes && item.sizes.length > 0 ? 
                           `À partir de ${Math.min(...item.sizes.map((s: any) => s.price)).toFixed(2)}€` : 
                           'Prix sur demande'
@@ -691,7 +691,7 @@ export default function CommanderPage() {
                         {item.name}
                       </h4>
                       <p className="text-xs text-gray-500">
-                        {(item.price * item.quantity).toFixed(2)} €
+                        {item.price && !isNaN(item.price) ? (item.price * item.quantity).toFixed(2) : '0.00'} €
                       </p>
                     </div>
                     
@@ -855,7 +855,7 @@ export default function CommanderPage() {
                                 return `${minPrice}€ - ${maxPrice}€`;
                               })()
                             ) : (
-                              item.price ? `${item.price.toFixed(2)}€` : 
+                              item.price && !isNaN(item.price) ? `${item.price.toFixed(2)}€` : 
                               item.sizes && item.sizes.length > 0 ? 
                               `À partir de ${Math.min(...item.sizes.map((s: any) => s.price)).toFixed(2)}€` : 
                               'Prix sur demande'

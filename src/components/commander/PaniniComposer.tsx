@@ -145,10 +145,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
   };
 
   const calculatePrice = () => {
-    let price = 0;
-    // Prix des ingrédients de base (viandes et fromages)
-    price += selectedIngredients.baseIngredients.reduce((sum, ing) => sum + ing.price, 0);
-    // Prix de la sauce (gratuite)
+    let price = 6.50; // Prix de base du panini
     // Prix des suppléments (1€ chacun)
     price += selectedIngredients.supplements.length;
     return price;

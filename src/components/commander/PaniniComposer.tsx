@@ -166,7 +166,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
       _id: `panini-${Date.now()}`,
       name: `Panini ${selectedIngredients.baseIngredients.map(i => i.name).join(', ')}`,
       price: calculatePrice(),
-      image: '/images/menu/format-tacos.jpg', // Image du panini
+      image: '/images/panini.jpeg', // Image du panini
       category: 'paninis',
       type: 'food',
       customIngredients: selectedIngredients

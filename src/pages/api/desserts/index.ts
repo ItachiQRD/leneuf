@@ -12,7 +12,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     
     const desserts = await Dessert.find({}).sort({ createdAt: -1 });
     
-    res.status(200).json(desserts);
+    // Formater les desserts pour inclure un prix de base
+    const formattedDesserts = desserts.map(dessert => ({
+      ...dessert.toObject(),
+      price: dessert.price || 0,
+      category: dessert.category || 'desserts',
+      type: 'dessert'
+    }));
+    
+    res.status(200).json(formattedDesserts);
   } catch (error) {
     console.error('Error fetching desserts:', error);
     res.status(500).json({ message: 'Error fetching desserts' });

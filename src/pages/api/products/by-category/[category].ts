@@ -98,7 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         products = await Drink.find({ 
           available: true,
           active: true 
-        }).select('name image description category nutritionalInfo sizes type brand');
+        }).select('name price image description category nutritionalInfo sizes type brand');
         break;
 
       case 'desserts':
@@ -112,11 +112,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ message: 'Invalid category' });
     }
 
-    // Ajouter le type de produit pour le frontend
-    const productsWithType = products.map(product => ({
-      ...product.toObject ? product.toObject() : product,
-      productType: getProductType(category)
-    }));
+    // Ajouter le type de produit pour le frontend et formater les prix
+    const productsWithType = products.map(product => {
+      const productObj = product.toObject ? product.toObject() : product;
+      
+      // Pour les boissons, ajouter un prix de base si pas défini
+      if (category === 'boissons' && (!productObj.price || productObj.price === 0)) {
+        productObj.price = productObj.sizes?.[0]?.price || 0;
+      }
+      
+      return {
+        ...productObj,
+        productType: getProductType(category)
+      };
+    });
 
     res.status(200).json({
       success: true,

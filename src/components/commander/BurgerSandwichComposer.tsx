@@ -47,7 +47,6 @@ interface Sauce {
 
 const STEPS = [
   { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
-  { id: 'bread', title: 'Pain', description: 'Durum ou pain pour sandwichs' },
   { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
   { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
   { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
@@ -86,7 +85,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   const [config, setConfig] = useState({
     menuOption: 'avec-frites' as string,
     breadType: 'pain' as string,
-    selectedIngredients: [] as Ingredient[],
+    selectedVegetables: [] as string[],
     withFries: true,
     selectedSauce: null as Sauce | null,
     selectedDrink: null as Drink | null,
@@ -100,7 +99,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       setConfig({
         menuOption: 'avec-frites',
         breadType: 'pain',
-        selectedIngredients: [],
+        selectedVegetables: [],
         withFries: true,
         selectedSauce: null,
         selectedDrink: null,
@@ -174,14 +173,6 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     }));
   };
 
-  const handleIngredientToggle = (ingredient: Ingredient) => {
-    setConfig(prev => ({
-      ...prev,
-      selectedIngredients: prev.selectedIngredients.some(ing => ing._id === ingredient._id)
-        ? prev.selectedIngredients.filter(ing => ing._id !== ingredient._id)
-        : [...prev.selectedIngredients, ingredient]
-    }));
-  };
 
   const handleSauceSelect = (sauce: Sauce) => {
     setConfig(prev => ({
@@ -223,7 +214,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       customIngredients: {
         menuOption: config.menuOption,
         breadType: config.breadType,
-        ingredients: config.selectedIngredients,
+        vegetables: config.selectedVegetables,
         withFries: config.withFries,
         sauce: config.selectedSauce,
         drink: config.selectedDrink,
@@ -240,7 +231,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     setConfig({
       menuOption: 'avec-frites',
       breadType: 'pain',
-      selectedIngredients: [],
+      selectedVegetables: [],
       withFries: true,
       selectedSauce: null,
       selectedDrink: null,
@@ -250,15 +241,27 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   };
 
   const canProceed = () => {
-    switch (currentStep) {
-      case 0: return config.menuOption !== '';
-      case 1: return config.breadType !== ''; // Pain obligatoire
-      case 2: return true; // Les crudités sont optionnelles
-      case 3: return true; // Les frites sont toujours incluses
-      case 4: return true; // Les sauces sont optionnelles
-      case 5: return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
-      case 6: return true; // Le récapitulatif
-      default: return true;
+    if (type === 'burger') {
+      switch (currentStep) {
+        case 0: return config.menuOption !== '';
+        case 1: return true; // Les crudités sont optionnelles
+        case 2: return true; // Les frites sont toujours incluses
+        case 3: return true; // Les sauces sont optionnelles
+        case 4: return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
+        case 5: return true; // Le récapitulatif
+        default: return true;
+      }
+    } else { // sandwich
+      switch (currentStep) {
+        case 0: return config.menuOption !== '';
+        case 1: return config.breadType !== ''; // Pain obligatoire
+        case 2: return true; // Les crudités sont optionnelles
+        case 3: return true; // Les frites sont toujours incluses
+        case 4: return true; // Les sauces sont optionnelles
+        case 5: return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
+        case 6: return true; // Le récapitulatif
+        default: return true;
+      }
     }
   };
 
@@ -361,8 +364,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 2: Pain */}
-              {currentStep === 1 && (
+              {/* Étape 2: Pain (seulement pour sandwichs) */}
+              {currentStep === 1 && type === 'sandwich' && (
                 <motion.div
                   key="bread"
                   initial={{ opacity: 0, x: 20 }}
@@ -398,8 +401,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 3: Crudités */}
-              {currentStep === 2 && (
+              {/* Étape 2/3: Crudités */}
+              {((currentStep === 1 && type === 'burger') || (currentStep === 2 && type === 'sandwich')) && (
                 <motion.div
                   key="vegetables"
                   initial={{ opacity: 0, x: 20 }}
@@ -411,58 +414,37 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                     Crudités (optionnel)
                   </h3>
                   
-                  {/* Option "Aucun" */}
-                  <div
-                    onClick={() => setConfig(prev => ({ ...prev, selectedIngredients: [] }))}
-                    className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      config.selectedIngredients.length === 0
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3 lg:mr-4">
-                        <X className="w-5 h-5 lg:w-6 lg:h-6 text-gray-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 text-sm lg:text-base">Aucun ingrédient</h4>
-                        <p className="text-xs lg:text-sm text-gray-600">Pas d'ingrédients supplémentaires</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Ingrédients disponibles */}
-                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
-                    {ingredients.map((ingredient) => (
-                      <div
-                        key={ingredient._id}
-                        onClick={() => handleIngredientToggle(ingredient)}
-                        className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                          config.selectedIngredients.some(ing => ing._id === ingredient._id)
-                            ? 'border-green-500 bg-green-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="text-center">
-                          <div className="w-12 h-12 lg:w-16 lg:h-16 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
-                            <Image
-                              src={ingredient.image || '/images/placeholder-ingredient.jpg'}
-                              alt={ingredient.name}
-                              width={48}
-                              height={48}
-                              className="object-contain rounded-lg"
-                            />
-                          </div>
-                          <h4 className="font-medium text-gray-900 text-xs lg:text-sm">{ingredient.name}</h4>
-                        </div>
-                      </div>
+                  <div className="space-y-2">
+                    {['Salade', 'Tomate', 'Oignons'].map((vegetable) => (
+                      <label key={vegetable} className="flex items-center p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
+                        <input
+                          type="checkbox"
+                          checked={config.selectedVegetables.includes(vegetable)}
+                          onChange={() => {
+                            const isSelected = config.selectedVegetables.includes(vegetable);
+                            if (isSelected) {
+                              setConfig(prev => ({
+                                ...prev,
+                                selectedVegetables: prev.selectedVegetables.filter(v => v !== vegetable)
+                              }));
+                            } else {
+                              setConfig(prev => ({
+                                ...prev,
+                                selectedVegetables: [...prev.selectedVegetables, vegetable]
+                              }));
+                            }
+                          }}
+                          className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                        />
+                        <span className="text-gray-700 text-sm lg:text-base">{vegetable}</span>
+                      </label>
                     ))}
                   </div>
                 </motion.div>
               )}
 
-              {/* Étape 4: Frites */}
-              {currentStep === 3 && (
+              {/* Étape 3/4: Frites */}
+              {((currentStep === 2 && type === 'burger') || (currentStep === 3 && type === 'sandwich')) && (
                 <motion.div
                   key="fries"
                   initial={{ opacity: 0, x: 20 }}
@@ -488,8 +470,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 5: Sauce */}
-              {currentStep === 4 && (
+              {/* Étape 4/5: Sauce */}
+              {((currentStep === 3 && type === 'burger') || (currentStep === 4 && type === 'sandwich')) && (
                 <motion.div
                   key="sauce"
                   initial={{ opacity: 0, x: 20 }}
@@ -551,8 +533,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 6: Boisson */}
-              {currentStep === 5 && (
+              {/* Étape 5/6: Boisson */}
+              {((currentStep === 4 && type === 'burger') || (currentStep === 5 && type === 'sandwich')) && (
                 <motion.div
                   key="drink"
                   initial={{ opacity: 0, x: 20 }}
@@ -647,8 +629,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 7: Récapitulatif */}
-              {currentStep === 6 && (
+              {/* Étape 6/7: Récapitulatif */}
+              {((currentStep === 5 && type === 'burger') || (currentStep === 6 && type === 'sandwich')) && (
                 <motion.div
                   key="summary"
                   initial={{ opacity: 0, x: 20 }}
@@ -681,15 +663,17 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                         <span>{MENU_OPTIONS.find(opt => opt.id === config.menuOption)?.name}</span>
                       </div>
                       
-                      <div className="flex justify-between">
-                        <span>Pain:</span>
-                        <span>{BREAD_OPTIONS.find(opt => opt.id === config.breadType)?.name}</span>
-                      </div>
+                      {type === 'sandwich' && (
+                        <div className="flex justify-between">
+                          <span>Pain:</span>
+                          <span>{BREAD_OPTIONS.find(opt => opt.id === config.breadType)?.name}</span>
+                        </div>
+                      )}
                       
-                      {config.selectedIngredients.length > 0 && (
+                      {config.selectedVegetables.length > 0 && (
                         <div className="flex justify-between">
                           <span>Crudités:</span>
-                          <span>{config.selectedIngredients.map(ing => ing.name).join(', ')}</span>
+                          <span>{config.selectedVegetables.join(', ')}</span>
                         </div>
                       )}
                       

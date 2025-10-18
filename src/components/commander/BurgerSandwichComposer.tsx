@@ -45,14 +45,28 @@ interface Sauce {
   image: string;
 }
 
-const STEPS = [
-  { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
-  { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
-  { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
-  { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
-  { id: 'drink', title: 'Boisson', description: 'Sélectionnez votre boisson' },
-  { id: 'summary', title: 'Récapitulatif', description: 'Vérifiez votre commande' }
-];
+const getSteps = (productType: 'burger' | 'sandwich') => {
+  if (productType === 'burger') {
+    return [
+      { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
+      { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
+      { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
+      { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
+      { id: 'drink', title: 'Boisson', description: 'Sélectionnez votre boisson' },
+      { id: 'summary', title: 'Récapitulatif', description: 'Vérifiez votre commande' }
+    ];
+  } else { // sandwich
+    return [
+      { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
+      { id: 'bread', title: 'Pain', description: 'Durum ou pain pour sandwichs' },
+      { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
+      { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
+      { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
+      { id: 'drink', title: 'Boisson', description: 'Sélectionnez votre boisson' },
+      { id: 'summary', title: 'Récapitulatif', description: 'Vérifiez votre commande' }
+    ];
+  }
+};
 
 const MENU_OPTIONS: MenuOption[] = [
   {
@@ -80,6 +94,9 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   const [drinks, setDrinks] = useState<Drink[]>([]);
   const [sauces, setSauces] = useState<Sauce[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  // Étapes dynamiques selon le type de produit
+  const steps = getSteps(type);
   
   // Configuration du produit
   const [config, setConfig] = useState({
@@ -189,7 +206,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   };
 
   const handleNext = () => {
-    if (currentStep < STEPS.length - 1) {
+    if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -241,27 +258,18 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   };
 
   const canProceed = () => {
-    if (type === 'burger') {
-      switch (currentStep) {
-        case 0: return config.menuOption !== '';
-        case 1: return true; // Les crudités sont optionnelles
-        case 2: return true; // Les frites sont toujours incluses
-        case 3: return true; // Les sauces sont optionnelles
-        case 4: return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
-        case 5: return true; // Le récapitulatif
-        default: return true;
-      }
-    } else { // sandwich
-      switch (currentStep) {
-        case 0: return config.menuOption !== '';
-        case 1: return config.breadType !== ''; // Pain obligatoire
-        case 2: return true; // Les crudités sont optionnelles
-        case 3: return true; // Les frites sont toujours incluses
-        case 4: return true; // Les sauces sont optionnelles
-        case 5: return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
-        case 6: return true; // Le récapitulatif
-        default: return true;
-      }
+    const currentStepData = steps[currentStep];
+    if (!currentStepData) return true;
+
+    switch (currentStepData.id) {
+      case 'menu': return config.menuOption !== '';
+      case 'bread': return config.breadType !== ''; // Pain obligatoire pour sandwichs
+      case 'vegetables': return true; // Les crudités sont optionnelles
+      case 'fries': return true; // Les frites sont toujours incluses
+      case 'sauce': return true; // Les sauces sont optionnelles
+      case 'drink': return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
+      case 'summary': return true; // Le récapitulatif
+      default: return true;
     }
   };
 
@@ -295,7 +303,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
           {/* Progress Bar */}
           <div className="px-4 lg:px-6 py-3 lg:py-4 bg-gray-50">
             <div className="flex items-center justify-between overflow-x-auto">
-              {STEPS.map((step, index) => (
+              {steps.map((step, index) => (
                 <div key={step.id} className="flex items-center flex-shrink-0">
                   <div className={`w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-xs lg:text-sm font-medium ${
                     index <= currentStep 
@@ -308,7 +316,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                     <div className="text-xs lg:text-sm font-medium text-gray-900 whitespace-nowrap">{step.title}</div>
                     <div className="text-xs text-gray-500 whitespace-nowrap">{step.description}</div>
                   </div>
-                  {index < STEPS.length - 1 && (
+                  {index < steps.length - 1 && (
                     <div className={`w-4 lg:w-8 h-0.5 mx-2 lg:mx-4 ${
                       index < currentStep ? 'bg-green-600' : 'bg-gray-300'
                     }`} />
@@ -321,8 +329,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
           {/* Content */}
           <div className="p-4 lg:p-6 overflow-y-auto max-h-[50vh]">
             <AnimatePresence mode="wait">
-              {/* Étape 1: Menu */}
-              {currentStep === 0 && (
+              {/* Étape Menu */}
+              {steps[currentStep]?.id === 'menu' && (
                 <motion.div
                   key="menu"
                   initial={{ opacity: 0, x: 20 }}
@@ -364,8 +372,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 2: Pain (seulement pour sandwichs) */}
-              {currentStep === 1 && type === 'sandwich' && (
+              {/* Étape Pain */}
+              {steps[currentStep]?.id === 'bread' && (
                 <motion.div
                   key="bread"
                   initial={{ opacity: 0, x: 20 }}
@@ -401,8 +409,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 2/3: Crudités */}
-              {((currentStep === 1 && type === 'burger') || (currentStep === 2 && type === 'sandwich')) && (
+              {/* Étape Crudités */}
+              {steps[currentStep]?.id === 'vegetables' && (
                 <motion.div
                   key="vegetables"
                   initial={{ opacity: 0, x: 20 }}
@@ -443,8 +451,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 3/4: Frites */}
-              {((currentStep === 2 && type === 'burger') || (currentStep === 3 && type === 'sandwich')) && (
+              {/* Étape Frites */}
+              {steps[currentStep]?.id === 'fries' && (
                 <motion.div
                   key="fries"
                   initial={{ opacity: 0, x: 20 }}
@@ -470,8 +478,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 4/5: Sauce */}
-              {((currentStep === 3 && type === 'burger') || (currentStep === 4 && type === 'sandwich')) && (
+              {/* Étape Sauce */}
+              {steps[currentStep]?.id === 'sauce' && (
                 <motion.div
                   key="sauce"
                   initial={{ opacity: 0, x: 20 }}
@@ -533,8 +541,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 5/6: Boisson */}
-              {((currentStep === 4 && type === 'burger') || (currentStep === 5 && type === 'sandwich')) && (
+              {/* Étape Boisson */}
+              {steps[currentStep]?.id === 'drink' && (
                 <motion.div
                   key="drink"
                   initial={{ opacity: 0, x: 20 }}
@@ -629,8 +637,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 6/7: Récapitulatif */}
-              {((currentStep === 5 && type === 'burger') || (currentStep === 6 && type === 'sandwich')) && (
+              {/* Étape Récapitulatif */}
+              {steps[currentStep]?.id === 'summary' && (
                 <motion.div
                   key="summary"
                   initial={{ opacity: 0, x: 20 }}
@@ -743,7 +751,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
               </Button>
             </div>
 
-            {currentStep === STEPS.length - 1 ? (
+            {currentStep === steps.length - 1 ? (
               <Button onClick={handleAddToCart} disabled={!canProceed()} className="text-sm lg:text-base px-2 lg:px-4 py-2 lg:py-2">
                 <span className="hidden lg:inline">Ajouter au panier</span>
                 <span className="lg:hidden">+</span>

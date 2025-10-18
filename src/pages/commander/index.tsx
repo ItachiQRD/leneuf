@@ -492,10 +492,12 @@ export default function CommanderPage() {
       image: productForCustomization.image,
       category: productForCustomization.category || selectedCategory,
       type: productForCustomization.type || 'food',
-      customIngredients: selectedIngredients,
-      selectedSauce: selectedSauceForProduct,
-      menuOption: selectedMenuOption,
-      selectedDrinks: selectedDrinks
+      customIngredients: {
+        ingredients: selectedIngredients,
+        sauce: selectedSauceForProduct,
+        menuOption: selectedMenuOption,
+        drinks: selectedDrinks
+      }
     };
 
     addItem(cartItem);
@@ -1074,6 +1076,8 @@ export default function CommanderPage() {
             )}
 
             {/* Choix des sauces */}
+            {(['accompagnements', 'assiettes', 'ptite-faim', 'menu-enfant'].includes(selectedCategory) || 
+              ['burgers', 'sandwichs'].includes(selectedCategory)) && (
             <div className="mb-6">
               <h4 className="text-lg font-medium text-gray-900 mb-3">Sauce</h4>
               <div className="grid grid-cols-2 gap-3">
@@ -1108,6 +1112,7 @@ export default function CommanderPage() {
                 ))}
               </div>
             </div>
+            )}
 
             {/* Options menu (pour burgers et sandwichs) */}
             {['burgers', 'sandwichs'].includes(selectedCategory) && (

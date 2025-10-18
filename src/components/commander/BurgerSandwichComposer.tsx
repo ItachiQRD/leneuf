@@ -47,6 +47,7 @@ interface Sauce {
 
 const STEPS = [
   { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
+  { id: 'bread', title: 'Pain', description: 'Durum ou pain pour sandwichs' },
   { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
   { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
   { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
@@ -69,6 +70,11 @@ const MENU_OPTIONS: MenuOption[] = [
   }
 ];
 
+const BREAD_OPTIONS = [
+  { id: 'pain', name: 'Pain', price: 0 },
+  { id: 'durum', name: 'Durum', price: 0 }
+];
+
 export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, product, type }: BurgerSandwichComposerProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -79,6 +85,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   // Configuration du produit
   const [config, setConfig] = useState({
     menuOption: 'avec-frites' as string,
+    breadType: 'pain' as string,
     selectedIngredients: [] as Ingredient[],
     withFries: true,
     selectedSauce: null as Sauce | null,
@@ -92,6 +99,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       setCurrentStep(0);
       setConfig({
         menuOption: 'avec-frites',
+        breadType: 'pain',
         selectedIngredients: [],
         withFries: true,
         selectedSauce: null,
@@ -214,6 +222,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       type: 'food',
       customIngredients: {
         menuOption: config.menuOption,
+        breadType: config.breadType,
         ingredients: config.selectedIngredients,
         withFries: config.withFries,
         sauce: config.selectedSauce,
@@ -230,6 +239,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     setCurrentStep(0);
     setConfig({
       menuOption: 'avec-frites',
+      breadType: 'pain',
       selectedIngredients: [],
       withFries: true,
       selectedSauce: null,
@@ -242,10 +252,12 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   const canProceed = () => {
     switch (currentStep) {
       case 0: return config.menuOption !== '';
-      case 1: return true; // Les crudités sont optionnelles
-      case 2: return true; // Les frites sont toujours incluses
-      case 3: return true; // Les sauces sont optionnelles
-      case 4: return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
+      case 1: return config.breadType !== ''; // Pain obligatoire
+      case 2: return true; // Les crudités sont optionnelles
+      case 3: return true; // Les frites sont toujours incluses
+      case 4: return true; // Les sauces sont optionnelles
+      case 5: return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
+      case 6: return true; // Le récapitulatif
       default: return true;
     }
   };
@@ -349,8 +361,45 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 2: Crudités */}
+              {/* Étape 2: Pain */}
               {currentStep === 1 && (
+                <motion.div
+                  key="bread"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="space-y-4"
+                >
+                  <h3 className="text-base lg:text-xl font-semibold text-gray-900 mb-4">
+                    Choisissez votre pain
+                  </h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    {BREAD_OPTIONS.map((option) => (
+                      <button
+                        key={option.id}
+                        onClick={() => setConfig(prev => ({ ...prev, breadType: option.id }))}
+                        className={`p-4 rounded-lg border-2 text-left transition-all ${
+                          config.breadType === option.id
+                            ? 'border-red-500 bg-red-50 text-red-700'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium">{option.name}</h4>
+                          </div>
+                          {config.breadType === option.id && (
+                            <Check className="w-5 h-5 text-red-500" />
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Étape 3: Crudités */}
+              {currentStep === 2 && (
                 <motion.div
                   key="vegetables"
                   initial={{ opacity: 0, x: 20 }}
@@ -412,8 +461,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 3: Frites */}
-              {currentStep === 2 && (
+              {/* Étape 4: Frites */}
+              {currentStep === 3 && (
                 <motion.div
                   key="fries"
                   initial={{ opacity: 0, x: 20 }}
@@ -439,8 +488,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 4: Sauce */}
-              {currentStep === 3 && (
+              {/* Étape 5: Sauce */}
+              {currentStep === 4 && (
                 <motion.div
                   key="sauce"
                   initial={{ opacity: 0, x: 20 }}
@@ -502,8 +551,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 5: Boisson */}
-              {currentStep === 4 && (
+              {/* Étape 6: Boisson */}
+              {currentStep === 5 && (
                 <motion.div
                   key="drink"
                   initial={{ opacity: 0, x: 20 }}
@@ -598,8 +647,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape 6: Récapitulatif */}
-              {currentStep === 5 && (
+              {/* Étape 7: Récapitulatif */}
+              {currentStep === 6 && (
                 <motion.div
                   key="summary"
                   initial={{ opacity: 0, x: 20 }}
@@ -630,6 +679,11 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                       <div className="flex justify-between">
                         <span>Menu:</span>
                         <span>{MENU_OPTIONS.find(opt => opt.id === config.menuOption)?.name}</span>
+                      </div>
+                      
+                      <div className="flex justify-between">
+                        <span>Pain:</span>
+                        <span>{BREAD_OPTIONS.find(opt => opt.id === config.breadType)?.name}</span>
                       </div>
                       
                       {config.selectedIngredients.length > 0 && (

@@ -56,7 +56,11 @@ const orderSchema = createBaseSchema<OrderModel>({
         name: String,
         price: Number
       }
-    }]
+    }],
+    customIngredients: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null
+    }
   }],
   total: {
     type: Number,

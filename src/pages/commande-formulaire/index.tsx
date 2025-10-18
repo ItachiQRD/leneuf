@@ -68,7 +68,8 @@ export default function CommandeFormulairePage() {
           quantity: item.quantity,
           price: item.price,
           image: item.image,
-          options: item.options || []
+          options: item.options || [],
+          customIngredients: item.customIngredients || null
         })),
         total: total,
         status: 'pending',

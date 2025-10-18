@@ -63,7 +63,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           productName: item.productName || 'Produit personnalisé',
           quantity: item.quantity || 1,
           price: item.price || 0,
-          options: item.options || []
+          options: item.options || [],
+          customIngredients: item.customIngredients || null
         })),
         total: total || 0,
         status: status || 'pending',

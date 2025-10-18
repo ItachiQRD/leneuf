@@ -15,7 +15,8 @@ import {
   Package,
   Phone,
   MessageSquare,
-  Printer
+  Printer,
+  Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
 import { Badge } from '@/components/ui/Badge';
@@ -85,6 +86,7 @@ interface Order {
         price: number;
       };
     }>;
+    customIngredients?: any;
   }>;
   total: number;
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
@@ -210,6 +212,34 @@ export default function AdminOrdersPage() {
     } catch (err) {
       setError('Erreur de connexion');
       console.error('Error updating order:', err);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const deleteOrder = async (orderId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette commande ? Cette action est irréversible.')) {
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      const response = await fetch(`/api/admin/orders/${orderId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setOrders(prev => prev.filter(order => order._id !== orderId));
+        setShowOrderModal(false);
+        setSelectedOrder(null);
+      } else {
+        setError(data.message || 'Erreur lors de la suppression');
+      }
+    } catch (err) {
+      console.error('Erreur lors de la suppression:', err);
+      setError('Erreur lors de la suppression de la commande');
     } finally {
       setUpdating(false);
     }
@@ -355,13 +385,7 @@ export default function AdminOrdersPage() {
                       Contact
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Type
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Statut
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Paiement
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Total
@@ -417,29 +441,9 @@ export default function AdminOrdersPage() {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            {order.userId ? (
-                              <Badge className="bg-blue-100 text-blue-800">
-                                <User className="w-3 h-3 mr-1" />
-                                Compte
-                              </Badge>
-                            ) : (
-                              <Badge className="bg-orange-100 text-orange-800">
-                                <Package className="w-3 h-3 mr-1" />
-                                Invité
-                              </Badge>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
                           <Badge className={orderStatusConfig.color}>
                             {getStatusIcon(order.status)}
                             <span className="ml-1">{orderStatusConfig.label}</span>
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge className={paymentConfig.color}>
-                            {paymentConfig.label}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -471,6 +475,14 @@ export default function AdminOrdersPage() {
                                 className="text-blue-600 hover:text-blue-700"
                               >
                                 <Printer className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => deleteOrder(order._id)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
                           </div>
@@ -631,6 +643,15 @@ export default function AdminOrdersPage() {
                       >
                         <Printer className="w-4 h-4 mr-2" />
                         Imprimer
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => deleteOrder(order._id)}
+                        className="flex-1 text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Supprimer
                       </Button>
                     </div>
                   </div>
@@ -826,6 +847,67 @@ function OrderDetailModal({
                           )}
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Custom Ingredients pour les produits personnalisés */}
+                {item.customIngredients && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <div className="text-sm font-medium text-gray-700 mb-2">Ingrédients personnalisés :</div>
+                    <div className="space-y-1">
+                      {item.customIngredients.baseIngredients && item.customIngredients.baseIngredients.length > 0 && (
+                        <div className="text-sm">
+                          <span className="text-gray-600 font-medium">Ingrédients de base:</span>
+                          <span className="ml-2 text-gray-900">
+                            {item.customIngredients.baseIngredients.map((ing: any) => ing.name).join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {item.customIngredients.supplements && item.customIngredients.supplements.length > 0 && (
+                        <div className="text-sm">
+                          <span className="text-gray-600 font-medium">Suppléments:</span>
+                          <span className="ml-2 text-gray-900">
+                            {item.customIngredients.supplements.map((sup: any) => sup.name).join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {item.customIngredients.sauces && item.customIngredients.sauces.length > 0 && (
+                        <div className="text-sm">
+                          <span className="text-gray-600 font-medium">Sauces:</span>
+                          <span className="ml-2 text-gray-900">
+                            {item.customIngredients.sauces.map((sauce: any) => sauce.name).join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {item.customIngredients.meats && item.customIngredients.meats.length > 0 && (
+                        <div className="text-sm">
+                          <span className="text-gray-600 font-medium">Viandes:</span>
+                          <span className="ml-2 text-gray-900">
+                            {item.customIngredients.meats.map((meat: any) => meat.name).join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {item.customIngredients.ingredients && item.customIngredients.ingredients.length > 0 && (
+                        <div className="text-sm">
+                          <span className="text-gray-600 font-medium">Ingrédients:</span>
+                          <span className="ml-2 text-gray-900">
+                            {item.customIngredients.ingredients.map((ing: any) => ing.name).join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {item.customIngredients.size && (
+                        <div className="text-sm">
+                          <span className="text-gray-600 font-medium">Taille:</span>
+                          <span className="ml-2 text-gray-900">{item.customIngredients.size}</span>
+                        </div>
+                      )}
+                      {item.customIngredients.type && (
+                        <div className="text-sm">
+                          <span className="text-gray-600 font-medium">Type:</span>
+                          <span className="ml-2 text-gray-900">{item.customIngredients.type}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

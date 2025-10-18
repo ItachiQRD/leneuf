@@ -27,6 +27,7 @@ interface Order {
         price: number;
       };
     }>;
+    customIngredients?: any;
   }>;
   total: number;
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
@@ -85,7 +86,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-gray-800 text-white p-4 rounded-t-lg">
           <div className="flex justify-between items-center">
@@ -99,164 +100,193 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           </div>
         </div>
 
-        {/* Ticket Content - Optimisé pour l'impression */}
-        <div className="p-6 print:p-4" id="ticket-content">
-          {/* Restaurant Info */}
-          <div className="text-center mb-6 print:mb-4">
-            <h1 className="text-2xl font-bold text-gray-900 print:text-xl">Le 9</h1>
-            <p className="text-gray-600 print:text-sm">Restaurant Fast-Food</p>
-            <p className="text-sm text-gray-500 print:text-xs">
+        {/* Ticket Content - Style ticket de magasin */}
+        <div className="p-4 print:p-2" id="ticket-content">
+          {/* Restaurant Info - Style ticket */}
+          <div className="text-center mb-4 print:mb-2">
+            <div className="border-b-2 border-gray-800 pb-2 print:pb-1">
+              <h1 className="text-3xl font-bold print:text-2xl">LE 9</h1>
+              <p className="text-sm print:text-xs">RESTAURANT FAST-FOOD</p>
+            </div>
+            <div className="mt-2 text-xs print:text-xs">
               {new Date().toLocaleString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit', 
                 year: 'numeric',
-                month: 'long',
-                day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
               })}
-            </p>
-          </div>
-
-          {/* Order Info */}
-          <div className="border-b border-gray-200 pb-4 mb-4 print:pb-2 print:mb-2">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-gray-900 print:text-sm">Commande #{order._id.slice(-8)}</span>
-              <span className="text-sm text-gray-600 print:text-xs">
-                {new Date(order.createdAt).toLocaleString('fr-FR')}
-              </span>
-            </div>
-            <div className="mt-2">
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium print:text-xs ${
-                order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                'bg-red-100 text-red-800'
-              }`}>
-                {order.status === 'pending' ? 'En attente' :
-                 order.status === 'processing' ? 'En cours' :
-                 order.status === 'completed' ? 'Terminée' : 'Annulée'}
-              </span>
             </div>
           </div>
 
-          {/* Customer Info */}
-          <div className="mb-6 print:mb-4">
-            <h3 className="font-semibold text-gray-900 mb-3 print:text-sm print:mb-2">Informations Client</h3>
-            <div className="bg-gray-50 rounded-lg p-4 print:bg-white print:p-2 print:border print:border-gray-300">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:grid-cols-2 print:gap-2">
-                <div>
-                  <p className="text-sm font-medium text-gray-700 print:text-xs">Nom:</p>
-                  <p className="text-gray-900 print:text-xs">
-                    {order.userId?.name || order.customer?.name || 'N/A'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700 print:text-xs">Téléphone:</p>
-                  <p className="text-gray-900 print:text-xs">
-                    {order.userId?.phone || order.customer?.phone || 'N/A'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700 print:text-xs">Email:</p>
-                  <p className="text-gray-900 print:text-xs">
-                    {order.userId?.email || 'N/A'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700 print:text-xs">Mode de paiement:</p>
-                  <p className="text-gray-900 print:text-xs">
-                    {order.customer?.paymentMethod === 'card' ? 'Carte bancaire' : 
-                     order.customer?.paymentMethod === 'cash' ? 'Espèces' : 'N/A'}
-                  </p>
-                </div>
+          {/* Order Info - Style ticket */}
+          <div className="border-b border-dashed border-gray-400 pb-2 mb-3 print:pb-1 print:mb-2">
+            <div className="text-center">
+              <div className="text-sm font-bold print:text-xs">COMMANDE #{order._id.slice(-8)}</div>
+              <div className="text-xs print:text-xs">
+                {new Date(order.createdAt).toLocaleString('fr-FR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
               </div>
             </div>
           </div>
 
-          {/* Delivery Address */}
-          <div className="mb-6 print:mb-4">
-            <h3 className="font-semibold text-gray-900 mb-3 print:text-sm print:mb-2">Adresse de Livraison</h3>
-            <div className="bg-gray-50 rounded-lg p-4 print:bg-white print:p-2 print:border print:border-gray-300">
-              <p className="text-gray-900 print:text-xs">{order.deliveryAddress.street}</p>
-              <p className="text-gray-900 print:text-xs">
-                {order.deliveryAddress.postalCode} {order.deliveryAddress.city}
-              </p>
-              {order.deliveryAddress.complement && (
-                <p className="text-gray-600 print:text-xs">{order.deliveryAddress.complement}</p>
-              )}
-              {order.customer?.deliveryInstructions && (
-                <div className="mt-2 pt-2 border-t border-gray-200 print:border-gray-400">
-                  <p className="text-sm font-medium text-gray-700 print:text-xs">Instructions:</p>
-                  <p className="text-gray-600 print:text-xs">{order.customer.deliveryInstructions}</p>
-                </div>
-              )}
+          {/* Customer Info - Style ticket */}
+          <div className="mb-3 print:mb-2">
+            <div className="text-xs font-bold print:text-xs mb-1">CLIENT:</div>
+            <div className="text-xs print:text-xs">
+              {order.userId?.name || order.customer?.name || 'N/A'}
+            </div>
+            <div className="text-xs print:text-xs">
+              TEL: {order.userId?.phone || order.customer?.phone || 'N/A'}
+            </div>
+            {order.userId?.email && (
+              <div className="text-xs print:text-xs">
+                EMAIL: {order.userId.email}
+              </div>
+            )}
+            <div className="text-xs print:text-xs">
+              PAIEMENT: {order.customer?.paymentMethod === 'card' ? 'CARTE' : 
+                         order.customer?.paymentMethod === 'cash' ? 'ESPECES' : 'N/A'}
             </div>
           </div>
 
-          {/* Order Items */}
-          <div className="mb-6 print:mb-4">
-            <h3 className="font-semibold text-gray-900 mb-3 print:text-sm print:mb-2">Articles Commandés</h3>
-            <div className="space-y-3 print:space-y-2">
+          {/* Delivery Address - Style ticket */}
+          <div className="mb-3 print:mb-2">
+            <div className="text-xs font-bold print:text-xs mb-1">LIVRAISON:</div>
+            <div className="text-xs print:text-xs">
+              {order.deliveryAddress.street}
+            </div>
+            <div className="text-xs print:text-xs">
+              {order.deliveryAddress.postalCode} {order.deliveryAddress.city}
+            </div>
+            {order.deliveryAddress.complement && (
+              <div className="text-xs print:text-xs">
+                {order.deliveryAddress.complement}
+              </div>
+            )}
+            {order.customer?.deliveryInstructions && (
+              <div className="text-xs print:text-xs mt-1">
+                NOTE: {order.customer.deliveryInstructions}
+              </div>
+            )}
+          </div>
+
+          {/* Order Items - Style ticket */}
+          <div className="mb-3 print:mb-2">
+            <div className="border-b border-dashed border-gray-400 pb-1 mb-2 print:pb-1 print:mb-1">
+              <div className="text-xs font-bold print:text-xs">ARTICLES:</div>
+            </div>
+            <div className="space-y-1 print:space-y-0">
               {order.items.map((item, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4 print:border-gray-400 print:p-2">
-                  <div className="flex justify-between items-start mb-2 print:mb-1">
+                <div key={index} className="text-xs print:text-xs">
+                  <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900 print:text-sm">
-                        {formatProductName(item)}
+                      <div className="font-bold">
+                        {item.quantity}x {formatProductName(item)}
                       </div>
-                      <div className="text-sm text-gray-600 print:text-xs">
-                        Quantité: {item.quantity} × {item.price.toFixed(2)} €
+                      <div className="text-xs">
+                        @ {item.price.toFixed(2)}€
                       </div>
+                      
+                      {/* Product Options - Style ticket */}
+                      {item.options && item.options.length > 0 && (
+                        <div className="ml-2 mt-1">
+                          {item.options.map((option, optionIndex) => (
+                            <div key={optionIndex} className="text-xs">
+                              + {formatOptionName(option)}: {option.choice.name}
+                              {option.choice.price > 0 && ` (+${option.choice.price.toFixed(2)}€)`}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Custom Ingredients - Style ticket */}
+                      {item.customIngredients && (
+                        <div className="ml-2 mt-1">
+                          {item.customIngredients.baseIngredients && item.customIngredients.baseIngredients.length > 0 && (
+                            <div className="text-xs">
+                              + Base: {item.customIngredients.baseIngredients.map((ing: any) => ing.name).join(', ')}
+                            </div>
+                          )}
+                          {item.customIngredients.supplements && item.customIngredients.supplements.length > 0 && (
+                            <div className="text-xs">
+                              + Supp: {item.customIngredients.supplements.map((sup: any) => sup.name).join(', ')}
+                            </div>
+                          )}
+                          {item.customIngredients.sauces && item.customIngredients.sauces.length > 0 && (
+                            <div className="text-xs">
+                              + Sauce: {item.customIngredients.sauces.map((sauce: any) => sauce.name).join(', ')}
+                            </div>
+                          )}
+                          {item.customIngredients.meats && item.customIngredients.meats.length > 0 && (
+                            <div className="text-xs">
+                              + Viande: {item.customIngredients.meats.map((meat: any) => meat.name).join(', ')}
+                            </div>
+                          )}
+                          {item.customIngredients.ingredients && item.customIngredients.ingredients.length > 0 && (
+                            <div className="text-xs">
+                              + Ingr: {item.customIngredients.ingredients.map((ing: any) => ing.name).join(', ')}
+                            </div>
+                          )}
+                          {item.customIngredients.size && (
+                            <div className="text-xs">
+                              + Taille: {item.customIngredients.size}
+                            </div>
+                          )}
+                          {item.customIngredients.type && (
+                            <div className="text-xs">
+                              + Type: {item.customIngredients.type}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <div className="font-medium text-lg print:text-sm">
-                      {(item.quantity * item.price).toFixed(2)} €
+                    <div className="font-bold text-right">
+                      {(item.quantity * item.price).toFixed(2)}€
                     </div>
                   </div>
-                  
-                  {/* Product Options */}
-                  {item.options && item.options.length > 0 && (
-                    <div className="mt-2 pt-2 border-t border-gray-200 print:border-gray-400">
-                      <div className="text-sm font-medium text-gray-700 mb-1 print:text-xs">Personnalisations:</div>
-                      <div className="space-y-1 print:space-y-0">
-                        {item.options.map((option, optionIndex) => (
-                          <div key={optionIndex} className="flex justify-between items-center text-sm print:text-xs">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-gray-600 font-medium">{formatOptionName(option)}:</span>
-                              <span className="font-medium text-gray-900">{option.choice.name}</span>
-                            </div>
-                            {option.choice.price > 0 && (
-                              <span className="text-gray-600 font-medium">+{option.choice.price.toFixed(2)} €</span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Total */}
-          <div className="border-t border-gray-200 pt-4 print:pt-2 print:border-gray-400">
-            <div className="flex justify-between items-center font-bold text-xl print:text-lg">
-              <span>Total</span>
-              <span>{order.total.toFixed(2)} €</span>
+          {/* Total - Style ticket */}
+          <div className="border-t-2 border-gray-800 pt-2 print:pt-1 print:border-gray-800">
+            <div className="flex justify-between items-center font-bold text-sm print:text-xs">
+              <span>TOTAL:</span>
+              <span>{order.total.toFixed(2)}€</span>
             </div>
           </div>
 
-          {/* Notes */}
+          {/* Notes - Style ticket */}
           {order.notes && (
-            <div className="mt-4 pt-4 border-t border-gray-200 print:pt-2 print:border-gray-400">
-              <h4 className="font-semibold text-gray-900 mb-2 print:text-sm">Notes:</h4>
-              <p className="text-gray-600 print:text-xs">{order.notes}</p>
+            <div className="mt-2 print:mt-1">
+              <div className="text-xs font-bold print:text-xs">NOTE:</div>
+              <div className="text-xs print:text-xs">{order.notes}</div>
             </div>
           )}
 
-          {/* Footer */}
-          <div className="mt-6 pt-4 border-t border-gray-200 text-center print:mt-4 print:pt-2 print:border-gray-400">
-            <p className="text-sm text-gray-500 print:text-xs">
-              Merci pour votre commande ! Bon appétit ! 🍔
-            </p>
+          {/* Footer - Style ticket */}
+          <div className="mt-4 pt-2 border-t border-dashed border-gray-400 text-center print:mt-2 print:pt-1 print:border-gray-400">
+            <div className="text-xs print:text-xs">
+              MERCI POUR VOTRE COMMANDE !
+            </div>
+            <div className="text-xs print:text-xs mt-1">
+              BON APPETIT ! 🍔
+            </div>
+            <div className="text-xs print:text-xs mt-2">
+              {new Date().toLocaleString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </div>
           </div>
         </div>
 

@@ -1,0 +1,243 @@
+{
+  "ingredients": [
+    {
+      "name": "poulet",
+      "displayName": "Poulet",
+      "imagePath": "/uploads/ingredients/poulet.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "boeuf",
+      "displayName": "Bœuf",
+      "imagePath": "/uploads/ingredients/boeuf.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "jambon",
+      "displayName": "Jambon",
+      "imagePath": "/uploads/ingredients/jambon.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "saumon",
+      "displayName": "Saumon",
+      "imagePath": "/uploads/ingredients/saumon.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "thon",
+      "displayName": "Thon",
+      "imagePath": "/uploads/ingredients/thon.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "lardons",
+      "displayName": "Lardons",
+      "imagePath": "/uploads/ingredients/lardons.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "tomates",
+      "displayName": "Tomates",
+      "imagePath": "/uploads/ingredients/tomates.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "concombre",
+      "displayName": "Concombre",
+      "imagePath": "/uploads/ingredients/concombre.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "oignons",
+      "displayName": "Oignons",
+      "imagePath": "/uploads/ingredients/oignons.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "poivrons",
+      "displayName": "Poivrons",
+      "imagePath": "/uploads/ingredients/poivrons.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "laitue",
+      "displayName": "Laitue",
+      "imagePath": "/uploads/ingredients/laitue.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "epinards",
+      "displayName": "Épinards",
+      "imagePath": "/uploads/ingredients/epinards.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "brocolis",
+      "displayName": "Brocolis",
+      "imagePath": "/uploads/ingredients/brocolis.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "carottes",
+      "displayName": "Carottes",
+      "imagePath": "/uploads/ingredients/carottes.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "avocat",
+      "displayName": "Avocat",
+      "imagePath": "/uploads/ingredients/avocat.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "champignons",
+      "displayName": "Champignons",
+      "imagePath": "/uploads/ingredients/champignons.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "jalapenos",
+      "displayName": "Jalapeños",
+      "imagePath": "/uploads/ingredients/jalapenos.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "fromage",
+      "displayName": "Fromage",
+      "imagePath": "/uploads/ingredients/fromage.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "parmesan",
+      "displayName": "Parmesan",
+      "imagePath": "/uploads/ingredients/parmesan.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "feta",
+      "displayName": "Feta",
+      "imagePath": "/uploads/ingredients/feta.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "chevre",
+      "displayName": "Chèvre",
+      "imagePath": "/uploads/ingredients/chevre.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "creme",
+      "displayName": "Crème",
+      "imagePath": "/uploads/ingredients/creme.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "pain-panini",
+      "displayName": "Pain panini",
+      "imagePath": "/uploads/ingredients/pain-panini.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "tortilla",
+      "displayName": "Tortilla",
+      "imagePath": "/uploads/ingredients/tortilla.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "riz",
+      "displayName": "Riz",
+      "imagePath": "/uploads/ingredients/riz.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "quinoa",
+      "displayName": "Quinoa",
+      "imagePath": "/uploads/ingredients/quinoa.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "pates",
+      "displayName": "Pâtes",
+      "imagePath": "/uploads/ingredients/pates.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "sauce-cesar",
+      "displayName": "Sauce césar",
+      "imagePath": "/uploads/ingredients/sauce-cesar.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "sauce-barbecue",
+      "displayName": "Sauce barbecue",
+      "imagePath": "/uploads/ingredients/sauce-barbecue.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "sauce-piquante",
+      "displayName": "Sauce piquante",
+      "imagePath": "/uploads/ingredients/sauce-piquante.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "sauce-guacamole",
+      "displayName": "Sauce guacamole",
+      "imagePath": "/uploads/ingredients/sauce-guacamole.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "vinaigrette-balsamique",
+      "displayName": "Vinaigrette balsamique",
+      "imagePath": "/uploads/ingredients/vinaigrette-balsamique.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "epices",
+      "displayName": "Épices",
+      "imagePath": "/uploads/ingredients/epices.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "curry",
+      "displayName": "Curry",
+      "imagePath": "/uploads/ingredients/curry.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "olives",
+      "displayName": "Olives",
+      "imagePath": "/uploads/ingredients/olives.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "noix",
+      "displayName": "Noix",
+      "imagePath": "/uploads/ingredients/noix.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "croutons",
+      "displayName": "Croûtons",
+      "imagePath": "/uploads/ingredients/croutons.webp",
+      "status": "placeholder"
+    },
+    {
+      "name": "tofu",
+      "displayName": "Tofu",
+      "imagePath": "/uploads/ingredients/tofu.webp",
+      "status": "placeholder"
+    }
+  ],
+  "totalCount": 38,
+  "categories": {
+    "meat": 4,
+    "vegetables": 11,
+    "dairy": 5,
+    "grains": 5,
+    "sauces": 5,
+    "spices": 2,
+    "seafood": 2,
+    "other": 4
+  }
+}

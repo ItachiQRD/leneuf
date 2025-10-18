@@ -41,6 +41,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         try {
 
           const foods = await Food.find({ active: true }).sort({ createdAt: -1 });
+          console.log(' [API Foods] Plats récupérés:', foods.length);
+          console.log(' [API Foods] Premier plat image:', foods[0]?.image);
 
           res.status(200).json(foods);
         } catch (error) {
@@ -84,6 +86,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
             try {
               const imageUrl = await imageService.uploadToCloudinary(imageFile, 'foods', data.name);
+              console.log(' [API Foods] Image URL générée:', imageUrl);
 
               data.image = imageUrl;
             } catch (error) {
@@ -105,6 +108,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           console.log(' [API Foods] Données reçues:', JSON.stringify(data, null, 2));
           console.log(' [API Foods] baseIngredients reçus:', data.baseIngredients);
           console.log(' [API Foods] baseIngredients nettoyés:', cleanData.baseIngredients);
+          console.log(' [API Foods] Image finale sauvegardée:', cleanData.image);
 
           // Vérifier que les champs obligatoires sont présents
           if (!cleanData.name) {

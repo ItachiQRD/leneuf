@@ -159,9 +159,14 @@ export default function AdminFoodsPage() {
                 {typeof food.image === 'string' && (
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={food.image}
+                      src={food.image || '/images/placeholder-food.jpg'}
                       alt={food.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        console.error('Erreur chargement image:', food.image, e);
+                        e.currentTarget.src = '/images/placeholder-food.jpg';
+                      }}
+                      onLoad={() => console.log('Image chargée avec succès:', food.image)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute top-3 right-3">
@@ -285,9 +290,14 @@ export default function AdminFoodsPage() {
                 {typeof food.image === 'string' && (
                   <div className="relative h-32 overflow-hidden">
                     <img
-                      src={food.image}
+                      src={food.image || '/images/placeholder-food.jpg'}
                       alt={food.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        console.error('Erreur chargement image mobile:', food.image, e);
+                        e.currentTarget.src = '/images/placeholder-food.jpg';
+                      }}
+                      onLoad={() => console.log('Image mobile chargée avec succès:', food.image)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute top-3 right-3">

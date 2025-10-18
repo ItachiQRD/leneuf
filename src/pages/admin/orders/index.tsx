@@ -14,7 +14,8 @@ import {
   CreditCard,
   Package,
   Phone,
-  MessageSquare
+  MessageSquare,
+  Printer
 } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
 import { Badge } from '@/components/ui/Badge';
@@ -22,6 +23,7 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Modal } from '@/components/ui/Modal';
 import { useAuth } from '@/contexts/AuthContext';
+import { OrderTicket } from '@/components/admin/OrderTicket';
 
 // Fonction utilitaire pour formater les noms de produits
 const formatProductName = (item: any) => {
@@ -136,6 +138,7 @@ export default function AdminOrdersPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
+  const [showTicket, setShowTicket] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -447,16 +450,29 @@ export default function AdminOrdersPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex justify-end space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedOrder(order);
-                                setShowOrderModal(true);
-                              }}
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Button>
+                            <div className="flex space-x-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedOrder(order);
+                                  setShowOrderModal(true);
+                                }}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedOrder(order);
+                                  setShowTicket(true);
+                                }}
+                                className="text-blue-600 hover:text-blue-700"
+                              >
+                                <Printer className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                         </td>
                       </motion.tr>
@@ -591,18 +607,32 @@ export default function AdminOrdersPage() {
                   </div>
 
                   <div className="flex justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedOrder(order);
-                        setShowOrderModal(true);
-                      }}
-                      className="w-full"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Voir les détails
-                    </Button>
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          setShowOrderModal(true);
+                        }}
+                        className="flex-1"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Détails
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedOrder(order);
+                          setShowTicket(true);
+                        }}
+                        className="flex-1 text-blue-600 hover:text-blue-700"
+                      >
+                        <Printer className="w-4 h-4 mr-2" />
+                        Imprimer
+                      </Button>
+                    </div>
                   </div>
                 </motion.div>
               );
@@ -648,6 +678,17 @@ export default function AdminOrdersPage() {
             }}
             onUpdateStatus={updateOrderStatus}
             updating={updating}
+          />
+        )}
+
+        {/* Modal d'impression de ticket */}
+        {selectedOrder && showTicket && (
+          <OrderTicket
+            order={selectedOrder}
+            onClose={() => {
+              setShowTicket(false);
+              setSelectedOrder(null);
+            }}
           />
         )}
       </div>

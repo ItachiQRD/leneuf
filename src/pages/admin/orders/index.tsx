@@ -738,6 +738,115 @@ function OrderDetailModal({
     onUpdateStatus(order._id, newStatus, notes);
   };
 
+  // Fonction pour afficher les customIngredients de manière structurée
+  const renderCustomIngredients = (customIngredients: any) => {
+    if (!customIngredients) return null;
+
+    const sections = [];
+
+    // Informations de base pour burgers/sandwichs
+    if (customIngredients.menuOption) {
+      sections.push({
+        title: 'Menu',
+        content: customIngredients.menuOption
+      });
+    }
+
+    if (customIngredients.breadType) {
+      sections.push({
+        title: 'Pain',
+        content: customIngredients.breadType
+      });
+    }
+
+    if (customIngredients.vegetables && customIngredients.vegetables.length > 0) {
+      sections.push({
+        title: 'Crudités',
+        content: customIngredients.vegetables.join(', ')
+      });
+    }
+
+    if (customIngredients.withFries !== undefined) {
+      sections.push({
+        title: 'Frites',
+        content: customIngredients.withFries ? 'Oui' : 'Non'
+      });
+    }
+
+    if (customIngredients.sauce) {
+      sections.push({
+        title: 'Sauce',
+        content: typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name
+      });
+    }
+
+    if (customIngredients.drink) {
+      sections.push({
+        title: 'Boisson',
+        content: typeof customIngredients.drink === 'string' ? customIngredients.drink : customIngredients.drink.name
+      });
+    }
+
+    // Informations pour tacos/paninis
+    if (customIngredients.baseIngredients && customIngredients.baseIngredients.length > 0) {
+      sections.push({
+        title: 'Ingrédients de base',
+        content: customIngredients.baseIngredients.map((ing: any) => ing.name).join(', ')
+      });
+    }
+
+    if (customIngredients.supplements && customIngredients.supplements.length > 0) {
+      sections.push({
+        title: 'Suppléments',
+        content: customIngredients.supplements.map((sup: any) => sup.name).join(', ')
+      });
+    }
+
+    if (customIngredients.sauces && customIngredients.sauces.length > 0) {
+      sections.push({
+        title: 'Sauces',
+        content: customIngredients.sauces.map((sauce: any) => sauce.name).join(', ')
+      });
+    }
+
+    if (customIngredients.meats && customIngredients.meats.length > 0) {
+      sections.push({
+        title: 'Viandes',
+        content: customIngredients.meats.map((meat: any) => meat.name).join(', ')
+      });
+    }
+
+    if (customIngredients.ingredients && customIngredients.ingredients.length > 0) {
+      sections.push({
+        title: 'Ingrédients',
+        content: customIngredients.ingredients.map((ing: any) => ing.name).join(', ')
+      });
+    }
+
+    if (customIngredients.size) {
+      sections.push({
+        title: 'Taille',
+        content: customIngredients.size
+      });
+    }
+
+    if (customIngredients.type) {
+      sections.push({
+        title: 'Type',
+        content: customIngredients.type
+      });
+    }
+
+    if (customIngredients.quantity) {
+      sections.push({
+        title: 'Quantité',
+        content: customIngredients.quantity.toString()
+      });
+    }
+
+    return sections.length > 0 ? sections : null;
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={`Commande #${order._id.slice(-8)}`}>
       <div className="space-y-6">
@@ -794,18 +903,104 @@ function OrderDetailModal({
           </div>
         </div>
 
-        {/* Adresse de livraison */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-3">Adresse de livraison</h3>
-          <div className="bg-gray-50 rounded-lg p-4">
-            <div className="flex items-start">
-              <MapPin className="w-4 h-4 text-gray-400 mr-2 mt-0.5" />
-              <div>
-                <div>{order.deliveryAddress.street}</div>
-                <div>{order.deliveryAddress.postalCode} {order.deliveryAddress.city}</div>
+        {/* Informations de livraison et paiement */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Adresse de livraison */}
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
+              <MapPin className="w-5 h-5 mr-2" />
+              Adresse de livraison
+            </h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="space-y-2">
+                <div className="font-medium text-gray-900">{order.deliveryAddress.street}</div>
+                <div className="text-gray-600">{order.deliveryAddress.postalCode} {order.deliveryAddress.city}</div>
                 {order.deliveryAddress.complement && (
-                  <div className="text-sm text-gray-600">{order.deliveryAddress.complement}</div>
+                  <div className="text-sm text-gray-600 italic">{order.deliveryAddress.complement}</div>
                 )}
+              </div>
+            </div>
+          </div>
+
+          {/* Informations de paiement */}
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
+              <CreditCard className="w-5 h-5 mr-2" />
+              Paiement
+            </h3>
+            <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Méthode:</span>
+                <span className="font-medium text-gray-900">
+                  {order.paymentMethod === 'card' ? 'Carte bancaire' : 
+                   order.paymentMethod === 'cash' ? 'Espèces' : 
+                   order.paymentMethod || 'Non spécifié'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Statut:</span>
+                <Badge className={
+                  order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
+                  order.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-red-100 text-red-800'
+                }>
+                  {order.paymentStatus === 'paid' ? 'Payé' :
+                   order.paymentStatus === 'pending' ? 'En attente' :
+                   order.paymentStatus === 'failed' ? 'Échec' : 'Inconnu'}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Informations de la commande */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
+            <Clock className="w-5 h-5 mr-2" />
+            Informations de la commande
+          </h3>
+          <div className="bg-gray-50 rounded-lg p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Date de commande:</span>
+                <span className="font-medium text-gray-900">
+                  {new Date(order.createdAt).toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Statut actuel:</span>
+                <Badge className={
+                  order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                  order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                  order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                  'bg-yellow-100 text-yellow-800'
+                }>
+                  {order.status === 'pending' ? 'En attente' :
+                   order.status === 'processing' ? 'En cours' :
+                   order.status === 'completed' ? 'Terminée' :
+                   order.status === 'cancelled' ? 'Annulée' : order.status}
+                </Badge>
+              </div>
+              {order.deliveryTime && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Heure de livraison:</span>
+                  <span className="font-medium text-gray-900">
+                    {new Date(order.deliveryTime).toLocaleTimeString('fr-FR', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                </div>
+              )}
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Total:</span>
+                <span className="font-bold text-lg text-red-600">{order.total.toFixed(2)} €</span>
               </div>
             </div>
           </div>
@@ -814,109 +1009,80 @@ function OrderDetailModal({
         {/* Articles commandés */}
         <div>
           <h3 className="text-lg font-medium text-gray-900 mb-3">Articles commandés</h3>
-          <div className="space-y-2">
-            {order.items.map((item, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-900 mb-1">
-                      {formatProductName(item)}
+          <div className="space-y-4">
+            {order.items.map((item, index) => {
+              const customSections = renderCustomIngredients(item.customIngredients);
+              
+              return (
+                <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  {/* En-tête de l'article */}
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1">
+                      <div className="font-semibold text-gray-900 text-lg mb-1">
+                        {formatProductName(item)}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Quantité: {item.quantity} × {item.price.toFixed(2)} €
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600">
-                      Quantité: {item.quantity} × {item.price.toFixed(2)} €
+                    <div className="font-bold text-xl text-gray-900">
+                      {(item.quantity * item.price).toFixed(2)} €
                     </div>
                   </div>
-                  <div className="font-medium text-lg">
-                    {(item.quantity * item.price).toFixed(2)} €
-                  </div>
-                </div>
-                
-                {/* Options du produit */}
-                {item.options && item.options.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <div className="text-sm font-medium text-gray-700 mb-2">Personnalisations :</div>
-                    <div className="space-y-1">
-                      {item.options.map((option, optionIndex) => (
-                        <div key={optionIndex} className="flex justify-between items-center text-sm">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-gray-600 font-medium">{formatOptionName(option)}:</span>
-                            <span className="font-medium text-gray-900">{option.choice.name}</span>
+                  
+                  {/* Options du produit (ancien système) */}
+                  {item.options && item.options.length > 0 && (
+                    <div className="mb-3 p-3 bg-white rounded-lg border border-gray-200">
+                      <div className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                        <Package className="w-4 h-4 mr-2" />
+                        Personnalisations :
+                      </div>
+                      <div className="space-y-1">
+                        {item.options.map((option, optionIndex) => (
+                          <div key={optionIndex} className="flex justify-between items-center text-sm">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-600 font-medium">{formatOptionName(option)}:</span>
+                              <span className="font-medium text-gray-900">{option.choice.name}</span>
+                            </div>
+                            {option.choice.price > 0 && (
+                              <span className="text-gray-600 font-medium">+{option.choice.price.toFixed(2)} €</span>
+                            )}
                           </div>
-                          {option.choice.price > 0 && (
-                            <span className="text-gray-600 font-medium">+{option.choice.price.toFixed(2)} €</span>
-                          )}
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Custom Ingredients pour les produits personnalisés */}
-                {item.customIngredients && (
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <div className="text-sm font-medium text-gray-700 mb-2">Ingrédients personnalisés :</div>
-                    <div className="space-y-1">
-                      {item.customIngredients.baseIngredients && item.customIngredients.baseIngredients.length > 0 && (
-                        <div className="text-sm">
-                          <span className="text-gray-600 font-medium">Ingrédients de base:</span>
-                          <span className="ml-2 text-gray-900">
-                            {item.customIngredients.baseIngredients.map((ing: any) => ing.name).join(', ')}
-                          </span>
-                        </div>
-                      )}
-                      {item.customIngredients.supplements && item.customIngredients.supplements.length > 0 && (
-                        <div className="text-sm">
-                          <span className="text-gray-600 font-medium">Suppléments:</span>
-                          <span className="ml-2 text-gray-900">
-                            {item.customIngredients.supplements.map((sup: any) => sup.name).join(', ')}
-                          </span>
-                        </div>
-                      )}
-                      {item.customIngredients.sauces && item.customIngredients.sauces.length > 0 && (
-                        <div className="text-sm">
-                          <span className="text-gray-600 font-medium">Sauces:</span>
-                          <span className="ml-2 text-gray-900">
-                            {item.customIngredients.sauces.map((sauce: any) => sauce.name).join(', ')}
-                          </span>
-                        </div>
-                      )}
-                      {item.customIngredients.meats && item.customIngredients.meats.length > 0 && (
-                        <div className="text-sm">
-                          <span className="text-gray-600 font-medium">Viandes:</span>
-                          <span className="ml-2 text-gray-900">
-                            {item.customIngredients.meats.map((meat: any) => meat.name).join(', ')}
-                          </span>
-                        </div>
-                      )}
-                      {item.customIngredients.ingredients && item.customIngredients.ingredients.length > 0 && (
-                        <div className="text-sm">
-                          <span className="text-gray-600 font-medium">Ingrédients:</span>
-                          <span className="ml-2 text-gray-900">
-                            {item.customIngredients.ingredients.map((ing: any) => ing.name).join(', ')}
-                          </span>
-                        </div>
-                      )}
-                      {item.customIngredients.size && (
-                        <div className="text-sm">
-                          <span className="text-gray-600 font-medium">Taille:</span>
-                          <span className="ml-2 text-gray-900">{item.customIngredients.size}</span>
-                        </div>
-                      )}
-                      {item.customIngredients.type && (
-                        <div className="text-sm">
-                          <span className="text-gray-600 font-medium">Type:</span>
-                          <span className="ml-2 text-gray-900">{item.customIngredients.type}</span>
-                        </div>
-                      )}
+                  {/* Custom Ingredients (nouveau système) */}
+                  {customSections && (
+                    <div className="p-3 bg-white rounded-lg border border-gray-200">
+                      <div className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                        <Package className="w-4 h-4 mr-2" />
+                        Détails de la personnalisation :
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {customSections.map((section, sectionIndex) => (
+                          <div key={sectionIndex} className="flex items-center text-sm">
+                            <span className="text-gray-600 font-medium min-w-0 flex-shrink-0 mr-2">
+                              {section.title}:
+                            </span>
+                            <span className="font-medium text-gray-900 truncate">
+                              {section.content}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
-            <div className="border-t pt-2">
-              <div className="flex justify-between items-center font-bold text-lg">
-                <span>Total</span>
-                <span>{order.total.toFixed(2)} €</span>
+                  )}
+                </div>
+              );
+            })}
+            
+            {/* Total */}
+            <div className="bg-gray-100 rounded-lg p-4 border-2 border-gray-300">
+              <div className="flex justify-between items-center font-bold text-xl">
+                <span className="text-gray-900">Total de la commande</span>
+                <span className="text-red-600">{order.total.toFixed(2)} €</span>
               </div>
             </div>
           </div>

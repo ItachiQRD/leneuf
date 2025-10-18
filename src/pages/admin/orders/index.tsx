@@ -738,113 +738,69 @@ function OrderDetailModal({
     onUpdateStatus(order._id, newStatus, notes);
   };
 
-  // Fonction pour afficher les customIngredients de manière structurée
+  // Fonction pour afficher les customIngredients de manière simplifiée
   const renderCustomIngredients = (customIngredients: any) => {
     if (!customIngredients) return null;
 
-    const sections = [];
+    const details = [];
 
     // Informations de base pour burgers/sandwichs
     if (customIngredients.menuOption) {
-      sections.push({
-        title: 'Menu',
-        content: customIngredients.menuOption
-      });
+      details.push(`Menu: ${customIngredients.menuOption}`);
     }
 
     if (customIngredients.breadType) {
-      sections.push({
-        title: 'Pain',
-        content: customIngredients.breadType
-      });
+      details.push(`Pain: ${customIngredients.breadType}`);
     }
 
     if (customIngredients.vegetables && customIngredients.vegetables.length > 0) {
-      sections.push({
-        title: 'Crudités',
-        content: customIngredients.vegetables.join(', ')
-      });
+      details.push(`Crudités: ${customIngredients.vegetables.join(', ')}`);
     }
 
     if (customIngredients.withFries !== undefined) {
-      sections.push({
-        title: 'Frites',
-        content: customIngredients.withFries ? 'Oui' : 'Non'
-      });
+      details.push(`Frites: ${customIngredients.withFries ? 'Oui' : 'Non'}`);
     }
 
     if (customIngredients.sauce) {
-      sections.push({
-        title: 'Sauce',
-        content: typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name
-      });
+      const sauceName = typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name;
+      details.push(`Sauce: ${sauceName}`);
     }
 
     if (customIngredients.drink) {
-      sections.push({
-        title: 'Boisson',
-        content: typeof customIngredients.drink === 'string' ? customIngredients.drink : customIngredients.drink.name
-      });
+      const drinkName = typeof customIngredients.drink === 'string' ? customIngredients.drink : customIngredients.drink.name;
+      details.push(`Boisson: ${drinkName}`);
     }
 
     // Informations pour tacos/paninis
     if (customIngredients.baseIngredients && customIngredients.baseIngredients.length > 0) {
-      sections.push({
-        title: 'Ingrédients de base',
-        content: customIngredients.baseIngredients.map((ing: any) => ing.name).join(', ')
-      });
+      details.push(`Base: ${customIngredients.baseIngredients.map((ing: any) => ing.name).join(', ')}`);
     }
 
     if (customIngredients.supplements && customIngredients.supplements.length > 0) {
-      sections.push({
-        title: 'Suppléments',
-        content: customIngredients.supplements.map((sup: any) => sup.name).join(', ')
-      });
+      details.push(`Suppléments: ${customIngredients.supplements.map((sup: any) => sup.name).join(', ')}`);
     }
 
     if (customIngredients.sauces && customIngredients.sauces.length > 0) {
-      sections.push({
-        title: 'Sauces',
-        content: customIngredients.sauces.map((sauce: any) => sauce.name).join(', ')
-      });
+      details.push(`Sauces: ${customIngredients.sauces.map((sauce: any) => sauce.name).join(', ')}`);
     }
 
     if (customIngredients.meats && customIngredients.meats.length > 0) {
-      sections.push({
-        title: 'Viandes',
-        content: customIngredients.meats.map((meat: any) => meat.name).join(', ')
-      });
+      details.push(`Viandes: ${customIngredients.meats.map((meat: any) => meat.name).join(', ')}`);
     }
 
     if (customIngredients.ingredients && customIngredients.ingredients.length > 0) {
-      sections.push({
-        title: 'Ingrédients',
-        content: customIngredients.ingredients.map((ing: any) => ing.name).join(', ')
-      });
+      details.push(`Ingrédients: ${customIngredients.ingredients.map((ing: any) => ing.name).join(', ')}`);
     }
 
     if (customIngredients.size) {
-      sections.push({
-        title: 'Taille',
-        content: customIngredients.size
-      });
+      details.push(`Taille: ${customIngredients.size}`);
     }
 
     if (customIngredients.type) {
-      sections.push({
-        title: 'Type',
-        content: customIngredients.type
-      });
+      details.push(`Type: ${customIngredients.type}`);
     }
 
-    if (customIngredients.quantity) {
-      sections.push({
-        title: 'Quantité',
-        content: customIngredients.quantity.toString()
-      });
-    }
-
-    return sections.length > 0 ? sections : null;
+    return details.length > 0 ? details : null;
   };
 
   return (
@@ -1053,23 +1009,15 @@ function OrderDetailModal({
                     </div>
                   )}
 
-                  {/* Custom Ingredients (nouveau système) */}
+                  {/* Custom Ingredients (nouveau système) - Affichage simplifié */}
                   {customSections && (
-                    <div className="p-3 bg-white rounded-lg border border-gray-200">
-                      <div className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                        <Package className="w-4 h-4 mr-2" />
-                        Détails de la personnalisation :
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {customSections.map((section, sectionIndex) => (
-                          <div key={sectionIndex} className="flex items-center text-sm">
-                            <span className="text-gray-600 font-medium min-w-0 flex-shrink-0 mr-2">
-                              {section.title}:
-                            </span>
-                            <span className="font-medium text-gray-900 truncate">
-                              {section.content}
-                            </span>
-                          </div>
+                    <div className="mt-2 p-2 bg-gray-100 rounded text-sm">
+                      <div className="text-gray-700">
+                        {customSections.map((detail, detailIndex) => (
+                          <span key={detailIndex}>
+                            {detail}
+                            {detailIndex < customSections.length - 1 && ' • '}
+                          </span>
                         ))}
                       </div>
                     </div>

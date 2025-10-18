@@ -68,16 +68,69 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
     return 'Produit personnalisé';
   };
 
-  const formatOptionName = (option: any) => {
-    const nameMap: { [key: string]: string } = {
-      'Viandes': 'Viandes',
-      'Sauces': 'Sauces',
-      'Suppléments': 'Suppléments',
-      'Ingrédients de base': 'Ingrédients',
-      'Taille': 'Taille',
-      'Type': 'Type'
-    };
-    return nameMap[option.name] || option.name;
+  // Fonction pour afficher les customIngredients de manière simplifiée
+  const renderCustomIngredients = (customIngredients: any) => {
+    if (!customIngredients) return null;
+
+    const details = [];
+
+    // Informations de base pour burgers/sandwichs
+    if (customIngredients.menuOption) {
+      details.push(`Menu: ${customIngredients.menuOption}`);
+    }
+
+    if (customIngredients.breadType) {
+      details.push(`Pain: ${customIngredients.breadType}`);
+    }
+
+    if (customIngredients.vegetables && customIngredients.vegetables.length > 0) {
+      details.push(`Crudités: ${customIngredients.vegetables.join(', ')}`);
+    }
+
+    if (customIngredients.withFries !== undefined) {
+      details.push(`Frites: ${customIngredients.withFries ? 'Oui' : 'Non'}`);
+    }
+
+    if (customIngredients.sauce) {
+      const sauceName = typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name;
+      details.push(`Sauce: ${sauceName}`);
+    }
+
+    if (customIngredients.drink) {
+      const drinkName = typeof customIngredients.drink === 'string' ? customIngredients.drink : customIngredients.drink.name;
+      details.push(`Boisson: ${drinkName}`);
+    }
+
+    // Informations pour tacos/paninis
+    if (customIngredients.baseIngredients && customIngredients.baseIngredients.length > 0) {
+      details.push(`Base: ${customIngredients.baseIngredients.map((ing: any) => ing.name).join(', ')}`);
+    }
+
+    if (customIngredients.supplements && customIngredients.supplements.length > 0) {
+      details.push(`Suppléments: ${customIngredients.supplements.map((sup: any) => sup.name).join(', ')}`);
+    }
+
+    if (customIngredients.sauces && customIngredients.sauces.length > 0) {
+      details.push(`Sauces: ${customIngredients.sauces.map((sauce: any) => sauce.name).join(', ')}`);
+    }
+
+    if (customIngredients.meats && customIngredients.meats.length > 0) {
+      details.push(`Viandes: ${customIngredients.meats.map((meat: any) => meat.name).join(', ')}`);
+    }
+
+    if (customIngredients.ingredients && customIngredients.ingredients.length > 0) {
+      details.push(`Ingrédients: ${customIngredients.ingredients.map((ing: any) => ing.name).join(', ')}`);
+    }
+
+    if (customIngredients.size) {
+      details.push(`Taille: ${customIngredients.size}`);
+    }
+
+    if (customIngredients.type) {
+      details.push(`Type: ${customIngredients.type}`);
+    }
+
+    return details.length > 0 ? details : null;
   };
 
   const handlePrint = () => {
@@ -175,82 +228,54 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             )}
           </div>
 
-          {/* Order Items - Style ticket */}
+          {/* Order Items - Style ticket simplifié */}
           <div className="mb-3 print:mb-2">
             <div className="border-b border-dashed border-gray-400 pb-1 mb-2 print:pb-1 print:mb-1">
               <div className="text-xs font-bold print:text-xs">ARTICLES:</div>
             </div>
-            <div className="space-y-1 print:space-y-0">
-              {order.items.map((item, index) => (
-                <div key={index} className="text-xs print:text-xs">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="font-bold">
-                        {item.quantity}x {formatProductName(item)}
-                      </div>
-                      <div className="text-xs">
-                        @ {item.price.toFixed(2)}€
-                      </div>
-                      
-                      {/* Product Options - Style ticket */}
-                      {item.options && item.options.length > 0 && (
-                        <div className="ml-2 mt-1">
-                          {item.options.map((option, optionIndex) => (
-                            <div key={optionIndex} className="text-xs">
-                              + {formatOptionName(option)}: {option.choice.name}
-                              {option.choice.price > 0 && ` (+${option.choice.price.toFixed(2)}€)`}
-                            </div>
-                          ))}
+            <div className="space-y-2 print:space-y-1">
+              {order.items.map((item, index) => {
+                const customDetails = renderCustomIngredients(item.customIngredients);
+                
+                return (
+                  <div key={index} className="text-xs print:text-xs border-b border-gray-200 pb-1 print:pb-0">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="font-bold">
+                          {item.quantity}x {formatProductName(item)}
                         </div>
-                      )}
+                        <div className="text-xs text-gray-600">
+                          @ {item.price.toFixed(2)}€
+                        </div>
+                        
+                        {/* Options du produit (ancien système) */}
+                        {item.options && item.options.length > 0 && (
+                          <div className="mt-1 text-xs text-gray-600">
+                            {item.options.map((option, optionIndex) => (
+                              <div key={optionIndex}>
+                                • {option.name}: {option.choice.name}
+                                {option.choice.price > 0 && ` (+${option.choice.price.toFixed(2)}€)`}
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
-                      {/* Custom Ingredients - Style ticket */}
-                      {item.customIngredients && (
-                        <div className="ml-2 mt-1">
-                          {item.customIngredients.baseIngredients && item.customIngredients.baseIngredients.length > 0 && (
-                            <div className="text-xs">
-                              + Base: {item.customIngredients.baseIngredients.map((ing: any) => ing.name).join(', ')}
-                            </div>
-                          )}
-                          {item.customIngredients.supplements && item.customIngredients.supplements.length > 0 && (
-                            <div className="text-xs">
-                              + Supp: {item.customIngredients.supplements.map((sup: any) => sup.name).join(', ')}
-                            </div>
-                          )}
-                          {item.customIngredients.sauces && item.customIngredients.sauces.length > 0 && (
-                            <div className="text-xs">
-                              + Sauce: {item.customIngredients.sauces.map((sauce: any) => sauce.name).join(', ')}
-                            </div>
-                          )}
-                          {item.customIngredients.meats && item.customIngredients.meats.length > 0 && (
-                            <div className="text-xs">
-                              + Viande: {item.customIngredients.meats.map((meat: any) => meat.name).join(', ')}
-                            </div>
-                          )}
-                          {item.customIngredients.ingredients && item.customIngredients.ingredients.length > 0 && (
-                            <div className="text-xs">
-                              + Ingr: {item.customIngredients.ingredients.map((ing: any) => ing.name).join(', ')}
-                            </div>
-                          )}
-                          {item.customIngredients.size && (
-                            <div className="text-xs">
-                              + Taille: {item.customIngredients.size}
-                            </div>
-                          )}
-                          {item.customIngredients.type && (
-                            <div className="text-xs">
-                              + Type: {item.customIngredients.type}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <div className="font-bold text-right">
-                      {(item.quantity * item.price).toFixed(2)}€
+                        {/* Custom Ingredients (nouveau système) - Affichage simplifié */}
+                        {customDetails && (
+                          <div className="mt-1 text-xs text-gray-600">
+                            {customDetails.map((detail, detailIndex) => (
+                              <div key={detailIndex}>• {detail}</div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="font-bold text-right ml-2">
+                        {(item.quantity * item.price).toFixed(2)}€
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

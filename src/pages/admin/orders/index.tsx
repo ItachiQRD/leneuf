@@ -945,10 +945,14 @@ function OrderDetailModal({
               <div>
                 <span className="text-sm font-medium text-gray-700">Adresse de livraison:</span>
                 <div className="text-sm text-gray-600 mt-1">
-                  <div className="font-medium">{order.deliveryAddress.street}</div>
-                  <div>{order.deliveryAddress.postalCode} {order.deliveryAddress.city}</div>
+                  <div className="font-medium">
+                    {order.deliveryAddress.street}
+                    {order.deliveryAddress.postalCode && order.deliveryAddress.city && 
+                      `, ${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}`
+                    }
+                  </div>
                   {order.deliveryAddress.complement && (
-                    <div className="italic">{order.deliveryAddress.complement}</div>
+                    <div className="italic mt-1">{order.deliveryAddress.complement}</div>
                   )}
                 </div>
               </div>
@@ -984,18 +988,6 @@ function OrderDetailModal({
               ]}
             />
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Notes (optionnel)
-              </label>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                rows={3}
-                placeholder="Ajoutez des notes pour cette commande..."
-              />
-            </div>
           </div>
         </div>
 

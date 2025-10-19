@@ -148,7 +148,13 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
                 <span className="font-medium">Adresse validée :</span>
               </div>
               <div className="text-sm text-green-600 mt-1">
-                {selectedAddress.display_name}
+                {selectedAddress.address?.house_number && selectedAddress.address?.road ? 
+                  `${selectedAddress.address.house_number} ${selectedAddress.address.road}` : 
+                  selectedAddress.address?.road || ''
+                }
+                {selectedAddress.address?.postcode && selectedAddress.address?.city && 
+                  `, ${selectedAddress.address.postcode} ${selectedAddress.address.city}`
+                }
               </div>
             </div>
           )}

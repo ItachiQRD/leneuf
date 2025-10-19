@@ -137,6 +137,16 @@ export function AddressAutocomplete({
     return parts.join(' ') || suggestion.display_name;
   };
 
+  const formatSimpleAddress = (suggestion: AddressSuggestion) => {
+    const parts = [];
+    if (suggestion.address?.house_number) parts.push(suggestion.address.house_number);
+    if (suggestion.address?.road) parts.push(suggestion.address.road);
+    if (suggestion.address?.postcode) parts.push(suggestion.address.postcode);
+    if (suggestion.address?.city) parts.push(suggestion.address.city);
+    
+    return parts.join(' ') || suggestion.display_name;
+  };
+
   return (
     <div className={`relative ${className}`}>
       <div className="relative">
@@ -180,10 +190,7 @@ export function AddressAutocomplete({
                 <MapPin className="h-4 w-4 text-gray-400 mt-0.5 mr-3 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium text-gray-900">
-                    {formatAddress(suggestion)}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1 truncate">
-                    {suggestion.display_name}
+                    {formatSimpleAddress(suggestion)}
                   </div>
                 </div>
               </div>

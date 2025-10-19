@@ -806,163 +806,7 @@ function OrderDetailModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={`Commande #${order._id.slice(-8)}`}>
       <div className="space-y-6">
-        {/* Informations client */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-medium text-gray-900">Informations client</h3>
-            {order.userId ? (
-              <Badge className="bg-blue-100 text-blue-800">
-                <User className="w-3 h-3 mr-1" />
-                Compte utilisateur
-              </Badge>
-            ) : (
-              <Badge className="bg-orange-100 text-orange-800">
-                <Package className="w-3 h-3 mr-1" />
-                Commande invité
-              </Badge>
-            )}
-          </div>
-          
-          <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-            <div className="flex items-center">
-              <User className="w-4 h-4 text-gray-400 mr-3" />
-              <div>
-                <span className="font-medium text-gray-900">
-                  {order.userId?.name || order.customer?.name || 'N/A'}
-                </span>
-                <div className="text-sm text-gray-600">
-                  {order.userId?.email || order.customer?.phone || 'N/A'}
-                </div>
-              </div>
-            </div>
-            
-            {(order.userId?.phone || order.customer?.phone) && (
-              <div className="flex items-center">
-                <Phone className="w-4 h-4 text-gray-400 mr-3" />
-                <span className="text-sm text-gray-600">
-                  {order.userId?.phone || order.customer?.phone}
-                </span>
-              </div>
-            )}
-            
-            {order.customer?.deliveryInstructions && (
-              <div className="flex items-start">
-                <MessageSquare className="w-4 h-4 text-gray-400 mr-3 mt-0.5" />
-                <div>
-                  <span className="text-sm font-medium text-gray-700">Instructions de livraison:</span>
-                  <div className="text-sm text-gray-600 mt-1">
-                    {order.customer.deliveryInstructions}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Informations de livraison et paiement */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Adresse de livraison */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
-              <MapPin className="w-5 h-5 mr-2" />
-              Adresse de livraison
-            </h3>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="space-y-2">
-                <div className="font-medium text-gray-900">{order.deliveryAddress.street}</div>
-                <div className="text-gray-600">{order.deliveryAddress.postalCode} {order.deliveryAddress.city}</div>
-                {order.deliveryAddress.complement && (
-                  <div className="text-sm text-gray-600 italic">{order.deliveryAddress.complement}</div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Informations de paiement */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
-              <CreditCard className="w-5 h-5 mr-2" />
-              Paiement
-            </h3>
-            <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Méthode:</span>
-                <span className="font-medium text-gray-900">
-                  {order.paymentMethod === 'card' ? 'Carte bancaire' : 
-                   order.paymentMethod === 'cash' ? 'Espèces' : 
-                   order.paymentMethod || 'Non spécifié'}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Statut:</span>
-                <Badge className={
-                  order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
-                  order.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-red-100 text-red-800'
-                }>
-                  {order.paymentStatus === 'paid' ? 'Payé' :
-                   order.paymentStatus === 'pending' ? 'En attente' :
-                   order.paymentStatus === 'failed' ? 'Échec' : 'Inconnu'}
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Informations de la commande */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
-            <Clock className="w-5 h-5 mr-2" />
-            Informations de la commande
-          </h3>
-          <div className="bg-gray-50 rounded-lg p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Date de commande:</span>
-                <span className="font-medium text-gray-900">
-                  {new Date(order.createdAt).toLocaleDateString('fr-FR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Statut actuel:</span>
-                <Badge className={
-                  order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                  order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                  order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }>
-                  {order.status === 'pending' ? 'En attente' :
-                   order.status === 'processing' ? 'En cours' :
-                   order.status === 'completed' ? 'Terminée' :
-                   order.status === 'cancelled' ? 'Annulée' : order.status}
-                </Badge>
-              </div>
-              {order.deliveryTime && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Heure de livraison:</span>
-                  <span className="font-medium text-gray-900">
-                    {new Date(order.deliveryTime).toLocaleTimeString('fr-FR', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </span>
-                </div>
-              )}
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total:</span>
-                <span className="font-bold text-lg text-red-600">{order.total.toFixed(2)} €</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Articles commandés */}
+        {/* Articles commandés - EN HAUT */}
         <div>
           <h3 className="text-lg font-medium text-gray-900 mb-3">Articles commandés</h3>
           <div className="space-y-4">
@@ -1009,15 +853,14 @@ function OrderDetailModal({
                     </div>
                   )}
 
-                  {/* Custom Ingredients (nouveau système) - Affichage simplifié */}
+                  {/* Custom Ingredients (nouveau système) - Affichage vertical */}
                   {customSections && (
                     <div className="mt-2 p-2 bg-gray-100 rounded text-sm">
-                      <div className="text-gray-700">
+                      <div className="text-gray-700 space-y-1">
                         {customSections.map((detail, detailIndex) => (
-                          <span key={detailIndex}>
+                          <div key={detailIndex}>
                             {detail}
-                            {detailIndex < customSections.length - 1 && ' • '}
-                          </span>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -1035,6 +878,94 @@ function OrderDetailModal({
             </div>
           </div>
         </div>
+
+        {/* Paiement */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
+            <CreditCard className="w-5 h-5 mr-2" />
+            Paiement
+          </h3>
+          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Méthode:</span>
+              <span className="font-medium text-gray-900">
+                {order.paymentMethod === 'card' ? 'Carte bancaire' : 
+                 order.paymentMethod === 'cash' ? 'Espèces' : 
+                 order.paymentMethod || 'Non spécifié'}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Statut:</span>
+              <Badge className={
+                order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
+                order.paymentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }>
+                {order.paymentStatus === 'paid' ? 'Payé' :
+                 order.paymentStatus === 'pending' ? 'En attente' :
+                 order.paymentStatus === 'failed' ? 'Échec' : 'Inconnu'}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Informations client */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
+            <User className="w-5 h-5 mr-2" />
+            Informations client
+          </h3>
+          <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+            <div className="flex items-center">
+              <User className="w-4 h-4 text-gray-400 mr-3" />
+              <div>
+                <span className="font-medium text-gray-900">
+                  {order.userId?.name || order.customer?.name || 'N/A'}
+                </span>
+                <div className="text-sm text-gray-600">
+                  {order.userId?.email || order.customer?.phone || 'N/A'}
+                </div>
+              </div>
+            </div>
+            
+            {(order.userId?.phone || order.customer?.phone) && (
+              <div className="flex items-center">
+                <Phone className="w-4 h-4 text-gray-400 mr-3" />
+                <span className="text-sm text-gray-600">
+                  {order.userId?.phone || order.customer?.phone}
+                </span>
+              </div>
+            )}
+
+            {/* Adresse de livraison */}
+            <div className="flex items-start">
+              <MapPin className="w-4 h-4 text-gray-400 mr-3 mt-0.5" />
+              <div>
+                <span className="text-sm font-medium text-gray-700">Adresse de livraison:</span>
+                <div className="text-sm text-gray-600 mt-1">
+                  <div className="font-medium">{order.deliveryAddress.street}</div>
+                  <div>{order.deliveryAddress.postalCode} {order.deliveryAddress.city}</div>
+                  {order.deliveryAddress.complement && (
+                    <div className="italic">{order.deliveryAddress.complement}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {order.customer?.deliveryInstructions && (
+              <div className="flex items-start">
+                <MessageSquare className="w-4 h-4 text-gray-400 mr-3 mt-0.5" />
+                <div>
+                  <span className="text-sm font-medium text-gray-700">Instructions de livraison:</span>
+                  <div className="text-sm text-gray-600 mt-1">
+                    {order.customer.deliveryInstructions}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
 
         {/* Mise à jour du statut */}
         <div>

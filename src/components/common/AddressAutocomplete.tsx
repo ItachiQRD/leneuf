@@ -108,7 +108,8 @@ export function AddressAutocomplete({
   };
 
   const handleSuggestionClick = (suggestion: AddressSuggestion) => {
-    onChange(suggestion.display_name);
+    const cleanAddress = formatCleanAddress(suggestion);
+    onChange(cleanAddress);
     onAddressSelect(suggestion);
     setShowSuggestions(false);
     setIsValid(true);

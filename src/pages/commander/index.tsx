@@ -305,8 +305,18 @@ export default function CommanderPage() {
       }
     }
 
-    // Produits qui nécessitent une personnalisation simple (accompagnements, assiettes, ptite-faim)
-    const needsCustomization = ['accompagnements', 'assiettes', 'ptite-faim'].includes(selectedCategory);
+    // Produits qui nécessitent une sélection de taille (accompagnements, boissons, desserts)
+    const needsSizeSelection = ['accompagnements', 'boissons', 'desserts'].includes(selectedCategory);
+    
+    if (needsSizeSelection && item.sizes && item.sizes.length > 0) {
+      setProductForSize(item);
+      setSelectedSauce(null);
+      setShowSizeSelector(true);
+      return;
+    }
+
+    // Produits qui nécessitent une personnalisation simple (assiettes, ptite-faim)
+    const needsCustomization = ['assiettes', 'ptite-faim'].includes(selectedCategory);
     
     if (needsCustomization) {
       setProductForCustomization(item);

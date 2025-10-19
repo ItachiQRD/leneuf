@@ -417,28 +417,16 @@ export default function AdminOrdersPage() {
                           <div className="text-sm text-gray-500">
                             {order.items.length} article{order.items.length > 1 ? 's' : ''}
                           </div>
-                          <div className="text-xs text-gray-400 mt-1 max-w-xs truncate">
-                            {order.items.slice(0, 2).map(item => formatProductName(item)).join(', ')}
-                            {order.items.length > 2 && ` +${order.items.length - 2} autres`}
-                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
                             {order.userId?.name || order.customer?.name || 'N/A'}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {order.userId ? 'Compte' : 'Invité'}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
                             {order.userId?.email || order.customer?.phone || 'N/A'}
                           </div>
-                          {order.customer?.address && (
-                            <div className="text-xs text-gray-500 truncate max-w-32">
-                              {order.customer.address}
-                            </div>
-                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Badge className={orderStatusConfig.color}>
@@ -545,66 +533,22 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
 
-                  {/* Informations client améliorées */}
+                  {/* Informations client simplifiées */}
                   <div className="mb-3 p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center">
-                        <User className="w-4 h-4 text-gray-400 mr-2" />
-                        <span className="font-medium text-gray-900">
-                          {order.userId?.name || order.customer?.name || 'N/A'}
-                        </span>
-                      </div>
-                      {order.userId ? (
-                        <Badge className="bg-blue-100 text-blue-800 text-xs">
-                          <User className="w-3 h-3 mr-1" />
-                          Compte
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-orange-100 text-orange-800 text-xs">
-                          <Package className="w-3 h-3 mr-1" />
-                          Invité
-                        </Badge>
-                      )}
+                    <div className="flex items-center mb-2">
+                      <User className="w-4 h-4 text-gray-400 mr-2" />
+                      <span className="font-medium text-gray-900">
+                        {order.userId?.name || order.customer?.name || 'N/A'}
+                      </span>
                     </div>
                     
                     <div className="space-y-1">
                       <p className="text-sm text-gray-600">
                         <strong>Contact:</strong> {order.userId?.email || order.customer?.phone || 'N/A'}
                       </p>
-                      {order.customer?.address && (
-                        <p className="text-sm text-gray-600">
-                          <strong>Adresse:</strong> {order.customer.address}
-                        </p>
-                      )}
-                      {order.customer?.deliveryInstructions && (
-                        <p className="text-sm text-gray-600">
-                          <strong>Instructions:</strong> {order.customer.deliveryInstructions}
-                        </p>
-                      )}
                     </div>
                   </div>
 
-                  {/* Articles commandés */}
-                  <div className="mb-3">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Articles commandés:</p>
-                    <div className="space-y-1">
-                      {order.items.slice(0, 3).map((item, index) => (
-                        <div key={index} className="flex justify-between text-sm">
-                          <span className="text-gray-600">
-                            {item.quantity}x {formatProductName(item)}
-                          </span>
-                          <span className="font-medium">
-                            {(item.price * item.quantity).toFixed(2)} €
-                          </span>
-                        </div>
-                      ))}
-                      {order.items.length > 3 && (
-                        <p className="text-xs text-gray-500">
-                          +{order.items.length - 3} autres articles
-                        </p>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex space-x-2">

@@ -28,6 +28,7 @@ export default function CommanderPage() {
   const [productForSize, setProductForSize] = useState<any>(null);
   const [selectedSauce, setSelectedSauce] = useState<any>(null);
   const [sauces, setSauces] = useState<any[]>([]);
+  const [showSauceSelector, setShowSauceSelector] = useState(false);
   const [showCustomizationModal, setShowCustomizationModal] = useState(false);
   const [productForCustomization, setProductForCustomization] = useState<any>(null);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
@@ -962,10 +963,19 @@ export default function CommanderPage() {
                   );
                 })
               ) : selectedCategory === 'accompagnements' ? (
-                // Tailles pour les accompagnements avec sélection de sauce
+                // Tailles pour les accompagnements (sélection simple comme les pizzas)
                 productForSize.sizes.map((size: any, index: number) => (
-                  <div key={index} className="border-2 border-gray-200 rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-3">
+                  <button
+                    key={index}
+                    onClick={() => {
+                      // D'abord sélectionner la taille, puis passer à la sélection de sauce
+                      setProductForSize({ ...productForSize, selectedSize: size });
+                      setShowSizeSelector(false);
+                      setShowSauceSelector(true);
+                    }}
+                    className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
+                  >
+                    <div className="flex justify-between items-center">
                       <div>
                         <h4 className="font-medium text-gray-900">{size.name}</h4>
                         {size.description && (
@@ -976,36 +986,7 @@ export default function CommanderPage() {
                         {size.price.toFixed(2)} €
                       </span>
                     </div>
-                    
-                    {/* Sélection de sauce */}
-                    <div className="mt-3">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Sauce (optionnelle)
-                      </label>
-                      <select
-                        value={selectedSauce?._id || ''}
-                        onChange={(e) => {
-                          const sauce = sauces.find(s => s._id === e.target.value);
-                          setSelectedSauce(sauce || null);
-                        }}
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                      >
-                        <option value="">Aucune sauce</option>
-                        {sauces.map((sauce) => (
-                          <option key={sauce._id} value={sauce._id}>
-                            {sauce.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    <button
-                      onClick={() => handleSizeSelect(size)}
-                      className="w-full mt-3 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                    >
-                      Ajouter au panier
-                    </button>
-                  </div>
+                  </button>
                 ))
               ) : (
                 // Tailles dynamiques pour les autres produits (boissons)
@@ -1037,6 +1018,78 @@ export default function CommanderPage() {
                   setShowSizeSelector(false);
                   setProductForSize(null);
                   setSelectedSauce(null);
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de sélection de sauce pour les accompagnements */}
+      {showSauceSelector && productForSize && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Choisissez une sauce pour {productForSize.name} - {productForSize.selectedSize.name}
+            </h3>
+            
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  // Ajouter au panier sans sauce
+                  handleSizeSelect(productForSize.selectedSize);
+                  setShowSauceSelector(false);
+                  setProductForSize(null);
+                }}
+                className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-medium text-gray-900">Aucune sauce</h4>
+                    <p className="text-sm text-gray-600">Accompagnement sans sauce</p>
+                  </div>
+                  <span className="text-lg font-bold text-red-600">
+                    {productForSize.selectedSize.price.toFixed(2)} €
+                  </span>
+                </div>
+              </button>
+              
+              {sauces.map((sauce) => (
+                <button
+                  key={sauce._id}
+                  onClick={() => {
+                    // Ajouter au panier avec sauce
+                    const itemWithSauce = {
+                      ...productForSize.selectedSize,
+                      sauce: sauce
+                    };
+                    handleSizeSelect(itemWithSauce);
+                    setShowSauceSelector(false);
+                    setProductForSize(null);
+                  }}
+                  className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{sauce.name}</h4>
+                      <p className="text-sm text-gray-600">Avec sauce {sauce.name}</p>
+                    </div>
+                    <span className="text-lg font-bold text-red-600">
+                      {productForSize.selectedSize.price.toFixed(2)} €
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => {
+                  setShowSauceSelector(false);
+                  setProductForSize(null);
                 }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >

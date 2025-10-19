@@ -148,13 +148,22 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
                 <span className="font-medium">Adresse validée :</span>
               </div>
               <div className="text-sm text-green-600 mt-1">
-                {selectedAddress.address?.house_number && selectedAddress.address?.road ? 
-                  `${selectedAddress.address.house_number} ${selectedAddress.address.road}` : 
-                  selectedAddress.address?.road || ''
-                }
-                {selectedAddress.address?.postcode && selectedAddress.address?.city && 
-                  `, ${selectedAddress.address.postcode} ${selectedAddress.address.city}`
-                }
+                {(() => {
+                  const address = selectedAddress.address;
+                  if (!address) return selectedAddress.display_name;
+                  
+                  const parts = [];
+                  if (address.house_number && address.road) {
+                    parts.push(`${address.house_number} ${address.road}`);
+                  } else if (address.road) {
+                    parts.push(address.road);
+                  }
+                  if (address.postcode && address.city) {
+                    parts.push(`${address.postcode} ${address.city}`);
+                  }
+                  
+                  return parts.join(', ') || selectedAddress.display_name;
+                })()}
               </div>
             </div>
           )}

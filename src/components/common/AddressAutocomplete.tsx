@@ -147,6 +147,28 @@ export function AddressAutocomplete({
     return parts.join(' ') || suggestion.display_name;
   };
 
+  const formatCleanAddress = (suggestion: AddressSuggestion) => {
+    // Extraire seulement les informations essentielles
+    const address = suggestion.address;
+    if (!address) return suggestion.display_name;
+
+    const parts = [];
+    
+    // Numéro et rue
+    if (address.house_number && address.road) {
+      parts.push(`${address.house_number} ${address.road}`);
+    } else if (address.road) {
+      parts.push(address.road);
+    }
+    
+    // Code postal et ville
+    if (address.postcode && address.city) {
+      parts.push(`${address.postcode} ${address.city}`);
+    }
+    
+    return parts.join(', ') || suggestion.display_name;
+  };
+
   return (
     <div className={`relative ${className}`}>
       <div className="relative">
@@ -190,7 +212,7 @@ export function AddressAutocomplete({
                 <MapPin className="h-4 w-4 text-gray-400 mt-0.5 mr-3 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium text-gray-900">
-                    {formatSimpleAddress(suggestion)}
+                    {formatCleanAddress(suggestion)}
                   </div>
                 </div>
               </div>

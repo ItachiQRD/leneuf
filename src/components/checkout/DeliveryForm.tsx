@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useCustomerData, CustomerData } from '@/hooks/useCustomerData';
 import { User, Phone, MapPin, CreditCard, Banknote, MessageSquare, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
+import { AddressAutocomplete } from '@/components/common/AddressAutocomplete';
 
 interface DeliveryFormProps {
   onSubmit: (data: CustomerData) => void;
@@ -13,6 +14,7 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
   const { customerData, updateCustomerData } = useCustomerData();
   const [formData, setFormData] = useState<CustomerData>(customerData);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [selectedAddress, setSelectedAddress] = useState<any>(null);
 
   // Mettre à jour le formulaire quand les données des cookies changent
   useEffect(() => {
@@ -34,6 +36,8 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
 
     if (!formData.address.trim()) {
       newErrors.address = 'L\'adresse est requise';
+    } else if (!selectedAddress) {
+      newErrors.address = 'Veuillez sélectionner une adresse valide dans la liste';
     }
 
     setErrors(newErrors);
@@ -51,6 +55,17 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
       setErrors(prev => ({
         ...prev,
         [field]: ''
+      }));
+    }
+  };
+
+  const handleAddressSelect = (address: any) => {
+    setSelectedAddress(address);
+    // Effacer l'erreur d'adresse si elle existe
+    if (errors.address) {
+      setErrors(prev => ({
+        ...prev,
+        address: ''
       }));
     }
   };
@@ -118,16 +133,25 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
             <MapPin className="w-4 h-4 inline mr-2" />
             Adresse de livraison *
           </label>
-          <textarea
+          <AddressAutocomplete
             value={formData.address}
-            onChange={(e) => handleInputChange('address', e.target.value)}
-            rows={3}
-            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white ${
-              errors.address ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-            }`}
-            placeholder="123 Rue de la Paix, 75001 Paris"
+            onChange={(value) => handleInputChange('address', value)}
+            onAddressSelect={handleAddressSelect}
+            placeholder="Rechercher votre adresse..."
+            className={errors.address ? 'border-red-500' : ''}
           />
           {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
+          {selectedAddress && (
+            <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center text-sm text-green-700">
+                <MapPin className="w-4 h-4 mr-2" />
+                <span className="font-medium">Adresse validée :</span>
+              </div>
+              <div className="text-sm text-green-600 mt-1">
+                {selectedAddress.display_name}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Mode de paiement */}

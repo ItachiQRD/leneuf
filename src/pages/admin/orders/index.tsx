@@ -922,9 +922,11 @@ function OrderDetailModal({
                 <span className="font-medium text-gray-900">
                   {order.userId?.name || order.customer?.name || 'N/A'}
                 </span>
-                <div className="text-sm text-gray-600">
-                  {order.userId?.email || order.customer?.phone || 'N/A'}
-                </div>
+                {order.userId?.email && (
+                  <div className="text-sm text-gray-600">
+                    {order.userId.email}
+                  </div>
+                )}
               </div>
             </div>
             

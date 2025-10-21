@@ -80,7 +80,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
     }
 
     if (customIngredients.breadType) {
-      details.push(`Pain: ${customIngredients.breadType}`);
+      details.push(`Classic: ${customIngredients.breadType}`);
     }
 
     if (customIngredients.vegetables && customIngredients.vegetables.length > 0) {
@@ -89,11 +89,6 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
 
     if (customIngredients.withFries !== undefined) {
       details.push(`Frites: ${customIngredients.withFries ? 'Oui' : 'Non'}`);
-    }
-
-    if (customIngredients.sauce) {
-      const sauceName = typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name;
-      details.push(`Sauce: ${sauceName}`);
     }
 
     if (customIngredients.drink) {
@@ -126,8 +121,10 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
       details.push(`Taille: ${customIngredients.size}`);
     }
 
+    // Gestion des sauces (une seule fois, à la fin)
     if (customIngredients.sauce) {
-      details.push(`Sauce: ${customIngredients.sauce}`);
+      const sauceName = typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name;
+      details.push(`Sauce: ${sauceName}`);
     }
 
     if (customIngredients.type) {
@@ -325,10 +322,12 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             width: 100%;
             background: white;
             font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.2;
+            font-size: 12px;
+            line-height: 1.1;
             color: black;
-            padding: 5px;
+            padding: 3px;
+            max-height: none !important;
+            overflow: visible !important;
           }
           .print\\:hidden {
             display: none !important;
@@ -351,6 +350,17 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           }
           .border-dashed {
             border-style: dashed !important;
+          }
+          /* S'assurer que tout le contenu est visible */
+          body, html {
+            overflow: visible !important;
+            height: auto !important;
+          }
+          .space-y-2 > * + * {
+            margin-top: 0.25rem !important;
+          }
+          .space-y-1 > * + * {
+            margin-top: 0.125rem !important;
           }
         }
       `}</style>

@@ -61,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         products = await Side.find({ 
           available: true,
           active: true 
-        }).select('name price image description category nutritionalInfo');
+        }).select('name price image description category nutritionalInfo sizes');
         break;
 
       case 'tacos':
@@ -105,7 +105,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         products = await Dessert.find({ 
           available: true,
           active: true 
-        }).select('name price image description category nutritionalInfo');
+        }).select('name price image description category nutritionalInfo sizes');
         break;
 
       default:

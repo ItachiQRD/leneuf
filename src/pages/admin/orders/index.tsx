@@ -694,7 +694,7 @@ function OrderDetailModal({
     }
 
     if (customIngredients.breadType) {
-      details.push(`Pain: ${customIngredients.breadType}`);
+      details.push(`Classic: ${customIngredients.breadType}`);
     }
 
     if (customIngredients.vegetables && customIngredients.vegetables.length > 0) {
@@ -703,11 +703,6 @@ function OrderDetailModal({
 
     if (customIngredients.withFries !== undefined) {
       details.push(`Frites: ${customIngredients.withFries ? 'Oui' : 'Non'}`);
-    }
-
-    if (customIngredients.sauce) {
-      const sauceName = typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name;
-      details.push(`Sauce: ${sauceName}`);
     }
 
     if (customIngredients.drink) {
@@ -738,6 +733,12 @@ function OrderDetailModal({
 
     if (customIngredients.size) {
       details.push(`Taille: ${customIngredients.size}`);
+    }
+
+    // Gestion des sauces (une seule fois, à la fin)
+    if (customIngredients.sauce) {
+      const sauceName = typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name;
+      details.push(`Sauce: ${sauceName}`);
     }
 
     if (customIngredients.type) {
@@ -892,6 +893,7 @@ function OrderDetailModal({
                   <div className="font-medium">
                     {order.deliveryAddress.street}
                     {order.deliveryAddress.postalCode && order.deliveryAddress.city && 
+                      order.deliveryAddress.postalCode !== '00000' && 
                       `, ${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}`
                     }
                   </div>

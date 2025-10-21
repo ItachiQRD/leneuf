@@ -58,7 +58,7 @@ const getSteps = (productType: 'burger' | 'sandwich') => {
   } else { // sandwich
     return [
       { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
-      { id: 'bread', title: 'Pain', description: 'Durum ou pain pour sandwichs' },
+      { id: 'bread', title: 'Classic', description: 'Durum ou pain pour sandwichs' },
       { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
       { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
       { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
@@ -84,7 +84,7 @@ const MENU_OPTIONS: MenuOption[] = [
 ];
 
 const BREAD_OPTIONS = [
-  { id: 'pain', name: 'Pain', price: 0 },
+  { id: 'pain', name: 'Classic', price: 0 },
   { id: 'durum', name: 'Durum', price: 0 }
 ];
 
@@ -673,7 +673,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                       
                       {type === 'sandwich' && (
                         <div className="flex justify-between">
-                          <span>Pain:</span>
+                          <span>Classic:</span>
                           <span>{BREAD_OPTIONS.find(opt => opt.id === config.breadType)?.name}</span>
                         </div>
                       )}

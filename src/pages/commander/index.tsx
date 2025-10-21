@@ -679,13 +679,15 @@ export default function CommanderPage() {
         </div>
 
         {/* Panier de droite */}
-        <div className="w-80 bg-white shadow-lg flex-shrink-0 hidden lg:block">
-          <div className="p-6">
+        <div className="w-80 bg-white shadow-lg flex-shrink-0 hidden lg:flex flex-col">
+          <div className="p-6 flex-shrink-0">
             <div className="flex items-center mb-6">
               <ShoppingCart className="w-6 h-6 text-gray-600 mr-2" />
               <h2 className="text-xl font-bold text-gray-900">Panier</h2>
             </div>
-            
+          </div>
+          
+          <div className="flex-1 overflow-y-auto px-6">
             {!items || items.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-500">Votre panier est vide</p>
@@ -733,23 +735,23 @@ export default function CommanderPage() {
                 ))}
               </div>
             )}
-            
-            <div className="border-t pt-4">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-lg font-semibold text-gray-900">Total</span>
-                <span className="text-lg font-bold text-gray-900">
-                  {total.toFixed(2)} €
-                </span>
-              </div>
-              
-              <button
-                onClick={handleCheckout}
-                disabled={isLoading || items.length === 0}
-                className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-              >
-                {isLoading ? 'Commande en cours...' : 'Commander'}
-              </button>
+          </div>
+          
+          <div className="p-6 flex-shrink-0 border-t">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-lg font-semibold text-gray-900">Total</span>
+              <span className="text-lg font-bold text-gray-900">
+                {total.toFixed(2)} €
+              </span>
             </div>
+            
+            <button
+              onClick={handleCheckout}
+              disabled={isLoading || items.length === 0}
+              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+            >
+              {isLoading ? 'Commande en cours...' : 'Commander'}
+            </button>
           </div>
         </div>
       </div>

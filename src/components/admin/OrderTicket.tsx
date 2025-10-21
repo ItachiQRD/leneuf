@@ -111,8 +111,19 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
       details.push(`Suppléments: ${customIngredients.supplements.map((sup: any) => sup.name).join(', ')}`);
     }
 
+    // Gestion des sauces (éviter les doublons)
+    const sauces = [];
     if (customIngredients.sauces && customIngredients.sauces.length > 0) {
-      details.push(`Sauces: ${customIngredients.sauces.map((sauce: any) => sauce.name).join(', ')}`);
+      sauces.push(...customIngredients.sauces.map((sauce: any) => sauce.name));
+    }
+    if (customIngredients.sauce) {
+      const sauceName = typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name;
+      if (!sauces.includes(sauceName)) {
+        sauces.push(sauceName);
+      }
+    }
+    if (sauces.length > 0) {
+      details.push(`Sauces: ${sauces.join(', ')}`);
     }
 
     if (customIngredients.meats && customIngredients.meats.length > 0) {
@@ -125,12 +136,6 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
 
     if (customIngredients.size) {
       details.push(`Taille: ${customIngredients.size}`);
-    }
-
-    // Gestion des sauces (une seule fois, à la fin)
-    if (customIngredients.sauce) {
-      const sauceName = typeof customIngredients.sauce === 'string' ? customIngredients.sauce : customIngredients.sauce.name;
-      details.push(`Sauce: ${sauceName}`);
     }
 
     if (customIngredients.type) {
@@ -232,18 +237,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                           {item.quantity}x {formatProductName(item)}
                         </div>
                         
-                        {/* Détails du produit - affichage simplifié */}
-                        <div className="text-xs print:text-base text-gray-600">
-                          {item.price.toFixed(2)}€
-                          
-                          {/* Afficher la taille pour les pizzas */}
-                          {item.customIngredients && item.customIngredients.size && 
-                           (item.category === 'pizzas' || item.productName.toLowerCase().includes('pizza')) && (
-                            <span> - Taille: {item.customIngredients.size}</span>
-                          )}
-                        </div>
-                        
-                        {/* Détails personnalisés - affichage simplifié */}
+                        {/* Détails personnalisés - affichage simplifié avec saut de ligne */}
                         {customDetails && customDetails.length > 0 && (
                           <div className="text-xs print:text-base text-gray-600">
                             {customDetails
@@ -256,9 +250,9 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                                 return true;
                               })
                               .map((detail, detailIndex) => (
-                                <span key={detailIndex}>
-                                  {detailIndex > 0 ? ' • ' : ''}{detail}
-                                </span>
+                                <div key={detailIndex} className="mt-1">
+                                  • {detail}
+                                </div>
                               ))}
                           </div>
                         )}

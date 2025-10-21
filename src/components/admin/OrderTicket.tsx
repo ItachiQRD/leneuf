@@ -172,24 +172,9 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             </div>
           </div>
 
-          {/* Order Info */}
-          <div className="border-b border-dashed border-gray-400 pb-2 mb-3 print:pb-1 print:mb-2">
-            <div className="text-center">
-              <div className="text-sm font-bold print:text-lg">COMMANDE #{order._id.slice(-8)}</div>
-              <div className="text-xs print:text-base">
-                {new Date(order.createdAt).toLocaleString('fr-FR', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Customer Info */}
+          {/* Customer & Delivery Info - Fusionné */}
           <div className="mb-3 print:mb-2">
-            <div className="text-xs font-bold print:text-base mb-1">CLIENT:</div>
+            <div className="text-xs font-bold print:text-base mb-1">CLIENT & LIVRAISON:</div>
             <div className="text-xs print:text-base">
               {order.userId?.name || order.customer?.name || 'N/A'}
             </div>
@@ -205,13 +190,8 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
               PAIEMENT: {order.customer?.paymentMethod === 'card' ? 'CARTE' : 
                          order.customer?.paymentMethod === 'cash' ? 'ESPECES' : 'N/A'}
             </div>
-          </div>
-
-          {/* Delivery Address */}
-          <div className="mb-3 print:mb-2">
-            <div className="text-xs font-bold print:text-base mb-1">LIVRAISON:</div>
-            <div className="text-xs print:text-base">
-              {order.deliveryAddress.street}
+            <div className="text-xs print:text-base mt-1">
+              ADRESSE: {order.deliveryAddress.street}
             </div>
             <div className="text-xs print:text-base">
               {order.deliveryAddress.postalCode} {order.deliveryAddress.city}
@@ -230,7 +210,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
 
           {/* Order Items */}
           <div className="mb-3 print:mb-2">
-            <div className="border-b border-dashed border-gray-400 pb-1 mb-2 print:pb-1 print:mb-1">
+            <div className="pb-1 mb-2 print:pb-1 print:mb-1">
               <div className="text-xs font-bold print:text-base">ARTICLES:</div>
             </div>
             <div className="space-y-2 print:space-y-1">
@@ -245,7 +225,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                           {item.quantity}x {formatProductName(item)}
                         </div>
                         <div className="text-xs print:text-base text-gray-600">
-                          @ {item.price.toFixed(2)}€
+                          {item.price.toFixed(2)}€
                         </div>
                         
                         {/* Options du produit (ancien système) */}
@@ -302,15 +282,6 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             </div>
             <div className="text-xs print:text-base mt-1">
               BON APPETIT !
-            </div>
-            <div className="text-xs print:text-base mt-2">
-              {new Date().toLocaleString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
             </div>
           </div>
         </div>

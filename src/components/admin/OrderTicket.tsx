@@ -1,5 +1,4 @@
 import React from 'react';
-import '@/styles/print.css';
 
 interface Order {
   _id: string;

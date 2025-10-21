@@ -85,8 +85,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
     }
 
     if (customIngredients.breadType) {
-      details.push(`Type: pain`);
-      details.push(`Classic: ${customIngredients.breadType}`);
+      details.push(`Pain: ${customIngredients.breadType}`);
     }
 
     if (customIngredients.vegetables && customIngredients.vegetables.length > 0) {
@@ -138,9 +137,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
       details.push(`Taille: ${customIngredients.size}`);
     }
 
-    if (customIngredients.type) {
-      details.push(`Type: ${customIngredients.type}`);
-    }
+    // Type supprimé pour simplifier l'affichage
 
     return details.length > 0 ? details : null;
   };

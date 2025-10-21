@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
+import Head from 'next/head';
 import { useEffect } from 'react';
 import ProviderWrapper from '@/components/ProviderWrapper';
 import AdminLayout from '@/components/layout/AdminLayout';
@@ -12,6 +13,31 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const isAdminRoute = router.pathname.startsWith('/admin');
 
   const Layout = isAdminRoute ? AdminLayout : MainLayout;
+
+  const getPageTitle = (pathname: string): string => {
+    const map: Record<string, string> = {
+      '/': 'Accueil',
+      '/menu': 'Menu',
+      '/commander': 'Commander',
+      '/checkout': 'Checkout',
+      '/commande-formulaire': 'Formulaire de commande',
+      '/commande-confirmee': 'Commande confirmée',
+      '/promos': 'Promotions',
+      '/contact': 'Contact',
+      '/a-propos': 'À propos',
+    };
+
+    if (pathname.startsWith('/admin')) return 'Admin';
+    if (map[pathname]) return map[pathname];
+
+    // Fallback: prendre le dernier segment et le formater
+    const parts = pathname.split('/').filter(Boolean);
+    if (parts.length === 0) return 'Accueil';
+    const last = parts[parts.length - 1]
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+    return last;
+  };
 
   // Corriger les erreurs de Performance Observer
   useEffect(() => {
@@ -41,6 +67,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ProviderWrapper>
       <Layout>
+        <Head>
+          <title>{`Le Neuf - ${getPageTitle(router.pathname)}`}</title>
+          <link rel="icon" href="/images/logo.png" />
+        </Head>
         <Component {...pageProps} />
         <Toaster />
       </Layout>

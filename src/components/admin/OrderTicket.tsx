@@ -153,15 +153,15 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           </div>
         </div>
 
-        {/* Ticket Content - Style ticket de magasin */}
-        <div className="p-4 print:p-2" id="ticket-content">
-          {/* Restaurant Info - Style ticket */}
-          <div className="text-center mb-4 print:mb-2">
+        {/* Ticket Content - Optimisé pour imprimante thermique */}
+        <div className="p-4 print:p-1" id="ticket-content">
+          {/* Restaurant Info */}
+          <div className="text-center mb-3 print:mb-2">
             <div className="border-b-2 border-gray-800 pb-2 print:pb-1">
-              <h1 className="text-3xl font-bold print:text-2xl">LE 9</h1>
-              <p className="text-sm print:text-xs">RESTAURANT FAST-FOOD</p>
+              <h1 className="text-3xl font-bold print:text-4xl">LE 9</h1>
+              <p className="text-sm print:text-lg">RESTAURANT FAST-FOOD</p>
             </div>
-            <div className="mt-2 text-xs print:text-xs">
+            <div className="mt-2 text-xs print:text-base">
               {new Date().toLocaleString('fr-FR', {
                 day: '2-digit',
                 month: '2-digit', 
@@ -172,11 +172,11 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             </div>
           </div>
 
-          {/* Order Info - Style ticket */}
+          {/* Order Info */}
           <div className="border-b border-dashed border-gray-400 pb-2 mb-3 print:pb-1 print:mb-2">
             <div className="text-center">
-              <div className="text-sm font-bold print:text-xs">COMMANDE #{order._id.slice(-8)}</div>
-              <div className="text-xs print:text-xs">
+              <div className="text-sm font-bold print:text-lg">COMMANDE #{order._id.slice(-8)}</div>
+              <div className="text-xs print:text-base">
                 {new Date(order.createdAt).toLocaleString('fr-FR', {
                   day: '2-digit',
                   month: '2-digit',
@@ -187,70 +187,70 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             </div>
           </div>
 
-          {/* Customer Info - Style ticket */}
+          {/* Customer Info */}
           <div className="mb-3 print:mb-2">
-            <div className="text-xs font-bold print:text-xs mb-1">CLIENT:</div>
-            <div className="text-xs print:text-xs">
+            <div className="text-xs font-bold print:text-base mb-1">CLIENT:</div>
+            <div className="text-xs print:text-base">
               {order.userId?.name || order.customer?.name || 'N/A'}
             </div>
-            <div className="text-xs print:text-xs">
+            <div className="text-xs print:text-base">
               TEL: {order.userId?.phone || order.customer?.phone || 'N/A'}
             </div>
             {order.userId?.email && (
-              <div className="text-xs print:text-xs">
+              <div className="text-xs print:text-base">
                 EMAIL: {order.userId.email}
               </div>
             )}
-            <div className="text-xs print:text-xs">
+            <div className="text-xs print:text-base">
               PAIEMENT: {order.customer?.paymentMethod === 'card' ? 'CARTE' : 
                          order.customer?.paymentMethod === 'cash' ? 'ESPECES' : 'N/A'}
             </div>
           </div>
 
-          {/* Delivery Address - Style ticket */}
+          {/* Delivery Address */}
           <div className="mb-3 print:mb-2">
-            <div className="text-xs font-bold print:text-xs mb-1">LIVRAISON:</div>
-            <div className="text-xs print:text-xs">
+            <div className="text-xs font-bold print:text-base mb-1">LIVRAISON:</div>
+            <div className="text-xs print:text-base">
               {order.deliveryAddress.street}
             </div>
-            <div className="text-xs print:text-xs">
+            <div className="text-xs print:text-base">
               {order.deliveryAddress.postalCode} {order.deliveryAddress.city}
             </div>
             {order.deliveryAddress.complement && (
-              <div className="text-xs print:text-xs">
+              <div className="text-xs print:text-base">
                 {order.deliveryAddress.complement}
               </div>
             )}
             {order.customer?.deliveryInstructions && (
-              <div className="text-xs print:text-xs mt-1">
+              <div className="text-xs print:text-base mt-1">
                 NOTE: {order.customer.deliveryInstructions}
               </div>
             )}
           </div>
 
-          {/* Order Items - Style ticket simplifié */}
+          {/* Order Items */}
           <div className="mb-3 print:mb-2">
             <div className="border-b border-dashed border-gray-400 pb-1 mb-2 print:pb-1 print:mb-1">
-              <div className="text-xs font-bold print:text-xs">ARTICLES:</div>
+              <div className="text-xs font-bold print:text-base">ARTICLES:</div>
             </div>
             <div className="space-y-2 print:space-y-1">
               {order.items.map((item, index) => {
                 const customDetails = renderCustomIngredients(item.customIngredients);
                 
                 return (
-                  <div key={index} className="text-xs print:text-xs border-b border-gray-200 pb-1 print:pb-0">
+                  <div key={index} className="text-xs print:text-base border-b border-gray-200 pb-1 print:pb-0">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="font-bold">
                           {item.quantity}x {formatProductName(item)}
                         </div>
-                        <div className="text-xs text-gray-600">
+                        <div className="text-xs print:text-base text-gray-600">
                           @ {item.price.toFixed(2)}€
                         </div>
                         
                         {/* Options du produit (ancien système) */}
                         {item.options && item.options.length > 0 && (
-                          <div className="mt-1 text-xs text-gray-600">
+                          <div className="mt-1 text-xs print:text-base text-gray-600">
                             {item.options.map((option, optionIndex) => (
                               <div key={optionIndex}>
                                 • {option.name}: {option.choice.name}
@@ -260,9 +260,9 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                           </div>
                         )}
 
-                        {/* Custom Ingredients (nouveau système) - Affichage simplifié */}
+                        {/* Custom Ingredients (nouveau système) */}
                         {customDetails && (
-                          <div className="mt-1 text-xs text-gray-600">
+                          <div className="mt-1 text-xs print:text-base text-gray-600">
                             {customDetails.map((detail, detailIndex) => (
                               <div key={detailIndex}>• {detail}</div>
                             ))}
@@ -279,31 +279,31 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             </div>
           </div>
 
-          {/* Total - Style ticket */}
+          {/* Total */}
           <div className="border-t-2 border-gray-800 pt-2 print:pt-1 print:border-gray-800">
-            <div className="flex justify-between items-center font-bold text-sm print:text-xs">
+            <div className="flex justify-between items-center font-bold text-sm print:text-lg">
               <span>TOTAL:</span>
               <span>{order.total.toFixed(2)}€</span>
             </div>
           </div>
 
-          {/* Notes - Style ticket */}
+          {/* Notes */}
           {order.notes && (
             <div className="mt-2 print:mt-1">
-              <div className="text-xs font-bold print:text-xs">NOTE:</div>
-              <div className="text-xs print:text-xs">{order.notes}</div>
+              <div className="text-xs font-bold print:text-base">NOTE:</div>
+              <div className="text-xs print:text-base">{order.notes}</div>
             </div>
           )}
 
-          {/* Footer - Style ticket */}
+          {/* Footer */}
           <div className="mt-4 pt-2 border-t border-dashed border-gray-400 text-center print:mt-2 print:pt-1 print:border-gray-400">
-            <div className="text-xs print:text-xs">
+            <div className="text-xs print:text-base">
               MERCI POUR VOTRE COMMANDE !
             </div>
-            <div className="text-xs print:text-xs mt-1">
-              BON APPETIT ! 🍔
+            <div className="text-xs print:text-base mt-1">
+              BON APPETIT !
             </div>
-            <div className="text-xs print:text-xs mt-2">
+            <div className="text-xs print:text-base mt-2">
               {new Date().toLocaleString('fr-FR', {
                 day: '2-digit',
                 month: '2-digit',
@@ -334,7 +334,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
         </div>
       </div>
 
-      {/* Print Styles */}
+      {/* Print Styles optimisés pour imprimante thermique */}
       <style jsx global>{`
         @media print {
           body * {
@@ -349,9 +349,33 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             top: 0;
             width: 100%;
             background: white;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.2;
+            color: black;
+            padding: 5px;
           }
           .print\\:hidden {
             display: none !important;
+          }
+          /* Supprimer toutes les bordures et ombres pour l'impression thermique */
+          * {
+            border: none !important;
+            box-shadow: none !important;
+            background: white !important;
+            color: black !important;
+          }
+          /* Garder seulement les bordures de séparation essentielles */
+          .border-b-2, .border-t-2 {
+            border-bottom: 2px solid black !important;
+            border-top: 2px solid black !important;
+          }
+          .border-b, .border-t {
+            border-bottom: 1px solid black !important;
+            border-top: 1px solid black !important;
+          }
+          .border-dashed {
+            border-style: dashed !important;
           }
         }
       `}</style>

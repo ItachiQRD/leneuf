@@ -54,10 +54,6 @@ interface OrderTicketProps {
 export function OrderTicket({ order, onClose }: OrderTicketProps) {
   const formatProductName = (item: any) => {
     if (item.productName && item.productName !== 'Produit personnalisé') {
-      // Vérifier si c'est une pizza
-      if (item.category === 'pizzas' || item.productName.toLowerCase().includes('pizza')) {
-        return `${item.productName} (Pizza)`;
-      }
       return item.productName;
     }
     
@@ -137,8 +133,6 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
       details.push(`Taille: ${customIngredients.size}`);
     }
 
-    // Type supprimé pour simplifier l'affichage
-
     return details.length > 0 ? details : null;
   };
 
@@ -162,99 +156,68 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           </div>
         </div>
 
-        {/* Ticket Content - Optimisé pour imprimante thermique */}
-        <div className="p-4 print:p-1 ticket-container" id="ticket-content">
-          {/* Restaurant Info */}
-          <div className="text-center mb-3 print:mb-2">
-            <div className="border-b-2 border-gray-800 pb-2 print:pb-1">
-              <h1 className="text-3xl font-bold print:text-4xl">LE 9</h1>
-              <p className="text-sm print:text-lg">RESTAURANT FAST-FOOD</p>
+        {/* Ticket Content - Design simplifié pour impression thermique */}
+        <div className="p-4 print:p-2" id="ticket-content">
+          {/* Restaurant Header */}
+          <div className="text-center mb-4 print:mb-2">
+            <div className="border-b-2 border-black pb-2 print:pb-1">
+              <h1 className="text-2xl font-bold print:text-3xl">LE NEUF</h1>
+              <p className="text-sm print:text-base">Fast Food & Grill</p>
             </div>
-            <div className="mt-2 text-xs print:text-base">
-              {new Date().toLocaleString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit', 
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
+            <div className="mt-2 text-xs print:text-sm">
+              Commande #{order._id}
+            </div>
+            <div className="text-xs print:text-sm">
+              {new Date(order.createdAt).toLocaleDateString('fr-FR')} à {new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
             </div>
           </div>
 
-          {/* Customer & Delivery Info - Fusionné */}
-          <div className="mb-3 print:mb-2">
-            <div className="text-xs font-bold print:text-base mb-1">CLIENT & LIVRAISON:</div>
-            <div className="text-xs print:text-base">
-              {order.userId?.name || order.customer?.name || 'N/A'}
-            </div>
-            <div className="text-xs print:text-base">
-              TEL: {order.userId?.phone || order.customer?.phone || 'N/A'}
-            </div>
-            {order.userId?.email && (
-              <div className="text-xs print:text-base">
-                EMAIL: {order.userId.email}
+          {/* Client & Livraison */}
+          <div className="mb-4 print:mb-2">
+            <div className="border-b border-black pb-2 print:pb-1">
+              <h2 className="text-sm font-bold print:text-base mb-1">CLIENT & LIVRAISON</h2>
+              <div className="text-xs print:text-sm space-y-1">
+                <div><strong>Nom:</strong> {order.userId?.name || order.customer?.name || 'N/A'}</div>
+                <div><strong>Tél:</strong> {order.userId?.phone || order.customer?.phone || 'N/A'}</div>
+                <div><strong>Adresse:</strong> {order.deliveryAddress.street}</div>
+                {order.deliveryAddress.postalCode !== '00000' && (
+                  <div>{order.deliveryAddress.postalCode} {order.deliveryAddress.city}</div>
+                )}
+                {order.deliveryAddress.complement && (
+                  <div><strong>Instructions:</strong> {order.deliveryAddress.complement}</div>
+                )}
+                <div><strong>Paiement:</strong> {order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
               </div>
-            )}
-            <div className="text-xs print:text-base">
-              PAIEMENT: {order.customer?.paymentMethod === 'card' ? 'CARTE' : 
-                         order.customer?.paymentMethod === 'cash' ? 'ESPECES' : 'N/A'}
             </div>
-            <div className="text-xs print:text-base mt-1">
-              ADRESSE: {order.deliveryAddress.street}
-            </div>
-            <div className="text-xs print:text-base">
-              {order.deliveryAddress.postalCode !== '00000' ? `${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}` : order.deliveryAddress.city}
-            </div>
-            {order.deliveryAddress.complement && (
-              <div className="text-xs print:text-base">
-                {order.deliveryAddress.complement}
-              </div>
-            )}
-            {order.customer?.deliveryInstructions && (
-              <div className="text-xs print:text-base mt-1">
-                NOTE: {order.customer.deliveryInstructions}
-              </div>
-            )}
           </div>
 
-          {/* Order Items */}
-          <div className="mb-3 print:mb-2 print:page-break-inside-auto">
-            <div className="pb-1 mb-2 print:pb-1 print:mb-1">
-              <div className="text-xs font-bold print:text-base">ARTICLES:</div>
-            </div>
-            <div className="space-y-2 print:space-y-1 print:page-break-inside-auto">
+          {/* Articles */}
+          <div className="mb-4 print:mb-2">
+            <h2 className="text-sm font-bold print:text-base mb-2 print:mb-1 border-b border-black pb-1">ARTICLES</h2>
+            <div className="space-y-2 print:space-y-1">
               {order.items.map((item, index) => {
                 const customDetails = renderCustomIngredients(item.customIngredients);
                 
                 return (
-                  <div key={index} className="text-xs print:text-base border-b border-gray-200 pb-1 print:pb-0 print:page-break-inside-auto">
+                  <div key={index} className="text-xs print:text-sm border-b border-gray-300 pb-2 print:pb-1 print:page-break-inside-auto">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="font-bold">
                           {item.quantity}x {formatProductName(item)}
                         </div>
                         
-                        {/* Détails personnalisés - affichage simplifié avec saut de ligne */}
+                        {/* Détails personnalisés */}
                         {customDetails && customDetails.length > 0 && (
-                          <div className="text-xs print:text-base text-gray-600">
-                            {customDetails
-                              .filter((detail: string) => {
-                                // Ne pas afficher la taille pour les pizzas car elle est déjà affichée au-dessus
-                                if (detail.startsWith('Taille:') && 
-                                    (item.category === 'pizzas' || item.productName.toLowerCase().includes('pizza'))) {
-                                  return false;
-                                }
-                                return true;
-                              })
-                              .map((detail, detailIndex) => (
-                                <div key={detailIndex} className="mt-1">
-                                  • {detail}
-                                </div>
-                              ))}
+                          <div className="text-xs print:text-sm text-gray-600 mt-1">
+                            {customDetails.map((detail, detailIndex) => (
+                              <div key={detailIndex}>
+                                • {detail}
+                              </div>
+                            ))}
                           </div>
                         )}
                       </div>
-                      <div className="font-bold text-right ml-2">
+                      <div className="font-bold text-right ml-2 print:ml-1">
                         {(item.quantity * item.price).toFixed(2)}€
                       </div>
                     </div>
@@ -265,28 +228,20 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           </div>
 
           {/* Total */}
-          <div className="border-t-2 border-gray-800 pt-2 print:pt-1 print:border-gray-800 total-section">
-            <div className="flex justify-between items-center font-bold text-sm print:text-lg">
+          <div className="border-t-2 border-black pt-2 print:pt-1">
+            <div className="flex justify-between items-center font-bold text-sm print:text-base">
               <span>TOTAL:</span>
               <span>{order.total.toFixed(2)}€</span>
             </div>
           </div>
 
-          {/* Notes */}
-          {order.notes && (
-            <div className="mt-2 print:mt-1">
-              <div className="text-xs font-bold print:text-base">NOTE:</div>
-              <div className="text-xs print:text-base">{order.notes}</div>
-            </div>
-          )}
-
           {/* Footer */}
-          <div className="mt-4 pt-2 border-t border-dashed border-gray-400 text-center print:mt-2 print:pt-1 print:border-gray-400 ticket-footer">
-            <div className="text-xs print:text-base">
+          <div className="mt-4 pt-2 border-t border-dashed border-gray-400 text-center print:mt-2 print:pt-1 print:border-gray-400">
+            <div className="text-xs print:text-sm font-bold">
               MERCI POUR VOTRE COMMANDE !
             </div>
-            <div className="text-xs print:text-base mt-1">
-              BON APPETIT !
+            <div className="text-xs print:text-sm mt-1">
+              BON APPÉTIT !
             </div>
           </div>
         </div>
@@ -327,10 +282,11 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             height: auto !important;
             background: white !important;
             font-family: 'Courier New', monospace !important;
-            font-size: 12px !important;
-            line-height: 1.2 !important;
+            font-size: 11px !important;
+            line-height: 1.1 !important;
             color: black !important;
-            padding: 5px !important;
+            padding: 8px !important;
+            margin: 0 !important;
             max-height: none !important;
             overflow: visible !important;
             page-break-inside: auto !important;
@@ -339,7 +295,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           .print\\:hidden {
             display: none !important;
           }
-          /* Garder seulement les bordures de séparation essentielles */
+          /* Bordures pour l'impression thermique */
           .border-b-2, .border-t-2 {
             border-bottom: 2px solid black !important;
             border-top: 2px solid black !important;
@@ -348,22 +304,37 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             border-bottom: 1px solid black !important;
             border-top: 1px solid black !important;
           }
-          .border-dashed {
-            border-style: dashed !important;
+          .border-black {
+            border-color: black !important;
           }
-          /* Espacement simplifié */
+          .border-gray-300 {
+            border-color: #666 !important;
+          }
+          .border-gray-400 {
+            border-color: #888 !important;
+          }
+          /* Espacement optimisé */
           .space-y-2 > * + * {
-            margin-top: 0.5rem !important;
-          }
-          .space-y-1 > * + * {
             margin-top: 0.25rem !important;
           }
-          /* Layout simplifié pour l'impression */
+          .space-y-1 > * + * {
+            margin-top: 0.125rem !important;
+          }
+          /* Layout pour impression */
           .flex {
             display: block !important;
           }
           .flex-1 {
             width: 100% !important;
+          }
+          /* Sauts de page */
+          .print\\:page-break-inside-auto {
+            page-break-inside: auto !important;
+            break-inside: auto !important;
+          }
+          .print\\:page-break-inside-avoid {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
           }
         }
       `}</style>

@@ -199,7 +199,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                 const customDetails = renderCustomIngredients(item.customIngredients);
                 
                 return (
-                  <div key={index} className="text-xs print:text-sm border-b border-gray-300 pb-2 print:pb-1 print:page-break-inside-auto">
+                  <div key={index} className="text-xs print:text-sm border-b border-gray-300 pb-2 print:pb-1">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="font-bold">
@@ -265,7 +265,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
         </div>
       </div>
 
-      {/* Print Styles optimisés pour imprimante thermique */}
+      {/* Print Styles - Seulement les règles essentielles */}
       <style jsx global>{`
         @media print {
           body * {
@@ -281,60 +281,13 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             width: 100% !important;
             height: auto !important;
             background: white !important;
-            font-family: 'Courier New', monospace !important;
-            font-size: 11px !important;
-            line-height: 1.1 !important;
-            color: black !important;
             padding: 8px !important;
             margin: 0 !important;
             max-height: none !important;
             overflow: visible !important;
-            page-break-inside: auto !important;
-            break-inside: auto !important;
           }
           .print\\:hidden {
             display: none !important;
-          }
-          /* Bordures pour l'impression thermique */
-          .border-b-2, .border-t-2 {
-            border-bottom: 2px solid black !important;
-            border-top: 2px solid black !important;
-          }
-          .border-b, .border-t {
-            border-bottom: 1px solid black !important;
-            border-top: 1px solid black !important;
-          }
-          .border-black {
-            border-color: black !important;
-          }
-          .border-gray-300 {
-            border-color: #666 !important;
-          }
-          .border-gray-400 {
-            border-color: #888 !important;
-          }
-          /* Espacement optimisé */
-          .space-y-2 > * + * {
-            margin-top: 0.25rem !important;
-          }
-          .space-y-1 > * + * {
-            margin-top: 0.125rem !important;
-          }
-          /* Layout pour impression */
-          .flex {
-            display: block !important;
-          }
-          .flex-1 {
-            width: 100% !important;
-          }
-          /* Sauts de page */
-          .print\\:page-break-inside-auto {
-            page-break-inside: auto !important;
-            break-inside: auto !important;
-          }
-          .print\\:page-break-inside-avoid {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
           }
         }
       `}</style>

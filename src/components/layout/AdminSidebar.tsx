@@ -13,7 +13,9 @@ import {
   ChevronDown,
   Receipt,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  Gift,
+  BarChart
 } from 'lucide-react';
 
 const menuItems = [
@@ -40,6 +42,11 @@ const menuItems = [
     path: '/admin/orders',
   },
   {
+    title: 'Promotions',
+    icon: Gift,
+    path: '/admin/promotions',
+  },
+  {
     title: 'Utilisateurs',
     icon: Users,
     path: '/admin/users',
@@ -48,6 +55,7 @@ const menuItems = [
     title: 'Statistiques',
     icon: BarChart3,
     children: [
+      { title: 'Analytics', path: '/admin/analytics' },
       { title: 'Ventes', path: '/admin/stats/sales' },
       { title: 'Produits', path: '/admin/stats/products' },
       { title: 'Clients', path: '/admin/stats/customers' },

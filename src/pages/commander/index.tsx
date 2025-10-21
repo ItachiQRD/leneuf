@@ -10,6 +10,7 @@ import MenuSelector from '@/components/commander/MenuSelector';
 import PaniniComposer from '@/components/commander/PaniniComposer';
 import BurgerSandwichComposer from '@/components/commander/BurgerSandwichComposer';
 import TexMexComposer from '@/components/commander/TexMexComposer';
+import { MenuPromotions } from '@/components/MenuPromotions';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -538,6 +539,13 @@ export default function CommanderPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 pt-20">
+      {/* Promotions Section */}
+      <div className="bg-white py-8">
+        <div className="container mx-auto px-4">
+          <MenuPromotions limit={3} />
+        </div>
+      </div>
+      
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen">
         {/* Menu de gauche */}

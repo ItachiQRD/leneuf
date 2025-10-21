@@ -19,6 +19,15 @@ interface Order {
   customer?: {
     name: string;
   };
+  deliveryAddress: {
+    street: string;
+    city: string;
+    postalCode: string;
+    complement?: string;
+  };
+  paymentMethod: 'card' | 'cash';
+  status: 'pending' | 'processing' | 'completed' | 'cancelled';
+  paymentStatus: 'pending' | 'paid' | 'failed';
 }
 
 interface AnalyticsData {

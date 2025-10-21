@@ -21,6 +21,7 @@ interface Order {
     productName: string;
     quantity: number;
     price: number;
+    category?: string;
     options?: Array<{
       name: string;
       choice: {

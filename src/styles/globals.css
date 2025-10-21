@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import des styles d'impression */
-@import './print.css';
+/* Styles d'impression supprimés pour éviter les conflits */
 
 @layer base {
   :root {

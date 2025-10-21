@@ -339,13 +339,6 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           .print\\:hidden {
             display: none !important;
           }
-          /* Supprimer toutes les bordures et ombres pour l'impression thermique */
-          * {
-            border: none !important;
-            box-shadow: none !important;
-            background: white !important;
-            color: black !important;
-          }
           /* Garder seulement les bordures de séparation essentielles */
           .border-b-2, .border-t-2 {
             border-bottom: 2px solid black !important;
@@ -357,12 +350,6 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           }
           .border-dashed {
             border-style: dashed !important;
-          }
-          /* S'assurer que tout le contenu est visible */
-          body, html {
-            overflow: visible !important;
-            height: auto !important;
-            max-height: none !important;
           }
           /* Espacement simplifié */
           .space-y-2 > * + * {

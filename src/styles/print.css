@@ -71,19 +71,6 @@
     max-height: none !important;
   }
 
-  /* Styles spécifiques pour les tickets */
-  #ticket-content {
-    position: static !important;
-    left: auto !important;
-    top: auto !important;
-    width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
-    page-break-inside: auto !important;
-    break-inside: auto !important;
-  }
-
   /* S'assurer que tous les éléments sont visibles */
   .hidden {
     display: block !important;
@@ -119,14 +106,12 @@
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
-    min-height: 100vh !important;
   }
 
   /* S'assurer que le footer apparaît toujours */
   .ticket-footer {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    margin-top: auto !important;
   }
 
   /* Éviter les coupures dans les totaux */
@@ -135,19 +120,5 @@
     break-before: avoid !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-  }
-
-  /* S'assurer que les éléments importants ne sont pas coupés */
-  .font-bold {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-  }
-
-  /* Forcer l'affichage du contenu complet */
-  .print-content {
-    display: block !important;
-    visibility: visible !important;
-    height: auto !important;
-    max-height: none !important;
   }
 }

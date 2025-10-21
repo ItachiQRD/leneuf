@@ -119,5 +119,35 @@
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
+    min-height: 100vh !important;
+  }
+
+  /* S'assurer que le footer apparaît toujours */
+  .ticket-footer {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-top: auto !important;
+  }
+
+  /* Éviter les coupures dans les totaux */
+  .total-section {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* S'assurer que les éléments importants ne sont pas coupés */
+  .font-bold {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Forcer l'affichage du contenu complet */
+  .print-content {
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+    max-height: none !important;
   }
 }

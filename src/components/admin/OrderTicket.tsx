@@ -231,32 +231,21 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                         <div className="font-bold">
                           {item.quantity}x {formatProductName(item)}
                         </div>
-                        {/* Afficher la taille pour les pizzas */}
-                        {item.customIngredients && item.customIngredients.size && 
-                         (item.category === 'pizzas' || item.productName.toLowerCase().includes('pizza')) && (
-                          <div className="text-xs print:text-base text-gray-600">
-                            Taille: {item.customIngredients.size}
-                          </div>
-                        )}
+                        
+                        {/* Détails du produit - affichage simplifié */}
                         <div className="text-xs print:text-base text-gray-600">
                           {item.price.toFixed(2)}€
+                          
+                          {/* Afficher la taille pour les pizzas */}
+                          {item.customIngredients && item.customIngredients.size && 
+                           (item.category === 'pizzas' || item.productName.toLowerCase().includes('pizza')) && (
+                            <span> - Taille: {item.customIngredients.size}</span>
+                          )}
                         </div>
                         
-                        {/* Options du produit (ancien système) */}
-                        {item.options && item.options.length > 0 && (
-                          <div className="mt-1 text-xs print:text-base text-gray-600">
-                            {item.options.map((option, optionIndex) => (
-                              <div key={optionIndex}>
-                                • {option.name}: {option.choice.name}
-                                {option.choice.price > 0 && ` (+${option.choice.price.toFixed(2)}€)`}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Custom Ingredients (nouveau système) */}
-                        {customDetails && (
-                          <div className="mt-1 text-xs print:text-base text-gray-600">
+                        {/* Détails personnalisés - affichage simplifié */}
+                        {customDetails && customDetails.length > 0 && (
+                          <div className="text-xs print:text-base text-gray-600">
                             {customDetails
                               .filter((detail: string) => {
                                 // Ne pas afficher la taille pour les pizzas car elle est déjà affichée au-dessus
@@ -267,7 +256,9 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                                 return true;
                               })
                               .map((detail, detailIndex) => (
-                                <div key={detailIndex}>• {detail}</div>
+                                <span key={detailIndex}>
+                                  {detailIndex > 0 ? ' • ' : ''}{detail}
+                                </span>
                               ))}
                           </div>
                         )}
@@ -283,7 +274,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           </div>
 
           {/* Total */}
-          <div className="border-t-2 border-gray-800 pt-2 print:pt-1 print:border-gray-800">
+          <div className="border-t-2 border-gray-800 pt-2 print:pt-1 print:border-gray-800 total-section">
             <div className="flex justify-between items-center font-bold text-sm print:text-lg">
               <span>TOTAL:</span>
               <span>{order.total.toFixed(2)}€</span>
@@ -299,7 +290,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           )}
 
           {/* Footer */}
-          <div className="mt-4 pt-2 border-t border-dashed border-gray-400 text-center print:mt-2 print:pt-1 print:border-gray-400">
+          <div className="mt-4 pt-2 border-t border-dashed border-gray-400 text-center print:mt-2 print:pt-1 print:border-gray-400 ticket-footer">
             <div className="text-xs print:text-base">
               MERCI POUR VOTRE COMMANDE !
             </div>
@@ -346,9 +337,9 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             background: white !important;
             font-family: 'Courier New', monospace !important;
             font-size: 12px !important;
-            line-height: 1.1 !important;
+            line-height: 1.2 !important;
             color: black !important;
-            padding: 3px !important;
+            padding: 5px !important;
             max-height: none !important;
             overflow: visible !important;
             page-break-inside: auto !important;
@@ -376,29 +367,20 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           .border-dashed {
             border-style: dashed !important;
           }
-          /* S'assurer que tout le contenu est visible et peut s'étendre sur plusieurs pages */
+          /* S'assurer que tout le contenu est visible */
           body, html {
             overflow: visible !important;
             height: auto !important;
             max-height: none !important;
           }
+          /* Espacement simplifié */
           .space-y-2 > * + * {
-            margin-top: 0.25rem !important;
+            margin-top: 0.5rem !important;
           }
           .space-y-1 > * + * {
-            margin-top: 0.125rem !important;
+            margin-top: 0.25rem !important;
           }
-          /* Permettre les sauts de page */
-          .space-y-2, .space-y-1 {
-            page-break-inside: auto !important;
-            break-inside: auto !important;
-          }
-          /* Éviter les coupures dans les éléments importants */
-          .font-bold {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-          }
-          /* S'assurer que les éléments peuvent s'étendre */
+          /* Layout simplifié pour l'impression */
           .flex {
             display: block !important;
           }

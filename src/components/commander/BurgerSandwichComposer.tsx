@@ -422,7 +422,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                     Crudités (optionnel)
                   </h3>
                   
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {/* Option "Aucun crudités" */}
                     <label className="flex items-center p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
                       <input
@@ -446,40 +446,42 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                       <span className="text-gray-700 text-sm lg:text-base">Aucun crudités</span>
                     </label>
 
-                    {/* Options de crudités avec images depuis la base de données */}
-                    {ingredients.map((vegetable) => (
-                      <label key={vegetable._id} className="flex items-center p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
-                        <input
-                          type="checkbox"
-                          checked={config.selectedVegetables.includes(vegetable.name)}
-                          onChange={() => {
-                            const isSelected = config.selectedVegetables.includes(vegetable.name);
-                            if (isSelected) {
-                              setConfig(prev => ({
-                                ...prev,
-                                selectedVegetables: prev.selectedVegetables.filter(v => v !== vegetable.name)
-                              }));
-                            } else {
-                              setConfig(prev => ({
-                                ...prev,
-                                selectedVegetables: [...prev.selectedVegetables, vegetable.name]
-                              }));
-                            }
-                          }}
-                          className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                        />
-                        <div className="w-8 h-8 mr-3 flex items-center justify-center">
-                          <Image
-                            src={vegetable.image}
-                            alt={vegetable.name}
-                            width={32}
-                            height={32}
-                            className="object-contain"
+                    {/* Grille responsive des crudités avec images */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                      {ingredients.map((vegetable) => (
+                        <label key={vegetable._id} className="flex flex-col items-center p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
+                          <input
+                            type="checkbox"
+                            checked={config.selectedVegetables.includes(vegetable.name)}
+                            onChange={() => {
+                              const isSelected = config.selectedVegetables.includes(vegetable.name);
+                              if (isSelected) {
+                                setConfig(prev => ({
+                                  ...prev,
+                                  selectedVegetables: prev.selectedVegetables.filter(v => v !== vegetable.name)
+                                }));
+                              } else {
+                                setConfig(prev => ({
+                                  ...prev,
+                                  selectedVegetables: [...prev.selectedVegetables, vegetable.name]
+                                }));
+                              }
+                            }}
+                            className="mb-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
                           />
-                        </div>
-                        <span className="text-gray-700 text-sm lg:text-base">{vegetable.name}</span>
-                      </label>
-                    ))}
+                          <div className="w-12 h-12 mb-2 flex items-center justify-center">
+                            <Image
+                              src={vegetable.image}
+                              alt={vegetable.name}
+                              width={48}
+                              height={48}
+                              className="object-contain"
+                            />
+                          </div>
+                          <span className="text-gray-700 text-xs lg:text-sm text-center">{vegetable.name}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               )}

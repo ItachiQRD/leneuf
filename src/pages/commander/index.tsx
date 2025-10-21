@@ -1051,6 +1051,7 @@ export default function CommanderPage() {
             </h3>
             
             <div className="space-y-3">
+              {/* Option "Aucune sauce" */}
               <button
                 onClick={() => {
                   // Ajouter au panier sans sauce
@@ -1060,8 +1061,13 @@ export default function CommanderPage() {
                 }}
                 className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
               >
-                <div className="flex justify-between items-center">
-                  <div>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
+                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
                     <h4 className="font-medium text-gray-900">Aucune sauce</h4>
                     <p className="text-sm text-gray-600">Accompagnement sans sauce</p>
                   </div>
@@ -1071,32 +1077,41 @@ export default function CommanderPage() {
                 </div>
               </button>
               
-              {sauces.map((sauce) => (
-                <button
-                  key={sauce._id}
-                  onClick={() => {
-                    // Ajouter au panier avec sauce
-                    const itemWithSauce = {
-                      ...productForSize.selectedSize,
-                      sauce: sauce
-                    };
-                    handleSizeSelect(itemWithSauce);
-                    setShowSauceSelector(false);
-                    setProductForSize(null);
-                  }}
-                  className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h4 className="font-medium text-gray-900">{sauce.name}</h4>
-                      <p className="text-sm text-gray-600">Avec sauce {sauce.name}</p>
+              {/* Grille des sauces avec images */}
+              <div className="grid grid-cols-2 gap-3">
+                {sauces.map((sauce) => (
+                  <button
+                    key={sauce._id}
+                    onClick={() => {
+                      // Ajouter au panier avec sauce
+                      const itemWithSauce = {
+                        ...productForSize.selectedSize,
+                        sauce: sauce
+                      };
+                      handleSizeSelect(itemWithSauce);
+                      setShowSauceSelector(false);
+                      setProductForSize(null);
+                    }}
+                    className="p-4 border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors text-left"
+                  >
+                    <div className="text-center">
+                      <div className="w-12 h-12 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <Image
+                          src={sauce.image || '/images/placeholder-sauce.jpg'}
+                          alt={sauce.name}
+                          width={48}
+                          height={48}
+                          className="object-contain rounded-lg"
+                        />
+                      </div>
+                      <h4 className="font-medium text-gray-900 text-sm">{sauce.name}</h4>
+                      <p className="text-xs text-gray-600 mt-1">
+                        {productForSize.selectedSize.price.toFixed(2)} €
+                      </p>
                     </div>
-                    <span className="text-lg font-bold text-red-600">
-                      {productForSize.selectedSize.price.toFixed(2)} €
-                    </span>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
             
             <div className="flex justify-end mt-6">

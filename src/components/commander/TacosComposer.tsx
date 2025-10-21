@@ -58,6 +58,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
     type: 'tacos' as 'tacos' | 'bowl',
     size: 'M',
     meats: [] as SelectedMeat[],
+    meatCounts: {} as Record<string, number>, // Pour compter les occurrences de chaque viande
     sauces: [] as SelectedSauce[],
     ingredients: [] as SelectedIngredient[],
     quantity: 1
@@ -71,6 +72,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
         type: 'tacos',
         size: 'M',
         meats: [],
+        meatCounts: {},
         sauces: [],
         ingredients: [],
         quantity: 1
@@ -137,31 +139,67 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
     setCurrentStep(2);
   };
 
+  const getMaxMeats = () => {
+    const selectedSize = options.sizes.find(s => s.name === config.size);
+    return selectedSize ? selectedSize.maxMeats : 1;
+  };
+
   const handleMeatToggle = (meat: any) => {
     setConfig(prev => {
-      const isSelected = prev.meats.some(m => m.id === meat._id);
-      let newMeats = [...prev.meats];
+      const maxMeats = getMaxMeats();
+      const currentCount = prev.meatCounts[meat._id] || 0;
+      const totalSelected = Object.values(prev.meatCounts).reduce((sum, count) => sum + count, 0);
       
-      if (isSelected) {
-        // Décocher la viande
-        newMeats = newMeats.filter(m => m.id !== meat._id);
-      } else {
-        // Vérifier la limite selon le type et la taille
-        const maxMeats = prev.type === 'bowl' ? 1 : 
-          prev.size === 'M' ? 1 : 
-          prev.size === 'L' ? 2 : 3;
-        
-        if (newMeats.length < maxMeats) {
-          newMeats.push({
-            id: meat._id,
-            name: meat.name,
-            price: 0, // Les viandes sont gratuites
-            image: meat.image
-          });
+      if (currentCount > 0 && totalSelected > 0) { // Allow removing if already selected and total > 0
+        const newCounts = { ...prev.meatCounts };
+        if (newCounts[meat._id] === 1) {
+          delete newCounts[meat._id];
+        } else {
+          newCounts[meat._id] = newCounts[meat._id] - 1;
         }
+        
+        // Rebuild meats array
+        const newMeats: SelectedMeat[] = [];
+        Object.entries(newCounts).forEach(([meatId, count]) => {
+          const meatData = options.meats.find(m => m._id === meatId);
+          if (meatData) {
+            for (let i = 0; i < (count as number); i++) {
+              newMeats.push({
+                id: meatData._id,
+                name: meatData.name,
+                price: 0,
+                image: meatData.image
+              });
+            }
+          }
+        });
+        
+        return { ...prev, meats: newMeats, meatCounts: newCounts };
+      } else if (totalSelected < maxMeats) {
+        const newCounts = {
+          ...prev.meatCounts,
+          [meat._id]: (prev.meatCounts[meat._id] || 0) + 1
+        };
+        
+        // Rebuild meats array
+        const newMeats: SelectedMeat[] = [];
+        Object.entries(newCounts).forEach(([meatId, count]) => {
+          const meatData = options.meats.find(m => m._id === meatId);
+          if (meatData) {
+            for (let i = 0; i < (count as number); i++) {
+              newMeats.push({
+                id: meatData._id,
+                name: meatData.name,
+                price: 0,
+                image: meatData.image
+              });
+            }
+          }
+        });
+        
+        return { ...prev, meats: newMeats, meatCounts: newCounts };
       }
-      
-      return { ...prev, meats: newMeats };
+      return prev;
     });
   };
 
@@ -232,7 +270,11 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
     switch (currentStep) {
       case 0: return config.type === 'tacos' || config.type === 'bowl';
       case 1: return config.type === 'bowl' || config.size !== '';
-      case 2: return config.meats.length > 0;
+      case 2: {
+        const maxMeats = getMaxMeats();
+        const totalSelected = Object.values(config.meatCounts).reduce((sum, count) => sum + count, 0);
+        return totalSelected > 0 && totalSelected <= maxMeats;
+      }
       case 3: return config.sauces.length >= 1; // Minimum 1 sauce
       case 4: return true; // Les suppléments sont optionnels
       case 5: return true;
@@ -279,6 +321,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       type: 'tacos',
       size: 'M',
       meats: [],
+      meatCounts: {},
       sauces: [],
       ingredients: [],
       quantity: 1
@@ -431,24 +474,23 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
                       {options.meats.map((meat) => {
-                        const isSelected = config.meats.some(m => m.id === meat._id);
-                        const maxMeats = config.type === 'bowl' ? 1 : 
-                          config.size === 'M' ? 1 : 
-                          config.size === 'L' ? 2 : 3;
-                        const canSelect = !isSelected && config.meats.length < maxMeats;
-                        const canDeselect = isSelected;
+                        const currentCount = config.meatCounts[meat._id] || 0;
+                        const maxMeats = getMaxMeats();
+                        const totalSelected = Object.values(config.meatCounts).reduce((sum, count) => sum + count, 0);
+                        const canAdd = totalSelected < maxMeats;
+                        const isSelected = currentCount > 0;
                         
                         return (
                           <motion.button
                             key={meat._id}
-                            whileHover={{ scale: (canSelect || canDeselect) ? 1.02 : 1 }}
-                            whileTap={{ scale: (canSelect || canDeselect) ? 0.98 : 1 }}
-                            onClick={() => (canSelect || canDeselect) && handleMeatToggle(meat)}
-                            disabled={!canSelect && !canDeselect}
+                            whileHover={{ scale: (canAdd || isSelected) ? 1.02 : 1 }}
+                            whileTap={{ scale: (canAdd || isSelected) ? 0.98 : 1 }}
+                            onClick={() => (canAdd || isSelected) && handleMeatToggle(meat)}
+                            disabled={!canAdd && !isSelected}
                             className={`p-3 lg:p-4 border-2 rounded-lg text-left transition-colors relative overflow-hidden ${
                               isSelected 
                                 ? 'border-orange-500 bg-orange-50' 
-                                : canSelect
+                                : canAdd
                                   ? 'border-gray-200 hover:border-orange-300'
                                   : 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
                             }`}
@@ -463,6 +505,32 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                             </div>
                             <h4 className="font-medium text-gray-900 text-sm lg:text-base">{meat.name}</h4>
                             <p className="text-xs lg:text-sm text-gray-600">Gratuit</p>
+                            {currentCount > 0 && (
+                              <div className="mt-1 flex items-center justify-center space-x-1">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMeatToggle(meat);
+                                  }}
+                                  className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                                >
+                                  -
+                                </button>
+                                <span className="text-sm font-bold text-orange-600">{currentCount}</span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (canAdd) {
+                                      handleMeatToggle(meat);
+                                    }
+                                  }}
+                                  disabled={!canAdd}
+                                  className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            )}
                             {isSelected && <Check className="w-4 h-4 lg:w-5 lg:h-5 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>
                         );
@@ -575,12 +643,15 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                           <span>{config.type === 'bowl' ? '7.50€' : config.size === 'M' ? '6.50€' : config.size === 'L' ? '7.50€' : '8.50€'}</span>
                         </div>
                         
-                        {config.meats.map((meat, index) => (
-                          <div key={index} className="flex justify-between">
-                            <span>Viande : {meat.name}</span>
-                            <span>+1.50€</span>
-                          </div>
-                        ))}
+                        {Object.entries(config.meatCounts).map(([meatId, count]) => {
+                          const meat = options.meats.find(m => m._id === meatId);
+                          return meat ? (
+                            <div key={meatId} className="flex justify-between">
+                              <span>Viande : {meat.name} {count > 1 ? `(x${count})` : ''}</span>
+                              <span>Gratuit</span>
+                            </div>
+                          ) : null;
+                        })}
                         
                         {config.sauces.map((sauce, index) => (
                           <div key={index} className="flex justify-between">

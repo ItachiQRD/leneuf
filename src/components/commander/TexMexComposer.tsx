@@ -237,7 +237,11 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
   const canProceed = () => {
     switch (currentStep) {
       case 0: return true; // Les sauces sont optionnelles
-      case 1: return true; // Les boissons sont optionnelles
+      case 1: {
+        const maxDrinks = getMaxDrinks();
+        const totalSelected = Object.values(config.drinkCounts).reduce((sum, count) => sum + count, 0);
+        return totalSelected <= maxDrinks; // Griser si on dépasse la limite
+      }
       default: return true;
     }
   };

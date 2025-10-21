@@ -139,7 +139,13 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       const response = await fetch('/api/ingredients/vegetables');
       const data = await response.json();
       if (data.success) {
-        setIngredients(data.vegetables);
+        // Filtrer pour n'afficher que salade, tomate, oignons
+        const filteredVegetables = data.vegetables.filter((vegetable: Vegetable) => 
+          vegetable.name.toLowerCase().includes('salade') || 
+          vegetable.name.toLowerCase().includes('tomate') || 
+          vegetable.name.toLowerCase().includes('oignon')
+        );
+        setIngredients(filteredVegetables);
       }
     } catch (error) {
       console.error('Error fetching vegetables:', error);
@@ -447,9 +453,9 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                     </label>
 
                     {/* Grille responsive des crudités avec images */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       {ingredients.map((vegetable) => (
-                        <label key={vegetable._id} className="flex flex-col items-center p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
+                        <label key={vegetable._id} className="flex flex-col items-center p-4 lg:p-6 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
                           <input
                             type="checkbox"
                             checked={config.selectedVegetables.includes(vegetable.name)}
@@ -467,18 +473,18 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                                 }));
                               }
                             }}
-                            className="mb-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                            className="mb-3 h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded"
                           />
-                          <div className="w-12 h-12 mb-2 flex items-center justify-center">
+                          <div className="w-16 h-16 mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
                             <Image
                               src={vegetable.image}
                               alt={vegetable.name}
-                              width={48}
-                              height={48}
+                              width={64}
+                              height={64}
                               className="object-contain"
                             />
                           </div>
-                          <span className="text-gray-700 text-xs lg:text-sm text-center">{vegetable.name}</span>
+                          <span className="text-gray-700 text-sm lg:text-base text-center font-medium">{vegetable.name}</span>
                         </label>
                       ))}
                     </div>

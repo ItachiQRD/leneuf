@@ -1077,9 +1077,10 @@ export default function CommanderPage() {
                 </div>
               </button>
               
-              {/* Grille des sauces avec images */}
-              <div className="grid grid-cols-2 gap-3">
-                {sauces.map((sauce) => (
+              {/* Grille des sauces avec images - scrollable */}
+              <div className="max-h-80 overflow-y-auto">
+                <div className="grid grid-cols-2 gap-3">
+                  {sauces.map((sauce) => (
                   <button
                     key={sauce._id}
                     onClick={() => {
@@ -1110,7 +1111,8 @@ export default function CommanderPage() {
                       </p>
                     </div>
                   </button>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
             

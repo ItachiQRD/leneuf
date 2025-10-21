@@ -379,17 +379,21 @@ export default function CommanderPage() {
       }
       
       // Pour les accompagnements, ajouter la sauce si sélectionnée
-      if (selectedCategory === 'accompagnements' && selectedSauce) {
-        name += ` + ${selectedSauce.name}`;
+      if (selectedCategory === 'accompagnements' && size.sauce) {
+        name += ` + ${size.sauce.name}`;
       }
       
       const cartItem = {
-        _id: `${productForSize._id || productForSize.id}-${size.name}${selectedSauce ? `-${selectedSauce._id}` : ''}`,
+        _id: `${productForSize._id || productForSize.id}-${size.name}${size.sauce ? `-${size.sauce._id}` : ''}`,
         name: name,
         price: price,
         image: productForSize.image,
         category: productForSize.category,
-        type: productForSize.productType || 'food'
+        type: productForSize.productType || 'food',
+        customIngredients: {
+          size: size.name,
+          sauce: size.sauce ? size.sauce.name : null
+        }
       };
       addItem(cartItem);
     }

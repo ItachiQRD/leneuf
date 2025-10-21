@@ -126,6 +126,10 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
       details.push(`Taille: ${customIngredients.size}`);
     }
 
+    if (customIngredients.sauce) {
+      details.push(`Sauce: ${customIngredients.sauce}`);
+    }
+
     if (customIngredients.type) {
       details.push(`Type: ${customIngredients.type}`);
     }
@@ -194,7 +198,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
               ADRESSE: {order.deliveryAddress.street}
             </div>
             <div className="text-xs print:text-base">
-              {order.deliveryAddress.postalCode} {order.deliveryAddress.city}
+              {order.deliveryAddress.postalCode !== '00000' ? `${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}` : order.deliveryAddress.city}
             </div>
             {order.deliveryAddress.complement && (
               <div className="text-xs print:text-base">

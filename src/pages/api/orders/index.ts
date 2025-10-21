@@ -54,28 +54,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
       
-      // Fonction pour extraire les informations d'adresse
-      const parseAddress = (addressString: string) => {
-        if (!addressString) return { street: 'Adresse non fournie', city: 'Ville', postalCode: '00000' };
-        
-        // Essayer d'extraire le code postal et la ville
-        const postalCodeMatch = addressString.match(/(\d{5})\s+([^,]+)/);
-        if (postalCodeMatch) {
-          return {
-            street: addressString.replace(/\d{5}\s+[^,]+/, '').trim().replace(/,$/, ''),
-            postalCode: postalCodeMatch[1],
-            city: postalCodeMatch[2].trim()
-          };
-        }
-        
-        // Si pas de code postal trouvé, retourner l'adresse complète comme rue
-        return {
-          street: addressString,
-          city: 'Ville',
-          postalCode: '00000'
-        };
-      };
-
       // Créer la commande avec validation
       const orderData = {
         userId: userId || null, // Optionnel pour les commandes sans compte
@@ -91,7 +69,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         total: total || 0,
         status: status || 'pending',
         deliveryAddress: customer ? {
-          ...parseAddress(customer.address),
+          street: customer.address,
+          city: 'Ville', // À extraire de l'adresse si nécessaire
+          postalCode: '00000', // À extraire de l'adresse si nécessaire
           complement: customer.deliveryInstructions || ''
         } : (deliveryAddress || {
           street: 'Adresse par défaut',

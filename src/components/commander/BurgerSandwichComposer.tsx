@@ -12,6 +12,12 @@ interface BurgerSandwichComposerProps {
   type: 'burger' | 'sandwich';
 }
 
+interface Vegetable {
+  _id: string;
+  name: string;
+  image: string;
+}
+
 interface MenuOption {
   id: string;
   name: string;
@@ -90,7 +96,7 @@ const BREAD_OPTIONS = [
 
 export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, product, type }: BurgerSandwichComposerProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<Vegetable[]>([]);
   const [drinks, setDrinks] = useState<Drink[]>([]);
   const [sauces, setSauces] = useState<Sauce[]>([]);
   const [loading, setLoading] = useState(false);
@@ -130,19 +136,13 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
 
   const fetchIngredients = async () => {
     try {
-      const response = await fetch('/api/products/tacos-options');
+      const response = await fetch('/api/ingredients/vegetables');
       const data = await response.json();
       if (data.success) {
-        // Filtrer pour avoir seulement salade, tomate, oignons
-        const filteredIngredients = data.data.ingredients.filter((ing: Ingredient) => 
-          ing.name.toLowerCase().includes('salade') || 
-          ing.name.toLowerCase().includes('tomate') || 
-          ing.name.toLowerCase().includes('oignon')
-        );
-        setIngredients(filteredIngredients);
+        setIngredients(data.vegetables);
       }
     } catch (error) {
-      console.error('Error fetching ingredients:', error);
+      console.error('Error fetching vegetables:', error);
     }
   };
 
@@ -423,28 +423,61 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   </h3>
                   
                   <div className="space-y-2">
-                    {['Salade', 'Tomate', 'Oignons'].map((vegetable) => (
-                      <label key={vegetable} className="flex items-center p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
+                    {/* Option "Aucun crudités" */}
+                    <label className="flex items-center p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={config.selectedVegetables.length === 0}
+                        onChange={() => {
+                          if (config.selectedVegetables.length > 0) {
+                            setConfig(prev => ({
+                              ...prev,
+                              selectedVegetables: []
+                            }));
+                          }
+                        }}
+                        className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                      />
+                      <div className="w-8 h-8 mr-3 flex items-center justify-center">
+                        <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm lg:text-base">Aucun crudités</span>
+                    </label>
+
+                    {/* Options de crudités avec images depuis la base de données */}
+                    {ingredients.map((vegetable) => (
+                      <label key={vegetable._id} className="flex items-center p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
                         <input
                           type="checkbox"
-                          checked={config.selectedVegetables.includes(vegetable)}
+                          checked={config.selectedVegetables.includes(vegetable.name)}
                           onChange={() => {
-                            const isSelected = config.selectedVegetables.includes(vegetable);
+                            const isSelected = config.selectedVegetables.includes(vegetable.name);
                             if (isSelected) {
                               setConfig(prev => ({
                                 ...prev,
-                                selectedVegetables: prev.selectedVegetables.filter(v => v !== vegetable)
+                                selectedVegetables: prev.selectedVegetables.filter(v => v !== vegetable.name)
                               }));
                             } else {
                               setConfig(prev => ({
                                 ...prev,
-                                selectedVegetables: [...prev.selectedVegetables, vegetable]
+                                selectedVegetables: [...prev.selectedVegetables, vegetable.name]
                               }));
                             }
                           }}
                           className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
                         />
-                        <span className="text-gray-700 text-sm lg:text-base">{vegetable}</span>
+                        <div className="w-8 h-8 mr-3 flex items-center justify-center">
+                          <Image
+                            src={vegetable.image}
+                            alt={vegetable.name}
+                            width={32}
+                            height={32}
+                            className="object-contain"
+                          />
+                        </div>
+                        <span className="text-gray-700 text-sm lg:text-base">{vegetable.name}</span>
                       </label>
                     ))}
                   </div>

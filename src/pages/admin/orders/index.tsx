@@ -694,6 +694,7 @@ function OrderDetailModal({
     }
 
     if (customIngredients.breadType) {
+      details.push(`Type: pain`);
       details.push(`Classic: ${customIngredients.breadType}`);
     }
 

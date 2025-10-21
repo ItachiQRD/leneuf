@@ -1,4 +1,5 @@
 import React from 'react';
+import '@/styles/print.css';
 
 interface Order {
   _id: string;
@@ -53,6 +54,10 @@ interface OrderTicketProps {
 export function OrderTicket({ order, onClose }: OrderTicketProps) {
   const formatProductName = (item: any) => {
     if (item.productName && item.productName !== 'Produit personnalisé') {
+      // Vérifier si c'est une pizza
+      if (item.category === 'pizzas' || item.productName.toLowerCase().includes('pizza')) {
+        return `${item.productName} (Pizza)`;
+      }
       return item.productName;
     }
     
@@ -80,6 +85,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
     }
 
     if (customIngredients.breadType) {
+      details.push(`Type: pain`);
       details.push(`Classic: ${customIngredients.breadType}`);
     }
 
@@ -155,7 +161,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
         </div>
 
         {/* Ticket Content - Optimisé pour imprimante thermique */}
-        <div className="p-4 print:p-1" id="ticket-content">
+        <div className="p-4 print:p-1 ticket-container" id="ticket-content">
           {/* Restaurant Info */}
           <div className="text-center mb-3 print:mb-2">
             <div className="border-b-2 border-gray-800 pb-2 print:pb-1">
@@ -210,21 +216,28 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           </div>
 
           {/* Order Items */}
-          <div className="mb-3 print:mb-2">
+          <div className="mb-3 print:mb-2 print:page-break-inside-auto">
             <div className="pb-1 mb-2 print:pb-1 print:mb-1">
               <div className="text-xs font-bold print:text-base">ARTICLES:</div>
             </div>
-            <div className="space-y-2 print:space-y-1">
+            <div className="space-y-2 print:space-y-1 print:page-break-inside-auto">
               {order.items.map((item, index) => {
                 const customDetails = renderCustomIngredients(item.customIngredients);
                 
                 return (
-                  <div key={index} className="text-xs print:text-base border-b border-gray-200 pb-1 print:pb-0">
+                  <div key={index} className="text-xs print:text-base border-b border-gray-200 pb-1 print:pb-0 print:page-break-inside-auto">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="font-bold">
                           {item.quantity}x {formatProductName(item)}
                         </div>
+                        {/* Afficher la taille pour les pizzas */}
+                        {item.customIngredients && item.customIngredients.size && 
+                         (item.category === 'pizzas' || item.productName.toLowerCase().includes('pizza')) && (
+                          <div className="text-xs print:text-base text-gray-600">
+                            Taille: {item.customIngredients.size}
+                          </div>
+                        )}
                         <div className="text-xs print:text-base text-gray-600">
                           {item.price.toFixed(2)}€
                         </div>
@@ -244,9 +257,18 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                         {/* Custom Ingredients (nouveau système) */}
                         {customDetails && (
                           <div className="mt-1 text-xs print:text-base text-gray-600">
-                            {customDetails.map((detail, detailIndex) => (
-                              <div key={detailIndex}>• {detail}</div>
-                            ))}
+                            {customDetails
+                              .filter((detail: string) => {
+                                // Ne pas afficher la taille pour les pizzas car elle est déjà affichée au-dessus
+                                if (detail.startsWith('Taille:') && 
+                                    (item.category === 'pizzas' || item.productName.toLowerCase().includes('pizza'))) {
+                                  return false;
+                                }
+                                return true;
+                              })
+                              .map((detail, detailIndex) => (
+                                <div key={detailIndex}>• {detail}</div>
+                              ))}
                           </div>
                         )}
                       </div>
@@ -316,18 +338,21 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             visibility: visible;
           }
           #ticket-content {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            background: white;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.1;
-            color: black;
-            padding: 3px;
+            position: static !important;
+            left: auto !important;
+            top: auto !important;
+            width: 100% !important;
+            height: auto !important;
+            background: white !important;
+            font-family: 'Courier New', monospace !important;
+            font-size: 12px !important;
+            line-height: 1.1 !important;
+            color: black !important;
+            padding: 3px !important;
             max-height: none !important;
             overflow: visible !important;
+            page-break-inside: auto !important;
+            break-inside: auto !important;
           }
           .print\\:hidden {
             display: none !important;
@@ -351,16 +376,34 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           .border-dashed {
             border-style: dashed !important;
           }
-          /* S'assurer que tout le contenu est visible */
+          /* S'assurer que tout le contenu est visible et peut s'étendre sur plusieurs pages */
           body, html {
             overflow: visible !important;
             height: auto !important;
+            max-height: none !important;
           }
           .space-y-2 > * + * {
             margin-top: 0.25rem !important;
           }
           .space-y-1 > * + * {
             margin-top: 0.125rem !important;
+          }
+          /* Permettre les sauts de page */
+          .space-y-2, .space-y-1 {
+            page-break-inside: auto !important;
+            break-inside: auto !important;
+          }
+          /* Éviter les coupures dans les éléments importants */
+          .font-bold {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+          /* S'assurer que les éléments peuvent s'étendre */
+          .flex {
+            display: block !important;
+          }
+          .flex-1 {
+            width: 100% !important;
           }
         }
       `}</style>

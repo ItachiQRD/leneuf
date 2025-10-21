@@ -47,6 +47,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
   const [config, setConfig] = useState({
     selectedSauce: null as Sauce | null,
     selectedDrinks: [] as Drink[],
+    drinkCounts: {} as Record<string, number>, // Pour compter les occurrences de chaque boisson
     quantity: 1
   });
 
@@ -57,6 +58,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
       setConfig({
         selectedSauce: null,
         selectedDrinks: [],
+        drinkCounts: {},
         quantity: 1
       });
       fetchDrinks();
@@ -120,22 +122,72 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
     }));
   };
 
+  const getMaxDrinks = () => {
+    if (!product) return 0;
+    const productName = product.name.toLowerCase();
+    if (productName.includes('7 pièces')) return 1;
+    if (productName.includes('14 pièces')) return 2;
+    if (productName.includes('20 pièces')) return 1; // 1 boisson 1.5L
+    return 0;
+  };
+
   const handleDrinkToggle = (drink: Drink) => {
     setConfig(prev => {
-      const isSelected = prev.selectedDrinks.some(d => d._id === drink._id);
+      const maxDrinks = getMaxDrinks();
+      const currentCount = prev.drinkCounts[drink._id] || 0;
+      const totalSelected = Object.values(prev.drinkCounts).reduce((sum, count) => sum + count, 0);
       
-      if (isSelected) {
-        // Retirer la boisson
+      if (currentCount > 0) {
+        // Retirer une occurrence de cette boisson
+        const newCounts = { ...prev.drinkCounts };
+        if (newCounts[drink._id] === 1) {
+          delete newCounts[drink._id];
+        } else {
+          newCounts[drink._id] = newCounts[drink._id] - 1;
+        }
+        
+        // Reconstruire la liste des boissons
+        const newSelectedDrinks: Drink[] = [];
+        Object.entries(newCounts).forEach(([drinkId, count]) => {
+          const drinkObj = drinks.find(d => d._id === drinkId);
+          if (drinkObj) {
+            for (let i = 0; i < count; i++) {
+              newSelectedDrinks.push(drinkObj);
+            }
+          }
+        });
+        
         return {
           ...prev,
-          selectedDrinks: prev.selectedDrinks.filter(d => d._id !== drink._id)
+          selectedDrinks: newSelectedDrinks,
+          drinkCounts: newCounts
         };
       } else {
-        // Ajouter la boisson
-        return {
-          ...prev,
-          selectedDrinks: [...prev.selectedDrinks, drink]
-        };
+        // Ajouter une occurrence de cette boisson seulement si on n'a pas atteint la limite
+        if (totalSelected < maxDrinks) {
+          const newCounts = {
+            ...prev.drinkCounts,
+            [drink._id]: (prev.drinkCounts[drink._id] || 0) + 1
+          };
+          
+          // Reconstruire la liste des boissons
+          const newSelectedDrinks: Drink[] = [];
+          Object.entries(newCounts).forEach(([drinkId, count]) => {
+            const drinkObj = drinks.find(d => d._id === drinkId);
+            if (drinkObj) {
+              for (let i = 0; i < count; i++) {
+                newSelectedDrinks.push(drinkObj);
+              }
+            }
+          });
+          
+          return {
+            ...prev,
+            selectedDrinks: newSelectedDrinks,
+            drinkCounts: newCounts
+          };
+        }
+        return prev;
       }
     });
   };
@@ -176,6 +228,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
     setConfig({
       selectedSauce: null,
       selectedDrinks: [],
+      drinkCounts: {},
       quantity: 1
     });
     onClose();
@@ -318,7 +371,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                   className="space-y-4"
                 >
                   <h3 className="text-base lg:text-xl font-semibold text-gray-900 mb-4">
-                    Boisson (optionnel)
+                    Boisson{getMaxDrinks() > 1 ? 's' : ''} (max {getMaxDrinks()})
                   </h3>
                   
                   {/* Option "Aucune" */}
@@ -343,17 +396,26 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
 
                   {/* Boissons disponibles */}
                   <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
-                    {getDrinkOptions().map((drink) => (
-                      <div
-                        key={drink._id}
-                        onClick={() => handleDrinkToggle(drink)}
-                        className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                          config.selectedDrinks.some(d => d._id === drink._id)
-                            ? 'border-green-500 bg-green-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="text-center">
+                    {getDrinkOptions().map((drink) => {
+                      const currentCount = config.drinkCounts[drink._id] || 0;
+                      const maxDrinks = getMaxDrinks();
+                      const totalSelected = Object.values(config.drinkCounts).reduce((sum, count) => sum + count, 0);
+                      const canAdd = totalSelected < maxDrinks;
+                      const isSelected = currentCount > 0;
+                      
+                      return (
+                        <div
+                          key={drink._id}
+                          onClick={() => handleDrinkToggle(drink)}
+                          className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                            isSelected
+                              ? 'border-green-500 bg-green-50'
+                              : canAdd
+                              ? 'border-gray-200 hover:border-gray-300'
+                              : 'border-gray-200 opacity-50 cursor-not-allowed'
+                          }`}
+                        >
+                          <div className="text-center">
                           <div className="w-12 h-12 lg:w-16 lg:h-16 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
                             <Image
                               src={drink.image || '/images/placeholder-drink.jpg'}
@@ -367,9 +429,38 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                           <p className="text-xs lg:text-sm text-gray-600">
                             {product?.name.toLowerCase().includes('20 pièces') ? '1.5L' : '33cl'}
                           </p>
+                          {currentCount > 0 && (
+                            <div className="mt-1 flex items-center justify-center space-x-1">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDrinkToggle(drink);
+                                }}
+                                className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                              >
+                                -
+                              </button>
+                              <span className="text-sm font-bold text-green-600">{currentCount}</span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (canAdd) handleDrinkToggle(drink);
+                                }}
+                                disabled={!canAdd}
+                                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+                                  canAdd 
+                                    ? 'bg-green-500 text-white hover:bg-green-600' 
+                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                }`}
+                              >
+                                +
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </motion.div>
               )}
@@ -409,10 +500,16 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                       </div>
                       
                       <div className="flex justify-between">
-                        <span>Boisson{config.selectedDrinks.length > 1 ? 's' : ''}:</span>
+                        <span>Boisson{Object.values(config.drinkCounts).reduce((sum, count) => sum + count, 0) > 1 ? 's' : ''}:</span>
                         <span>
-                          {config.selectedDrinks.length > 0 
-                            ? config.selectedDrinks.map(drink => drink.name).join(', ')
+                          {Object.keys(config.drinkCounts).length > 0 
+                            ? Object.entries(config.drinkCounts)
+                                .map(([drinkId, count]) => {
+                                  const drink = drinks.find(d => d._id === drinkId);
+                                  return drink ? `${count}x ${drink.name}` : '';
+                                })
+                                .filter(Boolean)
+                                .join(', ')
                             : 'Aucune'
                           }
                         </span>

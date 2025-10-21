@@ -1,0 +1,123 @@
+/* Styles d'impression pour les tickets multi-pages */
+/* 
+  Ces styles permettent l'impression sur plusieurs pages A4 (297mm) 
+  quand le contenu du ticket dépasse la hauteur d'une page.
+  Le contenu s'étend automatiquement sur plusieurs pages si nécessaire.
+*/
+
+@media print {
+  /* S'assurer que le contenu peut s'étendre sur plusieurs pages */
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Permettre les sauts de page automatiques */
+  * {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  /* Éviter les coupures dans les éléments importants */
+  .font-bold,
+  .text-lg,
+  .text-xl,
+  .text-2xl,
+  .text-3xl,
+  .text-4xl {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Permettre les sauts de page dans les listes */
+  .space-y-1,
+  .space-y-2,
+  .space-y-3,
+  .space-y-4 {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  /* S'assurer que les éléments flex s'affichent correctement */
+  .flex {
+    display: block !important;
+  }
+
+  .flex-1 {
+    width: 100% !important;
+  }
+
+  /* Éviter les coupures dans les totaux */
+  .border-t-2 {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+  }
+
+  /* Permettre les sauts de page entre les articles */
+  .border-b {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  /* S'assurer que le contenu n'est pas tronqué */
+  .overflow-hidden {
+    overflow: visible !important;
+  }
+
+  .max-h-\[90vh\] {
+    max-height: none !important;
+  }
+
+  /* Styles spécifiques pour les tickets */
+  #ticket-content {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  /* S'assurer que tous les éléments sont visibles */
+  .hidden {
+    display: block !important;
+  }
+
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  /* Classes personnalisées pour les sauts de page */
+  .print\\:page-break-inside-auto {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  .print\\:page-break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print\\:page-break-before-auto {
+    page-break-before: auto !important;
+    break-before: auto !important;
+  }
+
+  .print\\:page-break-after-auto {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  /* S'assurer que le contenu du ticket peut s'étendre */
+  .ticket-container {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}

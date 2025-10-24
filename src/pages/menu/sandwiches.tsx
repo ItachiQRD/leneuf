@@ -71,7 +71,7 @@ const pulseVariants = {
 
 export default function SandwichesPage() {
   const { foods, loading } = useProducts();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const { isDarkMode } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -132,14 +132,13 @@ export default function SandwichesPage() {
   const sortedSandwiches = getSortedSandwiches();
 
   const handleAddToCart = (sandwich: any) => {
-    addToCart({
+    addItem({
       _id: sandwich._id || sandwich.id,
       name: sandwich.name,
       price: sandwich.price,
       image: sandwich.image,
       type: 'food',
-      category: sandwich.category,
-      quantity: 1
+      category: sandwich.category
     });
   };
 

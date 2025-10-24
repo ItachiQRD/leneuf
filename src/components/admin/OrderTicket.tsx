@@ -159,6 +159,79 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
+            /* Styles de base pour tous les appareils */
+            .print-content {
+              font-family: 'Courier New', monospace !important;
+              font-size: 28px !important;
+              line-height: 1.4 !important;
+              color: black !important;
+              background: white !important;
+              margin: 0 !important;
+              padding: 8px !important;
+              width: 100% !important;
+            }
+            .print-content h1 {
+              font-size: 42px !important;
+              font-weight: 900 !important;
+              margin: 0 0 20px 0 !important;
+              text-align: center !important;
+            }
+            .print-content h2 {
+              font-size: 36px !important;
+              font-weight: 800 !important;
+              margin: 25px 0 15px 0 !important;
+            }
+            .print-content .header {
+              text-align: center !important;
+              border-bottom: 5px solid black !important;
+              padding-bottom: 25px !important;
+              margin-bottom: 25px !important;
+            }
+            .print-content .section {
+              margin-bottom: 25px !important;
+              border-bottom: 4px solid black !important;
+              padding-bottom: 20px !important;
+            }
+            .print-content .item {
+              margin-bottom: 15px !important;
+              padding-bottom: 15px !important;
+              border-bottom: 2px solid #ccc !important;
+            }
+            .print-content .item-header {
+              display: flex !important;
+              justify-content: space-between !important;
+              font-weight: 900 !important;
+              font-size: 32px !important;
+            }
+            .print-content .item-details {
+              font-size: 28px !important;
+              color: black !important;
+              margin-top: 10px !important;
+            }
+            .print-content .total {
+              border-top: 5px solid black !important;
+              padding-top: 20px !important;
+              font-weight: 900 !important;
+              font-size: 38px !important;
+              display: flex !important;
+              justify-content: space-between !important;
+            }
+            .print-content .footer {
+              text-align: center !important;
+              border-top: 4px dashed black !important;
+              padding-top: 20px !important;
+              margin-top: 25px !important;
+              font-size: 32px !important;
+            }
+            .print-content .bold {
+              font-weight: 700 !important;
+              font-size: 30px !important;
+            }
+            .print-content .black {
+              font-weight: 900 !important;
+              font-size: 32px !important;
+            }
+
             @media print {
               @page {
                 margin: 0.1in;
@@ -167,59 +240,64 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
               .print-button {
                 display: none !important;
               }
+              /* Forcer les styles sur tous les navigateurs */
+              * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+              }
               body {
-                font-size: 24px !important;
-                padding: 3px !important;
-                line-height: 1.3 !important;
+                font-size: 28px !important;
+                padding: 8px !important;
+                line-height: 1.4 !important;
               }
               h1 {
-                font-size: 36px !important;
-                margin: 0 0 15px 0 !important;
+                font-size: 42px !important;
+                margin: 0 0 20px 0 !important;
               }
               h2 {
-                font-size: 30px !important;
-                margin: 20px 0 10px 0 !important;
+                font-size: 36px !important;
+                margin: 25px 0 15px 0 !important;
               }
               .header {
-                padding-bottom: 20px !important;
-                margin-bottom: 20px !important;
-                border-bottom: 4px solid black !important;
+                padding-bottom: 25px !important;
+                margin-bottom: 25px !important;
+                border-bottom: 5px solid black !important;
               }
               .section {
-                margin-bottom: 20px !important;
-                padding-bottom: 15px !important;
-                border-bottom: 3px solid black !important;
+                margin-bottom: 25px !important;
+                padding-bottom: 20px !important;
+                border-bottom: 4px solid black !important;
               }
               .item {
-                margin-bottom: 12px !important;
-                padding-bottom: 12px !important;
+                margin-bottom: 15px !important;
+                padding-bottom: 15px !important;
               }
               .item-header {
-                font-size: 26px !important;
+                font-size: 32px !important;
                 font-weight: 900 !important;
               }
               .item-details {
-                font-size: 22px !important;
-                margin-top: 8px !important;
+                font-size: 28px !important;
+                margin-top: 10px !important;
                 color: black !important;
               }
               .total {
-                font-size: 32px !important;
-                padding-top: 15px !important;
-                border-top: 4px solid black !important;
+                font-size: 38px !important;
+                padding-top: 20px !important;
+                border-top: 5px solid black !important;
               }
               .footer {
-                font-size: 26px !important;
-                padding-top: 15px !important;
-                margin-top: 20px !important;
-                border-top: 3px dashed black !important;
+                font-size: 32px !important;
+                padding-top: 20px !important;
+                margin-top: 25px !important;
+                border-top: 4px dashed black !important;
               }
               .bold {
-                font-size: 24px !important;
+                font-size: 30px !important;
                 font-weight: 700 !important;
               }
               .black {
-                font-size: 26px !important;
+                font-size: 32px !important;
                 font-weight: 900 !important;
               }
             }
@@ -353,7 +431,8 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
         <body>
           <button class="print-button" onclick="window.print()">🖨️ Imprimer</button>
           
-          <div class="header">
+          <div class="print-content">
+            <div class="header">
             <h1>LE NEUF</h1>
             <div class="bold">Fast Food & Grill</div>
             <div class="bold">Commande #${order._id}</div>
@@ -395,9 +474,10 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             <span>${order.total.toFixed(2)}€</span>
           </div>
 
-          <div class="footer">
-            <div class="black">MERCI POUR VOTRE COMMANDE !</div>
-            <div class="bold">BON APPÉTIT !</div>
+            <div class="footer">
+              <div class="black">MERCI POUR VOTRE COMMANDE !</div>
+              <div class="bold">BON APPÉTIT !</div>
+            </div>
           </div>
         </body>
       </html>
@@ -417,16 +497,33 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             // Forcer l'application des styles d'impression sur mobile
             const style = printWindow.document.createElement('style');
             style.textContent = `
+              /* Forcer les styles sur tous les navigateurs */
+              * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+              }
+              .print-content {
+                font-size: 28px !important;
+                line-height: 1.4 !important;
+              }
+              .print-content h1 { font-size: 42px !important; }
+              .print-content h2 { font-size: 36px !important; }
+              .print-content .item-header { font-size: 32px !important; }
+              .print-content .item-details { font-size: 28px !important; }
+              .print-content .total { font-size: 38px !important; }
+              .print-content .footer { font-size: 32px !important; }
+              .print-content .bold { font-size: 30px !important; }
+              .print-content .black { font-size: 32px !important; }
               @media print {
-                body { font-size: 24px !important; }
-                h1 { font-size: 36px !important; }
-                h2 { font-size: 30px !important; }
-                .item-header { font-size: 26px !important; }
-                .item-details { font-size: 22px !important; }
-                .total { font-size: 32px !important; }
-                .footer { font-size: 26px !important; }
-                .bold { font-size: 24px !important; }
-                .black { font-size: 26px !important; }
+                body { font-size: 28px !important; }
+                h1 { font-size: 42px !important; }
+                h2 { font-size: 36px !important; }
+                .item-header { font-size: 32px !important; }
+                .item-details { font-size: 28px !important; }
+                .total { font-size: 38px !important; }
+                .footer { font-size: 32px !important; }
+                .bold { font-size: 30px !important; }
+                .black { font-size: 32px !important; }
               }
             `;
             printWindow.document.head.appendChild(style);

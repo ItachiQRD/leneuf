@@ -110,9 +110,7 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
     onPromotionRemoved();
   };
 
-  if (availableOffers.length === 0) {
-    return null;
-  }
+  // Le composant s'affiche toujours maintenant
 
   return (
     <motion.div
@@ -128,7 +126,24 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
       </div>
 
       <div className="space-y-4">
-        {availableOffers.map((offer) => (
+        {availableOffers.length === 0 ? (
+          <div className="text-center py-8">
+            <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600 mb-4">
+              Aucune promotion disponible pour votre panier actuel
+            </p>
+            <div className="bg-blue-50 rounded-lg p-4 text-left">
+              <h4 className="font-semibold text-blue-800 mb-2">
+                💡 Comment bénéficier des promotions ?
+              </h4>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• Ajoutez 2+ pizzas Senior pour obtenir une pizza Senior gratuite</li>
+                <li>• Ajoutez 2+ pizzas Méga pour obtenir une pizza Méga gratuite</li>
+              </ul>
+            </div>
+          </div>
+        ) : (
+          availableOffers.map((offer) => (
           <motion.div
             key={offer.id}
             initial={{ opacity: 0, scale: 0.95 }}
@@ -195,6 +210,9 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
           </div>
         </motion.div>
       )}
+
+        )}
+      </div>
 
       <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
         <div className="flex items-start">

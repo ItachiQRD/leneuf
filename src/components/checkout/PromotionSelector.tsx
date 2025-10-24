@@ -52,29 +52,28 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
   // Vérifier les conditions des promotions
   useEffect(() => {
     const checkPromotions = () => {
-      const pizzaItems = items.filter(item => 
+      // Détecter les pizzas par leur prix (Senior: 13€, Méga: 17€)
+      // Note: Margherita a des prix différents (Senior: 9€, Méga: 14€)
+      const seniorPizzas = items.filter(item => 
         item.name.toLowerCase().includes('pizza') && 
-        (item.name.toLowerCase().includes('senior') || item.name.toLowerCase().includes('mega'))
+        (item.price === 13 || item.price === 9) // Senior: 13€ normal, 9€ Margherita
+      );
+      
+      const megaPizzas = items.filter(item => 
+        item.name.toLowerCase().includes('pizza') && 
+        (item.price === 17 || item.price === 14) // Méga: 17€ normal, 14€ Margherita
       );
 
       const available: Promotion[] = [];
 
-      // Vérifier l'offre Senior
-      const seniorPizzas = pizzaItems.filter(item => 
-        item.name.toLowerCase().includes('senior')
-      );
+      // Vérifier l'offre Senior (2+ pizzas Senior)
       const seniorQuantity = seniorPizzas.reduce((sum, item) => sum + item.quantity, 0);
-      
       if (seniorQuantity >= 2) {
         available.push(availablePromotions[0]);
       }
 
-      // Vérifier l'offre Méga
-      const megaPizzas = pizzaItems.filter(item => 
-        item.name.toLowerCase().includes('mega')
-      );
+      // Vérifier l'offre Méga (2+ pizzas Méga)
       const megaQuantity = megaPizzas.reduce((sum, item) => sum + item.quantity, 0);
-      
       if (megaQuantity >= 2) {
         available.push(availablePromotions[1]);
       }
@@ -93,13 +92,29 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
     setAppliedPromotion(promotion);
     
     // Calculer la remise (prix de la pizza gratuite)
-    const pizzaItems = items.filter(item => 
-      item.name.toLowerCase().includes('pizza') && 
-      item.name.toLowerCase().includes(promotion.type)
-    );
+    let pizzaPrice = 0;
     
-    if (pizzaItems.length > 0) {
-      const pizzaPrice = pizzaItems[0].price;
+    if (promotion.type === 'senior') {
+      // Prix Senior: 13€ normal, 9€ Margherita
+      const seniorPizzas = items.filter(item => 
+        item.name.toLowerCase().includes('pizza') && 
+        (item.price === 13 || item.price === 9)
+      );
+      if (seniorPizzas.length > 0) {
+        pizzaPrice = seniorPizzas[0].price;
+      }
+    } else if (promotion.type === 'mega') {
+      // Prix Méga: 17€ normal, 14€ Margherita
+      const megaPizzas = items.filter(item => 
+        item.name.toLowerCase().includes('pizza') && 
+        (item.price === 17 || item.price === 14)
+      );
+      if (megaPizzas.length > 0) {
+        pizzaPrice = megaPizzas[0].price;
+      }
+    }
+    
+    if (pizzaPrice > 0) {
       onPromotionApplied(pizzaPrice, promotion.description);
     }
   };
@@ -130,13 +145,33 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
             <p className="text-gray-600 mb-4">
               Aucune promotion disponible pour votre panier actuel
             </p>
+            
+            {/* Debug info */}
+            <div className="bg-gray-50 rounded-lg p-4 text-left mb-4">
+              <h4 className="font-semibold text-gray-800 mb-2">
+                🔍 Debug - Contenu du panier :
+              </h4>
+              <div className="text-sm text-gray-600 space-y-1">
+                {items.length === 0 ? (
+                  <p>Panier vide</p>
+                ) : (
+                  items.map((item, index) => (
+                    <div key={index} className="flex justify-between">
+                      <span>{item.name}</span>
+                      <span>{item.price}€ x{item.quantity}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+            
             <div className="bg-blue-50 rounded-lg p-4 text-left">
               <h4 className="font-semibold text-blue-800 mb-2">
                 💡 Comment bénéficier des promotions ?
               </h4>
               <ul className="text-sm text-blue-700 space-y-1">
-                <li>• Ajoutez 2+ pizzas Senior pour obtenir une pizza Senior gratuite</li>
-                <li>• Ajoutez 2+ pizzas Méga pour obtenir une pizza Méga gratuite</li>
+                <li>• Ajoutez 2+ pizzas Senior (13€ ou 9€) pour obtenir une pizza Senior gratuite</li>
+                <li>• Ajoutez 2+ pizzas Méga (17€ ou 14€) pour obtenir une pizza Méga gratuite</li>
               </ul>
             </div>
           </div>

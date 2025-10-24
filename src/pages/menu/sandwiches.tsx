@@ -285,8 +285,9 @@ export default function SandwichesPage() {
                     <SmartImage
                       src={typeof sandwich.image === 'string' ? sandwich.image : '/images/menu/default-sandwich.jpg'}
                       alt={sandwich.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      width={400}
+                      height={256}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     

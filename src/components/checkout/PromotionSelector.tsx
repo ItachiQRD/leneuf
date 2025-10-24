@@ -55,12 +55,10 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
       // Détecter les pizzas par leur prix (Senior: 13€, Méga: 17€)
       // Note: Margherita a des prix différents (Senior: 9€, Méga: 14€)
       const seniorPizzas = items.filter(item => 
-        item.name.toLowerCase().includes('pizza') && 
         (item.price === 13 || item.price === 9) // Senior: 13€ normal, 9€ Margherita
       );
       
       const megaPizzas = items.filter(item => 
-        item.name.toLowerCase().includes('pizza') && 
         (item.price === 17 || item.price === 14) // Méga: 17€ normal, 14€ Margherita
       );
 
@@ -97,7 +95,6 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
     if (promotion.type === 'senior') {
       // Prix Senior: 13€ normal, 9€ Margherita
       const seniorPizzas = items.filter(item => 
-        item.name.toLowerCase().includes('pizza') && 
         (item.price === 13 || item.price === 9)
       );
       if (seniorPizzas.length > 0) {
@@ -106,7 +103,6 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
     } else if (promotion.type === 'mega') {
       // Prix Méga: 17€ normal, 14€ Margherita
       const megaPizzas = items.filter(item => 
-        item.name.toLowerCase().includes('pizza') && 
         (item.price === 17 || item.price === 14)
       );
       if (megaPizzas.length > 0) {

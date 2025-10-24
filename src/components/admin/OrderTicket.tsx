@@ -151,7 +151,6 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
   };
 
   const handlePrint = () => {
-    // Créer un contenu HTML simple avec styles inline pour l'impression thermique
     const printContent = `
       <!DOCTYPE html>
       <html>
@@ -160,71 +159,139 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
-            @page {
-              margin: 0;
-              size: A4;
+            @media print {
+              @page {
+                margin: 0.5in;
+                size: A4;
+              }
+              .print-button {
+                display: none !important;
+              }
             }
             body {
-              margin: 0;
-              padding: 5px;
-              font-family: monospace;
-              font-size: 16px;
+              font-family: 'Courier New', monospace;
+              font-size: 14px;
               line-height: 1.2;
               color: black;
               background: white;
+              margin: 0;
+              padding: 10px;
+              width: 100%;
             }
+            h1 {
+              font-size: 18px;
+              font-weight: 900;
+              margin: 0 0 5px 0;
+              text-align: center;
+            }
+            h2 {
+              font-size: 16px;
+              font-weight: 800;
+              margin: 10px 0 5px 0;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 2px solid black;
+              padding-bottom: 10px;
+              margin-bottom: 10px;
+            }
+            .section {
+              margin-bottom: 10px;
+              border-bottom: 1px solid black;
+              padding-bottom: 5px;
+            }
+            .item {
+              margin-bottom: 5px;
+              padding-bottom: 5px;
+              border-bottom: 1px solid #ccc;
+            }
+            .item-header {
+              display: flex;
+              justify-content: space-between;
+              font-weight: 900;
+            }
+            .item-details {
+              font-size: 12px;
+              color: #666;
+              margin-top: 2px;
+            }
+            .total {
+              border-top: 2px solid black;
+              padding-top: 5px;
+              font-weight: 900;
+              font-size: 16px;
+              display: flex;
+              justify-content: space-between;
+            }
+            .footer {
+              text-align: center;
+              border-top: 1px dashed #999;
+              padding-top: 5px;
+              margin-top: 10px;
+            }
+            .bold { font-weight: 700; }
+            .black { font-weight: 900; }
             .print-button {
               position: fixed;
-              top: 10px;
-              right: 10px;
+              top: 20px;
+              right: 20px;
               background: #007bff;
               color: white;
               border: none;
-              padding: 10px 20px;
-              border-radius: 5px;
+              padding: 12px 24px;
+              border-radius: 8px;
               cursor: pointer;
-              font-size: 14px;
+              font-size: 16px;
+              font-weight: bold;
               z-index: 1000;
+              box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             }
-            @media print {
-              .print-button { display: none; }
-              body { font-size: 20px; padding: 2px; }
+            .print-button:hover {
+              background: #0056b3;
+            }
+            @media screen and (max-width: 768px) {
+              .print-button {
+                top: 10px;
+                right: 10px;
+                padding: 10px 16px;
+                font-size: 14px;
+              }
             }
           </style>
         </head>
         <body>
           <button class="print-button" onclick="window.print()">🖨️ Imprimer</button>
           
-          <div style="text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 15px;">
-            <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">LE NEUF</div>
-            <div style="font-size: 18px; font-weight: bold;">Fast Food & Grill</div>
-            <div style="font-size: 16px; font-weight: bold;">Commande #${order._id}</div>
-            <div style="font-size: 16px; font-weight: bold;">${new Date(order.createdAt).toLocaleDateString('fr-FR')} à ${new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+          <div class="header">
+            <h1>LE NEUF</h1>
+            <div class="bold">Fast Food & Grill</div>
+            <div class="bold">Commande #${order._id}</div>
+            <div class="bold">${new Date(order.createdAt).toLocaleDateString('fr-FR')} à ${new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
           </div>
 
-          <div style="margin-bottom: 15px; border-bottom: 1px solid black; padding-bottom: 10px;">
-            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">CLIENT & LIVRAISON</div>
-            <div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;"><strong>Nom:</strong> ${order.userId?.name || order.customer?.name || 'N/A'}</div>
-            <div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;"><strong>Tél:</strong> ${order.userId?.phone || order.customer?.phone || 'N/A'}</div>
-            <div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;"><strong>Adresse:</strong> ${order.deliveryAddress.street}</div>
-            ${order.deliveryAddress.postalCode !== '00000' ? `<div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
-            ${order.deliveryAddress.complement ? `<div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
-            <div style="font-size: 16px; font-weight: bold;"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
+          <div class="section">
+            <h2>CLIENT & LIVRAISON</h2>
+            <div class="bold"><strong>Nom:</strong> ${order.userId?.name || order.customer?.name || 'N/A'}</div>
+            <div class="bold"><strong>Tél:</strong> ${order.userId?.phone || order.customer?.phone || 'N/A'}</div>
+            <div class="bold"><strong>Adresse:</strong> ${order.deliveryAddress.street}</div>
+            ${order.deliveryAddress.postalCode !== '00000' ? `<div class="bold">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
+            ${order.deliveryAddress.complement ? `<div class="bold"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
+            <div class="bold"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
           </div>
 
-          <div style="margin-bottom: 15px; border-bottom: 1px solid black; padding-bottom: 10px;">
-            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">ARTICLES</div>
+          <div class="section">
+            <h2>ARTICLES</h2>
             ${order.items.map(item => {
               const customDetails = renderCustomIngredients(item.customIngredients);
               return `
-                <div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #ccc;">
-                  <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 3px;">
+                <div class="item">
+                  <div class="item-header">
                     <span>${item.quantity}x ${formatProductName(item)}</span>
                     <span>${(item.quantity * item.price).toFixed(2)}€</span>
                   </div>
                   ${customDetails && customDetails.length > 0 ? `
-                    <div style="font-size: 14px; color: #333; margin-top: 3px;">
-                      ${customDetails.map(detail => `<div style="font-weight: bold;">• ${detail}</div>`).join('')}
+                    <div class="item-details">
+                      ${customDetails.map(detail => `<div class="bold">• ${detail}</div>`).join('')}
                     </div>
                   ` : ''}
                 </div>
@@ -232,14 +299,14 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             }).join('')}
           </div>
 
-          <div style="border-top: 2px solid black; padding-top: 10px; font-weight: bold; font-size: 18px; display: flex; justify-content: space-between;">
+          <div class="total">
             <span>TOTAL:</span>
             <span>${order.total.toFixed(2)}€</span>
           </div>
 
-          <div style="text-align: center; border-top: 1px dashed #999; padding-top: 10px; margin-top: 15px;">
-            <div style="font-weight: bold; font-size: 18px; margin-bottom: 3px;">MERCI POUR VOTRE COMMANDE !</div>
-            <div style="font-weight: bold; font-size: 16px;">BON APPÉTIT !</div>
+          <div class="footer">
+            <div class="black">MERCI POUR VOTRE COMMANDE !</div>
+            <div class="bold">BON APPÉTIT !</div>
           </div>
         </body>
       </html>
@@ -256,21 +323,6 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
         // Attendre que le contenu soit chargé avant d'imprimer
         printWindow.onload = () => {
           setTimeout(() => {
-            // Forcer l'application des styles d'impression sur mobile
-            const style = printWindow.document.createElement('style');
-            style.textContent = `
-              @media print {
-                body { 
-                  font-size: 20px !important; 
-                  padding: 2px !important;
-                  margin: 0 !important;
-                }
-                @page {
-                  margin: 0 !important;
-                }
-              }
-            `;
-            printWindow.document.head.appendChild(style);
             printWindow.print();
           }, 500);
         };

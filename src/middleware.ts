@@ -25,14 +25,12 @@ const publicRoutes = [
   '/a-propos',
   '/about',
   '/contact',
-  '/promos',
   '/checkout',
   '/commande-formulaire',
   '/commande-confirmee',
   '/api/public',
   '/api/menu',
   '/api/products',
-  '/api/promos',
   '/api/orders'
 ];
 

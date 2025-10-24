@@ -11,10 +11,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await dbConnect();
 
-    // Récupérer les ingrédients (suppléments)
+    // Récupérer les ingrédients (suppléments) - exclure les hot wings
     const ingredients = await Ingredient.find({ 
       available: true,
-      active: true 
+      active: true,
+      name: { $not: /hot wings/i }
     }).select('name price image description category type isSpicy isVegetarian allergens');
 
     // Récupérer les sauces

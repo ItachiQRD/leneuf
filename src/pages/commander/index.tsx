@@ -10,7 +10,7 @@ import MenuSelector from '@/components/commander/MenuSelector';
 import PaniniComposer from '@/components/commander/PaniniComposer';
 import BurgerSandwichComposer from '@/components/commander/BurgerSandwichComposer';
 import TexMexComposer from '@/components/commander/TexMexComposer';
-import { MenuPromotions } from '@/components/MenuPromotions';
+import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -24,6 +24,7 @@ export default function CommanderPage() {
   const [showPaniniComposer, setShowPaniniComposer] = useState(false);
   const [showBurgerSandwichComposer, setShowBurgerSandwichComposer] = useState(false);
   const [showTexMexComposer, setShowTexMexComposer] = useState(false);
+  const [showMenuEnfantsComposer, setShowMenuEnfantsComposer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const [productForSize, setProductForSize] = useState<any>(null);
@@ -289,8 +290,8 @@ export default function CommanderPage() {
     }
     }
 
-    // Produits qui nécessitent une composition avec étapes (burgers, sandwichs, tex-mex)
-    const needsStepComposition = ['burgers', 'sandwichs', 'tex-mex'].includes(selectedCategory);
+    // Produits qui nécessitent une composition avec étapes (burgers, sandwichs, tex-mex, menu-enfants)
+    const needsStepComposition = ['burgers', 'sandwichs', 'tex-mex', 'menu-enfants'].includes(selectedCategory);
     
     if (needsStepComposition) {
       if (selectedCategory === 'burgers' || selectedCategory === 'sandwichs') {
@@ -303,6 +304,12 @@ export default function CommanderPage() {
         setSelectedProduct(item);
         setShowTexMexComposer(true);
       return;
+      }
+
+      if (selectedCategory === 'menu-enfants') {
+        setSelectedProduct(item);
+        setShowMenuEnfantsComposer(true);
+        return;
       }
     }
 
@@ -539,13 +546,6 @@ export default function CommanderPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 pt-20">
-      {/* Promotions Section */}
-      <div className="bg-white py-8">
-        <div className="container mx-auto px-4">
-          <MenuPromotions limit={3} />
-        </div>
-      </div>
-      
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen">
         {/* Menu de gauche */}
@@ -941,6 +941,14 @@ export default function CommanderPage() {
       <TexMexComposer
         isOpen={showTexMexComposer}
         onClose={() => setShowTexMexComposer(false)}
+        onAddToCart={handleAddCustomToCart}
+        product={selectedProduct}
+      />
+
+      {/* Composant de composition Menu Enfants */}
+      <MenuEnfantsComposer
+        isOpen={showMenuEnfantsComposer}
+        onClose={() => setShowMenuEnfantsComposer(false)}
         onAddToCart={handleAddCustomToCart}
         product={selectedProduct}
       />

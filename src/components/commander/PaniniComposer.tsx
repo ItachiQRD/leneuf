@@ -166,7 +166,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
       _id: `panini-${Date.now()}`,
       name: `Panini ${selectedIngredients.baseIngredients.map(i => i.name).join(', ')}`,
       price: calculatePrice(),
-      image: '/images/panini.jpeg', // Image du panini
+      image: '/images/menu/panini.jpeg', // Image du panini
       category: 'paninis',
       type: 'food',
       customIngredients: selectedIngredients
@@ -280,7 +280,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                                 : 'border-gray-200 hover:border-orange-300'
                             }`}
                           >
-                            <div className="relative w-full h-24 lg:h-32 mb-2 lg:mb-3">
+                            <div className="relative w-full h-28 lg:h-36 mb-2 lg:mb-3">
                               <Image
                                 src={ingredient.image}
                                 alt={ingredient.name}
@@ -317,7 +317,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                                 : 'border-gray-200 hover:border-orange-300'
                             }`}
                           >
-                            <div className="relative w-full h-24 lg:h-32 mb-2 lg:mb-3">
+                            <div className="relative w-full h-28 lg:h-36 mb-2 lg:mb-3">
                               <Image
                                 src={sauce.image}
                                 alt={sauce.name}
@@ -354,7 +354,7 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                                 : 'border-gray-200 hover:border-orange-300'
                             }`}
                           >
-                            <div className="relative w-full h-20 lg:h-24 mb-2">
+                            <div className="relative w-full h-24 lg:h-28 mb-2">
                               <Image
                                 src={supplement.image}
                                 alt={supplement.name}

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, Utensils, Clock, Award, Star, MapPin, Phone, Navigation, Calendar, Users, Heart, ChefHat, Pizza, Wine, Coffee } from 'lucide-react';
 import SmartImage from '@/components/common/SmartImage';
-import { PromotionsBanner } from '@/components/PromotionsBanner';
+import MenuOffers from '@/components/menu/MenuOffers';
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -83,9 +83,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Bannière des promotions */}
-      <PromotionsBanner />
-      
       {/* Hero Section - Design Minimaliste Élégant */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-800">
         <motion.div
@@ -406,6 +403,9 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Section Offres Spéciales */}
+      <MenuOffers />
 
       {/* Section Témoignages */}
       <section className="py-24 bg-gray-50">

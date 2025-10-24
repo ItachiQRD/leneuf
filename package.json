@@ -14,6 +14,7 @@
     "seed": "ts-node scripts/seed.ts",
     "seed-ingredients": "node scripts/seedIngredients.js",
     "init": "node scripts/init.js",
+    "migrate-promotions": "node scripts/migrate-promotions.js",
     "lint": "next lint",
     "e2e": "cypress open",
     "clean": "rm -rf .next && rm -rf node_modules/.cache"

@@ -20,6 +20,7 @@ import {
   Zap
 } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
+import MenuOffers from '@/components/menu/MenuOffers';
 
 // Configuration des catégories de menu avec icônes et couleurs
 const menuCategories = [
@@ -245,6 +246,9 @@ export default function MenuPage() {
             </motion.div>
           </div>
         </motion.section>
+
+        {/* Section Offres Spéciales */}
+        <MenuOffers />
 
         {/* Section Produits en Vedette */}
         {featuredProducts.length > 0 && (

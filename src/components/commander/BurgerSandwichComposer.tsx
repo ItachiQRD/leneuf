@@ -89,6 +89,21 @@ const MENU_OPTIONS: MenuOption[] = [
   }
 ];
 
+const FRIES_OPTIONS = [
+  {
+    id: 'avec-frites',
+    name: 'Avec frites',
+    price: 0,
+    description: 'Frites incluses'
+  },
+  {
+    id: 'sans-frites',
+    name: 'Sans frites',
+    price: 0,
+    description: 'Pas de frites'
+  }
+];
+
 const BREAD_OPTIONS = [
   { id: 'pain', name: 'Classic', price: 0 },
   { id: 'durum', name: 'Durum', price: 0 }
@@ -109,6 +124,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     menuOption: 'avec-frites' as string,
     breadType: 'pain' as string,
     selectedVegetables: [] as string[],
+    friesOption: 'avec-frites' as string,
     withFries: true,
     selectedSauce: null as Sauce | null,
     selectedDrink: null as Drink | null,
@@ -123,6 +139,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
         menuOption: 'avec-frites',
         breadType: 'pain',
         selectedVegetables: [],
+        friesOption: 'avec-frites',
         withFries: true,
         selectedSauce: null,
         selectedDrink: null,
@@ -183,6 +200,11 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     if (config.menuOption === 'avec-frites') {
       price -= 1;
     }
+    // Si menu "sans frites", prix normal
+    else if (config.menuOption === 'sans-frites') {
+      // Prix normal, pas de modification
+    }
+    // Si menu "avec frites + boisson", prix normal (frites + boisson incluses)
     
     return price * config.quantity;
   };
@@ -191,8 +213,15 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     setConfig(prev => ({
       ...prev,
       menuOption: menuId,
-      withFries: true, // Toujours avec frites maintenant
       selectedDrink: menuId === 'avec-frites-boisson' ? prev.selectedDrink : null
+    }));
+  };
+
+  const handleFriesSelect = (friesId: string) => {
+    setConfig(prev => ({
+      ...prev,
+      friesOption: friesId,
+      withFries: friesId === 'avec-frites'
     }));
   };
 
@@ -214,12 +243,26 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+      // Défilement automatique vers le haut du contenu
+      setTimeout(() => {
+        const contentElement = document.querySelector('.burger-sandwich-content');
+        if (contentElement) {
+          contentElement.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 100);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      // Défilement automatique vers le haut du contenu
+      setTimeout(() => {
+        const contentElement = document.querySelector('.burger-sandwich-content');
+        if (contentElement) {
+          contentElement.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 100);
     }
   };
 
@@ -255,6 +298,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       menuOption: 'avec-frites',
       breadType: 'pain',
       selectedVegetables: [],
+      friesOption: 'avec-frites',
       withFries: true,
       selectedSauce: null,
       selectedDrink: null,
@@ -271,7 +315,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       case 'menu': return config.menuOption !== '';
       case 'bread': return config.breadType !== ''; // Pain obligatoire pour sandwichs
       case 'vegetables': return true; // Les crudités sont optionnelles
-      case 'fries': return true; // Les frites sont toujours incluses
+      case 'fries': return config.friesOption !== ''; // Les frites sont obligatoires (avec ou sans)
       case 'sauce': return true; // Les sauces sont optionnelles
       case 'drink': return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
       case 'summary': return true; // Le récapitulatif
@@ -333,7 +377,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
           </div>
 
           {/* Content */}
-          <div className="p-4 lg:p-6 overflow-y-auto max-h-[50vh]">
+          <div className="burger-sandwich-content p-4 lg:p-6 overflow-y-auto max-h-[50vh]">
             <AnimatePresence mode="wait">
               {/* Étape Menu */}
               {steps[currentStep]?.id === 'menu' && (
@@ -347,7 +391,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   <h3 className="text-base lg:text-xl font-semibold text-gray-900 mb-4">
                     Choisissez votre option menu
                   </h3>
-                  <div className="grid gap-3 lg:gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                     {MENU_OPTIONS.map((option) => (
                       <div
                         key={option.id}
@@ -390,23 +434,30 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   <h3 className="text-base lg:text-xl font-semibold text-gray-900 mb-4">
                     Choisissez votre pain
                   </h3>
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     {BREAD_OPTIONS.map((option) => (
                       <button
                         key={option.id}
                         onClick={() => setConfig(prev => ({ ...prev, breadType: option.id }))}
-                        className={`p-4 rounded-lg border-2 text-left transition-all ${
+                        className={`p-3 lg:p-4 rounded-lg border-2 text-center transition-all ${
                           config.breadType === option.id
                             ? 'border-red-500 bg-red-50 text-red-700'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-medium">{option.name}</h4>
+                        <div className="flex flex-col items-center">
+                          <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                            <Image
+                              src={option.id === 'pain' ? '/images/menu/pain.jpeg' : '/images/menu/durum.avif'}
+                              alt={option.name}
+                              width={64}
+                              height={64}
+                              className="object-contain"
+                            />
                           </div>
+                          <h4 className="font-medium text-sm lg:text-base">{option.name}</h4>
                           {config.breadType === option.id && (
-                            <Check className="w-5 h-5 text-red-500" />
+                            <Check className="w-4 h-4 text-red-500 mt-1" />
                           )}
                         </div>
                       </button>
@@ -422,19 +473,22 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="space-y-4"
+                  className="space-y-6"
                 >
                   <h3 className="text-base lg:text-xl font-semibold text-gray-900 mb-4">
                     Crudités (optionnel)
                   </h3>
                   
-                  <div className="space-y-3">
-                    {/* Option "Aucun crudités" */}
-                    <label className="flex items-center p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
-                      <input
-                        type="checkbox"
-                        checked={config.selectedVegetables.length === 0}
-                        onChange={() => {
+                  <div className="space-y-4">
+                    {/* Grille responsive des crudités avec images - S'adapte au nombre d'éléments */}
+                    <div className={`grid gap-3 ${
+                      ingredients.length <= 2 ? 'grid-cols-2' : 
+                      ingredients.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' : 
+                      'grid-cols-2 lg:grid-cols-3'
+                    }`}>
+                      {/* Option "Aucun crudités" - Alignée à gauche sur desktop */}
+                      <button
+                        onClick={() => {
                           if (config.selectedVegetables.length > 0) {
                             setConfig(prev => ({
                               ...prev,
@@ -442,25 +496,25 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                             }));
                           }
                         }}
-                        className="mr-3 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                      />
-                      <div className="w-8 h-8 mr-3 flex items-center justify-center">
-                        <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700 text-sm lg:text-base">Aucun crudités</span>
-                    </label>
-
-                    {/* Grille responsive des crudités avec images */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                      {ingredients.map((vegetable) => (
-                        <label key={vegetable._id} className="flex flex-col items-center p-4 lg:p-6 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300">
-                          <input
-                            type="checkbox"
-                            checked={config.selectedVegetables.includes(vegetable.name)}
-                            onChange={() => {
-                              const isSelected = config.selectedVegetables.includes(vegetable.name);
+                        className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                          config.selectedVegetables.length === 0
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                        }`}
+                      >
+                        <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </div>
+                        <span className="text-xs lg:text-sm text-center font-medium">Aucun</span>
+                      </button>
+                      {ingredients.map((vegetable) => {
+                        const isSelected = config.selectedVegetables.includes(vegetable.name);
+                        return (
+                          <button
+                            key={vegetable._id}
+                            onClick={() => {
                               if (isSelected) {
                                 setConfig(prev => ({
                                   ...prev,
@@ -473,20 +527,25 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                                 }));
                               }
                             }}
-                            className="mb-3 h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                          />
-                          <div className="w-16 h-16 mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
-                            <Image
-                              src={vegetable.image}
-                              alt={vegetable.name}
-                              width={64}
-                              height={64}
-                              className="object-contain"
-                            />
-                          </div>
-                          <span className="text-gray-700 text-sm lg:text-base text-center font-medium">{vegetable.name}</span>
-                        </label>
-                      ))}
+                            className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                              isSelected
+                                ? 'border-primary bg-primary/10 text-primary'
+                                : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                            }`}
+                          >
+                            <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                              <Image
+                                src={vegetable.image}
+                                alt={vegetable.name}
+                                width={64}
+                                height={64}
+                                className="object-contain"
+                              />
+                            </div>
+                            <span className="text-xs lg:text-sm text-center font-medium">{vegetable.name}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </motion.div>
@@ -502,19 +561,46 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   className="space-y-4"
                 >
                   <h3 className="text-base lg:text-xl font-semibold text-gray-900 mb-4">
-                    Frites (incluses)
+                    Frites
                   </h3>
                   
-                  <div className="p-3 lg:p-4 bg-green-50 border-2 border-green-200 rounded-lg">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 lg:w-12 lg:h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-3 lg:mr-4">
-                        <div className="w-5 h-5 lg:w-6 lg:h-6 bg-yellow-500 rounded-sm"></div>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    {FRIES_OPTIONS.map((option) => (
+                      <div
+                        key={option.id}
+                        onClick={() => handleFriesSelect(option.id)}
+                        className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                          config.friesOption === option.id
+                            ? 'border-green-500 bg-green-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="flex items-center">
+                          <div className="w-16 h-16 lg:w-20 lg:h-20 bg-yellow-100 rounded-lg flex items-center justify-center mr-3 lg:mr-4">
+                            {option.id === 'avec-frites' ? (
+                              <Image
+                                src="/images/menu/frites.jpeg"
+                                alt="Frites"
+                                width={64}
+                                height={64}
+                                className="object-contain"
+                              />
+                            ) : (
+                              <svg className="w-8 h-8 lg:w-10 lg:h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-gray-900 text-sm lg:text-base">{option.name}</h4>
+                            <p className="text-xs lg:text-sm text-gray-600">{option.description}</p>
+                          </div>
+                          {config.friesOption === option.id && (
+                            <Check className="w-5 h-5 lg:w-6 lg:h-6 text-green-500" />
+                          )}
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 text-sm lg:text-base">Avec frites</h4>
-                        <p className="text-xs lg:text-sm text-gray-600">Portion de frites incluse</p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </motion.div>
               )}
@@ -553,7 +639,11 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   </div>
 
                   {/* Sauces disponibles */}
-                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                  <div className={`grid gap-3 ${
+                    sauces.length <= 2 ? 'grid-cols-2' : 
+                    sauces.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' : 
+                    'grid-cols-2 lg:grid-cols-3'
+                  }`}>
                     {sauces.map((sauce) => (
                       <div
                         key={sauce._id}
@@ -565,12 +655,12 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                         }`}
                       >
                         <div className="text-center">
-                          <div className="w-12 h-12 lg:w-16 lg:h-16 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
+                          <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
                             <Image
                               src={sauce.image || '/images/placeholder-sauce.jpg'}
                               alt={sauce.name}
-                              width={48}
-                              height={48}
+                              width={64}
+                              height={64}
                               className="object-contain rounded-lg"
                             />
                           </div>
@@ -596,7 +686,11 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   </h3>
                   
                   {config.menuOption === 'avec-frites-boisson' ? (
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                    <div className={`grid gap-3 ${
+                      drinks.length <= 2 ? 'grid-cols-2' : 
+                      drinks.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' : 
+                      'grid-cols-2 lg:grid-cols-3'
+                    }`}>
                       {drinks.map((drink) => (
                         <div
                           key={drink._id}
@@ -608,13 +702,13 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                           }`}
                         >
                           <div className="text-center">
-                            <div className="w-12 h-12 lg:w-16 lg:h-16 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                               <Image
                                 src={drink.image || '/images/placeholder-drink.jpg'}
                                 alt={drink.name}
                                 width={48}
                                 height={48}
-                                className="object-contain rounded-lg"
+                                className="max-w-full max-h-full object-contain"
                               />
                             </div>
                             <h4 className="font-medium text-gray-900 text-xs lg:text-sm">{drink.name}</h4>
@@ -646,7 +740,11 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                       </div>
 
                       {/* Boissons disponibles */}
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                      <div className={`grid gap-3 ${
+                        drinks.length <= 2 ? 'grid-cols-2' : 
+                        drinks.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' : 
+                        'grid-cols-2 lg:grid-cols-3'
+                      }`}>
                         {drinks.map((drink) => (
                           <div
                             key={drink._id}
@@ -658,13 +756,13 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                             }`}
                           >
                             <div className="text-center">
-                              <div className="w-12 h-12 lg:w-16 lg:h-16 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
+                              <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                                 <Image
                                   src={drink.image || '/images/placeholder-drink.jpg'}
                                   alt={drink.name}
                                   width={48}
                                   height={48}
-                                  className="object-contain rounded-lg"
+                                  className="max-w-full max-h-full object-contain"
                                 />
                               </div>
                               <h4 className="font-medium text-gray-900 text-xs lg:text-sm">{drink.name}</h4>
@@ -728,7 +826,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                       
                       <div className="flex justify-between">
                         <span>Frites:</span>
-                        <span>Oui (incluses)</span>
+                        <span>{config.friesOption === 'avec-frites' ? 'Oui' : 'Non'}</span>
                       </div>
                       
                       <div className="flex justify-between">

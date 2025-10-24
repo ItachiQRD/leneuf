@@ -54,6 +54,18 @@ interface OrderTicketProps {
 export function OrderTicket({ order, onClose }: OrderTicketProps) {
   const formatProductName = (item: any) => {
     if (item.productName && item.productName !== 'Produit personnalisé') {
+      // Pour les pizzas, remplacer la taille par "Pizza"
+      if (item.productName.toLowerCase().includes('pizza')) {
+        return item.productName.replace(/\s+(Junior|Senior|Mega|XL|L|M|S)\s*$/, ' Pizza');
+      }
+      // Pour les tacos, garder seulement "Tacos" + taille
+      if (item.productName.toLowerCase().includes('tacos')) {
+        const sizeMatch = item.productName.match(/\s+(Junior|Senior|Mega|XL|L|M|S)\s*$/);
+        if (sizeMatch) {
+          return `Tacos ${sizeMatch[1]}`;
+        }
+        return 'Tacos';
+      }
       return item.productName;
     }
     
@@ -118,7 +130,13 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
     }
 
     if (customIngredients.meats && customIngredients.meats.length > 0) {
-      details.push(`Viandes: ${customIngredients.meats.map((meat: any) => meat.name).join(', ')}`);
+      // Pour TexMex, afficher le nombre et le nom de la viande
+      if (customIngredients.meats.length === 1 && customIngredients.meats[0].quantity) {
+        const meat = customIngredients.meats[0];
+        details.push(`${meat.quantity} ${meat.name}`);
+      } else {
+        details.push(`Viandes: ${customIngredients.meats.map((meat: any) => meat.name).join(', ')}`);
+      }
     }
 
     if (customIngredients.ingredients && customIngredients.ingredients.length > 0) {

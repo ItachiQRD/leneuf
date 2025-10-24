@@ -42,11 +42,6 @@ const menuItems = [
     path: '/admin/orders',
   },
   {
-    title: 'Promotions',
-    icon: Gift,
-    path: '/admin/promotions',
-  },
-  {
     title: 'Utilisateurs',
     icon: Users,
     path: '/admin/users',

@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
 import MenuOffers from '@/components/menu/MenuOffers';
+import PromotionsSection from '@/components/menu/PromotionsSection';
 
 // Configuration des catégories de menu avec icônes et couleurs
 const menuCategories = [
@@ -48,7 +49,7 @@ const menuCategories = [
   },
   {
     id: 'salad',
-    title: "Salades",
+    title: "Salades et assiettes",
     description: "Légumes frais, protéines de qualité, vinaigrettes maison",
     icon: Leaf,
     color: "from-green-500 to-emerald-500",
@@ -58,14 +59,14 @@ const menuCategories = [
     count: 0
   },
   {
-    id: 'drink',
-    title: "Boissons",
-    description: "Boissons fraîches, jus naturels, boissons chaudes",
-    icon: Coffee,
-    color: "from-blue-500 to-cyan-500",
-    bgColor: "bg-blue-50",
-    textColor: "text-blue-600",
-    href: "/menu/drinks",
+    id: 'sandwich',
+    title: "Sandwichs",
+    description: "Pains frais, garnitures variées, sauces maison",
+    icon: Utensils,
+    color: "from-purple-500 to-violet-500",
+    bgColor: "bg-purple-50",
+    textColor: "text-purple-600",
+    href: "/menu/sandwiches",
     count: 0
   },
   {
@@ -249,6 +250,9 @@ export default function MenuPage() {
 
         {/* Section Offres Spéciales */}
         <MenuOffers />
+
+        {/* Section Promotions Dynamiques */}
+        <PromotionsSection />
 
         {/* Section Produits en Vedette */}
         {featuredProducts.length > 0 && (

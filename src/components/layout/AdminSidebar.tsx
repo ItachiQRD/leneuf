@@ -12,9 +12,7 @@ import {
   Settings,
   ChevronDown,
   Receipt,
-  TrendingUp,
   BarChart3,
-  Gift,
   BarChart
 } from 'lucide-react';
 
@@ -160,18 +158,6 @@ export default function AdminSidebar() {
         </nav>
       </div>
 
-      {/* Footer de la sidebar */}
-      <div className="p-4 border-t border-neutral-800 mt-6">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-primary-400 rounded-full flex items-center justify-center">
-            <TrendingUp className="w-4 h-4 text-white" />
-          </div>
-          <div>
-            <div className="text-sm font-medium text-white">+12.5%</div>
-            <div className="text-xs text-gray-500">Ventes du mois</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

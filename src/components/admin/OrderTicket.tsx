@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import PrintTicket from './PrintTicket';
 
 interface Order {
   _id: string;
@@ -52,6 +54,8 @@ interface OrderTicketProps {
 }
 
 export function OrderTicket({ order, onClose }: OrderTicketProps) {
+  const isMobile = useIsMobile();
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
   const formatProductName = (item: any) => {
     if (item.productName && item.productName !== 'Produit personnalisé') {
       // Pour les pizzas, remplacer la taille par "Pizza"
@@ -150,209 +154,212 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
     return details.length > 0 ? details : null;
   };
 
+  const handlePrintMobile = () => {
+    // Version mobile-friendly qui utilise l'API d'impression native
+    const printContent = document.createElement('div');
+    printContent.innerHTML = `
+      <div style="
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        line-height: 1.2;
+        color: black;
+        background: white;
+        padding: 10px;
+        max-width: 300px;
+        margin: 0 auto;
+        border: 1px solid #000;
+      ">
+        <div style="text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 10px;">
+          <div style="font-size: 16px; font-weight: 900;">LE NEUF</div>
+          <div style="font-weight: 700;">Fast Food & Grill</div>
+          <div style="font-weight: 700;">Commande #${order._id}</div>
+          <div style="font-weight: 700;">${new Date(order.createdAt).toLocaleDateString('fr-FR')} à ${new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+        </div>
+        
+        <div style="margin-bottom: 10px; border-bottom: 1px solid black; padding-bottom: 5px;">
+          <div style="font-weight: 800; font-size: 14px; margin-bottom: 5px;">CLIENT & LIVRAISON</div>
+          <div style="font-weight: 700;"><strong>Nom:</strong> ${order.userId?.name || order.customer?.name || 'N/A'}</div>
+          <div style="font-weight: 700;"><strong>Tél:</strong> ${order.userId?.phone || order.customer?.phone || 'N/A'}</div>
+          <div style="font-weight: 700;"><strong>Adresse:</strong> ${order.deliveryAddress.street}</div>
+          ${order.deliveryAddress.postalCode !== '00000' ? `<div style="font-weight: 700;">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
+          ${order.deliveryAddress.complement ? `<div style="font-weight: 700;"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
+          <div style="font-weight: 700;"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
+        </div>
+
+        <div style="margin-bottom: 10px; border-bottom: 1px solid black; padding-bottom: 5px;">
+          <div style="font-weight: 800; font-size: 14px; margin-bottom: 5px;">ARTICLES</div>
+          ${order.items.map(item => {
+            const customDetails = renderCustomIngredients(item.customIngredients);
+            return `
+              <div style="margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid #ccc;">
+                <div style="display: flex; justify-content: space-between; font-weight: 900;">
+                  <span>${item.quantity}x ${formatProductName(item)}</span>
+                  <span>${(item.quantity * item.price).toFixed(2)}€</span>
+                </div>
+                ${customDetails && customDetails.length > 0 ? `
+                  <div style="font-size: 10px; color: #666; margin-top: 2px;">
+                    ${customDetails.map(detail => `<div style="font-weight: 700;">• ${detail}</div>`).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div style="border-top: 2px solid black; padding-top: 5px; font-weight: 900; font-size: 14px; display: flex; justify-content: space-between;">
+          <span>TOTAL:</span>
+          <span>${order.total.toFixed(2)}€</span>
+        </div>
+
+        <div style="text-align: center; border-top: 1px dashed #999; padding-top: 5px; margin-top: 10px;">
+          <div style="font-weight: 900;">MERCI POUR VOTRE COMMANDE !</div>
+          <div style="font-weight: 700;">BON APPÉTIT !</div>
+        </div>
+      </div>
+    `;
+
+    // Créer une nouvelle fenêtre pour l'impression
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      // Fallback: afficher dans une alerte
+      alert('Impossible d\'ouvrir la fenêtre d\'impression. Veuillez autoriser les popups.');
+      return;
+    }
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Ticket de Commande - LE NEUF</title>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body { margin: 0; padding: 20px; background: white; }
+            @media print { body { margin: 0; padding: 5px; } }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+    
+    // Auto-print après un court délai
+    setTimeout(() => {
+      printWindow.print();
+    }, 1000);
+  };
+
   const handlePrint = () => {
+    // Créer le contenu HTML pour l'impression
     const printContent = `
       <!DOCTYPE html>
       <html>
         <head>
           <title>Ticket de Commande - LE NEUF</title>
-          <meta charset="utf-8">
+          <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
-            @media print {
-              @page {
-                margin: 0.1in;
-                size: A4;
-              }
-              .print-button {
-                display: none !important;
-              }
-              body {
-                font-size: 24px !important;
-                padding: 3px !important;
-                line-height: 1.3 !important;
-              }
-              h1 {
-                font-size: 36px !important;
-                margin: 0 0 15px 0 !important;
-              }
-              h2 {
-                font-size: 30px !important;
-                margin: 20px 0 10px 0 !important;
-              }
-              .header {
-                padding-bottom: 20px !important;
-                margin-bottom: 20px !important;
-                border-bottom: 4px solid black !important;
-              }
-              .section {
-                margin-bottom: 20px !important;
-                padding-bottom: 15px !important;
-                border-bottom: 3px solid black !important;
-              }
-              .item {
-                margin-bottom: 12px !important;
-                padding-bottom: 12px !important;
-              }
-              .item-header {
-                font-size: 26px !important;
-                font-weight: 900 !important;
-              }
-              .item-details {
-                font-size: 22px !important;
-                margin-top: 8px !important;
-                color: black !important;
-              }
-              .total {
-                font-size: 32px !important;
-                padding-top: 15px !important;
-                border-top: 4px solid black !important;
-              }
-              .footer {
-                font-size: 26px !important;
-                padding-top: 15px !important;
-                margin-top: 20px !important;
-                border-top: 3px dashed black !important;
-              }
-              .bold {
-                font-size: 24px !important;
-                font-weight: 700 !important;
-              }
-              .black {
-                font-size: 26px !important;
-                font-weight: 900 !important;
-              }
-            }
             body {
               font-family: 'Courier New', monospace;
-              font-size: 18px;
-              line-height: 1.4;
+              font-size: 14px;
+              line-height: 1.2;
               color: black;
               background: white;
               margin: 0;
-              padding: 15px;
+              padding: 10px;
               width: 100%;
             }
             h1 {
-              font-size: 28px;
+              font-size: 18px;
               font-weight: 900;
-              margin: 0 0 10px 0;
+              margin: 0 0 5px 0;
               text-align: center;
             }
             h2 {
-              font-size: 22px;
+              font-size: 16px;
               font-weight: 800;
-              margin: 15px 0 8px 0;
+              margin: 10px 0 5px 0;
             }
             .header {
               text-align: center;
-              border-bottom: 3px solid black;
-              padding-bottom: 15px;
-              margin-bottom: 15px;
-            }
-            .section {
-              margin-bottom: 15px;
               border-bottom: 2px solid black;
               padding-bottom: 10px;
+              margin-bottom: 10px;
+            }
+            .section {
+              margin-bottom: 10px;
+              border-bottom: 1px solid black;
+              padding-bottom: 5px;
             }
             .item {
-              margin-bottom: 8px;
-              padding-bottom: 8px;
+              margin-bottom: 5px;
+              padding-bottom: 5px;
               border-bottom: 1px solid #ccc;
             }
             .item-header {
               display: flex;
               justify-content: space-between;
               font-weight: 900;
-              font-size: 20px;
             }
             .item-details {
-              font-size: 16px;
-              color: #333;
-              margin-top: 5px;
+              font-size: 12px;
+              color: #666;
+              margin-top: 2px;
             }
             .total {
-              border-top: 3px solid black;
-              padding-top: 10px;
+              border-top: 2px solid black;
+              padding-top: 5px;
               font-weight: 900;
-              font-size: 24px;
+              font-size: 16px;
               display: flex;
               justify-content: space-between;
             }
             .footer {
               text-align: center;
-              border-top: 2px dashed #999;
-              padding-top: 10px;
-              margin-top: 15px;
-              font-size: 20px;
+              border-top: 1px dashed #999;
+              padding-top: 5px;
+              margin-top: 10px;
             }
-            .bold { 
-              font-weight: 700; 
-              font-size: 18px;
-            }
-            .black { 
-              font-weight: 900; 
-              font-size: 20px;
+            .bold { font-weight: 700; }
+            .black { font-weight: 900; }
+            .print-controls {
+              text-align: center;
+              margin: 20px 0;
+              padding: 10px;
+              background: #f5f5f5;
+              border: 1px solid #ddd;
             }
             .print-button {
-              position: fixed;
-              top: 20px;
-              right: 20px;
-              background: #007bff;
+              background: #3b82f6;
               color: white;
               border: none;
-              padding: 12px 24px;
-              border-radius: 8px;
+              padding: 10px 20px;
+              border-radius: 5px;
               cursor: pointer;
-              font-size: 16px;
-              font-weight: bold;
-              z-index: 1000;
-              box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+              margin: 5px;
+              font-size: 14px;
+              font-family: inherit;
             }
             .print-button:hover {
-              background: #0056b3;
+              background: #2563eb;
             }
-            @media screen and (max-width: 768px) {
-              .print-button {
-                top: 10px;
-                right: 10px;
-                padding: 10px 16px;
-                font-size: 14px;
-              }
-              body {
-                font-size: 20px;
-                padding: 8px;
-              }
-              h1 {
-                font-size: 32px;
-              }
-              h2 {
-                font-size: 26px;
-              }
-              .item-header {
-                font-size: 22px;
-              }
-              .item-details {
-                font-size: 18px;
-              }
-              .total {
-                font-size: 28px;
-              }
-              .footer {
-                font-size: 22px;
-              }
-              .bold {
-                font-size: 20px;
-              }
-              .black {
-                font-size: 22px;
-              }
+            .print-button.secondary {
+              background: #6b7280;
+            }
+            .print-button.secondary:hover {
+              background: #4b5563;
+            }
+            @media print {
+              .print-controls { display: none; }
+              body { margin: 0; padding: 5px; }
             }
           </style>
         </head>
         <body>
-          <button class="print-button" onclick="window.print()">🖨️ Imprimer</button>
-          
           <div class="header">
             <h1>LE NEUF</h1>
             <div class="bold">Fast Food & Grill</div>
@@ -399,68 +406,70 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             <div class="black">MERCI POUR VOTRE COMMANDE !</div>
             <div class="bold">BON APPÉTIT !</div>
           </div>
+
+          <div class="print-controls">
+            <button class="print-button" onclick="window.print()">🖨️ Imprimer</button>
+            <button class="print-button secondary" onclick="window.close()">❌ Fermer</button>
+          </div>
         </body>
       </html>
     `;
 
-    // Méthode 1: Essayer d'ouvrir dans un nouvel onglet
+    // Essayer d'ouvrir une nouvelle fenêtre
+    let printWindow;
     try {
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(printContent);
-        printWindow.document.close();
-        printWindow.focus();
-        
-        // Attendre que le contenu soit chargé avant d'imprimer
-        printWindow.onload = () => {
-          setTimeout(() => {
-            // Forcer l'application des styles d'impression sur mobile
-            const style = printWindow.document.createElement('style');
-            style.textContent = `
-              @media print {
-                body { font-size: 24px !important; }
-                h1 { font-size: 36px !important; }
-                h2 { font-size: 30px !important; }
-                .item-header { font-size: 26px !important; }
-                .item-details { font-size: 22px !important; }
-                .total { font-size: 32px !important; }
-                .footer { font-size: 26px !important; }
-                .bold { font-size: 24px !important; }
-                .black { font-size: 26px !important; }
-              }
-            `;
-            printWindow.document.head.appendChild(style);
-            printWindow.print();
-          }, 500);
-        };
-      } else {
-        // Méthode 2: Fallback - créer un blob et télécharger
-        fallbackPrint(printContent);
-      }
+      printWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
     } catch (error) {
-      console.error('Erreur lors de l\'impression:', error);
-      // Méthode 3: Fallback - afficher dans la même fenêtre
-      fallbackPrint(printContent);
+      console.error('Erreur lors de l\'ouverture de la fenêtre:', error);
+      // Fallback: utiliser une nouvelle fenêtre sans paramètres
+      printWindow = window.open('', '_blank');
     }
-  };
 
-  const fallbackPrint = (content: string) => {
-    // Créer un blob avec le contenu HTML
-    const blob = new Blob([content], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
+    if (!printWindow) {
+      // Si window.open est bloqué, essayer d'utiliser le presse-papier
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(`
+LE NEUF - Fast Food & Grill
+Commande #${order._id}
+${new Date(order.createdAt).toLocaleDateString('fr-FR')} à ${new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+
+CLIENT & LIVRAISON
+Nom: ${order.userId?.name || order.customer?.name || 'N/A'}
+Tél: ${order.userId?.phone || order.customer?.phone || 'N/A'}
+Adresse: ${order.deliveryAddress.street}
+${order.deliveryAddress.postalCode !== '00000' ? `${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}` : ''}
+Paiement: ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}
+
+ARTICLES
+${order.items.map(item => `${item.quantity}x ${formatProductName(item)} - ${(item.quantity * item.price).toFixed(2)}€`).join('\n')}
+
+TOTAL: ${order.total.toFixed(2)}€
+
+MERCI POUR VOTRE COMMANDE !
+BON APPÉTIT !
+        `).then(() => {
+          alert('Le contenu du ticket a été copié dans le presse-papier. Vous pouvez le coller dans un document pour l\'imprimer.');
+        }).catch(() => {
+          alert('Impossible d\'ouvrir la fenêtre d\'impression. Veuillez autoriser les popups ou utiliser la fonction d\'impression de votre navigateur.');
+        });
+      } else {
+        alert('Impossible d\'ouvrir la fenêtre d\'impression. Veuillez autoriser les popups ou utiliser la fonction d\'impression de votre navigateur.');
+      }
+      return;
+    }
+
+    // Écrire le contenu dans la nouvelle fenêtre
+    printWindow.document.write(printContent);
+    printWindow.document.close();
     
-    // Créer un lien de téléchargement
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `ticket-commande-${order._id}.html`;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    
-    // Afficher un message à l'utilisateur
-    alert('Le ticket a été téléchargé. Ouvrez le fichier dans votre navigateur et utilisez Ctrl+P pour imprimer.');
+    // Attendre que le contenu soit chargé puis imprimer
+    printWindow.onload = () => {
+      printWindow.focus();
+      // Délai pour permettre le chargement complet
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+    };
   };
 
   return (
@@ -580,15 +589,35 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                 Fermer
               </button>
               <button
-                onClick={handlePrint}
+                onClick={() => setShowPrintPreview(true)}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors mr-2"
+              >
+                👁️ Aperçu
+              </button>
+              <button
+                onClick={() => {
+                  if (isMobile) {
+                    handlePrintMobile();
+                  } else {
+                    handlePrint();
+                  }
+                }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
-                Imprimer
+                {isMobile ? '📱 Imprimer' : '🖨️ Imprimer'}
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Aperçu d'impression */}
+      {showPrintPreview && (
+        <PrintTicket
+          order={order}
+          onClose={() => setShowPrintPreview(false)}
+        />
+      )}
     </>
   );
 }

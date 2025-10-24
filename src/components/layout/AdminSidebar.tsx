@@ -13,8 +13,7 @@ import {
   ChevronDown,
   Receipt,
   BarChart3,
-  BarChart,
-  Gift
+  BarChart
 } from 'lucide-react';
 
 const menuItems = [
@@ -39,11 +38,6 @@ const menuItems = [
     title: 'Commandes',
     icon: Receipt,
     path: '/admin/orders',
-  },
-  {
-    title: 'Promotions',
-    icon: Gift,
-    path: '/admin/promotions',
   },
   {
     title: 'Utilisateurs',

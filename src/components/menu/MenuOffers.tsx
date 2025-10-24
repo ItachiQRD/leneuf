@@ -12,8 +12,7 @@ const menuOffers = [
     color: 'from-red-500 to-orange-500',
     bgColor: 'bg-red-50',
     textColor: 'text-red-600',
-    promotion: '2 Pizzas Seniors achetées = 3ème Offerte',
-    promotionColor: 'bg-yellow-400 text-yellow-900'
+    promotion: null
   },
   {
     id: 'menu-trio',
@@ -46,8 +45,7 @@ const menuOffers = [
     color: 'from-green-500 to-emerald-500',
     bgColor: 'bg-green-50',
     textColor: 'text-green-600',
-    promotion: '2 Pizzas Mégas achetées = 3ème Offerte',
-    promotionColor: 'bg-green-400 text-green-900'
+    promotion: null
   },
   {
     id: 'menu-le-neuf',
@@ -73,6 +71,30 @@ const menuOffers = [
   }
 ];
 
+// Offres de promotion statiques
+const staticOffers = [
+  {
+    id: 'offer-senior',
+    title: 'Offre Senior',
+    description: '2 pizzas Senior achetées = 1 pizza Senior offerte',
+    condition: 'Achetez 2 pizzas de taille Senior et obtenez une pizza Senior gratuite',
+    icon: Pizza,
+    color: 'from-red-500 to-orange-500',
+    bgColor: 'bg-red-50',
+    textColor: 'text-red-600'
+  },
+  {
+    id: 'offer-mega',
+    title: 'Offre Méga',
+    description: '2 pizzas Méga achetées = 1 pizza Méga offerte',
+    condition: 'Achetez 2 pizzas de taille Méga et obtenez une pizza Méga gratuite',
+    icon: Pizza,
+    color: 'from-green-500 to-emerald-500',
+    bgColor: 'bg-green-50',
+    textColor: 'text-green-600'
+  }
+];
+
 export default function MenuOffers() {
   return (
     <section className="py-16 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -95,7 +117,69 @@ export default function MenuOffers() {
           </p>
         </motion.div>
 
-        {/* Grille des offres */}
+        {/* Section des offres de promotion statiques */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              🎉 Offres Spéciales
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              Profitez de nos promotions exclusives
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {staticOffers.map((offer, index) => (
+              <motion.div
+                key={offer.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className={`relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ${offer.bgColor} dark:bg-gray-800 border-2 border-dashed border-gray-300 hover:border-gray-400`}
+              >
+                <div className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${offer.color} flex items-center justify-center mr-4`}>
+                      <offer.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className={`text-lg font-bold ${offer.textColor} dark:text-white`}>
+                        {offer.title}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-700 dark:text-gray-300 mb-3 font-medium">
+                    {offer.description}
+                  </p>
+
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    {offer.condition}
+                  </p>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r ${offer.color} hover:shadow-lg transition-all duration-200`}
+                    onClick={() => {
+                      // Logique pour appliquer l'offre
+                      alert(`Offre "${offer.title}" appliquée ! Les conditions seront vérifiées lors de la commande.`);
+                    }}
+                  >
+                    ✨ Appliquer l'offre
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Grille des menus */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {menuOffers.map((offer, index) => (
             <motion.div
@@ -105,13 +189,6 @@ export default function MenuOffers() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="relative group"
             >
-              {/* Badge de promotion */}
-              {offer.promotion && (
-                <div className={`absolute -top-3 -right-3 z-10 px-3 py-1 rounded-full text-sm font-bold ${offer.promotionColor} shadow-lg`}>
-                  {offer.promotion}
-                </div>
-              )}
-
               {/* Carte de l'offre */}
               <div className={`relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 group-hover:scale-105 ${offer.bgColor} dark:bg-gray-800`}>
                 {/* Header avec gradient */}

@@ -72,7 +72,7 @@ const pulseVariants = {
 export default function SandwichesPage() {
   const { foods, loading } = useProducts();
   const { addItem } = useCart();
-  const { isDarkMode } = useDarkMode();
+  const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
@@ -86,16 +86,16 @@ export default function SandwichesPage() {
   // Filtrer par terme de recherche
   const filteredSandwiches = sandwiches.filter(sandwich =>
     sandwich.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sandwich.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    (sandwich as any).description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Filtrer par catégorie
   const getFilteredSandwiches = () => {
     if (selectedFilter === 'all') return filteredSandwiches;
     
-    return filteredSandwiches.filter(sandwich => {
-      const name = sandwich.name.toLowerCase();
-      const description = sandwich.description?.toLowerCase() || '';
+     return filteredSandwiches.filter(sandwich => {
+       const name = sandwich.name.toLowerCase();
+       const description = (sandwich as any).description?.toLowerCase() || '';
       
       switch (selectedFilter) {
         case 'classic':
@@ -120,9 +120,9 @@ export default function SandwichesPage() {
     
     switch (sortBy) {
       case 'price-asc':
-        return [...filtered].sort((a, b) => a.price - b.price);
+        return [...filtered].sort((a, b) => (a.price || 0) - (b.price || 0));
       case 'price-desc':
-        return [...filtered].sort((a, b) => b.price - a.price);
+        return [...filtered].sort((a, b) => (b.price || 0) - (a.price || 0));
       case 'name':
       default:
         return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
@@ -133,10 +133,10 @@ export default function SandwichesPage() {
 
   const handleAddToCart = (sandwich: any) => {
     addItem({
-      _id: sandwich._id || sandwich.id,
+      _id: sandwich._id || (sandwich as any).id,
       name: sandwich.name,
-      price: sandwich.price,
-      image: sandwich.image,
+      price: sandwich.price || 0,
+      image: typeof sandwich.image === 'string' ? sandwich.image : undefined,
       type: 'food',
       category: sandwich.category
     });
@@ -149,7 +149,7 @@ export default function SandwichesPage() {
         <meta name="description" content="Découvrez nos délicieux sandwichs préparés avec des ingrédients frais et des pains artisanaux" />
       </Head>
 
-      <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         {/* Header avec toggle dark mode */}
         <div className="fixed top-4 right-4 z-50">
           <DarkModeToggle />
@@ -207,11 +207,11 @@ export default function SandwichesPage() {
                   placeholder="Rechercher un sandwich..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 border-transparent focus:border-orange-500 focus:outline-none transition-all duration-300 ${
-                    isDarkMode 
-                      ? 'bg-gray-800 text-white placeholder-gray-400' 
-                      : 'bg-white text-gray-900 placeholder-gray-500'
-                  }`}
+                   className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 border-transparent focus:border-orange-500 focus:outline-none transition-all duration-300 ${
+                     isDark 
+                       ? 'bg-gray-800 text-white placeholder-gray-400' 
+                       : 'bg-white text-gray-900 placeholder-gray-500'
+                   }`}
                 />
               </div>
 
@@ -227,13 +227,13 @@ export default function SandwichesPage() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedFilter(filter.id)}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                        isActive
-                          ? 'bg-orange-500 text-white shadow-lg'
-                          : isDarkMode
-                          ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                          : 'bg-white text-gray-700 hover:bg-gray-100'
-                      }`}
+                       className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
+                         isActive
+                           ? 'bg-orange-500 text-white shadow-lg'
+                           : isDark
+                           ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                           : 'bg-white text-gray-700 hover:bg-gray-100'
+                       }`}
                     >
                       <Icon className="w-4 h-4" />
                       <span className="font-medium">{filter.name}</span>
@@ -246,11 +246,11 @@ export default function SandwichesPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className={`px-4 py-2 rounded-xl border-2 border-transparent focus:border-orange-500 focus:outline-none transition-all duration-300 ${
-                  isDarkMode 
-                    ? 'bg-gray-800 text-white' 
-                    : 'bg-white text-gray-900'
-                }`}
+                 className={`px-4 py-2 rounded-xl border-2 border-transparent focus:border-orange-500 focus:outline-none transition-all duration-300 ${
+                   isDark 
+                     ? 'bg-gray-800 text-white' 
+                     : 'bg-white text-gray-900'
+                 }`}
               >
                 <option value="name">Trier par nom</option>
                 <option value="price-asc">Prix croissant</option>
@@ -273,17 +273,17 @@ export default function SandwichesPage() {
             >
               {sortedSandwiches.map((sandwich, index) => (
                 <motion.div
-                  key={sandwich._id || sandwich.id || index}
+                  key={sandwich._id || (sandwich as any).id || index}
                   variants={itemVariants}
                   whileHover="hover"
-                  className={`group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ${
-                    isDarkMode ? 'bg-gray-800' : 'bg-white'
-                  }`}
+                   className={`group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ${
+                     isDark ? 'bg-gray-800' : 'bg-white'
+                   }`}
                 >
                   {/* Image */}
                   <div className="relative h-64 overflow-hidden">
                     <SmartImage
-                      src={sandwich.image || '/images/menu/default-sandwich.jpg'}
+                      src={typeof sandwich.image === 'string' ? sandwich.image : '/images/menu/default-sandwich.jpg'}
                       alt={sandwich.name}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -306,18 +306,18 @@ export default function SandwichesPage() {
                   {/* Contenu */}
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                       <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                         {sandwich.name}
                       </h3>
                       <div className="text-2xl font-bold text-orange-500">
-                        {sandwich.price.toFixed(2)}€
+                        {(sandwich.price || 0).toFixed(2)}€
                       </div>
                     </div>
 
-                    <p className={`text-sm mb-4 line-clamp-2 ${
-                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                    }`}>
-                      {sandwich.description || 'Sandwich préparé avec des ingrédients frais et de qualité.'}
+                     <p className={`text-sm mb-4 line-clamp-2 ${
+                       isDark ? 'text-gray-300' : 'text-gray-600'
+                     }`}>
+                      {(sandwich as any).description || 'Sandwich préparé avec des ingrédients frais et de qualité.'}
                     </p>
 
                     {/* Actions */}
@@ -348,10 +348,10 @@ export default function SandwichesPage() {
           ) : (
             <div className="text-center py-20">
               <Utensils className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+               <h3 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 Aucun sandwich trouvé
               </h3>
-              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 Essayez de modifier vos critères de recherche
               </p>
             </div>

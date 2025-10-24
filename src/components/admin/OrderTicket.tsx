@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import PrintTicket from './PrintTicket';
 
 interface Order {
   _id: string;
@@ -55,7 +54,6 @@ interface OrderTicketProps {
 
 export function OrderTicket({ order, onClose }: OrderTicketProps) {
   const isMobile = useIsMobile();
-  const [showPrintPreview, setShowPrintPreview] = useState(false);
   const formatProductName = (item: any) => {
     if (item.productName && item.productName !== 'Produit personnalisé') {
       // Pour les pizzas, remplacer la taille par "Pizza"
@@ -589,12 +587,6 @@ BON APPÉTIT !
                 Fermer
               </button>
               <button
-                onClick={() => setShowPrintPreview(true)}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors mr-2"
-              >
-                👁️ Aperçu
-              </button>
-              <button
                 onClick={() => {
                   if (isMobile) {
                     handlePrintMobile();
@@ -611,13 +603,6 @@ BON APPÉTIT !
         </div>
       </div>
 
-      {/* Aperçu d'impression */}
-      {showPrintPreview && (
-        <PrintTicket
-          order={order}
-          onClose={() => setShowPrintPreview(false)}
-        />
-      )}
     </>
   );
 }

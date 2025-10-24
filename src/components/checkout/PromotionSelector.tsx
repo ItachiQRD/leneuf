@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, Pizza, Gift, AlertCircle } from 'lucide-react';
 
 interface CartItem {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   quantity: number;

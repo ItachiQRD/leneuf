@@ -151,6 +151,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
   };
 
   const handlePrint = () => {
+    // Créer un contenu HTML simple avec styles inline pour l'impression thermique
     const printContent = `
       <!DOCTYPE html>
       <html>
@@ -159,230 +160,71 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
-            @media print {
-              @page {
-                margin: 0.05in;
-                size: A4;
-              }
-              .print-button {
-                display: none !important;
-              }
-              body {
-                font-size: 72px !important;
-                padding: 2px !important;
-                line-height: 1.2 !important;
-              }
-              h1 {
-                font-size: 108px !important;
-                margin: 0 0 30px 0 !important;
-              }
-              h2 {
-                font-size: 90px !important;
-                margin: 40px 0 20px 0 !important;
-              }
-              .header {
-                padding-bottom: 40px !important;
-                margin-bottom: 40px !important;
-                border-bottom: 8px solid black !important;
-              }
-              .section {
-                margin-bottom: 40px !important;
-                padding-bottom: 30px !important;
-                border-bottom: 6px solid black !important;
-              }
-              .item {
-                margin-bottom: 24px !important;
-                padding-bottom: 24px !important;
-              }
-              .item-header {
-                font-size: 78px !important;
-                font-weight: 900 !important;
-              }
-              .item-details {
-                font-size: 66px !important;
-                margin-top: 16px !important;
-                color: black !important;
-              }
-              .total {
-                font-size: 96px !important;
-                padding-top: 30px !important;
-                border-top: 8px solid black !important;
-              }
-              .footer {
-                font-size: 78px !important;
-                padding-top: 30px !important;
-                margin-top: 40px !important;
-                border-top: 6px dashed black !important;
-              }
-              .bold {
-                font-size: 72px !important;
-                font-weight: 700 !important;
-              }
-              .black {
-                font-size: 78px !important;
-                font-weight: 900 !important;
-              }
+            @page {
+              margin: 0;
+              size: A4;
             }
             body {
-              font-family: 'Courier New', monospace;
-              font-size: 36px;
-              line-height: 1.3;
+              margin: 0;
+              padding: 5px;
+              font-family: monospace;
+              font-size: 16px;
+              line-height: 1.2;
               color: black;
               background: white;
-              margin: 0;
-              padding: 20px;
-              width: 100%;
-            }
-            h1 {
-              font-size: 54px;
-              font-weight: 900;
-              margin: 0 0 20px 0;
-              text-align: center;
-            }
-            h2 {
-              font-size: 45px;
-              font-weight: 800;
-              margin: 30px 0 15px 0;
-            }
-            .header {
-              text-align: center;
-              border-bottom: 6px solid black;
-              padding-bottom: 30px;
-              margin-bottom: 30px;
-            }
-            .section {
-              margin-bottom: 30px;
-              border-bottom: 4px solid black;
-              padding-bottom: 20px;
-            }
-            .item {
-              margin-bottom: 16px;
-              padding-bottom: 16px;
-              border-bottom: 2px solid #ccc;
-            }
-            .item-header {
-              display: flex;
-              justify-content: space-between;
-              font-weight: 900;
-              font-size: 40px;
-            }
-            .item-details {
-              font-size: 32px;
-              color: #333;
-              margin-top: 10px;
-            }
-            .total {
-              border-top: 6px solid black;
-              padding-top: 20px;
-              font-weight: 900;
-              font-size: 48px;
-              display: flex;
-              justify-content: space-between;
-            }
-            .footer {
-              text-align: center;
-              border-top: 4px dashed #999;
-              padding-top: 20px;
-              margin-top: 30px;
-              font-size: 40px;
-            }
-            .bold { 
-              font-weight: 700; 
-              font-size: 36px;
-            }
-            .black { 
-              font-weight: 900; 
-              font-size: 40px;
             }
             .print-button {
               position: fixed;
-              top: 20px;
-              right: 20px;
+              top: 10px;
+              right: 10px;
               background: #007bff;
               color: white;
               border: none;
-              padding: 12px 24px;
-              border-radius: 8px;
+              padding: 10px 20px;
+              border-radius: 5px;
               cursor: pointer;
-              font-size: 16px;
-              font-weight: bold;
+              font-size: 14px;
               z-index: 1000;
-              box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             }
-            .print-button:hover {
-              background: #0056b3;
-            }
-            @media screen and (max-width: 768px) {
-              .print-button {
-                top: 10px;
-                right: 10px;
-                padding: 10px 16px;
-                font-size: 14px;
-              }
-              body {
-                font-size: 48px;
-                padding: 10px;
-              }
-              h1 {
-                font-size: 72px;
-              }
-              h2 {
-                font-size: 60px;
-              }
-              .item-header {
-                font-size: 54px;
-              }
-              .item-details {
-                font-size: 42px;
-              }
-              .total {
-                font-size: 64px;
-              }
-              .footer {
-                font-size: 54px;
-              }
-              .bold {
-                font-size: 48px;
-              }
-              .black {
-                font-size: 54px;
-              }
+            @media print {
+              .print-button { display: none; }
+              body { font-size: 20px; padding: 2px; }
             }
           </style>
         </head>
         <body>
           <button class="print-button" onclick="window.print()">🖨️ Imprimer</button>
           
-          <div class="header">
-            <h1>LE NEUF</h1>
-            <div class="bold">Fast Food & Grill</div>
-            <div class="bold">Commande #${order._id}</div>
-            <div class="bold">${new Date(order.createdAt).toLocaleDateString('fr-FR')} à ${new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+          <div style="text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 15px;">
+            <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">LE NEUF</div>
+            <div style="font-size: 18px; font-weight: bold;">Fast Food & Grill</div>
+            <div style="font-size: 16px; font-weight: bold;">Commande #${order._id}</div>
+            <div style="font-size: 16px; font-weight: bold;">${new Date(order.createdAt).toLocaleDateString('fr-FR')} à ${new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
           </div>
 
-          <div class="section">
-            <h2>CLIENT & LIVRAISON</h2>
-            <div class="bold"><strong>Nom:</strong> ${order.userId?.name || order.customer?.name || 'N/A'}</div>
-            <div class="bold"><strong>Tél:</strong> ${order.userId?.phone || order.customer?.phone || 'N/A'}</div>
-            <div class="bold"><strong>Adresse:</strong> ${order.deliveryAddress.street}</div>
-            ${order.deliveryAddress.postalCode !== '00000' ? `<div class="bold">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
-            ${order.deliveryAddress.complement ? `<div class="bold"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
-            <div class="bold"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
+          <div style="margin-bottom: 15px; border-bottom: 1px solid black; padding-bottom: 10px;">
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">CLIENT & LIVRAISON</div>
+            <div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;"><strong>Nom:</strong> ${order.userId?.name || order.customer?.name || 'N/A'}</div>
+            <div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;"><strong>Tél:</strong> ${order.userId?.phone || order.customer?.phone || 'N/A'}</div>
+            <div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;"><strong>Adresse:</strong> ${order.deliveryAddress.street}</div>
+            ${order.deliveryAddress.postalCode !== '00000' ? `<div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
+            ${order.deliveryAddress.complement ? `<div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
+            <div style="font-size: 16px; font-weight: bold;"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
           </div>
 
-          <div class="section">
-            <h2>ARTICLES</h2>
+          <div style="margin-bottom: 15px; border-bottom: 1px solid black; padding-bottom: 10px;">
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">ARTICLES</div>
             ${order.items.map(item => {
               const customDetails = renderCustomIngredients(item.customIngredients);
               return `
-                <div class="item">
-                  <div class="item-header">
+                <div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #ccc;">
+                  <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 3px;">
                     <span>${item.quantity}x ${formatProductName(item)}</span>
                     <span>${(item.quantity * item.price).toFixed(2)}€</span>
                   </div>
                   ${customDetails && customDetails.length > 0 ? `
-                    <div class="item-details">
-                      ${customDetails.map(detail => `<div class="bold">• ${detail}</div>`).join('')}
+                    <div style="font-size: 14px; color: #333; margin-top: 3px;">
+                      ${customDetails.map(detail => `<div style="font-weight: bold;">• ${detail}</div>`).join('')}
                     </div>
                   ` : ''}
                 </div>
@@ -390,14 +232,14 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             }).join('')}
           </div>
 
-          <div class="total">
+          <div style="border-top: 2px solid black; padding-top: 10px; font-weight: bold; font-size: 18px; display: flex; justify-content: space-between;">
             <span>TOTAL:</span>
             <span>${order.total.toFixed(2)}€</span>
           </div>
 
-          <div class="footer">
-            <div class="black">MERCI POUR VOTRE COMMANDE !</div>
-            <div class="bold">BON APPÉTIT !</div>
+          <div style="text-align: center; border-top: 1px dashed #999; padding-top: 10px; margin-top: 15px;">
+            <div style="font-weight: bold; font-size: 18px; margin-bottom: 3px;">MERCI POUR VOTRE COMMANDE !</div>
+            <div style="font-weight: bold; font-size: 16px;">BON APPÉTIT !</div>
           </div>
         </body>
       </html>
@@ -418,15 +260,14 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             const style = printWindow.document.createElement('style');
             style.textContent = `
               @media print {
-                body { font-size: 72px !important; }
-                h1 { font-size: 108px !important; }
-                h2 { font-size: 90px !important; }
-                .item-header { font-size: 78px !important; }
-                .item-details { font-size: 66px !important; }
-                .total { font-size: 96px !important; }
-                .footer { font-size: 78px !important; }
-                .bold { font-size: 72px !important; }
-                .black { font-size: 78px !important; }
+                body { 
+                  font-size: 20px !important; 
+                  padding: 2px !important;
+                  margin: 0 !important;
+                }
+                @page {
+                  margin: 0 !important;
+                }
               }
             `;
             printWindow.document.head.appendChild(style);

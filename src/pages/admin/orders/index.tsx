@@ -326,29 +326,40 @@ export default function AdminOrdersPage() {
           </div>
         </div>
 
-        {/* Filtres et recherche - Mobile */}
-        <div className="lg:hidden bg-white rounded-lg shadow-sm p-4 mb-4">
+        {/* Filtres et recherche - Mobile optimisé */}
+        <div className="lg:hidden bg-white rounded-lg shadow-sm p-4 mb-4 border border-gray-200">
           <div className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Rechercher..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Rechercher une commande
+              </label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Nom, email, téléphone..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-full"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Filtrer par statut
+              </label>
+              <Select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                options={[
+                  { value: 'all', label: 'Tous les statuts' },
+                  { value: 'pending', label: 'En attente' },
+                  { value: 'processing', label: 'En cours' },
+                  { value: 'completed', label: 'Terminées' },
+                  { value: 'cancelled', label: 'Annulées' }
+                ]}
+                className="w-full"
               />
             </div>
-            <Select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              options={[
-                { value: 'all', label: 'Tous les statuts' },
-                { value: 'pending', label: 'En attente' },
-                { value: 'processing', label: 'En cours' },
-                { value: 'completed', label: 'Terminées' },
-                { value: 'cancelled', label: 'Annulées' }
-              ]}
-            />
           </div>
         </div>
 
@@ -533,37 +544,50 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
 
-                  {/* Informations client simplifiées */}
-                  <div className="mb-3 p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center mb-2">
-                      <User className="w-4 h-4 text-gray-400 mr-2" />
-                      <span className="font-medium text-gray-900">
-                        {order.userId?.name || order.customer?.name || 'N/A'}
-                      </span>
+                  {/* Informations client simplifiées - Optimisé mobile */}
+                  <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center mb-3">
+                      <User className="w-5 h-5 text-gray-500 mr-3" />
+                      <div>
+                        <span className="font-semibold text-gray-900 text-base">
+                          {order.userId?.name || order.customer?.name || 'N/A'}
+                        </span>
+                      </div>
                     </div>
                     
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-600">
-                        <strong>Contact:</strong> {order.userId?.email || order.customer?.phone || 'N/A'}
-                      </p>
+                    <div className="space-y-2">
+                      <div className="flex items-center">
+                        <Phone className="w-4 h-4 text-gray-400 mr-2" />
+                        <span className="text-sm text-gray-600">
+                          {order.userId?.phone || order.customer?.phone || 'N/A'}
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 text-gray-400 mr-2" />
+                        <span className="text-sm text-gray-600">
+                          {order.deliveryAddress.street}, {order.deliveryAddress.city}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
 
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex space-x-2">
-                      <Badge className={orderStatusConfig.color}>
+                  {/* Statuts - Optimisé pour mobile */}
+                  <div className="mb-4">
+                    <div className="flex flex-wrap gap-2">
+                      <Badge className={`${orderStatusConfig.color} px-3 py-1 text-sm font-medium`}>
                         {getStatusIcon(order.status)}
                         <span className="ml-1">{orderStatusConfig.label}</span>
                       </Badge>
-                      <Badge className={paymentConfig.color}>
+                      <Badge className={`${paymentConfig.color} px-3 py-1 text-sm font-medium`}>
                         {paymentConfig.label}
                       </Badge>
                     </div>
                   </div>
 
-                  <div className="flex justify-end">
-                    <div className="flex space-x-2">
+                  {/* Actions - Optimisé pour mobile */}
+                  <div className="mt-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <Button
                         variant="outline"
                         size="sm"
@@ -571,7 +595,7 @@ export default function AdminOrdersPage() {
                           setSelectedOrder(order);
                           setShowOrderModal(true);
                         }}
-                        className="flex-1"
+                        className="w-full flex items-center justify-center py-2 px-3 text-sm font-medium"
                       >
                         <Eye className="w-4 h-4 mr-2" />
                         Détails
@@ -583,7 +607,7 @@ export default function AdminOrdersPage() {
                           setSelectedOrder(order);
                           setShowTicket(true);
                         }}
-                        className="flex-1 text-blue-600 hover:text-blue-700"
+                        className="w-full flex items-center justify-center py-2 px-3 text-sm font-medium text-blue-600 hover:text-blue-700 border-blue-200 hover:border-blue-300"
                       >
                         <Printer className="w-4 h-4 mr-2" />
                         Imprimer
@@ -592,7 +616,7 @@ export default function AdminOrdersPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => deleteOrder(order._id)}
-                        className="flex-1 text-red-600 hover:text-red-700"
+                        className="w-full flex items-center justify-center py-2 px-3 text-sm font-medium text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Supprimer
@@ -605,29 +629,31 @@ export default function AdminOrdersPage() {
           )}
         </div>
 
-        {/* Pagination */}
+        {/* Pagination - Optimisé pour mobile */}
         {totalPages > 1 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between mt-6 space-y-4 sm:space-y-0">
-            <div className="text-sm text-gray-700">
-              Page {currentPage} sur {totalPages}
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-                className="w-full sm:w-auto"
-              >
-                Précédent
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
-                className="w-full sm:w-auto"
-              >
-                Suivant
-              </Button>
+          <div className="mt-8 bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+            <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+              <div className="text-sm text-gray-700 font-medium">
+                Page {currentPage} sur {totalPages} ({orders.length} commandes)
+              </div>
+              <div className="flex space-x-2 w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="flex-1 sm:flex-none px-4 py-2"
+                >
+                  ← Précédent
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="flex-1 sm:flex-none px-4 py-2"
+                >
+                  Suivant →
+                </Button>
+              </div>
             </div>
           </div>
         )}

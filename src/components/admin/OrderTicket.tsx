@@ -153,50 +153,50 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
   };
 
   const handlePrintMobile = () => {
-    // Version optimisée pour imprimantes thermiques 80mm
+    // Version optimisée pour imprimantes thermiques 80mm - ÉLÉMENTS AGRANDIS
     const printContent = document.createElement('div');
     printContent.innerHTML = `
       <div style="
         font-family: 'Courier New', monospace;
-        font-size: 14px;
-        line-height: 1.3;
+        font-size: 18px;
+        line-height: 1.4;
         color: black;
         background: white;
-        padding: 8px;
+        padding: 12px;
         width: 80mm;
         max-width: 80mm;
         margin: 0 auto;
         border: none;
       ">
-        <div style="text-align: center; border-bottom: 2px solid black; padding-bottom: 8px; margin-bottom: 8px;">
-          <div style="font-size: 20px; font-weight: 900; letter-spacing: 1px;">LE NEUF</div>
-          <div style="font-size: 12px; font-weight: 700; margin-top: 2px;">Fast Food & Grill</div>
-          <div style="font-size: 11px; font-weight: 700; margin-top: 2px;">Commande #${order._id}</div>
-          <div style="font-size: 11px; font-weight: 700; margin-top: 2px;">${new Date(order.createdAt).toLocaleDateString('fr-FR')} à ${new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+        <div style="text-align: center; border-bottom: 3px solid black; padding-bottom: 12px; margin-bottom: 12px;">
+          <div style="font-size: 28px; font-weight: 900; letter-spacing: 2px;">LE NEUF</div>
+          <div style="font-size: 16px; font-weight: 700; margin-top: 4px;">Fast Food & Grill</div>
+          <div style="font-size: 15px; font-weight: 700; margin-top: 4px;">Commande #${order._id}</div>
+          <div style="font-size: 15px; font-weight: 700; margin-top: 4px;">${new Date(order.createdAt).toLocaleDateString('fr-FR')} à ${new Date(order.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
         </div>
         
-        <div style="margin-bottom: 8px; border-bottom: 1px solid black; padding-bottom: 4px;">
-          <div style="font-weight: 900; font-size: 12px; margin-bottom: 3px; text-transform: uppercase;">CLIENT & LIVRAISON</div>
-          <div style="font-weight: 700; font-size: 11px; margin-bottom: 1px;"><strong>Nom:</strong> ${order.userId?.name || order.customer?.name || 'N/A'}</div>
-          <div style="font-weight: 700; font-size: 11px; margin-bottom: 1px;"><strong>Tél:</strong> ${order.userId?.phone || order.customer?.phone || 'N/A'}</div>
-          <div style="font-weight: 700; font-size: 11px; margin-bottom: 1px;"><strong>Adresse:</strong> ${order.deliveryAddress.street}</div>
-          ${order.deliveryAddress.postalCode !== '00000' ? `<div style="font-weight: 700; font-size: 11px; margin-bottom: 1px;">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
-          ${order.deliveryAddress.complement ? `<div style="font-weight: 700; font-size: 11px; margin-bottom: 1px;"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
-          <div style="font-weight: 700; font-size: 11px;"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
+        <div style="margin-bottom: 12px; border-bottom: 2px solid black; padding-bottom: 8px;">
+          <div style="font-weight: 900; font-size: 16px; margin-bottom: 6px; text-transform: uppercase;">CLIENT & LIVRAISON</div>
+          <div style="font-weight: 700; font-size: 15px; margin-bottom: 3px;"><strong>Nom:</strong> ${order.userId?.name || order.customer?.name || 'N/A'}</div>
+          <div style="font-weight: 700; font-size: 15px; margin-bottom: 3px;"><strong>Tél:</strong> ${order.userId?.phone || order.customer?.phone || 'N/A'}</div>
+          <div style="font-weight: 700; font-size: 15px; margin-bottom: 3px;"><strong>Adresse:</strong> ${order.deliveryAddress.street}</div>
+          ${order.deliveryAddress.postalCode !== '00000' ? `<div style="font-weight: 700; font-size: 15px; margin-bottom: 3px;">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
+          ${order.deliveryAddress.complement ? `<div style="font-weight: 700; font-size: 15px; margin-bottom: 3px;"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
+          <div style="font-weight: 700; font-size: 15px;"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
         </div>
 
-        <div style="margin-bottom: 8px; border-bottom: 1px solid black; padding-bottom: 4px;">
-          <div style="font-weight: 900; font-size: 12px; margin-bottom: 3px; text-transform: uppercase;">ARTICLES</div>
+        <div style="margin-bottom: 12px; border-bottom: 2px solid black; padding-bottom: 8px;">
+          <div style="font-weight: 900; font-size: 16px; margin-bottom: 6px; text-transform: uppercase;">ARTICLES</div>
           ${order.items.map(item => {
             const customDetails = renderCustomIngredients(item.customIngredients);
             return `
-              <div style="margin-bottom: 3px; padding-bottom: 2px; border-bottom: 1px solid #ccc;">
-                <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 11px;">
+              <div style="margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #ccc;">
+                <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 15px;">
                   <span>${item.quantity}x ${formatProductName(item)}</span>
                   <span>${(item.quantity * item.price).toFixed(2)}€</span>
                 </div>
                 ${customDetails && customDetails.length > 0 ? `
-                  <div style="font-size: 9px; color: #666; margin-top: 1px;">
+                  <div style="font-size: 13px; color: #666; margin-top: 3px;">
                     ${customDetails.map(detail => `<div style="font-weight: 700;">• ${detail}</div>`).join('')}
                   </div>
                 ` : ''}
@@ -205,14 +205,14 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           }).join('')}
         </div>
 
-        <div style="border-top: 2px solid black; padding-top: 4px; font-weight: 900; font-size: 13px; display: flex; justify-content: space-between;">
+        <div style="border-top: 3px solid black; padding-top: 8px; font-weight: 900; font-size: 18px; display: flex; justify-content: space-between;">
           <span>TOTAL:</span>
           <span>${order.total.toFixed(2)}€</span>
         </div>
 
-        <div style="text-align: center; border-top: 1px dashed #999; padding-top: 4px; margin-top: 8px;">
-          <div style="font-weight: 900; font-size: 11px;">MERCI POUR VOTRE COMMANDE !</div>
-          <div style="font-weight: 700; font-size: 10px; margin-top: 1px;">BON APPÉTIT !</div>
+        <div style="text-align: center; border-top: 2px dashed #999; padding-top: 8px; margin-top: 12px;">
+          <div style="font-weight: 900; font-size: 15px;">MERCI POUR VOTRE COMMANDE !</div>
+          <div style="font-weight: 700; font-size: 14px; margin-top: 3px;">BON APPÉTIT !</div>
         </div>
       </div>
     `;

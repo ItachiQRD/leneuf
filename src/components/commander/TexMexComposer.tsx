@@ -291,6 +291,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
   const handleClose = () => {
     setCurrentStep(0);
     setConfig({
+      selectedIngredients: [],
       selectedSauce: null,
       selectedDrinks: [],
       drinkCounts: {},

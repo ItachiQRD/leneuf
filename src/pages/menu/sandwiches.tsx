@@ -334,13 +334,15 @@ export default function SandwichesPage() {
                         </div>
                       </div>
 
-                      <OrderButton
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => handleAddToCart(sandwich)}
                         className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-200 flex items-center space-x-2"
                       >
                         <ShoppingCart className="w-4 h-4" />
                         <span>Commander</span>
-                      </OrderButton>
+                      </motion.button>
                     </div>
                   </div>
                 </motion.div>

@@ -110,8 +110,6 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
     onPromotionRemoved();
   };
 
-  // Le composant s'affiche toujours maintenant
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -144,56 +142,57 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
           </div>
         ) : (
           availableOffers.map((offer) => (
-          <motion.div
-            key={offer.id}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className={`border-2 rounded-lg p-4 transition-all duration-300 ${
-              selectedPromotion === offer.id
-                ? 'border-green-500 bg-green-50'
-                : 'border-gray-200 bg-white hover:border-yellow-300'
-            }`}
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center mb-2">
-                  <Pizza className="w-5 h-5 text-orange-500 mr-2" />
-                  <h4 className="font-semibold text-gray-900">{offer.name}</h4>
-                  {selectedPromotion === offer.id && (
-                    <CheckCircle className="w-5 h-5 text-green-500 ml-2" />
+            <motion.div
+              key={offer.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className={`border-2 rounded-lg p-4 transition-all duration-300 ${
+                selectedPromotion === offer.id
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-gray-200 bg-white hover:border-yellow-300'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center mb-2">
+                    <Pizza className="w-5 h-5 text-orange-500 mr-2" />
+                    <h4 className="font-semibold text-gray-900">{offer.name}</h4>
+                    {selectedPromotion === offer.id && (
+                      <CheckCircle className="w-5 h-5 text-green-500 ml-2" />
+                    )}
+                  </div>
+                  
+                  <p className="text-gray-700 mb-2">{offer.description}</p>
+                  <p className="text-sm text-gray-600">{offer.condition}</p>
+                </div>
+
+                <div className="ml-4">
+                  {selectedPromotion === offer.id ? (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleRemovePromotion}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
+                    >
+                      <XCircle className="w-4 h-4 mr-2" />
+                      Retirer
+                    </motion.button>
+                  ) : (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handlePromotionSelect(offer.id)}
+                      className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
+                    >
+                      <Gift className="w-4 h-4 mr-2" />
+                      Appliquer
+                    </motion.button>
                   )}
                 </div>
-                
-                <p className="text-gray-700 mb-2">{offer.description}</p>
-                <p className="text-sm text-gray-600">{offer.condition}</p>
               </div>
-
-              <div className="ml-4">
-                {selectedPromotion === offer.id ? (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleRemovePromotion}
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
-                  >
-                    <XCircle className="w-4 h-4 mr-2" />
-                    Retirer
-                  </motion.button>
-                ) : (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handlePromotionSelect(offer.id)}
-                    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
-                  >
-                    <Gift className="w-4 h-4 mr-2" />
-                    Appliquer
-                  </motion.button>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))
+        )}
       </div>
 
       {appliedPromotion && (
@@ -210,9 +209,6 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
           </div>
         </motion.div>
       )}
-
-        )}
-      </div>
 
       <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
         <div className="flex items-start">

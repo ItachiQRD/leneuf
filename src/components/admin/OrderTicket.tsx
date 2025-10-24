@@ -151,16 +151,23 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
   };
 
   const handlePrint = () => {
-    // Créer un nouvel élément pour l'impression
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-
     const printContent = `
       <!DOCTYPE html>
       <html>
         <head>
           <title>Ticket de Commande - LE NEUF</title>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
+            @media print {
+              @page {
+                margin: 0.5in;
+                size: A4;
+              }
+              .print-button {
+                display: none !important;
+              }
+            }
             body {
               font-family: 'Courier New', monospace;
               font-size: 14px;
@@ -224,9 +231,37 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             }
             .bold { font-weight: 700; }
             .black { font-weight: 900; }
+            .print-button {
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              background: #007bff;
+              color: white;
+              border: none;
+              padding: 12px 24px;
+              border-radius: 8px;
+              cursor: pointer;
+              font-size: 16px;
+              font-weight: bold;
+              z-index: 1000;
+              box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+            .print-button:hover {
+              background: #0056b3;
+            }
+            @media screen and (max-width: 768px) {
+              .print-button {
+                top: 10px;
+                right: 10px;
+                padding: 10px 16px;
+                font-size: 14px;
+              }
+            }
           </style>
         </head>
         <body>
+          <button class="print-button" onclick="window.print()">🖨️ Imprimer</button>
+          
           <div class="header">
             <h1>LE NEUF</h1>
             <div class="bold">Fast Food & Grill</div>
@@ -277,11 +312,48 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
       </html>
     `;
 
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+    // Méthode 1: Essayer d'ouvrir dans un nouvel onglet
+    try {
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.focus();
+        
+        // Attendre que le contenu soit chargé avant d'imprimer
+        printWindow.onload = () => {
+          setTimeout(() => {
+            printWindow.print();
+          }, 500);
+        };
+      } else {
+        // Méthode 2: Fallback - créer un blob et télécharger
+        fallbackPrint(printContent);
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'impression:', error);
+      // Méthode 3: Fallback - afficher dans la même fenêtre
+      fallbackPrint(printContent);
+    }
+  };
+
+  const fallbackPrint = (content: string) => {
+    // Créer un blob avec le contenu HTML
+    const blob = new Blob([content], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    
+    // Créer un lien de téléchargement
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ticket-commande-${order._id}.html`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    // Afficher un message à l'utilisateur
+    alert('Le ticket a été téléchargé. Ouvrez le fichier dans votre navigateur et utilisez Ctrl+P pour imprimer.');
   };
 
   return (

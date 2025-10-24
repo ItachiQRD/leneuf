@@ -161,39 +161,66 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           <style>
             @media print {
               @page {
-                margin: 0.2in;
+                margin: 0.1in;
                 size: A4;
               }
               .print-button {
                 display: none !important;
               }
               body {
-                font-size: 20px;
-                padding: 5px;
+                font-size: 24px !important;
+                padding: 3px !important;
+                line-height: 1.3 !important;
               }
               h1 {
-                font-size: 32px;
+                font-size: 36px !important;
+                margin: 0 0 15px 0 !important;
               }
               h2 {
-                font-size: 26px;
+                font-size: 30px !important;
+                margin: 20px 0 10px 0 !important;
+              }
+              .header {
+                padding-bottom: 20px !important;
+                margin-bottom: 20px !important;
+                border-bottom: 4px solid black !important;
+              }
+              .section {
+                margin-bottom: 20px !important;
+                padding-bottom: 15px !important;
+                border-bottom: 3px solid black !important;
+              }
+              .item {
+                margin-bottom: 12px !important;
+                padding-bottom: 12px !important;
               }
               .item-header {
-                font-size: 22px;
+                font-size: 26px !important;
+                font-weight: 900 !important;
               }
               .item-details {
-                font-size: 18px;
+                font-size: 22px !important;
+                margin-top: 8px !important;
+                color: black !important;
               }
               .total {
-                font-size: 28px;
+                font-size: 32px !important;
+                padding-top: 15px !important;
+                border-top: 4px solid black !important;
               }
               .footer {
-                font-size: 22px;
+                font-size: 26px !important;
+                padding-top: 15px !important;
+                margin-top: 20px !important;
+                border-top: 3px dashed black !important;
               }
               .bold {
-                font-size: 20px;
+                font-size: 24px !important;
+                font-weight: 700 !important;
               }
               .black {
-                font-size: 22px;
+                font-size: 26px !important;
+                font-weight: 900 !important;
               }
             }
             body {
@@ -292,6 +319,34 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
                 padding: 10px 16px;
                 font-size: 14px;
               }
+              body {
+                font-size: 20px;
+                padding: 8px;
+              }
+              h1 {
+                font-size: 32px;
+              }
+              h2 {
+                font-size: 26px;
+              }
+              .item-header {
+                font-size: 22px;
+              }
+              .item-details {
+                font-size: 18px;
+              }
+              .total {
+                font-size: 28px;
+              }
+              .footer {
+                font-size: 22px;
+              }
+              .bold {
+                font-size: 20px;
+              }
+              .black {
+                font-size: 22px;
+              }
             }
           </style>
         </head>
@@ -359,6 +414,22 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
         // Attendre que le contenu soit chargé avant d'imprimer
         printWindow.onload = () => {
           setTimeout(() => {
+            // Forcer l'application des styles d'impression sur mobile
+            const style = printWindow.document.createElement('style');
+            style.textContent = `
+              @media print {
+                body { font-size: 24px !important; }
+                h1 { font-size: 36px !important; }
+                h2 { font-size: 30px !important; }
+                .item-header { font-size: 26px !important; }
+                .item-details { font-size: 22px !important; }
+                .total { font-size: 32px !important; }
+                .footer { font-size: 26px !important; }
+                .bold { font-size: 24px !important; }
+                .black { font-size: 26px !important; }
+              }
+            `;
+            printWindow.document.head.appendChild(style);
             printWindow.print();
           }, 500);
         };

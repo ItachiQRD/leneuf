@@ -17,9 +17,11 @@ import { useProducts } from '@/contexts/ProductContext';
 import SmartImage from '@/components/common/SmartImage';
 import { useCart } from '@/contexts/CartContext';
 
-// Filtres spécifiques aux salades
+// Filtres spécifiques aux salades et assiettes
 const saladFilters = [
   { id: 'all', name: 'Toutes', icon: Leaf },
+  { id: 'salad', name: 'Salades', icon: Leaf },
+  { id: 'plate', name: 'Assiettes', icon: Star },
   { id: 'classic', name: 'Classiques', icon: Star },
   { id: 'signature', name: 'Signatures', icon: Zap },
   { id: 'veggie', name: 'Végétariennes', icon: Heart },
@@ -70,8 +72,12 @@ export default function SaladsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
-  // Filtrer les salades
-  const salads = foods.filter((food: any) => food.type === 'salad');
+  // Filtrer les salades et assiettes
+  const salads = foods.filter((food: any) => 
+    food.type === 'salad' || 
+    food.type === 'plate' ||
+    food.name.toLowerCase().includes('assiette')
+  );
   
   const filteredSalads = salads.filter((salad: any) => {
     const matchesSearch = salad.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -80,6 +86,8 @@ export default function SaladsPage() {
                         );
     
     const matchesFilter = selectedFilter === 'all' || 
+                         (selectedFilter === 'salad' && salad.type === 'salad') ||
+                         (selectedFilter === 'plate' && (salad.type === 'plate' || salad.name.toLowerCase().includes('assiette'))) ||
                          (selectedFilter === 'classic' && salad.category === 'regular') ||
                          (selectedFilter === 'signature' && salad.category === 'bestseller') ||
                          (selectedFilter === 'veggie' && salad.isVegetarian) ||
@@ -121,10 +129,10 @@ export default function SaladsPage() {
   return (
     <>
       <Head>
-        <title>Le 9 - Nos Salades | Menu</title>
+        <title>Le 9 - Salades et Assiettes | Menu</title>
         <meta 
           name="description" 
-          content="Découvrez nos salades fraîches et équilibrées, préparées avec des légumes de saison et des protéines de qualité." 
+          content="Découvrez nos salades fraîches et assiettes équilibrées, préparées avec des légumes de saison et des protéines de qualité." 
         />
       </Head>
 

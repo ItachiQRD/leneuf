@@ -6,6 +6,7 @@ import MainHeader from '@/components/layout/MainHeader';
 import Cart from '@/components/cart/Cart';
 import DeliveryForm from '@/components/checkout/DeliveryForm';
 import AccountCreationModal from '@/components/checkout/AccountCreationModal';
+import PromotionSelector from '@/components/checkout/PromotionSelector';
 import { ShoppingCart, ArrowLeft, Clock, MapPin, UserPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -16,6 +17,8 @@ export default function CheckoutPage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [promotionDiscount, setPromotionDiscount] = useState(0);
+  const [promotionDescription, setPromotionDescription] = useState('');
 
   // Rediriger si le panier est vide
   if (!items || items.length === 0) {
@@ -42,6 +45,16 @@ export default function CheckoutPage() {
       </div>
     );
   }
+
+  const handlePromotionApplied = (discount: number, description: string) => {
+    setPromotionDiscount(discount);
+    setPromotionDescription(description);
+  };
+
+  const handlePromotionRemoved = () => {
+    setPromotionDiscount(0);
+    setPromotionDescription('');
+  };
 
   const handleOrderSubmit = async (data: CustomerData) => {
     // Sauvegarder les données client et rediriger vers la page de formulaire
@@ -95,6 +108,13 @@ export default function CheckoutPage() {
           </div>
         </div>
 
+        {/* Sélecteur de promotions */}
+        <PromotionSelector
+          items={items}
+          onPromotionApplied={handlePromotionApplied}
+          onPromotionRemoved={handlePromotionRemoved}
+        />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Formulaire de livraison */}
           <div className="lg:col-span-2">
@@ -138,11 +158,21 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
+              {/* Promotion appliquée */}
+              {promotionDiscount > 0 && (
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
+                  <div className="flex justify-between items-center text-green-600 dark:text-green-400">
+                    <span className="text-sm font-medium">{promotionDescription}</span>
+                    <span className="text-sm font-bold">-{promotionDiscount.toFixed(2)}€</span>
+                  </div>
+                </div>
+              )}
+
               {/* Total */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <div className="flex justify-between text-lg font-bold text-gray-900 dark:text-white">
                   <span>Total</span>
-                  <span>{total.toFixed(2)}€</span>
+                  <span>{(total - promotionDiscount).toFixed(2)}€</span>
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Livraison incluse

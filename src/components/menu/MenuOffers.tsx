@@ -168,10 +168,10 @@ export default function MenuOffers() {
                     className={`w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r ${offer.color} hover:shadow-lg transition-all duration-200`}
                     onClick={() => {
                       // Logique pour appliquer l'offre
-                      alert(`Offre "${offer.title}" appliquée ! Les conditions seront vérifiées lors de la commande.`);
+                      alert(`Offre "${offer.title}" sera appliquée après la confirmation du panier. Les conditions seront vérifiées lors de la commande.`);
                     }}
                   >
-                    ✨ Appliquer l'offre
+                    ✨ Voir les conditions
                   </motion.button>
                 </div>
               </motion.div>

@@ -161,76 +161,112 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           <style>
             @media print {
               @page {
-                margin: 0.5in;
+                margin: 0.2in;
                 size: A4;
               }
               .print-button {
                 display: none !important;
               }
+              body {
+                font-size: 20px;
+                padding: 5px;
+              }
+              h1 {
+                font-size: 32px;
+              }
+              h2 {
+                font-size: 26px;
+              }
+              .item-header {
+                font-size: 22px;
+              }
+              .item-details {
+                font-size: 18px;
+              }
+              .total {
+                font-size: 28px;
+              }
+              .footer {
+                font-size: 22px;
+              }
+              .bold {
+                font-size: 20px;
+              }
+              .black {
+                font-size: 22px;
+              }
             }
             body {
               font-family: 'Courier New', monospace;
-              font-size: 14px;
-              line-height: 1.2;
+              font-size: 18px;
+              line-height: 1.4;
               color: black;
               background: white;
               margin: 0;
-              padding: 10px;
+              padding: 15px;
               width: 100%;
             }
             h1 {
-              font-size: 18px;
+              font-size: 28px;
               font-weight: 900;
-              margin: 0 0 5px 0;
+              margin: 0 0 10px 0;
               text-align: center;
             }
             h2 {
-              font-size: 16px;
+              font-size: 22px;
               font-weight: 800;
-              margin: 10px 0 5px 0;
+              margin: 15px 0 8px 0;
             }
             .header {
               text-align: center;
-              border-bottom: 2px solid black;
-              padding-bottom: 10px;
-              margin-bottom: 10px;
+              border-bottom: 3px solid black;
+              padding-bottom: 15px;
+              margin-bottom: 15px;
             }
             .section {
-              margin-bottom: 10px;
-              border-bottom: 1px solid black;
-              padding-bottom: 5px;
+              margin-bottom: 15px;
+              border-bottom: 2px solid black;
+              padding-bottom: 10px;
             }
             .item {
-              margin-bottom: 5px;
-              padding-bottom: 5px;
+              margin-bottom: 8px;
+              padding-bottom: 8px;
               border-bottom: 1px solid #ccc;
             }
             .item-header {
               display: flex;
               justify-content: space-between;
               font-weight: 900;
+              font-size: 20px;
             }
             .item-details {
-              font-size: 12px;
-              color: #666;
-              margin-top: 2px;
+              font-size: 16px;
+              color: #333;
+              margin-top: 5px;
             }
             .total {
-              border-top: 2px solid black;
-              padding-top: 5px;
+              border-top: 3px solid black;
+              padding-top: 10px;
               font-weight: 900;
-              font-size: 16px;
+              font-size: 24px;
               display: flex;
               justify-content: space-between;
             }
             .footer {
               text-align: center;
-              border-top: 1px dashed #999;
-              padding-top: 5px;
-              margin-top: 10px;
+              border-top: 2px dashed #999;
+              padding-top: 10px;
+              margin-top: 15px;
+              font-size: 20px;
             }
-            .bold { font-weight: 700; }
-            .black { font-weight: 900; }
+            .bold { 
+              font-weight: 700; 
+              font-size: 18px;
+            }
+            .black { 
+              font-weight: 900; 
+              font-size: 20px;
+            }
             .print-button {
               position: fixed;
               top: 20px;

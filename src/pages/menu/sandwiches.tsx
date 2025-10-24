@@ -70,7 +70,7 @@ const pulseVariants = {
 };
 
 export default function SandwichesPage() {
-  const { products, loading } = useProducts();
+  const { foods, loading } = useProducts();
   const { addToCart } = useCart();
   const { isDarkMode } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
@@ -78,9 +78,9 @@ export default function SandwichesPage() {
   const [sortBy, setSortBy] = useState('name');
 
   // Filtrer les sandwichs
-  const sandwiches = products.filter(product => 
-    product.category === 'sandwich' || 
-    (product.category === 'food' && product.name.toLowerCase().includes('sandwich'))
+  const sandwiches = foods.filter((food: any) => 
+    food.type === 'sandwich' || 
+    (food.category === 'food' && food.name.toLowerCase().includes('sandwich'))
   );
 
   // Filtrer par terme de recherche
@@ -133,10 +133,11 @@ export default function SandwichesPage() {
 
   const handleAddToCart = (sandwich: any) => {
     addToCart({
-      id: sandwich._id || sandwich.id,
+      _id: sandwich._id || sandwich.id,
       name: sandwich.name,
       price: sandwich.price,
       image: sandwich.image,
+      type: 'food',
       category: sandwich.category,
       quantity: 1
     });

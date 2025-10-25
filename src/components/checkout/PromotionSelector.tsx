@@ -23,6 +23,7 @@ interface Promotion {
   condition: string;
   discount: number;
   type: 'senior' | 'mega';
+  maxQuantity?: number;
 }
 
 const availablePromotions: Promotion[] = [
@@ -45,9 +46,10 @@ const availablePromotions: Promotion[] = [
 ];
 
 export default function PromotionSelector({ items, onPromotionApplied, onPromotionRemoved }: PromotionSelectorProps) {
-  const [selectedPromotion, setSelectedPromotion] = useState<string | null>(null);
+  const [selectedPromotions, setSelectedPromotions] = useState<string[]>([]);
   const [availableOffers, setAvailableOffers] = useState<Promotion[]>([]);
-  const [appliedPromotion, setAppliedPromotion] = useState<Promotion | null>(null);
+  const [appliedPromotions, setAppliedPromotions] = useState<Promotion[]>([]);
+  const [promotionQuantities, setPromotionQuantities] = useState<Record<string, number>>({});
 
   // Vérifier les conditions des promotions
   useEffect(() => {
@@ -67,13 +69,23 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
       // Vérifier l'offre Senior (2+ pizzas Senior)
       const seniorQuantity = seniorPizzas.reduce((sum, item) => sum + item.quantity, 0);
       if (seniorQuantity >= 2) {
-        available.push(availablePromotions[0]);
+        const maxOffers = Math.floor(seniorQuantity / 2);
+        available.push({
+          ...availablePromotions[0],
+          id: 'senior-offer',
+          maxQuantity: maxOffers
+        });
       }
 
       // Vérifier l'offre Méga (2+ pizzas Méga)
       const megaQuantity = megaPizzas.reduce((sum, item) => sum + item.quantity, 0);
       if (megaQuantity >= 2) {
-        available.push(availablePromotions[1]);
+        const maxOffers = Math.floor(megaQuantity / 2);
+        available.push({
+          ...availablePromotions[1],
+          id: 'mega-offer',
+          maxQuantity: maxOffers
+        });
       }
 
       setAvailableOffers(available);
@@ -83,41 +95,82 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
   }, [items]);
 
   const handlePromotionSelect = (promotionId: string) => {
-    const promotion = availablePromotions.find(p => p.id === promotionId);
+    const promotion = availableOffers.find(p => p.id === promotionId);
     if (!promotion) return;
 
-    setSelectedPromotion(promotionId);
-    setAppliedPromotion(promotion);
-    
-    // Calculer la remise (prix de la pizza gratuite)
-    let pizzaPrice = 0;
-    
-    if (promotion.type === 'senior') {
-      // Prix Senior: 13€ normal, 9€ Margherita
-      const seniorPizzas = items.filter(item => 
-        (item.price === 13 || item.price === 9)
-      );
-      if (seniorPizzas.length > 0) {
-        pizzaPrice = seniorPizzas[0].price;
-      }
-    } else if (promotion.type === 'mega') {
-      // Prix Méga: 17€ normal, 14€ Margherita
-      const megaPizzas = items.filter(item => 
-        (item.price === 17 || item.price === 14)
-      );
-      if (megaPizzas.length > 0) {
-        pizzaPrice = megaPizzas[0].price;
-      }
-    }
-    
-    if (pizzaPrice > 0) {
-      onPromotionApplied(pizzaPrice, promotion.description);
+    if (!selectedPromotions.includes(promotionId)) {
+      setSelectedPromotions(prev => [...prev, promotionId]);
+      setPromotionQuantities(prev => ({
+        ...prev,
+        [promotionId]: 1
+      }));
     }
   };
 
-  const handleRemovePromotion = () => {
-    setSelectedPromotion(null);
-    setAppliedPromotion(null);
+  const handlePromotionRemove = (promotionId: string) => {
+    setSelectedPromotions(prev => prev.filter(id => id !== promotionId));
+    setPromotionQuantities(prev => {
+      const newQuantities = { ...prev };
+      delete newQuantities[promotionId];
+      return newQuantities;
+    });
+  };
+
+  const handleQuantityChange = (promotionId: string, quantity: number) => {
+    const promotion = availableOffers.find(p => p.id === promotionId);
+    if (!promotion || quantity < 1 || quantity > (promotion.maxQuantity || 1)) return;
+
+    setPromotionQuantities(prev => ({
+      ...prev,
+      [promotionId]: quantity
+    }));
+  };
+
+  const handleApplyPromotions = () => {
+    let totalDiscount = 0;
+    let description = '';
+
+    selectedPromotions.forEach(promotionId => {
+      const promotion = availableOffers.find(p => p.id === promotionId);
+      const quantity = promotionQuantities[promotionId] || 1;
+      
+      if (promotion) {
+        let pizzaPrice = 0;
+        
+        if (promotion.type === 'senior') {
+          const seniorPizzas = items.filter(item => 
+            (item.price === 13 || item.price === 9)
+          );
+          if (seniorPizzas.length > 0) {
+            // Trouver la pizza Senior la moins chère
+            pizzaPrice = Math.min(...seniorPizzas.map(pizza => pizza.price));
+          }
+        } else if (promotion.type === 'mega') {
+          const megaPizzas = items.filter(item => 
+            (item.price === 17 || item.price === 14)
+          );
+          if (megaPizzas.length > 0) {
+            // Trouver la pizza Méga la moins chère
+            pizzaPrice = Math.min(...megaPizzas.map(pizza => pizza.price));
+          }
+        }
+        
+        const discount = pizzaPrice * quantity;
+        totalDiscount += discount;
+        
+        if (description) description += ' + ';
+        description += `${quantity}x ${promotion.name}`;
+      }
+    });
+
+    if (totalDiscount > 0) {
+      onPromotionApplied(totalDiscount, description);
+    }
+  };
+
+  const handleRemoveAllPromotions = () => {
+    setSelectedPromotions([]);
+    setPromotionQuantities({});
     onPromotionRemoved();
   };
 
@@ -172,71 +225,132 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
             </div>
           </div>
         ) : (
-          availableOffers.map((offer) => (
-            <motion.div
-              key={offer.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className={`border-2 rounded-lg p-4 transition-all duration-300 ${
-                selectedPromotion === offer.id
-                  ? 'border-green-500 bg-green-50'
-                  : 'border-gray-200 bg-white hover:border-yellow-300'
-              }`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center mb-2">
-                    <Pizza className="w-5 h-5 text-orange-500 mr-2" />
-                    <h4 className="font-semibold text-gray-900">{offer.name}</h4>
-                    {selectedPromotion === offer.id && (
-                      <CheckCircle className="w-5 h-5 text-green-500 ml-2" />
+          availableOffers.map((offer) => {
+            const isSelected = selectedPromotions.includes(offer.id);
+            const quantity = promotionQuantities[offer.id] || 1;
+            
+            return (
+              <motion.div
+                key={offer.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className={`border-2 rounded-lg p-4 transition-all duration-300 ${
+                  isSelected
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-gray-200 bg-white hover:border-yellow-300'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center mb-2">
+                      <Pizza className="w-5 h-5 text-orange-500 mr-2" />
+                      <h4 className="font-semibold text-gray-900">{offer.name}</h4>
+                      {isSelected && (
+                        <CheckCircle className="w-5 h-5 text-green-500 ml-2" />
+                      )}
+                    </div>
+                    
+                    <p className="text-gray-700 mb-2">{offer.description}</p>
+                    <p className="text-sm text-gray-600 mb-2">{offer.condition}</p>
+                    
+                    <p className="text-sm text-green-600 font-medium mb-2">
+                      💰 La pizza la moins chère de cette taille sera offerte
+                    </p>
+                    
+                    {offer.maxQuantity && offer.maxQuantity > 1 && (
+                      <p className="text-sm text-blue-600 font-medium">
+                        💡 Cumulable ! Vous pouvez appliquer cette offre jusqu'à {offer.maxQuantity} fois
+                      </p>
                     )}
                   </div>
-                  
-                  <p className="text-gray-700 mb-2">{offer.description}</p>
-                  <p className="text-sm text-gray-600">{offer.condition}</p>
-                </div>
 
-                <div className="ml-4">
-                  {selectedPromotion === offer.id ? (
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleRemovePromotion}
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
-                    >
-                      <XCircle className="w-4 h-4 mr-2" />
-                      Retirer
-                    </motion.button>
-                  ) : (
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handlePromotionSelect(offer.id)}
-                      className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
-                    >
-                      <Gift className="w-4 h-4 mr-2" />
-                      Appliquer
-                    </motion.button>
-                  )}
+                  <div className="ml-4 flex flex-col items-end space-y-2">
+                    {isSelected ? (
+                      <>
+                        {/* Contrôle de quantité */}
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => handleQuantityChange(offer.id, Math.max(1, quantity - 1))}
+                            className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600"
+                            disabled={quantity <= 1}
+                          >
+                            -
+                          </button>
+                          <span className="w-8 text-center font-medium">{quantity}</span>
+                          <button
+                            onClick={() => handleQuantityChange(offer.id, Math.min(offer.maxQuantity || 1, quantity + 1))}
+                            className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600"
+                            disabled={quantity >= (offer.maxQuantity || 1)}
+                          >
+                            +
+                          </button>
+                        </div>
+                        
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handlePromotionRemove(offer.id)}
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg font-medium transition-colors flex items-center text-sm"
+                        >
+                          <XCircle className="w-4 h-4 mr-1" />
+                          Retirer
+                        </motion.button>
+                      </>
+                    ) : (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handlePromotionSelect(offer.id)}
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
+                      >
+                        <Gift className="w-4 h-4 mr-2" />
+                        Sélectionner
+                      </motion.button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))
+              </motion.div>
+            );
+          })
         )}
       </div>
 
-      {appliedPromotion && (
+      {/* Boutons d'action pour les promotions sélectionnées */}
+      {selectedPromotions.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 p-4 bg-green-100 border border-green-300 rounded-lg"
+          className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg"
         >
-          <div className="flex items-center">
-            <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
-            <span className="text-green-800 font-medium">
-              Promotion "{appliedPromotion.name}" appliquée ! Une pizza {appliedPromotion.type} sera offerte.
-            </span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Gift className="w-5 h-5 text-blue-600 mr-2" />
+              <span className="text-blue-800 font-medium">
+                {selectedPromotions.length} promotion{selectedPromotions.length > 1 ? 's' : ''} sélectionnée{selectedPromotions.length > 1 ? 's' : ''}
+              </span>
+            </div>
+            
+            <div className="flex space-x-2">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleApplyPromotions}
+                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center"
+              >
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Appliquer les promotions
+              </motion.button>
+              
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleRemoveAllPromotions}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
+              >
+                <XCircle className="w-4 h-4 mr-2" />
+                Tout retirer
+              </motion.button>
+            </div>
           </div>
         </motion.div>
       )}

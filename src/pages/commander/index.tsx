@@ -693,8 +693,8 @@ export default function CommanderPage() {
               <ShoppingCart className="w-6 h-6 text-gray-600 mr-2" />
               <h2 className="text-xl font-bold text-gray-900">Panier</h2>
             </div>
-          </div>
-          
+            </div>
+            
           <div className="flex-1 overflow-y-auto px-6">
             {!items || items.length === 0 ? (
               <div className="text-center py-8">
@@ -744,22 +744,22 @@ export default function CommanderPage() {
               </div>
             )}
           </div>
-          
-          <div className="p-6 flex-shrink-0 border-t">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-lg font-semibold text-gray-900">Total</span>
-              <span className="text-lg font-bold text-gray-900">
-                {total.toFixed(2)} €
-              </span>
-            </div>
             
-            <button
-              onClick={handleCheckout}
-              disabled={isLoading || items.length === 0}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-            >
-              {isLoading ? 'Commande en cours...' : 'Commander'}
-            </button>
+          <div className="p-6 flex-shrink-0 border-t">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-lg font-semibold text-gray-900">Total</span>
+                <span className="text-lg font-bold text-gray-900">
+                  {total.toFixed(2)} €
+                </span>
+              </div>
+              
+              <button
+                onClick={handleCheckout}
+                disabled={isLoading || items.length === 0}
+                className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+              >
+                {isLoading ? 'Commande en cours...' : 'Commander'}
+              </button>
           </div>
         </div>
       </div>
@@ -1018,7 +1018,7 @@ export default function CommanderPage() {
                         {size.price.toFixed(2)} €
                       </span>
                     </div>
-                  </button>
+                    </button>
                 ))
               ) : (
                 // Tailles dynamiques pour les autres produits (boissons)
@@ -1084,7 +1084,7 @@ export default function CommanderPage() {
                     <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                  </div>
+    </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-gray-900">Aucune sauce</h4>
                     <p className="text-sm text-gray-600">Accompagnement sans sauce</p>

@@ -35,11 +35,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [promotionDescription, setPromotionDescription] = useState('');
   const { showToast } = useToast();
 
-  // Load cart from localStorage on mount
+  // Load cart and promotions from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
+    const savedPromotionDiscount = localStorage.getItem('promotionDiscount');
+    const savedPromotionDescription = localStorage.getItem('promotionDescription');
+    
     if (savedCart) {
       setItems(JSON.parse(savedCart));
+    }
+    if (savedPromotionDiscount) {
+      setPromotionDiscount(parseFloat(savedPromotionDiscount));
+    }
+    if (savedPromotionDescription) {
+      setPromotionDescription(savedPromotionDescription);
     }
   }, []);
 
@@ -48,8 +57,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('cart', JSON.stringify(items));
   }, [items]);
 
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = Math.max(0, subtotal - promotionDiscount);
+  // Save promotions to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('promotionDiscount', promotionDiscount.toString());
+    localStorage.setItem('promotionDescription', promotionDescription);
+  }, [promotionDiscount, promotionDescription]);
+
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const addItem = (newItem: Omit<CartItem, 'quantity'>) => {
@@ -118,7 +132,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setPromotionDescription(description);
     showToast({
       title: 'Promotion appliquée',
-      description: `${description} - ${discount.toFixed(2)}€ de réduction`,
+      description: description,
     });
   };
 

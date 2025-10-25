@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, Pizza, Gift, AlertCircle } from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
 
 interface CartItem {
   _id: string;
@@ -13,6 +12,8 @@ interface CartItem {
 
 interface PromotionSelectorProps {
   items: CartItem[];
+  onPromotionApplied: (discount: number, description: string) => void;
+  onPromotionRemoved: () => void;
 }
 
 interface Promotion {
@@ -44,8 +45,7 @@ const availablePromotions: Promotion[] = [
   }
 ];
 
-export default function PromotionSelector({ items }: PromotionSelectorProps) {
-  const { applyPromotion, removePromotion } = useCart();
+export default function PromotionSelector({ items, onPromotionApplied, onPromotionRemoved }: PromotionSelectorProps) {
   const [selectedPromotions, setSelectedPromotions] = useState<string[]>([]);
   const [availableOffers, setAvailableOffers] = useState<Promotion[]>([]);
   const [appliedPromotions, setAppliedPromotions] = useState<Promotion[]>([]);
@@ -164,14 +164,14 @@ export default function PromotionSelector({ items }: PromotionSelectorProps) {
     });
 
     if (totalDiscount > 0) {
-      applyPromotion(totalDiscount, description);
+      onPromotionApplied(totalDiscount, description);
     }
   };
 
   const handleRemoveAllPromotions = () => {
     setSelectedPromotions([]);
     setPromotionQuantities({});
-    removePromotion();
+    onPromotionRemoved();
   };
 
   return (

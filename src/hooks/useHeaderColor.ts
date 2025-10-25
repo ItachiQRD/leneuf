@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 export const useHeaderColor = (threshold = 100) => {
+  const router = useRouter();
   const [headerStyle, setHeaderStyle] = useState({
     backgroundColor: 'transparent',
     textColor: 'text-white',
@@ -11,8 +13,9 @@ export const useHeaderColor = (threshold = 100) => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
+      const isCommanderPage = router.pathname === '/commander';
       
-      if (scrollPosition > threshold) {
+      if (scrollPosition > threshold || isCommanderPage) {
         setHeaderStyle({
           backgroundColor: 'bg-white',
           textColor: 'text-gray-900',
@@ -34,7 +37,7 @@ export const useHeaderColor = (threshold = 100) => {
     handleScroll(); // Appel initial
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [threshold]);
+  }, [threshold, router.pathname]);
 
   return headerStyle;
 };

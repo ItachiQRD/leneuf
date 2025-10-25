@@ -17,16 +17,22 @@ interface CartContextType {
   items: CartItem[];
   total: number;
   itemCount: number;
+  promotionDiscount: number;
+  promotionDescription: string;
   addItem: (item: Omit<CartItem, 'quantity'>) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
+  applyPromotion: (discount: number, description: string) => void;
+  removePromotion: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [promotionDiscount, setPromotionDiscount] = useState(0);
+  const [promotionDescription, setPromotionDescription] = useState('');
   const { showToast } = useToast();
 
   // Load cart from localStorage on mount
@@ -42,7 +48,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('cart', JSON.stringify(items));
   }, [items]);
 
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = Math.max(0, subtotal - promotionDiscount);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const addItem = (newItem: Omit<CartItem, 'quantity'>) => {
@@ -98,9 +105,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => {
     setItems([]);
+    setPromotionDiscount(0);
+    setPromotionDescription('');
     showToast({
       title: 'Panier vidé',
       description: 'Tous les articles ont été retirés du panier',
+    });
+  };
+
+  const applyPromotion = (discount: number, description: string) => {
+    setPromotionDiscount(discount);
+    setPromotionDescription(description);
+    showToast({
+      title: 'Promotion appliquée',
+      description: `${description} - ${discount.toFixed(2)}€ de réduction`,
+    });
+  };
+
+  const removePromotion = () => {
+    setPromotionDiscount(0);
+    setPromotionDescription('');
+    showToast({
+      title: 'Promotion retirée',
+      description: 'La promotion a été retirée de votre panier',
     });
   };
 
@@ -110,10 +137,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         items,
         total,
         itemCount,
+        promotionDiscount,
+        promotionDescription,
         addItem,
         removeItem,
         updateQuantity,
         clearCart,
+        applyPromotion,
+        removePromotion,
       }}
     >
       {children}

@@ -12,13 +12,11 @@ import { motion } from 'framer-motion';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, clearCart } = useCart();
+  const { items, total, clearCart, promotionDiscount, promotionDescription } = useCart();
   const { customerData } = useCustomerData();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
-  const [promotionDiscount, setPromotionDiscount] = useState(0);
-  const [promotionDescription, setPromotionDescription] = useState('');
 
   // Rediriger si le panier est vide
   if (!items || items.length === 0) {
@@ -46,15 +44,6 @@ export default function CheckoutPage() {
     );
   }
 
-  const handlePromotionApplied = (discount: number, description: string) => {
-    setPromotionDiscount(discount);
-    setPromotionDescription(description);
-  };
-
-  const handlePromotionRemoved = () => {
-    setPromotionDiscount(0);
-    setPromotionDescription('');
-  };
 
   const handleOrderSubmit = async (data: CustomerData) => {
     // Sauvegarder les données client et rediriger vers la page de formulaire
@@ -111,8 +100,6 @@ export default function CheckoutPage() {
         {/* Sélecteur de promotions */}
         <PromotionSelector
           items={items}
-          onPromotionApplied={handlePromotionApplied}
-          onPromotionRemoved={handlePromotionRemoved}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

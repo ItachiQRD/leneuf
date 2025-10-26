@@ -42,6 +42,7 @@ interface Dessert {
 
 export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizzasProp = [], drinks: drinksProp = [] }: PizzaMenuSelectorProps) {
   const { addItem } = useCart();
+  const [currentStep, setCurrentStep] = useState<'pizzas' | 'drinks' | 'petite-faim' | 'quantity'>('pizzas');
   const [selectedPizzas, setSelectedPizzas] = useState<{ pizza: Pizza; quantity: number }[]>([]);
   const [selectedDrinks, setSelectedDrinks] = useState<{ drink: Drink; quantity: number }[]>([]);
   const [selectedPetiteFaim, setSelectedPetiteFaim] = useState<PetiteFaimItem | null>(null);
@@ -243,30 +244,67 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
     return true;
   };
 
-  // Filtrer les pizzas selon la taille requise
-  const getFilteredPizzas = () => {
-    if (!menu.pizzaSize) return pizzas;
-    // Pour le debug
-    console.log('Pizzas disponibles:', pizzas);
-    console.log('Taille recherchée:', menu.pizzaSize);
-    
-    // Filtrer par taille si nécessaire
-    const filtered = pizzas.filter(pizza => {
+  // Séparer les pizzas par base
+  const getPizzasByBase = () => {
+    const pizzasByBase = {
+      tomate: [] as Pizza[],
+      crème: [] as Pizza[]
+    };
+
+    pizzas.forEach(pizza => {
       const name = pizza.name.toLowerCase();
-      const size = menu.pizzaSize.toLowerCase();
-      
-      // Remplacer les accents et variantes
-      const normalizedSize = size
-        .replace('sénior', 'senior')
-        .replace('séniors', 'senior')
-        .replace('méga', 'mega')
-        .replace('mégas', 'mega');
-      
-      return name.includes(size) || name.includes(normalizedSize);
+      if (name.includes('crème') || name.includes('creme')) {
+        pizzasByBase.crème.push(pizza);
+      } else {
+        pizzasByBase.tomate.push(pizza);
+      }
     });
-    
-    console.log('Pizzas filtrées:', filtered);
-    return filtered;
+
+    return pizzasByBase;
+  };
+
+  const pizzasByBase = getPizzasByBase();
+  const canProceedToNextStep = () => {
+    if (currentStep === 'pizzas') {
+      const totalPizzaQuantity = selectedPizzas.reduce((sum, p) => sum + p.quantity, 0);
+      return totalPizzaQuantity >= (menu.pizzaCount || 1);
+    }
+    if (currentStep === 'drinks') {
+      const totalDrinkQuantity = selectedDrinks.reduce((sum, d) => sum + d.quantity, 0);
+      return totalDrinkQuantity >= (menu.drinkCount || 0);
+    }
+    if (currentStep === 'petite-faim') {
+      return menu.id !== 'menu-couple' || selectedPetiteFaim !== null;
+    }
+    return true;
+  };
+
+  const handleNextStep = () => {
+    if (currentStep === 'pizzas') {
+      setCurrentStep('drinks');
+    } else if (currentStep === 'drinks') {
+      if (menu.id === 'menu-couple') {
+        setCurrentStep('petite-faim');
+      } else {
+        setCurrentStep('quantity');
+      }
+    } else if (currentStep === 'petite-faim') {
+      setCurrentStep('quantity');
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (currentStep === 'quantity') {
+      if (menu.id === 'menu-couple') {
+        setCurrentStep('petite-faim');
+      } else {
+        setCurrentStep('drinks');
+      }
+    } else if (currentStep === 'drinks') {
+      setCurrentStep('pizzas');
+    } else if (currentStep === 'petite-faim') {
+      setCurrentStep('drinks');
+    }
   };
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -311,61 +349,117 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Sélection des pizzas */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Choisissez vos pizzas {menu.pizzaSize && `(${menu.pizzaSize})`}
-                  </h3>
-                  <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
-                    {pizzas.map((pizza) => {
-                      const quantity = getPizzaQuantity(pizza._id);
-                      return (
-                        <div
-                          key={pizza._id}
-                          className={`p-3 border-2 rounded-lg flex items-center space-x-3 ${
-                            quantity > 0
-                              ? 'border-red-600 bg-red-50'
-                              : 'border-gray-300 hover:border-gray-400'
-                          }`}
-                        >
-                          <div className="relative w-16 h-16 flex-shrink-0 bg-gray-50 rounded flex items-center justify-center">
-                            <Image
-                              src={pizza.image || '/images/placeholder-food.jpg'}
-                              alt={pizza.name}
-                              width={64}
-                              height={64}
-                              className="object-cover rounded"
-                            />
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium text-sm">{pizza.name}</div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <button
-                              onClick={() => handlePizzaQuantity(pizza, -1)}
-                              className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                            >
-                              <Minus className="w-4 h-4" />
-                            </button>
-                            <span className="w-8 text-center font-medium">{quantity}</span>
-                            <button
-                              onClick={() => handlePizzaQuantity(pizza, 1)}
-                              className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                            >
-                              <Plus className="w-4 h-4" />
-                            </button>
-                          </div>
+                {/* Étape 1: Sélection des pizzas */}
+                {currentStep === 'pizzas' && (
+                  <>
+                    {/* Pizzas base tomate */}
+                    {pizzasByBase.tomate.length > 0 && (
+                      <div>
+                        <h4 className="text-base font-semibold text-red-600 mb-3">Pizzas base tomate</h4>
+                        <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3 mb-4`}>
+                          {pizzasByBase.tomate.map((pizza) => {
+                            const quantity = getPizzaQuantity(pizza._id);
+                            return (
+                              <div
+                                key={pizza._id}
+                                className={`p-3 border-2 rounded-lg flex items-center space-x-3 ${
+                                  quantity > 0
+                                    ? 'border-red-600 bg-red-50'
+                                    : 'border-gray-300 hover:border-gray-400'
+                                }`}
+                              >
+                                <div className="relative w-16 h-16 flex-shrink-0 bg-gray-50 rounded flex items-center justify-center">
+                                  <Image
+                                    src={pizza.image || '/images/placeholder-food.jpg'}
+                                    alt={pizza.name}
+                                    width={64}
+                                    height={64}
+                                    className="object-cover rounded"
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm">{pizza.name}</div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <button
+                                    onClick={() => handlePizzaQuantity(pizza, -1)}
+                                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                                  >
+                                    <Minus className="w-4 h-4" />
+                                  </button>
+                                  <span className="w-8 text-center font-medium">{quantity}</span>
+                                  <button
+                                    onClick={() => handlePizzaQuantity(pizza, 1)}
+                                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
-                      );
-                    })}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    {menu.pizzaCount === 2 ? 'Choisissez 2 pizzas' : 
-                     menu.pizzaCount === 3 ? 'Choisissez 3 pizzas' :
-                     menu.pizzaCount === 4 ? 'Choisissez 4 pizzas' :
-                     menu.pizzaCount === 5 ? 'Choisissez 5 pizzas' : 'Choisissez 1 pizza'}
-                  </p>
-                </div>
+                      </div>
+                    )}
+
+                    {/* Pizzas base crème */}
+                    {pizzasByBase.crème.length > 0 && (
+                      <div>
+                        <h4 className="text-base font-semibold text-orange-600 mb-3">Pizzas base crème fraîche</h4>
+                        <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3 mb-4`}>
+                          {pizzasByBase.crème.map((pizza) => {
+                            const quantity = getPizzaQuantity(pizza._id);
+                            return (
+                              <div
+                                key={pizza._id}
+                                className={`p-3 border-2 rounded-lg flex items-center space-x-3 ${
+                                  quantity > 0
+                                    ? 'border-red-600 bg-red-50'
+                                    : 'border-gray-300 hover:border-gray-400'
+                                }`}
+                              >
+                                <div className="relative w-16 h-16 flex-shrink-0 bg-gray-50 rounded flex items-center justify-center">
+                                  <Image
+                                    src={pizza.image || '/images/placeholder-food.jpg'}
+                                    alt={pizza.name}
+                                    width={64}
+                                    height={64}
+                                    className="object-cover rounded"
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="font-medium text-sm">{pizza.name}</div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <button
+                                    onClick={() => handlePizzaQuantity(pizza, -1)}
+                                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                                  >
+                                    <Minus className="w-4 h-4" />
+                                  </button>
+                                  <span className="w-8 text-center font-medium">{quantity}</span>
+                                  <button
+                                    onClick={() => handlePizzaQuantity(pizza, 1)}
+                                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    <p className="text-xs text-gray-500 mt-2">
+                      {menu.pizzaCount === 2 ? 'Choisissez 2 pizzas' : 
+                       menu.pizzaCount === 3 ? 'Choisissez 3 pizzas' :
+                       menu.pizzaCount === 4 ? 'Choisissez 4 pizzas' :
+                       menu.pizzaCount === 5 ? 'Choisissez 5 pizzas' : 'Choisissez 1 pizza'}
+                    </p>
+                  </>
+                )}
 
                 {/* Sélection des boissons */}
                 {menu.drinkCount > 0 && (

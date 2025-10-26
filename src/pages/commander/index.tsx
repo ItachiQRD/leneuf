@@ -11,6 +11,7 @@ import PaniniComposer from '@/components/commander/PaniniComposer';
 import BurgerSandwichComposer from '@/components/commander/BurgerSandwichComposer';
 import TexMexComposer from '@/components/commander/TexMexComposer';
 import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
+import PizzaMenuSelector from '@/components/commander/PizzaMenuSelector';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -25,6 +26,8 @@ export default function CommanderPage() {
   const [showBurgerSandwichComposer, setShowBurgerSandwichComposer] = useState(false);
   const [showTexMexComposer, setShowTexMexComposer] = useState(false);
   const [showMenuEnfantsComposer, setShowMenuEnfantsComposer] = useState(false);
+  const [showPizzaMenuSelector, setShowPizzaMenuSelector] = useState(false);
+  const [selectedPizzaMenu, setSelectedPizzaMenu] = useState<any>(null);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const [productForSize, setProductForSize] = useState<any>(null);
@@ -53,6 +56,76 @@ export default function CommanderPage() {
     { id: 'menu-enfants', name: 'Menu Enfants', active: false },
     { id: 'boissons', name: 'Boissons', active: false },
     { id: 'desserts', name: 'Desserts', active: false },
+  ];
+
+  // Menus pizza statiques
+  const pizzaMenus = [
+    {
+      id: 'menu-senior',
+      name: 'MENU SENIOR',
+      price: 25,
+      description: '2 pizzas séniors + 1 boisson 1,5L',
+      image: '/images/menu/menu-senior.jpg',
+      pizzaCount: 2,
+      pizzaSize: 'sénior',
+      drinkCount: 1,
+      drinkSize: '1.5L'
+    },
+    {
+      id: 'menu-trio',
+      name: 'MENU TRIO',
+      price: 25,
+      description: '3 Juniors + 1 boisson 1,5L',
+      image: '/images/menu/menu-trio.jpg',
+      pizzaCount: 3,
+      pizzaSize: 'junior',
+      drinkCount: 1,
+      drinkSize: '1.5L'
+    },
+    {
+      id: 'menu-couple',
+      name: 'MENU COUPLE',
+      price: 19,
+      description: '1 pizza sénior + 6 Nuggets ou Wings + 2 boissons 33cl + 2 Brownie',
+      image: '/images/menu/menu-couple.jpg',
+      pizzaCount: 1,
+      pizzaSize: 'sénior',
+      drinkCount: 2,
+      drinkSize: '33cl'
+    },
+    {
+      id: 'menu-famille',
+      name: 'MENU FAMILLE',
+      price: 34,
+      description: '2 pizzas mégas + 1 boisson 1,5L',
+      image: '/images/menu/menu-famille.jpg',
+      pizzaCount: 2,
+      pizzaSize: 'méga',
+      drinkCount: 1,
+      drinkSize: '1.5L'
+    },
+    {
+      id: 'menu-le-neuf',
+      name: 'MENU LE NEUF',
+      price: 34,
+      description: '4 pizzas Junior + 1 boisson 1,5L',
+      image: '/images/menu/menu-le-neuf.jpg',
+      pizzaCount: 4,
+      pizzaSize: 'junior',
+      drinkCount: 1,
+      drinkSize: '1.5L'
+    },
+    {
+      id: 'menu-top',
+      name: 'MENU TOP',
+      price: 51,
+      description: '5 pizzas séniors + 2 boisson 1,5L',
+      image: '/images/menu/menu-top.jpg',
+      pizzaCount: 5,
+      pizzaSize: 'sénior',
+      drinkCount: 2,
+      drinkSize: '1.5L'
+    }
   ];
 
   // Charger les produits quand la catégorie change
@@ -612,6 +685,107 @@ export default function CommanderPage() {
                 Commencer la composition
               </button>
             </div>
+          ) : selectedCategory === 'pizzas' ? (
+            /* Section Pizzas avec menus */
+            <div className="space-y-6">
+              {/* Menus Pizza */}
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">🎉 Nos Menus Pizza</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {pizzaMenus.map((menu) => (
+                    <motion.div
+                      key={menu.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                    >
+                      <div className="relative h-32 bg-gradient-to-br from-red-500 to-red-600">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-4xl">🍕</span>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <h4 className="text-lg font-bold text-gray-900 mb-1">{menu.name}</h4>
+                        <p className="text-sm text-gray-600 mb-3">{menu.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xl font-bold text-red-600">{menu.price}€</span>
+                          <button
+                            onClick={() => {
+                              setSelectedPizzaMenu(menu);
+                              setShowPizzaMenuSelector(true);
+                            }}
+                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm"
+                          >
+                            Commander
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Liste des pizzas */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">🍕 Nos Pizzas</h3>
+                <div className="space-y-4">
+                  {loadingProducts ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+                      <p className="mt-2 text-gray-600">Chargement des produits...</p>
+                    </div>
+                  ) : !products || products.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
+                    </div>
+                  ) : (
+                    products.map((item) => (
+                      <motion.div
+                        key={item._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
+                      >
+                        <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
+                          <Image
+                            src={item.image || '/images/placeholder-food.jpg'}
+                            alt={item.name}
+                            fill
+                            className="rounded-lg object-cover"
+                          />
+                        </div>
+                        
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {item.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {item.description || 'Délicieux plat préparé avec soin'}
+                          </p>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-lg font-bold text-red-600">
+                              {(() => {
+                                const isMargherita = item.name.toLowerCase().includes('margherita') || 
+                                                    item.name.toLowerCase().includes('margarita');
+                                const minPrice = isMargherita ? 7 : 9;
+                                const maxPrice = isMargherita ? 14 : 17;
+                                return `${minPrice}€ - ${maxPrice}€`;
+                              })()}
+                            </span>
+                            <button
+                              onClick={() => handleAddToCart(item)}
+                              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm"
+                            >
+                              Ajouter
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
           ) : (
             /* Liste des produits normaux */
             <div className="space-y-4">
@@ -828,6 +1002,115 @@ export default function CommanderPage() {
                 Commencer la composition
               </button>
             </div>
+          ) : selectedCategory === 'pizzas' ? (
+            /* Section Pizzas avec menus - Mobile */
+            <div className="space-y-6">
+              {/* Menus Pizza */}
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">🎉 Nos Menus Pizza</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {pizzaMenus.map((menu) => (
+                    <motion.div
+                      key={menu.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                    >
+                      <div className="relative h-32 bg-gradient-to-br from-red-500 to-red-600">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-4xl">🍕</span>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <h4 className="text-lg font-bold text-gray-900 mb-1">{menu.name}</h4>
+                        <p className="text-sm text-gray-600 mb-3">{menu.description}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xl font-bold text-red-600">{menu.price}€</span>
+                          <button
+                            onClick={() => {
+                              setSelectedPizzaMenu(menu);
+                              setShowPizzaMenuSelector(true);
+                            }}
+                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm"
+                          >
+                            Commander
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Liste des pizzas */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">🍕 Nos Pizzas</h3>
+                <div className="space-y-4">
+                  {loadingProducts ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+                      <p className="mt-2 text-gray-600">Chargement des produits...</p>
+                    </div>
+                  ) : !products || products.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
+                    </div>
+                  ) : (
+                    products.map((item) => (
+                      <motion.div
+                        key={item._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white rounded-lg shadow-md p-4"
+                      >
+                        <div className="flex items-start space-x-4">
+                          <div className="relative w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
+                            <Image
+                              src={item.image || '/images/placeholder-food.jpg'}
+                              alt={item.name}
+                              fill
+                              className="object-cover rounded-lg"
+                            />
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                              {item.name}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                              {item.description || 'Délicieux plat préparé avec soin'}
+                            </p>
+                            {item.baseIngredients && item.baseIngredients.length > 0 && (
+                              <p className="text-xs text-gray-500 mb-2">
+                                Ingrédients: {item.baseIngredients.join(', ')}
+                              </p>
+                            )}
+                            
+                            <div className="flex items-center justify-between">
+                              <span className="text-lg font-bold text-red-600">
+                                {(() => {
+                                  const isMargherita = item.name.toLowerCase().includes('margherita') || 
+                                                      item.name.toLowerCase().includes('margarita');
+                                  const minPrice = isMargherita ? 7 : 9;
+                                  const maxPrice = isMargherita ? 14 : 17;
+                                  return `${minPrice}€ - ${maxPrice}€`;
+                                })()}
+                              </span>
+                              <button
+                                onClick={() => handleAddToCart(item)}
+                                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm"
+                              >
+                                Ajouter
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
           ) : (
             /* Liste des produits normaux */
             <div className="space-y-4">
@@ -951,6 +1234,13 @@ export default function CommanderPage() {
         onClose={() => setShowMenuEnfantsComposer(false)}
         onAddToCart={handleAddCustomToCart}
         product={selectedProduct}
+      />
+
+      {/* Composant de sélection de menu pizza */}
+      <PizzaMenuSelector
+        isOpen={showPizzaMenuSelector}
+        onClose={() => setShowPizzaMenuSelector(false)}
+        menu={selectedPizzaMenu}
       />
 
       {/* Composant de sélection de taille */}

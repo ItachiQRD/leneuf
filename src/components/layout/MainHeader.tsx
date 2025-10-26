@@ -44,13 +44,13 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-between h-24 px-8">
           {/* Actions à gauche */}
-          <div className="flex items-center flex-1 max-w-[400px]">
+          <div className="flex items-center justify-end flex-1">
             {/* Theme Toggle */}
             <motion.button
               onClick={toggleTheme}
               whileHover={{ scale: 1.1, rotate: 180 }}
               whileTap={{ scale: 0.9 }}
-              className={`hidden md:block p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor} ml-4`}
+              className={`hidden md:block p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
               aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
             >
               {theme === 'dark' ? (
@@ -64,22 +64,22 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             <div className="md:hidden">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link href="/">
-            <Image
-              src="/images/logo.png"
-              alt="Le 9 Logo"
+                  <Image
+                    src="/images/logo.png"
+                    alt="Le 9 Logo"
                     width={40}
                     height={40}
                     className="drop-shadow-lg"
-              style={{ width: 'auto', height: 'auto' }}
-            />
-          </Link>
+                    style={{ width: 'auto', height: 'auto' }}
+                  />
+                </Link>
               </motion.div>
             </div>
 
             {/* À propos - Rapproché du centre */}
-            <div className="hidden md:flex items-center ml-auto mr-auto">
+            <div className="hidden md:flex items-center ml-8">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
-            <Link
+                <Link
                   href="/a-propos"
                   className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-5 py-2 rounded-lg`}
                 >
@@ -182,9 +182,9 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Actions à droite */}
-          <div className="flex items-center flex-1 max-w-[400px] justify-end">
+          <div className="flex items-center flex-1 justify-end">
             {/* Contact et autres actions */}
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center mr-8">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
                   href="/contact"

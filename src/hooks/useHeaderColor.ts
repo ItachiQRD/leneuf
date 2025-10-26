@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 export const useHeaderColor = (threshold = 100) => {
+  const router = useRouter();
   const [headerStyle, setHeaderStyle] = useState({
     backgroundColor: 'bg-white',
     textColor: 'text-gray-900',
@@ -12,7 +14,11 @@ export const useHeaderColor = (threshold = 100) => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       
-      if (scrollPosition > threshold) {
+      // Pages où la navbar doit toujours être opaque
+      const opaquePages = ['/commander'];
+      const isOpaquePage = opaquePages.includes(router.pathname);
+      
+      if (isOpaquePage || scrollPosition > threshold) {
         setHeaderStyle({
           backgroundColor: 'bg-white',
           textColor: 'text-gray-900',
@@ -34,7 +40,7 @@ export const useHeaderColor = (threshold = 100) => {
     handleScroll(); // Appel initial
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [threshold]);
+  }, [threshold, router.pathname]);
 
   return headerStyle;
 };

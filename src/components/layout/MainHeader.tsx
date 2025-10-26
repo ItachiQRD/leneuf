@@ -41,10 +41,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="container mx-auto px-8 relative">
-        <div className="flex items-center h-24">
+      <div className="w-full mx-auto relative">
+        <div className="flex items-center justify-between h-24 px-8">
           {/* Actions à gauche */}
-          <div className="flex items-center flex-1">
+          <div className="flex items-center flex-1 max-w-[400px]">
             {/* Theme Toggle */}
             <motion.button
               onClick={toggleTheme}
@@ -96,7 +96,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Section centrale avec logo entouré par Menu et Commander */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center space-x-4 z-10">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center space-x-6 z-10">
             {/* Menu à gauche du logo */}
             <motion.div
               whileHover={{ scale: 1.1, x: -5 }}
@@ -106,14 +106,15 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               <Link
                 href="/menu"
                 className="block px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group whitespace-nowrap"
+                style={{ minWidth: '160px', textAlign: 'center' }}
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
                   animate={{ x: ['-100%', '100%'] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                 />
-              Menu
-            </Link>
+                Menu
+              </Link>
             </motion.div>
 
             {/* Logo centré */}
@@ -156,7 +157,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                     style={{ width: 'auto', height: 'auto' }}
                   />
                 </div>
-            </Link>
+              </Link>
             </motion.div>
 
             {/* Commander à droite du logo */}
@@ -165,24 +166,25 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               whileTap={{ scale: 0.95 }}
               className="relative"
             >
-            <Link
-              href="/commander"
+              <Link
+                href="/commander"
                 className="block px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group whitespace-nowrap"
-            >
+                style={{ minWidth: '160px', textAlign: 'center' }}
+              >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
                   animate={{ x: ['-100%', '100%'] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                 />
-              🍔 Commander
-            </Link>
+                Commander
+              </Link>
             </motion.div>
           </div>
 
           {/* Actions à droite */}
-          <div className="flex items-center flex-1 justify-end">
-            {/* Contact - Rapproché du centre */}
-            <div className="hidden md:flex items-center mr-auto">
+          <div className="flex items-center flex-1 max-w-[400px] justify-end">
+            {/* Contact et autres actions */}
+            <div className="hidden md:flex items-center space-x-4">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
                   href="/contact"

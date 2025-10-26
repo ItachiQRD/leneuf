@@ -89,6 +89,8 @@ interface Order {
     customIngredients?: any;
   }>;
   total: number;
+  promotionDiscount?: number;
+  promotionDescription?: string;
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
   deliveryAddress: {
     street: string;
@@ -841,6 +843,20 @@ function OrderDetailModal({
               );
             })}
             
+            {/* Promotion */}
+            {order.promotionDiscount && order.promotionDiscount > 0 && (
+              <div className="bg-green-50 rounded-lg p-4 border-2 border-green-300">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold text-green-800">
+                    Remise ({order.promotionDescription || 'Promotion'}):
+                  </span>
+                  <span className="text-lg font-bold text-green-600">
+                    -{order.promotionDiscount.toFixed(2)} €
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Total */}
             <div className="bg-gray-100 rounded-lg p-4 border-2 border-gray-300">
               <div className="flex justify-between items-center font-bold text-xl">

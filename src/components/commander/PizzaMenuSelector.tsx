@@ -158,6 +158,9 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   const handlePizzaQuantity = (pizza: Pizza, delta: number) => {
     setSelectedPizzas(prev => {
       const existing = prev.find(p => p.pizza._id === pizza._id);
+      const currentTotal = prev.reduce((sum, p) => sum + p.quantity, 0);
+      const requiredPizzas = menu.pizzaCount || 1;
+      
       if (existing) {
         const newQuantity = Math.max(0, existing.quantity + delta);
         if (newQuantity === 0) {
@@ -167,6 +170,10 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
           p.pizza._id === pizza._id ? { ...p, quantity: newQuantity } : p
         );
       } else if (delta > 0) {
+        // Empêcher d'ajouter une nouvelle pizza si on a déjà atteint le maximum
+        if (currentTotal >= requiredPizzas) {
+          return prev;
+        }
         return [...prev, { pizza, quantity: 1 }];
       }
       return prev;
@@ -176,6 +183,9 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   const handleDrinkQuantity = (drink: Drink, delta: number) => {
     setSelectedDrinks(prev => {
       const existing = prev.find(d => d.drink._id === drink._id);
+      const currentTotal = prev.reduce((sum, d) => sum + d.quantity, 0);
+      const requiredDrinks = menu.drinkCount || 0;
+      
       if (existing) {
         const newQuantity = Math.max(0, existing.quantity + delta);
         if (newQuantity === 0) {
@@ -185,6 +195,10 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
           d.drink._id === drink._id ? { ...d, quantity: newQuantity } : d
         );
       } else if (delta > 0) {
+        // Empêcher d'ajouter une nouvelle boisson si on a déjà atteint le maximum
+        if (currentTotal >= requiredDrinks) {
+          return prev;
+        }
         return [...prev, { drink, quantity: 1 }];
       }
       return prev;
@@ -399,8 +413,14 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                     <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-3'} gap-3`}>
                       {drinks.filter(drink => {
                         if (menu.drinkSize) {
-                          const sizes = ['1,5l', '1.5l', '1,5L', '1.5L', '33cl', '33cl'];
-                          return sizes.some(size => drink.name.toLowerCase().includes(size));
+                          const drinkName = drink.name.toLowerCase();
+                          const size = menu.drinkSize.toLowerCase();
+                          // Adapter selon la taille demandée
+                          if (size.includes('1.5l') || size.includes('1,5l') || size.includes('1.5L') || size.includes('1,5L')) {
+                            return drinkName.includes('1.5') || drinkName.includes('1,5');
+                          } else if (size.includes('33cl')) {
+                            return drinkName.includes('33cl');
+                          }
                         }
                         return true;
                       }).map((drink) => {

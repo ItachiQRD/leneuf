@@ -44,39 +44,40 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
     >
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-between h-24 px-8">
-          {/* Dark mode - Gauche */}
-          <motion.button
-            onClick={toggleTheme}
-            whileHover={{ scale: 1.1, rotate: 180 }}
-            whileTap={{ scale: 0.9 }}
-            className={`hidden md:block p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
-            aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-6 h-6" />
-            ) : (
-              <Moon className="w-6 h-6" />
-            )}
-          </motion.button>
+          {/* Partie gauche - Dark mode + Navigation */}
+          <div className="flex items-center space-x-4 flex-1">
+            <motion.button
+              onClick={toggleTheme}
+              whileHover={{ scale: 1.1, rotate: 180 }}
+              whileTap={{ scale: 0.9 }}
+              className={`hidden md:block p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
+              aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-6 h-6" />
+              ) : (
+                <Moon className="w-6 h-6" />
+              )}
+            </motion.button>
 
-          {/* Logo - Mobile only */}
-          <div className="md:hidden">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link href="/">
-                <Image
-                  src="/images/logo.png"
-                  alt="Le 9 Logo"
-                  width={40}
-                  height={40}
-                  className="drop-shadow-lg"
-                  style={{ width: 'auto', height: 'auto' }}
-                />
-              </Link>
-            </motion.div>
-          </div>
+            {/* Logo - Mobile only */}
+            <div className="md:hidden">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/">
+                  <Image
+                    src="/images/logo.png"
+                    alt="Le 9 Logo"
+                    width={40}
+                    height={40}
+                    className="drop-shadow-lg"
+                    style={{ width: 'auto', height: 'auto' }}
+                  />
+                </Link>
+              </motion.div>
+            </div>
 
-          {/* Centrage des liens de navigation */}
-          <div className="hidden md:flex items-center justify-end flex-1 space-x-8 pr-44">
+            {/* Navigation gauche */}
+            <div className="hidden md:flex items-center space-x-6 ml-auto">
             {/* À propos */}
             <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
               <Link
@@ -111,6 +112,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 MENU
               </Link>
             </motion.div>
+            </div>
           </div>
 
           {/* Logo centré (Desktop) */}
@@ -158,8 +160,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </motion.div>
           </div>
 
-          {/* Partie droite : Commander, Contact, Auth, Cart */}
-          <div className="hidden md:flex items-center justify-start flex-1 space-x-8 pl-44">
+          {/* Partie droite - Navigation droite + Actions */}
+          <div className="flex items-center space-x-4 flex-1">
+            {/* Navigation droite */}
+            <div className="hidden md:flex items-center space-x-6 mr-auto">
             {/* Commander */}
             <motion.div
               whileHover={{ scale: 1.1, x: 5 }}
@@ -194,6 +198,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 />
               </Link>
             </motion.div>
+            </div>
           </div>
 
           {/* Partie droite : Auth, Cart, Mobile menu */}

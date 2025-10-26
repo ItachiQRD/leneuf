@@ -1056,8 +1056,8 @@ export default function CommanderPage() {
                             {item.baseIngredients && item.baseIngredients.length > 0 && (
                               <p className="text-xs text-gray-500 mb-2">
                                 Ingrédients: {item.baseIngredients.join(', ')}
-                              </p>
-                            )}
+                </p>
+              )}
                             
                             <div className="flex items-center justify-between">
                               <span className="text-lg font-bold text-red-600">
@@ -1075,9 +1075,9 @@ export default function CommanderPage() {
                               >
                                 Ajouter
                               </button>
-                            </div>
-                          </div>
-                        </div>
+            </div>
+          </div>
+        </div>
                       </motion.div>
                     ))
                   )}

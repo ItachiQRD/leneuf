@@ -44,8 +44,9 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
     >
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-between h-24 px-8">
-          {/* Partie gauche - Dark mode */}
-          <div className="flex items-center">
+          {/* Partie gauche : Dark mode, À propos */}
+          <div className="flex items-center space-x-6">
+            {/* Dark mode */}
             <motion.button
               onClick={toggleTheme}
               whileHover={{ scale: 1.1, rotate: 180 }}
@@ -76,10 +77,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </motion.div>
             </div>
 
-            {/* Navigation gauche - centrée */}
-            <div className="hidden md:flex items-center space-x-6">
             {/* À propos */}
-            <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+            <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }} className="hidden md:block">
               <Link
                 href="/a-propos"
                 className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-sm uppercase tracking-wider relative group px-3 py-2`}
@@ -93,8 +92,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 />
               </Link>
             </motion.div>
+          </div>
 
-            {/* Menu */}
+          {/* Centre : Menu */}
+          <div className="hidden md:flex items-center justify-end flex-1 pr-48">
             <motion.div
               whileHover={{ scale: 1.1, x: -5 }}
               whileTap={{ scale: 0.95 }}
@@ -112,7 +113,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 MENU
               </Link>
             </motion.div>
-            </div>
           </div>
 
           {/* Logo centré (Desktop) */}
@@ -160,10 +160,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </motion.div>
           </div>
 
-          {/* Partie droite - Navigation droite */}
-          <div className="flex items-center">
-            <div className="hidden md:flex items-center space-x-6">
-            {/* Commander */}
+          {/* Centre : Commander */}
+          <div className="hidden md:flex items-center justify-start flex-1 pl-48">
             <motion.div
               whileHover={{ scale: 1.1, x: 5 }}
               whileTap={{ scale: 0.95 }}
@@ -181,9 +179,12 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 COMMANDER
               </Link>
             </motion.div>
+          </div>
 
+          {/* Partie droite : Contact, Auth, Cart, Mobile menu */}
+          <div className="flex items-center space-x-4">
             {/* Contact */}
-            <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+            <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }} className="hidden md:block">
               <Link
                 href="/contact"
                 className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-sm uppercase tracking-wider relative group px-3 py-2`}
@@ -197,10 +198,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 />
               </Link>
             </motion.div>
-            </div>
-
-            {/* Auth et Cart */}
-            <div className="flex items-center space-x-4 ml-8">
 
             {/* Auth */}
             <div className="hidden md:block">
@@ -369,7 +366,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             >
               <Menu className="w-7 h-7" />
             </motion.button>
-            </div>
           </div>
         </div>
 

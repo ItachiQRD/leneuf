@@ -244,26 +244,6 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
     return true;
   };
 
-  // Séparer les pizzas par base
-  const getPizzasByBase = () => {
-    const pizzasByBase = {
-      tomate: [] as Pizza[],
-      crème: [] as Pizza[]
-    };
-
-    pizzas.forEach(pizza => {
-      const name = pizza.name.toLowerCase();
-      if (name.includes('crème') || name.includes('creme')) {
-        pizzasByBase.crème.push(pizza);
-      } else {
-        pizzasByBase.tomate.push(pizza);
-      }
-    });
-
-    return pizzasByBase;
-  };
-
-  const pizzasByBase = getPizzasByBase();
   const canProceedToNextStep = () => {
     if (currentStep === 'pizzas') {
       const totalPizzaQuantity = selectedPizzas.reduce((sum, p) => sum + p.quantity, 0);
@@ -352,105 +332,54 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                 {/* Étape 1: Sélection des pizzas */}
                 {currentStep === 'pizzas' && (
                   <>
-                    {/* Pizzas base tomate */}
-                    {pizzasByBase.tomate.length > 0 && (
-                      <div>
-                        <h4 className="text-base font-semibold text-red-600 mb-3">Pizzas base tomate</h4>
-                        <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3 mb-4`}>
-                          {pizzasByBase.tomate.map((pizza) => {
-                            const quantity = getPizzaQuantity(pizza._id);
-                            return (
-                              <div
-                                key={pizza._id}
-                                className={`p-3 border-2 rounded-lg flex items-center space-x-3 ${
-                                  quantity > 0
-                                    ? 'border-red-600 bg-red-50'
-                                    : 'border-gray-300 hover:border-gray-400'
-                                }`}
+                    <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
+                      {pizzas.map((pizza: any) => {
+                        const quantity = getPizzaQuantity(pizza._id);
+                        return (
+                          <div
+                            key={pizza._id}
+                            className={`p-3 border-2 rounded-lg flex items-center space-x-3 ${
+                              quantity > 0
+                                ? 'border-red-600 bg-red-50'
+                                : 'border-gray-300 hover:border-gray-400'
+                            }`}
+                          >
+                            <div className="relative w-16 h-16 flex-shrink-0 bg-gray-50 rounded flex items-center justify-center">
+                              <Image
+                                src={pizza.image || '/images/placeholder-food.jpg'}
+                                alt={pizza.name}
+                                width={64}
+                                height={64}
+                                className="object-cover rounded"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-medium text-sm">{pizza.name}</div>
+                              {pizza.baseIngredients && (
+                                <div className="text-xs text-gray-500 mt-1">
+                                  {pizza.baseIngredients.join(', ')}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handlePizzaQuantity(pizza, -1)}
+                                className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
                               >
-                                <div className="relative w-16 h-16 flex-shrink-0 bg-gray-50 rounded flex items-center justify-center">
-                                  <Image
-                                    src={pizza.image || '/images/placeholder-food.jpg'}
-                                    alt={pizza.name}
-                                    width={64}
-                                    height={64}
-                                    className="object-cover rounded"
-                                  />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="font-medium text-sm">{pizza.name}</div>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <button
-                                    onClick={() => handlePizzaQuantity(pizza, -1)}
-                                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                                  >
-                                    <Minus className="w-4 h-4" />
-                                  </button>
-                                  <span className="w-8 text-center font-medium">{quantity}</span>
-                                  <button
-                                    onClick={() => handlePizzaQuantity(pizza, 1)}
-                                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Pizzas base crème */}
-                    {pizzasByBase.crème.length > 0 && (
-                      <div>
-                        <h4 className="text-base font-semibold text-orange-600 mb-3">Pizzas base crème fraîche</h4>
-                        <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3 mb-4`}>
-                          {pizzasByBase.crème.map((pizza) => {
-                            const quantity = getPizzaQuantity(pizza._id);
-                            return (
-                              <div
-                                key={pizza._id}
-                                className={`p-3 border-2 rounded-lg flex items-center space-x-3 ${
-                                  quantity > 0
-                                    ? 'border-red-600 bg-red-50'
-                                    : 'border-gray-300 hover:border-gray-400'
-                                }`}
+                                <Minus className="w-4 h-4" />
+                              </button>
+                              <span className="w-8 text-center font-medium">{quantity}</span>
+                              <button
+                                onClick={() => handlePizzaQuantity(pizza, 1)}
+                                className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
                               >
-                                <div className="relative w-16 h-16 flex-shrink-0 bg-gray-50 rounded flex items-center justify-center">
-                                  <Image
-                                    src={pizza.image || '/images/placeholder-food.jpg'}
-                                    alt={pizza.name}
-                                    width={64}
-                                    height={64}
-                                    className="object-cover rounded"
-                                  />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="font-medium text-sm">{pizza.name}</div>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <button
-                                    onClick={() => handlePizzaQuantity(pizza, -1)}
-                                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                                  >
-                                    <Minus className="w-4 h-4" />
-                                  </button>
-                                  <span className="w-8 text-center font-medium">{quantity}</span>
-                                  <button
-                                    onClick={() => handlePizzaQuantity(pizza, 1)}
-                                    className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                                  >
-                                    <Plus className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
+                                <Plus className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
 
                     <p className="text-xs text-gray-500 mt-2">
                       {menu.pizzaCount === 2 ? 'Choisissez 2 pizzas' : 
@@ -461,8 +390,8 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                   </>
                 )}
 
-                {/* Sélection des boissons */}
-                {menu.drinkCount > 0 && (
+                {/* Étape 2: Sélection des boissons */}
+                {currentStep === 'drinks' && menu.drinkCount > 0 && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       Choisissez vos boissons {menu.drinkSize && `(${menu.drinkSize})`}
@@ -522,8 +451,8 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                   </div>
                 )}
 
-                {/* Sélection nuggets/wings pour menu couple */}
-                {menu.id === 'menu-couple' && (
+                {/* Étape 3: Sélection nuggets/wings pour menu couple */}
+                {currentStep === 'petite-faim' && menu.id === 'menu-couple' && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       Choisissez 6 Nuggets ou Wings
@@ -610,20 +539,49 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
 
           {/* Footer - Always visible */}
           <div className="flex items-center justify-between p-6 border-t bg-gray-50 flex-shrink-0">
-            <div>
-              <div className="text-sm text-gray-600">Total</div>
-              <div className="text-2xl font-bold text-red-600">
-                {calculatePrice().toFixed(2)} €
+            {currentStep === 'quantity' ? (
+              <>
+                <div>
+                  <div className="text-sm text-gray-600">Total</div>
+                  <div className="text-2xl font-bold text-red-600">
+                    {calculatePrice().toFixed(2)} €
+                  </div>
+                </div>
+                
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!canAddToCart()}
+                  className="px-8 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  Ajouter au panier
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center justify-between w-full">
+                <button
+                  onClick={handlePrevStep}
+                  disabled={currentStep === 'pizzas'}
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  Précédent
+                </button>
+                
+                <div>
+                  <div className="text-sm text-gray-600">Total</div>
+                  <div className="text-2xl font-bold text-red-600">
+                    {calculatePrice().toFixed(2)} €
+                  </div>
+                </div>
+                
+                <button
+                  onClick={handleNextStep}
+                  disabled={!canProceedToNextStep()}
+                  className="px-6 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  Suivant
+                </button>
               </div>
-            </div>
-            
-            <button
-              onClick={handleAddToCart}
-              disabled={!canAddToCart()}
-              className="px-8 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-            >
-              Ajouter au panier
-            </button>
+            )}
           </div>
         </motion.div>
       </motion.div>

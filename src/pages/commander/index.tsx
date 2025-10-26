@@ -159,6 +159,13 @@ export default function CommanderPage() {
     }
   }, [showCustomizationModal, selectedCategory, drinks.length]);
 
+  // Charger les boissons quand on ouvre le modal des menus pizza
+  useEffect(() => {
+    if (showPizzaMenuSelector && drinks.length === 0) {
+      fetchDrinks();
+    }
+  }, [showPizzaMenuSelector, drinks.length]);
+
   // Produits statiques basés sur le menu
   const getStaticProducts = (category: string) => {
     switch (category) {
@@ -688,39 +695,22 @@ export default function CommanderPage() {
           ) : selectedCategory === 'pizzas' ? (
             /* Section Pizzas avec menus */
             <div className="space-y-6">
-              {/* Menus Pizza */}
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">🎉 Nos Menus Pizza</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Menus Pizza - Discret */}
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">Menus Disponibles</h3>
+                <div className="flex flex-wrap gap-2">
                   {pizzaMenus.map((menu) => (
-                    <motion.div
+                    <button
                       key={menu.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                      onClick={() => {
+                        setSelectedPizzaMenu(menu);
+                        setShowPizzaMenuSelector(true);
+                      }}
+                      className="bg-gray-50 hover:bg-red-50 border border-gray-200 hover:border-red-300 rounded-lg px-3 py-2 transition-all text-sm"
                     >
-                      <div className="relative h-32 bg-gradient-to-br from-red-500 to-red-600">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-4xl">🍕</span>
-                        </div>
-                      </div>
-                      <div className="p-4">
-                        <h4 className="text-lg font-bold text-gray-900 mb-1">{menu.name}</h4>
-                        <p className="text-sm text-gray-600 mb-3">{menu.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xl font-bold text-red-600">{menu.price}€</span>
-                          <button
-                            onClick={() => {
-                              setSelectedPizzaMenu(menu);
-                              setShowPizzaMenuSelector(true);
-                            }}
-                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm"
-                          >
-                            Commander
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
+                      <span className="text-xs text-gray-500">{menu.name}</span>
+                      <span className="ml-1 text-xs font-semibold text-red-600">{menu.price}€</span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -1005,39 +995,22 @@ export default function CommanderPage() {
           ) : selectedCategory === 'pizzas' ? (
             /* Section Pizzas avec menus - Mobile */
             <div className="space-y-6">
-              {/* Menus Pizza */}
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">🎉 Nos Menus Pizza</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Menus Pizza - Discret */}
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-gray-600 mb-2">Menus Disponibles</h3>
+                <div className="flex flex-wrap gap-2">
                   {pizzaMenus.map((menu) => (
-                    <motion.div
+                    <button
                       key={menu.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                      onClick={() => {
+                        setSelectedPizzaMenu(menu);
+                        setShowPizzaMenuSelector(true);
+                      }}
+                      className="bg-gray-50 hover:bg-red-50 border border-gray-200 hover:border-red-300 rounded-lg px-3 py-2 transition-all text-sm"
                     >
-                      <div className="relative h-32 bg-gradient-to-br from-red-500 to-red-600">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-4xl">🍕</span>
-                        </div>
-                      </div>
-                      <div className="p-4">
-                        <h4 className="text-lg font-bold text-gray-900 mb-1">{menu.name}</h4>
-                        <p className="text-sm text-gray-600 mb-3">{menu.description}</p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xl font-bold text-red-600">{menu.price}€</span>
-                          <button
-                            onClick={() => {
-                              setSelectedPizzaMenu(menu);
-                              setShowPizzaMenuSelector(true);
-                            }}
-                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm"
-                          >
-                            Commander
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
+                      <span className="text-xs text-gray-500">{menu.name}</span>
+                      <span className="ml-1 text-xs font-semibold text-red-600">{menu.price}€</span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -1241,6 +1214,8 @@ export default function CommanderPage() {
         isOpen={showPizzaMenuSelector}
         onClose={() => setShowPizzaMenuSelector(false)}
         menu={selectedPizzaMenu}
+        pizzas={products}
+        drinks={drinks}
       />
 
       {/* Composant de sélection de taille */}

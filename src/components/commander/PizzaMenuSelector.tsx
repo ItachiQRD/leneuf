@@ -8,6 +8,8 @@ interface PizzaMenuSelectorProps {
   isOpen: boolean;
   onClose: () => void;
   menu: any;
+  pizzas?: any[];
+  drinks?: any[];
 }
 
 interface Pizza {
@@ -38,42 +40,35 @@ interface Dessert {
   image?: string;
 }
 
-export default function PizzaMenuSelector({ isOpen, onClose, menu }: PizzaMenuSelectorProps) {
+export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizzasProp = [], drinks: drinksProp = [] }: PizzaMenuSelectorProps) {
   const { addItem } = useCart();
   const [selectedPizzas, setSelectedPizzas] = useState<{ pizza: Pizza; quantity: number }[]>([]);
   const [selectedDrinks, setSelectedDrinks] = useState<{ drink: Drink; quantity: number }[]>([]);
   const [selectedPetiteFaim, setSelectedPetiteFaim] = useState<PetiteFaimItem | null>(null);
   const [selectedDesserts, setSelectedDesserts] = useState<{ dessert: Dessert; quantity: number }[]>([]);
   const [quantity, setQuantity] = useState(1);
-  const [pizzas, setPizzas] = useState<Pizza[]>([]);
-  const [drinks, setDrinks] = useState<Drink[]>([]);
+  const [pizzas, setPizzas] = useState<Pizza[]>(pizzasProp);
+  const [drinks, setDrinks] = useState<Drink[]>(drinksProp);
   const [petiteFaimItems, setPetiteFaimItems] = useState<PetiteFaimItem[]>([]);
   const [desserts, setDesserts] = useState<Dessert[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      fetchProducts();
+      // Si pizzas et drinks sont passées en props, on les utilise directement
+      if (pizzasProp.length > 0) {
+        setPizzas(pizzasProp);
+      }
+      if (drinksProp.length > 0) {
+        setDrinks(drinksProp);
+      }
+      fetchPetiteFaimAndDesserts();
     }
-  }, [isOpen]);
+  }, [isOpen, pizzasProp, drinksProp]);
 
-  const fetchProducts = async () => {
+  const fetchPetiteFaimAndDesserts = async () => {
     setLoading(true);
     try {
-      // Récupérer les pizzas
-      const pizzasResponse = await fetch('/api/products/by-category/pizzas');
-      const pizzasData = await pizzasResponse.json();
-      if (pizzasData.success) {
-        setPizzas(pizzasData.products);
-      }
-
-      // Récupérer les boissons
-      const drinksResponse = await fetch('/api/products/by-category/boissons');
-      const drinksData = await drinksResponse.json();
-      if (drinksData.success) {
-        setDrinks(drinksData.products);
-      }
-
       // Récupérer les petite faim (pour nuggets/wings)
       const petiteFaimResponse = await fetch('/api/products/by-category/ptite-faim');
       const petiteFaimData = await petiteFaimResponse.json();

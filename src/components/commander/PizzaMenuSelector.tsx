@@ -24,6 +24,11 @@ interface Drink {
   name: string;
   price: number;
   image?: string;
+  sizes?: Array<{
+    name: string;
+    price: number;
+    volume: string;
+  }>;
 }
 
 interface PetiteFaimItem {
@@ -42,7 +47,7 @@ interface Dessert {
 
 export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizzasProp = [], drinks: drinksProp = [] }: PizzaMenuSelectorProps) {
   const { addItem } = useCart();
-  const [currentStep, setCurrentStep] = useState<'pizzas' | 'drinks' | 'petite-faim' | 'desserts'>('pizzas');
+  const [currentStep, setCurrentStep] = useState<'pizzas' | 'drinks' | 'petite-faim' | 'summary'>('pizzas');
   const [selectedPizzas, setSelectedPizzas] = useState<{ pizza: Pizza; quantity: number }[]>([]);
   const [selectedDrinks, setSelectedDrinks] = useState<{ drink: Drink; quantity: number }[]>([]);
   const [selectedPetiteFaim, setSelectedPetiteFaim] = useState<PetiteFaimItem | null>(null);
@@ -54,8 +59,20 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   const [desserts, setDesserts] = useState<Dessert[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const resetForm = () => {
+    setSelectedPizzas([]);
+    setSelectedDrinks([]);
+    setSelectedPetiteFaim(null);
+    setSelectedDesserts([]);
+    setQuantity(1);
+  };
+
   useEffect(() => {
     if (isOpen) {
+      // Réinitialiser à la première étape quand on ouvre le modal
+      setCurrentStep('pizzas');
+      // Réinitialiser le formulaire
+      resetForm();
       // Si pizzas et drinks sont passées en props, on les utilise directement
       if (pizzasProp.length > 0) {
         setPizzas(pizzasProp);
@@ -142,16 +159,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
     resetForm();
   };
 
-  const resetForm = () => {
-    setSelectedPizzas([]);
-    setSelectedDrinks([]);
-    setSelectedPetiteFaim(null);
-    setSelectedDesserts([]);
-    setQuantity(1);
-  };
-
   const handleClose = () => {
-    resetForm();
     onClose();
   };
 
@@ -184,15 +192,19 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
     });
   };
 
-  const handleDrinkQuantity = (drink: Drink, delta: number) => {
+  const handleDrinkQuantity = (drink: any, delta: number) => {
     setSelectedDrinks(prev => {
       const existing = prev.find(d => d.drink._id === drink._id);
       const currentTotal = prev.reduce((sum, d) => sum + d.quantity, 0);
       const requiredDrinks = menu.drinkCount || 0;
       
       if (existing) {
-        const newQuantity = Math.max(0, existing.quantity + delta);
-        if (newQuantity === 0) {
+        const newQuantity = existing.quantity + delta;
+        // Empêcher de dépasser le maximum
+        if (newQuantity > 0 && currentTotal >= requiredDrinks && delta > 0) {
+          return prev;
+        }
+        if (newQuantity <= 0) {
           return prev.filter(d => d.drink._id !== drink._id);
         }
         return prev.map(d => 
@@ -235,6 +247,55 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   const getDrinkQuantity = (drinkId: string) => {
     const found = selectedDrinks.find(d => d.drink._id === drinkId);
     return found ? found.quantity : 0;
+  };
+
+  // Filtrer les boissons selon la taille requise
+  const getFilteredDrinks = () => {
+    if (!menu.drinkSize || drinks.length === 0) return drinks;
+    
+    const size = menu.drinkSize.toLowerCase();
+    const is15L = size.includes('1.5l') || size.includes('1,5l') || size.includes('1.5 l') || size.includes('1,5 l');
+    
+    if (is15L) {
+      // Filtrer pour n'afficher que les boissons 1.5L
+      return drinks.filter(drink => {
+        // Vérifier si la boisson a une taille 1.5L dans le champ sizes
+        if (drink.sizes && Array.isArray(drink.sizes)) {
+          return drink.sizes.some((size: any) => {
+            const volume = size.volume?.toLowerCase() || '';
+            return volume.includes('1.5l') ||
+                   volume.includes('1.5 l') ||
+                   volume.includes('1,5l') ||
+                   volume.includes('1,5 l') ||
+                   volume.includes('1500ml') ||
+                   volume.includes('1500 ml');
+          });
+        }
+        
+        // Fallback : vérifier dans le nom si pas de sizes
+        const drinkName = drink.name.toLowerCase();
+        return drinkName.includes('1.5l') ||
+               drinkName.includes('1.5 l') ||
+               drinkName.includes('1,5l') ||
+               drinkName.includes('1,5 l') ||
+               drinkName.includes('1500ml') ||
+               drinkName.includes('1500 ml');
+      });
+    } else if (size.includes('33cl')) {
+      // Filtrer pour n'afficher que les boissons 33cl
+      return drinks.filter(drink => {
+        if (drink.sizes && Array.isArray(drink.sizes)) {
+          return drink.sizes.some((size: any) => {
+            const volume = size.volume?.toLowerCase() || '';
+            return volume.includes('33cl') || volume.includes('33 cl');
+          });
+        }
+        const drinkName = drink.name.toLowerCase();
+        return drinkName.includes('33cl') || drinkName.includes('33 cl');
+      });
+    }
+    
+    return drinks;
   };
 
   const getDessertQuantity = (dessertId: string) => {
@@ -371,7 +432,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                       Choisissez {menu.drinkCount} boisson{menu.drinkCount > 1 ? 's' : ''} ({selectedDrinks.reduce((sum, d) => sum + d.quantity, 0)}/{menu.drinkCount} sélectionnées)
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {drinks.length > 0 ? drinks.map((drink) => {
+                      {getFilteredDrinks().length > 0 ? getFilteredDrinks().map((drink) => {
                         const qty = getDrinkQuantity(drink._id);
                         return (
                           <div
@@ -454,37 +515,110 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                   </div>
                 )}
 
-                {/* Affichage brownies inclus pour menu couple */}
+              </div>
+            )}
+
+            {/* Étape 4: Récapitulatif */}
+            {currentStep === 'summary' && (
+              <div className="space-y-4">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">📋 Récapitulatif</h3>
+                
+                {/* Pizzas sélectionnées */}
+                {selectedPizzas.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-gray-700">Pizzas</h4>
+                    {selectedPizzas.map(({ pizza, quantity }) => (
+                      <div key={pizza._id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="relative w-16 h-16">
+                          <Image
+                            src={pizza.image || '/images/placeholder-food.jpg'}
+                            alt={pizza.name}
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">{pizza.name}</div>
+                        </div>
+                        <div className="text-lg font-bold text-red-600">x{quantity}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Boissons sélectionnées */}
+                {selectedDrinks.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-gray-700">Boissons</h4>
+                    {selectedDrinks.map(({ drink, quantity }) => (
+                      <div key={drink._id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="relative w-16 h-16">
+                          <Image
+                            src={drink.image || '/images/placeholder-drink.jpg'}
+                            alt={drink.name}
+                            fill
+                            className="object-contain rounded"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">{drink.name}</div>
+                        </div>
+                        <div className="text-lg font-bold text-red-600">x{quantity}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Nuggets/Wings pour menu couple */}
+                {selectedPetiteFaim && menu.id === 'menu-couple' && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-gray-700">6 Nuggets ou Wings</h4>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="relative w-16 h-16">
+                        <Image
+                          src={selectedPetiteFaim.image || '/images/placeholder-food.jpg'}
+                          alt={selectedPetiteFaim.name}
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">{selectedPetiteFaim.name}</div>
+                      </div>
+                      <div className="text-lg font-bold text-red-600">x6</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Brownies inclus pour menu couple */}
                 {menu.id === 'menu-couple' && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      2 Brownies Inclus
-                    </h3>
-                    <div className="flex justify-center">
-                      <div className="text-center">
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-gray-700">Brownies Inclus</h4>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg opacity-60">
+                      <div className="relative w-16 h-16">
                         {desserts.filter(dessert => dessert.name.toLowerCase().includes('brownie')).map((dessert) => (
                           <div key={dessert._id}>
-                            <div className="relative w-24 h-24 mx-auto mb-2">
-                              <Image
-                                src={dessert.image || '/images/placeholder-food.jpg'}
-                                alt={dessert.name}
-                                width={96}
-                                height={96}
-                                className="object-cover"
-                              />
-                            </div>
-                            <div className="text-gray-700 font-medium">{dessert.name}</div>
-                            <div className="text-sm text-gray-500">Inclus</div>
+                            <Image
+                              src={dessert.image || '/images/placeholder-food.jpg'}
+                              alt={dessert.name}
+                              width={64}
+                              height={64}
+                              className="object-cover rounded"
+                            />
                           </div>
                         ))}
                       </div>
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-500">2 Brownies Inclus</div>
+                      </div>
+                      <div className="text-sm text-gray-500">Inclus</div>
                     </div>
                   </div>
                 )}
 
                 {/* Quantité */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Quantité</h3>
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold text-gray-700 mb-3">Quantité</h4>
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -511,6 +645,10 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
               onClick={() => {
                 if (currentStep === 'drinks') setCurrentStep('pizzas');
                 else if (currentStep === 'petite-faim') setCurrentStep('drinks');
+                else if (currentStep === 'summary') {
+                  if (menu.id === 'menu-couple') setCurrentStep('petite-faim');
+                  else setCurrentStep('drinks');
+                }
               }}
               disabled={currentStep === 'pizzas'}
               className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
@@ -525,23 +663,27 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
               </div>
             </div>
             
-            {currentStep === 'pizzas' || (currentStep === 'drinks' && menu.id === 'menu-couple') ? (
-              <button
-                onClick={() => {
-                  if (currentStep === 'pizzas') setCurrentStep('drinks');
-                  else if (currentStep === 'drinks' && menu.id === 'menu-couple') setCurrentStep('petite-faim');
-                }}
-                className="px-6 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors"
-              >
-                Suivant
-              </button>
-            ) : (
+            {currentStep === 'summary' ? (
               <button
                 onClick={handleAddToCart}
                 disabled={!canAddToCart()}
                 className="px-8 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               >
                 Ajouter au panier
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  if (currentStep === 'pizzas') setCurrentStep('drinks');
+                  else if (currentStep === 'drinks') {
+                    if (menu.id === 'menu-couple') setCurrentStep('petite-faim');
+                    else setCurrentStep('summary');
+                  }
+                  else if (currentStep === 'petite-faim') setCurrentStep('summary');
+                }}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors"
+              >
+                Suivant
               </button>
             )}
           </div>

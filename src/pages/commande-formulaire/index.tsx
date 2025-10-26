@@ -10,11 +10,14 @@ import { Button } from '@/components/ui/Buttons';
 
 export default function CommandeFormulairePage() {
   const router = useRouter();
-  const { items, total, clearCart } = useCart();
+  const { items, total, clearCart, promotionDiscount, promotionDescription } = useCart();
   const [customerData, setCustomerData] = useState<CustomerData | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  
+  // Calculer le total final avec promotion
+  const finalTotal = total - promotionDiscount;
 
   // Charger les données client depuis localStorage
   useEffect(() => {
@@ -71,7 +74,7 @@ export default function CommandeFormulairePage() {
           options: item.options || [],
           customIngredients: item.customIngredients || null
         })),
-        total: total,
+        total: finalTotal,
         status: 'pending',
         createdAt: new Date().toISOString()
       };
@@ -91,7 +94,9 @@ export default function CommandeFormulairePage() {
         // Sauvegarder le résumé de la commande
         localStorage.setItem('orderSummary', JSON.stringify({
           orderId: result._id,
-          total: total,
+          total: finalTotal,
+          promotionDiscount,
+          promotionDescription,
           items: items,
           customer: customerData,
           timestamp: new Date().toISOString()
@@ -286,9 +291,19 @@ export default function CommandeFormulairePage() {
 
               {/* Total */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                {/* Promotion */}
+                {promotionDiscount > 0 && (
+                  <>
+                    <div className="flex justify-between text-sm text-green-600 mb-2">
+                      <span>Remise ({promotionDescription})</span>
+                      <span>-{promotionDiscount.toFixed(2)}€</span>
+                    </div>
+                  </>
+                )}
+                
                 <div className="flex justify-between text-lg font-bold text-gray-900 dark:text-white">
                   <span>Total</span>
-                  <span>{total.toFixed(2)}€</span>
+                  <span>{finalTotal.toFixed(2)}€</span>
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Livraison incluse

@@ -43,8 +43,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
     >
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-between h-24 px-8">
-          {/* Actions à gauche */}
-          <div className="flex items-center justify-end flex-1">
+          {/* Section gauche : Theme Toggle + Menu + À propos */}
+          <div className="flex items-center space-x-4 flex-1">
             {/* Theme Toggle */}
             <motion.button
               onClick={toggleTheme}
@@ -76,37 +76,15 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </motion.div>
             </div>
 
-            {/* À propos - Rapproché du centre */}
-            <div className="hidden md:flex items-center ml-8">
-              <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
-                <Link
-                  href="/a-propos"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-5 py-2 rounded-lg`}
-                >
-                  À propos
-                  <motion.span
-                    className="absolute -bottom-1 left-5 right-5 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
-                    initial={{ width: 0 }}
-                    whileHover={{ width: 'calc(100% - 2.5rem)' }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </Link>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Section centrale avec logo entouré par Menu et Commander */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center space-x-6 z-10">
-            {/* Menu à gauche du logo */}
+            {/* Menu - Desktop */}
             <motion.div
               whileHover={{ scale: 1.1, x: -5 }}
               whileTap={{ scale: 0.95 }}
-              className="relative"
+              className="relative hidden md:block"
             >
               <Link
                 href="/menu"
-                className="block px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group whitespace-nowrap"
-                style={{ minWidth: '160px', textAlign: 'center' }}
+                className="block px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-base shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group"
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
@@ -117,7 +95,27 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </Link>
             </motion.div>
 
-            {/* Logo centré */}
+            {/* À propos - Juste après Menu */}
+            <div className="hidden md:flex items-center">
+              <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+                <Link
+                  href="/a-propos"
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-4 py-2 rounded-lg`}
+                >
+                  À propos
+                  <motion.span
+                    className="absolute -bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    initial={{ width: 0 }}
+                    whileHover={{ width: 'calc(100% - 2rem)' }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Section centrale : Logo centré */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center z-10">
             <motion.div
               whileHover={{ scale: 1.15, rotate: [0, -5, 5, -5, 0] }}
               whileTap={{ scale: 0.95 }}
@@ -159,17 +157,19 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 </div>
               </Link>
             </motion.div>
+          </div>
 
-            {/* Commander à droite du logo */}
+          {/* Section droite : Commander + Contact + Auth + Cart */}
+          <div className="flex items-center space-x-4 flex-1 justify-end">
+            {/* Commander */}
             <motion.div
               whileHover={{ scale: 1.1, x: 5 }}
               whileTap={{ scale: 0.95 }}
-              className="relative"
+              className="relative hidden md:block"
             >
               <Link
                 href="/commander"
-                className="block px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group whitespace-nowrap"
-                style={{ minWidth: '160px', textAlign: 'center' }}
+                className="block px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-base shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group"
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
@@ -179,28 +179,25 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 Commander
               </Link>
             </motion.div>
-          </div>
 
-          {/* Actions à droite */}
-          <div className="flex items-center flex-1 justify-end">
-            {/* Contact et autres actions */}
-            <div className="hidden md:flex items-center mr-8">
+            {/* Contact - Juste après Commander */}
+            <div className="hidden md:flex items-center">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
                   href="/contact"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-5 py-2 rounded-lg`}
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-4 py-2 rounded-lg`}
                 >
                   Contact
                   <motion.span
-                    className="absolute -bottom-1 left-5 right-5 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    className="absolute -bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
                     initial={{ width: 0 }}
-                    whileHover={{ width: 'calc(100% - 2.5rem)' }}
+                    whileHover={{ width: 'calc(100% - 2rem)' }}
                     transition={{ duration: 0.3 }}
                   />
                 </Link>
               </motion.div>
             </div>
-            
+
             {/* Auth - Desktop only */}
             <div className="hidden md:block">
               {isAuthenticated ? (
@@ -276,13 +273,13 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               )}
             </motion.button>
 
-          {/* Mobile Menu Button */}
+            {/* Mobile Menu Button */}
             <motion.button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               className="md:hidden p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300"
-          >
+            >
               <Menu className="w-7 h-7" />
             </motion.button>
           </div>

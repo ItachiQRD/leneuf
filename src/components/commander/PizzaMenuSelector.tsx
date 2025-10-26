@@ -233,10 +233,27 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   // Filtrer les pizzas selon la taille requise
   const getFilteredPizzas = () => {
     if (!menu.pizzaSize) return pizzas;
-    return pizzas.filter(pizza => {
+    // Pour le debug
+    console.log('Pizzas disponibles:', pizzas);
+    console.log('Taille recherchée:', menu.pizzaSize);
+    
+    // Filtrer par taille si nécessaire
+    const filtered = pizzas.filter(pizza => {
       const name = pizza.name.toLowerCase();
-      return name.includes(menu.pizzaSize.toLowerCase());
+      const size = menu.pizzaSize.toLowerCase();
+      
+      // Remplacer les accents et variantes
+      const normalizedSize = size
+        .replace('sénior', 'senior')
+        .replace('séniors', 'senior')
+        .replace('méga', 'mega')
+        .replace('mégas', 'mega');
+      
+      return name.includes(size) || name.includes(normalizedSize);
     });
+    
+    console.log('Pizzas filtrées:', filtered);
+    return filtered;
   };
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;

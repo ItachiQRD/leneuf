@@ -74,19 +74,19 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   const fetchPetiteFaimAndDesserts = () => {
     setLoading(true);
     try {
-      // Petite faim statique (images dans /images/menu)
+      // Petite faim statique (images dans /images/ptite-faim)
       const petiteFaimItems = [
         {
           _id: 'nuggets-menu',
           name: 'Nuggets',
           price: 0,
-          image: '/images/menu/nuggets.jpg'
+          image: '/images/ptite-faim/3-nuggets.jpeg'
         },
         {
           _id: 'wings-menu',
           name: 'Hot Wings',
           price: 0,
-          image: '/images/menu/wings.jpg'
+          image: '/images/ptite-faim/3-hot-wings.jpeg'
         }
       ];
       setPetiteFaimItems(petiteFaimItems);
@@ -408,7 +408,6 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                           </button>
                         );
                       })}
-                    </div>
                     </div>
                   </div>
                 )}

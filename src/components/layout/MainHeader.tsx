@@ -43,42 +43,42 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       transition={{ duration: 0.5 }}
     >
       <div className="w-full mx-auto relative">
-        <div className="flex items-center justify-between h-24 px-8">
-          {/* Partie gauche : Dark mode, À propos */}
-          <div className="flex items-center space-x-3">
-            {/* Dark mode */}
-            <motion.button
-              onClick={toggleTheme}
-              whileHover={{ scale: 1.1, rotate: 180 }}
-              whileTap={{ scale: 0.9 }}
-              className={`hidden md:block p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
-              aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-6 h-6" />
-              ) : (
-                <Moon className="w-6 h-6" />
-              )}
-            </motion.button>
+        <div className="flex items-center justify-center h-24 px-8 relative">
+          {/* Dark mode */}
+          <motion.button
+            onClick={toggleTheme}
+            whileHover={{ scale: 1.1, rotate: 180 }}
+            whileTap={{ scale: 0.9 }}
+            className={`absolute left-8 p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
+            aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-6 h-6" />
+            ) : (
+              <Moon className="w-6 h-6" />
+            )}
+          </motion.button>
 
-            {/* Logo - Mobile only */}
-            <div className="md:hidden">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/">
-                  <Image
-                    src="/images/logo.png"
-                    alt="Le 9 Logo"
-                    width={40}
-                    height={40}
-                    className="drop-shadow-lg"
-                    style={{ width: 'auto', height: 'auto' }}
-                  />
-                </Link>
-              </motion.div>
-            </div>
+          {/* Logo - Mobile only */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link href="/">
+                <Image
+                  src="/images/logo.png"
+                  alt="Le 9 Logo"
+                  width={40}
+                  height={40}
+                  className="drop-shadow-lg"
+                  style={{ width: 'auto', height: 'auto' }}
+                />
+              </Link>
+            </motion.div>
+          </div>
 
+          {/* Tous les boutons dans un flex centré */}
+          <div className="hidden md:flex items-center space-x-8">
             {/* À propos */}
-            <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }} className="hidden md:block">
+            <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
               <Link
                 href="/a-propos"
                 className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-sm uppercase tracking-wider relative group px-3 py-2`}
@@ -92,10 +92,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 />
               </Link>
             </motion.div>
-          </div>
 
-          {/* Centre : Menu */}
-          <div className="hidden md:flex items-center justify-end flex-1 pr-64">
+            {/* Menu */}
             <motion.div
               whileHover={{ scale: 1.1, x: -5 }}
               whileTap={{ scale: 0.95 }}
@@ -113,55 +111,53 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 MENU
               </Link>
             </motion.div>
-          </div>
 
-          {/* Logo centré (Desktop) */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center z-10">
-            <motion.div
-              whileHover={{ scale: 1.15, rotate: [0, -5, 5, -5, 0] }}
-              whileTap={{ scale: 0.95 }}
-              animate={{
-                y: [0, -10, 0],
-              }}
-              transition={{
-                y: {
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }
-              }}
-            >
-              <Link href="/" className="relative">
-                {/* Effet de halo pulsant */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 rounded-full blur-2xl opacity-30"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.2, 0.4, 0.2],
-                  }}
-                  transition={{
-                    duration: 2,
+            {/* Logo centré (Desktop) */}
+            <div className="relative z-10">
+              <motion.div
+                whileHover={{ scale: 1.15, rotate: [0, -5, 5, -5, 0] }}
+                whileTap={{ scale: 0.95 }}
+                animate={{
+                  y: [0, -10, 0],
+                }}
+                transition={{
+                  y: {
+                    duration: 3,
                     repeat: Infinity,
                     ease: "easeInOut"
-                  }}
-                />
-                
-                <div className="relative">
-                  <Image
-                    src="/images/logo.png"
-                    alt="Le 9 Logo"
-                    width={140}
-                    height={140}
-                    className="drop-shadow-2xl filter brightness-105"
-                    style={{ width: 'auto', height: 'auto' }}
+                  }
+                }}
+              >
+                <Link href="/" className="relative">
+                  {/* Effet de halo pulsant */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 rounded-full blur-2xl opacity-30"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.2, 0.4, 0.2],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
                   />
-                </div>
-              </Link>
-            </motion.div>
-          </div>
+                  
+                  <div className="relative">
+                    <Image
+                      src="/images/logo.png"
+                      alt="Le 9 Logo"
+                      width={140}
+                      height={140}
+                      className="drop-shadow-2xl filter brightness-105"
+                      style={{ width: 'auto', height: 'auto' }}
+                    />
+                  </div>
+                </Link>
+              </motion.div>
+            </div>
 
-          {/* Centre : Commander */}
-          <div className="hidden md:flex items-center justify-start flex-1 pl-64">
+            {/* Commander */}
             <motion.div
               whileHover={{ scale: 1.1, x: 5 }}
               whileTap={{ scale: 0.95 }}
@@ -179,12 +175,9 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 COMMANDER
               </Link>
             </motion.div>
-          </div>
 
-          {/* Partie droite : Contact, Auth, Cart, Mobile menu */}
-          <div className="flex items-center space-x-3">
             {/* Contact */}
-            <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }} className="hidden md:block">
+            <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
               <Link
                 href="/contact"
                 className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-sm uppercase tracking-wider relative group px-3 py-2`}
@@ -198,7 +191,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 />
               </Link>
             </motion.div>
+          </div>
 
+          {/* Partie droite : Auth, Cart, Mobile menu */}
+          <div className="absolute right-8 flex items-center space-x-3">
             {/* Auth */}
             <div className="hidden md:block">
               {isAuthenticated ? (

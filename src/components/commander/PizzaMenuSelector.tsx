@@ -42,6 +42,7 @@ interface Dessert {
 
 export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizzasProp = [], drinks: drinksProp = [] }: PizzaMenuSelectorProps) {
   const { addItem } = useCart();
+  const [currentStep, setCurrentStep] = useState<'pizzas' | 'drinks' | 'petite-faim' | 'desserts'>('pizzas');
   const [selectedPizzas, setSelectedPizzas] = useState<{ pizza: Pizza; quantity: number }[]>([]);
   const [selectedDrinks, setSelectedDrinks] = useState<{ drink: Drink; quantity: number }[]>([]);
   const [selectedPetiteFaim, setSelectedPetiteFaim] = useState<PetiteFaimItem | null>(null);
@@ -52,6 +53,10 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   const [petiteFaimItems, setPetiteFaimItems] = useState<PetiteFaimItem[]>([]);
   const [desserts, setDesserts] = useState<Dessert[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  console.log('Pizzas prop:', pizzasProp);
+  console.log('Drinks prop:', drinksProp);
+  console.log('Current drinks state:', drinks);
 
   useEffect(() => {
     if (isOpen) {
@@ -300,11 +305,12 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Pizzas */}
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    🍕 Choisissez vos pizzas
-                  </h3>
+                {/* Étape 1: Pizzas */}
+                {currentStep === 'pizzas' && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      🍕 Choisissez vos pizzas
+                    </h3>
                   <div className="space-y-2">
                     {pizzas.map((pizza: any) => {
                       const qty = getPizzaQuantity(pizza._id);
@@ -352,10 +358,11 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                       );
                     })}
                   </div>
-                </div>
+                  </div>
+                )}
 
-                {/* Boissons */}
-                {menu.drinkCount > 0 && (
+                {/* Étape 2: Boissons */}
+                {currentStep === 'drinks' && menu.drinkCount > 0 && (
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-3">
                       🥤 Choisissez vos boissons
@@ -402,11 +409,12 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                         );
                       })}
                     </div>
+                    </div>
                   </div>
                 )}
 
-                {/* Nuggets/Wings pour menu couple */}
-                {menu.id === 'menu-couple' && (
+                {/* Étape 3: Nuggets/Wings pour menu couple */}
+                {currentStep === 'petite-faim' && menu.id === 'menu-couple' && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       Choisissez 6 Nuggets ou Wings
@@ -493,6 +501,17 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
 
           {/* Footer - Always visible */}
           <div className="flex items-center justify-between p-6 border-t bg-gray-50 flex-shrink-0">
+            <button
+              onClick={() => {
+                if (currentStep === 'drinks') setCurrentStep('pizzas');
+                else if (currentStep === 'petite-faim') setCurrentStep('drinks');
+              }}
+              disabled={currentStep === 'pizzas'}
+              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+            >
+              Précédent
+            </button>
+            
             <div>
               <div className="text-sm text-gray-600">Total</div>
               <div className="text-2xl font-bold text-red-600">
@@ -500,13 +519,25 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
               </div>
             </div>
             
-            <button
-              onClick={handleAddToCart}
-              disabled={!canAddToCart()}
-              className="px-8 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-            >
-              Ajouter au panier
-            </button>
+            {currentStep === 'pizzas' || (currentStep === 'drinks' && menu.id === 'menu-couple') ? (
+              <button
+                onClick={() => {
+                  if (currentStep === 'pizzas') setCurrentStep('drinks');
+                  else if (currentStep === 'drinks' && menu.id === 'menu-couple') setCurrentStep('petite-faim');
+                }}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors"
+              >
+                Suivant
+              </button>
+            ) : (
+              <button
+                onClick={handleAddToCart}
+                disabled={!canAddToCart()}
+                className="px-8 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              >
+                Ajouter au panier
+              </button>
+            )}
           </div>
         </motion.div>
       </motion.div>

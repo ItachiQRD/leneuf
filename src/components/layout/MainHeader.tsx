@@ -45,7 +45,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-between h-24 px-8">
           {/* Partie gauche : Dark mode, À propos */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3">
             {/* Dark mode */}
             <motion.button
               onClick={toggleTheme}
@@ -95,7 +95,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Centre : Menu */}
-          <div className="hidden md:flex items-center justify-end flex-1 pr-48">
+          <div className="hidden md:flex items-center justify-end flex-1 pr-64">
             <motion.div
               whileHover={{ scale: 1.1, x: -5 }}
               whileTap={{ scale: 0.95 }}
@@ -161,7 +161,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Centre : Commander */}
-          <div className="hidden md:flex items-center justify-start flex-1 pl-48">
+          <div className="hidden md:flex items-center justify-start flex-1 pl-64">
             <motion.div
               whileHover={{ scale: 1.1, x: 5 }}
               whileTap={{ scale: 0.95 }}
@@ -182,7 +182,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Partie droite : Contact, Auth, Cart, Mobile menu */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             {/* Contact */}
             <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }} className="hidden md:block">
               <Link

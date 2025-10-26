@@ -43,9 +43,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
     >
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-between h-24 px-8">
-          {/* Section gauche : Theme Toggle + Menu + À propos */}
-          <div className="flex items-center space-x-3 flex-1 justify-end">
-            {/* Theme Toggle */}
+          {/* Dark mode tout à gauche */}
+          <div className="flex-shrink-0">
             <motion.button
               onClick={toggleTheme}
               whileHover={{ scale: 1.1, rotate: 180 }}
@@ -59,6 +58,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 <Moon className="w-6 h-6" />
               )}
             </motion.button>
+          </div>
+
+          {/* Section gauche : Menu + À propos (proches du logo) */}
+          <div className="flex items-center space-x-3 flex-1 justify-end">
 
             {/* Logo - Mobile only */}
             <div className="md:hidden">
@@ -159,7 +162,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </motion.div>
           </div>
 
-          {/* Section droite : Commander + Contact + Auth + Cart */}
+          {/* Section droite : Commander + Contact (proches du logo) */}
           <div className="flex items-center space-x-3 flex-1 justify-start">
             {/* Commander */}
             <motion.div
@@ -197,7 +200,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 </Link>
               </motion.div>
             </div>
+          </div>
 
+          {/* Section extrême droite : Auth + Cart */}
+          <div className="flex items-center space-x-2 flex-shrink-0">
             {/* Auth - Desktop only */}
             <div className="hidden md:block">
               {isAuthenticated ? (

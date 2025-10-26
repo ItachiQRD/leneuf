@@ -167,6 +167,10 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
       
       if (existing) {
         const newQuantity = Math.max(0, existing.quantity + delta);
+        // Si on augmente, vérifier qu'on ne dépasse pas le maximum total
+        if (delta > 0 && currentTotal >= requiredPizzas) {
+          return prev;
+        }
         if (newQuantity === 0) {
           return prev.filter(p => p.pizza._id !== pizza._id);
         }
@@ -367,28 +371,34 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                     <h3 className="text-xl font-bold text-gray-900 mb-3">
                       🥤 Choisissez vos boissons
                     </h3>
+                    <div className="text-sm text-gray-600 mb-4">
+                      Choisissez {menu.drinkCount} boisson{menu.drinkCount > 1 ? 's' : ''} ({selectedDrinks.reduce((sum, d) => sum + d.quantity, 0)}/{menu.drinkCount} sélectionnées)
+                    </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {drinks.filter(drink => {
+                      {drinks.length > 0 ? drinks.filter(drink => {
+                        // Logs for debugging
+                        if (process.env.NODE_ENV === 'development') {
+                          console.log('Checking drink:', drink.name, 'menu.drinkSize:', menu.drinkSize);
+                        }
                         if (menu.drinkSize) {
                           const drinkName = drink.name.toLowerCase();
                           const size = menu.drinkSize.toLowerCase();
-                          if (size.includes('1.5l') || size.includes('1,5l') || size.includes('1.5L') || size.includes('1,5L')) {
-                            return drinkName.includes('1.5') || drinkName.includes('1,5');
+                          if (size.includes('1.5l') || size.includes('1,5l') || size.includes('1.5l') || size.includes('1,5l')) {
+                            return drinkName.includes('1.5') || drinkName.includes('1,5') || drinkName.includes('1.5l') || drinkName.includes('1,5l');
                           } else if (size.includes('33cl')) {
-                            return drinkName.includes('33cl');
+                            return drinkName.includes('33cl') || drinkName.includes('33 cl');
                           }
                         }
                         return true;
                       }).map((drink) => {
                         const qty = getDrinkQuantity(drink._id);
                         return (
-                          <button
+                          <div
                             key={drink._id}
-                            onClick={() => handleDrinkQuantity(drink, 1)}
                             className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${
                               qty > 0
                                 ? 'border-red-500 bg-red-50'
-                                : 'border-gray-200 hover:border-gray-300'
+                                : 'border-gray-200'
                             }`}
                           >
                             <div className="relative w-14 h-14 flex-shrink-0">
@@ -402,12 +412,28 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                             <div className="flex-1 text-left">
                               <div className="font-medium text-sm">{drink.name}</div>
                             </div>
-                            {qty > 0 && (
-                              <span className="w-8 text-center font-bold text-lg">{qty}</span>
-                            )}
-                          </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleDrinkQuantity(drink, -1)}
+                                className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                              >
+                                <Minus className="w-4 h-4" />
+                              </button>
+                              <span className="w-6 text-center font-bold">{qty}</span>
+                              <button
+                                onClick={() => handleDrinkQuantity(drink, 1)}
+                                className="w-8 h-8 rounded bg-red-500 hover:bg-red-600 text-white flex items-center justify-center"
+                              >
+                                <Plus className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
                         );
-                      })}
+                      }) : (
+                        <div className="col-span-3 text-center py-8 text-gray-500">
+                          Aucune boisson disponible pour ce menu
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

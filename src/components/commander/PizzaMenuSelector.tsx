@@ -444,14 +444,29 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu }: PizzaMenuSe
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       2 Brownies Inclus
                     </h3>
-                    <div className="bg-gray-100 p-4 rounded-lg border-2 border-gray-300">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-4xl">🍫</div>
-                        <div>
-                          <div className="font-semibold text-gray-700">2 Brownies</div>
-                          <div className="text-sm text-gray-500">Inclus dans le menu</div>
-                        </div>
-                      </div>
+                    <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-3'} gap-3`}>
+                      {desserts
+                        .filter(dessert => dessert.name.toLowerCase().includes('brownie'))
+                        .map((dessert) => (
+                          <div
+                            key={dessert._id}
+                            className="bg-gray-100 p-4 border-2 rounded-lg border-gray-300 opacity-60 cursor-not-allowed"
+                          >
+                            <div className="relative w-12 h-12 mx-auto mb-2 bg-gray-50 rounded flex items-center justify-center">
+                              <Image
+                                src={dessert.image || '/images/placeholder-food.jpg'}
+                                alt={dessert.name}
+                                width={48}
+                                height={48}
+                                className="object-cover rounded"
+                              />
+                            </div>
+                            <div className="text-center">
+                              <div className="font-medium text-sm text-gray-600">{dessert.name}</div>
+                              <div className="text-xs text-gray-500 mt-1">Inclus</div>
+                            </div>
+                          </div>
+                        ))}
                     </div>
                   </div>
                 )}

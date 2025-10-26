@@ -43,8 +43,9 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
     >
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-between h-24 px-8">
-          {/* Dark mode tout à gauche */}
-          <div className="flex-shrink-0">
+          {/* Partie gauche : Dark mode, Menu, À propos */}
+          <div className="flex items-center space-x-4">
+            {/* Dark mode */}
             <motion.button
               onClick={toggleTheme}
               whileHover={{ scale: 1.1, rotate: 180 }}
@@ -58,10 +59,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 <Moon className="w-6 h-6" />
               )}
             </motion.button>
-          </div>
-
-          {/* Section gauche : Menu + À propos (proches du logo) */}
-          <div className="flex items-center space-x-3 flex-1 justify-end">
 
             {/* Logo - Mobile only */}
             <div className="md:hidden">
@@ -79,7 +76,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </motion.div>
             </div>
 
-            {/* Menu - Desktop */}
+            {/* Menu */}
             <motion.div
               whileHover={{ scale: 1.1, x: -5 }}
               whileTap={{ scale: 0.95 }}
@@ -98,7 +95,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </Link>
             </motion.div>
 
-            {/* À propos - Juste après Menu */}
+            {/* À propos */}
             <div className="hidden md:flex items-center">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
@@ -117,7 +114,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </div>
           </div>
 
-          {/* Section centrale : Logo centré */}
+          {/* Logo centré (Desktop) */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center z-10">
             <motion.div
               whileHover={{ scale: 1.15, rotate: [0, -5, 5, -5, 0] }}
@@ -162,8 +159,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </motion.div>
           </div>
 
-          {/* Section droite : Commander + Contact (proches du logo) */}
-          <div className="flex items-center space-x-3 flex-1 justify-start">
+          {/* Partie droite : Commander, Contact, Auth, Cart */}
+          <div className="flex items-center space-x-4">
             {/* Commander */}
             <motion.div
               whileHover={{ scale: 1.1, x: 5 }}
@@ -183,7 +180,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </Link>
             </motion.div>
 
-            {/* Contact - Juste après Commander */}
+            {/* Contact */}
             <div className="hidden md:flex items-center">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
@@ -200,11 +197,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 </Link>
               </motion.div>
             </div>
-          </div>
 
-          {/* Section extrême droite : Auth + Cart */}
-          <div className="flex items-center space-x-2 flex-shrink-0">
-            {/* Auth - Desktop only */}
+            {/* Auth */}
             <div className="hidden md:block">
               {isAuthenticated ? (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative group">

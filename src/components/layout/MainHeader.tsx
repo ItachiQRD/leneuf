@@ -76,33 +76,18 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </motion.div>
             </div>
 
-            {/* Liens à gauche - Menu et À propos */}
+            {/* Liens à gauche - Menu */}
             <div className="hidden md:flex items-center space-x-6">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
-                  href="/menu"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-lg relative group`}
-                >
-                  Menu
-                  <motion.span
-                    className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
-                    initial={{ width: 0 }}
-                    whileHover={{ width: '100%' }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </Link>
-              </motion.div>
-
-              <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
-                <Link
                   href="/a-propos"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-lg relative group`}
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-4 py-2 rounded-lg`}
                 >
                   À propos
                   <motion.span
-                    className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    className="absolute -bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
                     initial={{ width: 0 }}
-                    whileHover={{ width: '100%' }}
+                    whileHover={{ width: 'calc(100% - 2rem)' }}
                     transition={{ duration: 0.3 }}
                   />
                 </Link>
@@ -110,8 +95,28 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </div>
           </div>
 
-          {/* Logo centré - GRANDE taille avec animations */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block">
+          {/* Section centrale avec logo entouré par Menu et Commander */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center space-x-3">
+            {/* Menu à gauche du logo */}
+            <motion.div
+              whileHover={{ scale: 1.1, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative"
+            >
+              <Link
+                href="/menu"
+                className="block px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                />
+                Menu
+              </Link>
+            </motion.div>
+
+            {/* Logo centré */}
             <motion.div
               whileHover={{ scale: 1.15, rotate: [0, -5, 5, -5, 0] }}
               whileTap={{ scale: 0.95 }}
@@ -153,37 +158,41 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 </div>
               </Link>
             </motion.div>
+
+            {/* Commander à droite du logo */}
+            <motion.div
+              whileHover={{ scale: 1.1, x: 5 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative"
+            >
+              <Link
+                href="/commander"
+                className="block px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                />
+                🍔 Commander
+              </Link>
+            </motion.div>
           </div>
 
           {/* Actions à droite */}
           <div className="flex items-center space-x-4 flex-1 justify-end">
-            {/* Liens à droite - Commander et Contact */}
+            {/* Liens à droite - Contact */}
             <div className="hidden md:flex items-center space-x-6">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
-                  href="/commander"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-lg relative group`}
-                >
-                  Commander
-                  <motion.span
-                    className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
-                    initial={{ width: 0 }}
-                    whileHover={{ width: '100%' }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </Link>
-              </motion.div>
-
-              <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
-                <Link
                   href="/contact"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-lg relative group`}
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-4 py-2 rounded-lg`}
                 >
                   Contact
                   <motion.span
-                    className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    className="absolute -bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
                     initial={{ width: 0 }}
-                    whileHover={{ width: '100%' }}
+                    whileHover={{ width: 'calc(100% - 2rem)' }}
                     transition={{ duration: 0.3 }}
                   />
                 </Link>

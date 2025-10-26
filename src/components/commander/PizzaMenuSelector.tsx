@@ -66,25 +66,38 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
     }
   }, [isOpen, pizzasProp, drinksProp]);
 
-  const fetchPetiteFaimAndDesserts = async () => {
+  const fetchPetiteFaimAndDesserts = () => {
     setLoading(true);
     try {
-      // Récupérer les petite faim (pour nuggets/wings)
-      const petiteFaimResponse = await fetch('/api/products/by-category/ptite-faim');
-      const petiteFaimData = await petiteFaimResponse.json();
-      if (petiteFaimData.success) {
-        setPetiteFaimItems(petiteFaimData.products);
-      }
+      // Petite faim statique (images dans /images/menu)
+      const petiteFaimItems = [
+        {
+          _id: 'nuggets-menu',
+          name: 'Nuggets',
+          price: 0,
+          image: '/images/menu/nuggets.jpg'
+        },
+        {
+          _id: 'wings-menu',
+          name: 'Hot Wings',
+          price: 0,
+          image: '/images/menu/wings.jpg'
+        }
+      ];
+      setPetiteFaimItems(petiteFaimItems);
 
       // Récupérer les desserts (pour brownie)
-      const dessertsResponse = await fetch('/api/products/by-category/desserts');
-      const dessertsData = await dessertsResponse.json();
-      if (dessertsData.success) {
-        setDesserts(dessertsData.products);
-      }
+      fetch('/api/products/by-category/desserts')
+        .then(res => res.json())
+        .then(dessertsData => {
+          if (dessertsData.success) {
+            setDesserts(dessertsData.products);
+          }
+        })
+        .catch(error => console.error('Error fetching desserts:', error))
+        .finally(() => setLoading(false));
     } catch (error) {
-      console.error('Error fetching products:', error);
-    } finally {
+      console.error('Error setting petite faim items:', error);
       setLoading(false);
     }
   };
@@ -304,7 +317,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                     Choisissez vos pizzas {menu.pizzaSize && `(${menu.pizzaSize})`}
                   </h3>
                   <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
-                    {getFilteredPizzas().map((pizza) => {
+                    {pizzas.map((pizza) => {
                       const quantity = getPizzaQuantity(pizza._id);
                       return (
                         <div
@@ -456,29 +469,24 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       2 Brownies Inclus
                     </h3>
-                    <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-3'} gap-3`}>
-                      {desserts
-                        .filter(dessert => dessert.name.toLowerCase().includes('brownie'))
-                        .map((dessert) => (
-                          <div
-                            key={dessert._id}
-                            className="bg-gray-100 p-4 border-2 rounded-lg border-gray-300 opacity-60 cursor-not-allowed"
-                          >
-                            <div className="relative w-12 h-12 mx-auto mb-2 bg-gray-50 rounded flex items-center justify-center">
+                    <div className="flex justify-center">
+                      <div className="text-center">
+                        {desserts.filter(dessert => dessert.name.toLowerCase().includes('brownie')).map((dessert) => (
+                          <div key={dessert._id}>
+                            <div className="relative w-24 h-24 mx-auto mb-2">
                               <Image
                                 src={dessert.image || '/images/placeholder-food.jpg'}
                                 alt={dessert.name}
-                                width={48}
-                                height={48}
-                                className="object-cover rounded"
+                                width={96}
+                                height={96}
+                                className="object-cover"
                               />
                             </div>
-                            <div className="text-center">
-                              <div className="font-medium text-sm text-gray-600">{dessert.name}</div>
-                              <div className="text-xs text-gray-500 mt-1">Inclus</div>
-                            </div>
+                            <div className="text-gray-700 font-medium">{dessert.name}</div>
+                            <div className="text-sm text-gray-500">Inclus</div>
                           </div>
                         ))}
+                      </div>
                     </div>
                   </div>
                 )}

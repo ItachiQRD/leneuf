@@ -53,10 +53,6 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   const [petiteFaimItems, setPetiteFaimItems] = useState<PetiteFaimItem[]>([]);
   const [desserts, setDesserts] = useState<Dessert[]>([]);
   const [loading, setLoading] = useState(false);
-  
-  console.log('Pizzas prop:', pizzasProp);
-  console.log('Drinks prop:', drinksProp);
-  console.log('Current drinks state:', drinks);
 
   useEffect(() => {
     if (isOpen) {
@@ -375,22 +371,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                       Choisissez {menu.drinkCount} boisson{menu.drinkCount > 1 ? 's' : ''} ({selectedDrinks.reduce((sum, d) => sum + d.quantity, 0)}/{menu.drinkCount} sélectionnées)
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {drinks.length > 0 ? drinks.filter(drink => {
-                        // Logs for debugging
-                        if (process.env.NODE_ENV === 'development') {
-                          console.log('Checking drink:', drink.name, 'menu.drinkSize:', menu.drinkSize);
-                        }
-                        if (menu.drinkSize) {
-                          const drinkName = drink.name.toLowerCase();
-                          const size = menu.drinkSize.toLowerCase();
-                          if (size.includes('1.5l') || size.includes('1,5l') || size.includes('1.5l') || size.includes('1,5l')) {
-                            return drinkName.includes('1.5') || drinkName.includes('1,5') || drinkName.includes('1.5l') || drinkName.includes('1,5l');
-                          } else if (size.includes('33cl')) {
-                            return drinkName.includes('33cl') || drinkName.includes('33 cl');
-                          }
-                        }
-                        return true;
-                      }).map((drink) => {
+                      {drinks.length > 0 ? drinks.map((drink) => {
                         const qty = getDrinkQuantity(drink._id);
                         return (
                           <div

@@ -44,8 +44,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
     >
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-between h-24 px-8">
-          {/* Partie gauche - Dark mode + Navigation */}
-          <div className="flex items-center space-x-4 flex-1">
+          {/* Partie gauche - Dark mode */}
+          <div className="flex items-center">
             <motion.button
               onClick={toggleTheme}
               whileHover={{ scale: 1.1, rotate: 180 }}
@@ -76,8 +76,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </motion.div>
             </div>
 
-            {/* Navigation gauche */}
-            <div className="hidden md:flex items-center space-x-6 ml-auto">
+            {/* Navigation gauche - centrée */}
+            <div className="hidden md:flex items-center space-x-6">
             {/* À propos */}
             <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
               <Link
@@ -160,10 +160,9 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </motion.div>
           </div>
 
-          {/* Partie droite - Navigation droite + Actions */}
-          <div className="flex items-center space-x-4 flex-1">
-            {/* Navigation droite */}
-            <div className="hidden md:flex items-center space-x-6 mr-auto">
+          {/* Partie droite - Navigation droite */}
+          <div className="flex items-center">
+            <div className="hidden md:flex items-center space-x-6">
             {/* Commander */}
             <motion.div
               whileHover={{ scale: 1.1, x: 5 }}
@@ -199,10 +198,9 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </Link>
             </motion.div>
             </div>
-          </div>
 
-          {/* Partie droite : Auth, Cart, Mobile menu */}
-          <div className="flex items-center space-x-4">
+            {/* Auth et Cart */}
+            <div className="flex items-center space-x-4 ml-8">
 
             {/* Auth */}
             <div className="hidden md:block">
@@ -371,6 +369,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             >
               <Menu className="w-7 h-7" />
             </motion.button>
+            </div>
           </div>
         </div>
 

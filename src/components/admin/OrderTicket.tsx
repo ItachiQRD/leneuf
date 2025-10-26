@@ -32,6 +32,8 @@ interface Order {
     customIngredients?: any;
   }>;
   total: number;
+  promotionDiscount?: number;
+  promotionDescription?: string;
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
   deliveryAddress: {
     street: string;
@@ -204,6 +206,12 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           }).join('')}
         </div>
 
+        ${order.promotionDiscount && order.promotionDiscount > 0 ? `
+        <div style="border-top: 1px dashed #999; padding-top: 5px; padding-bottom: 5px; font-size: 12px; display: flex; justify-content: space-between;">
+          <span>Remise (${order.promotionDescription || 'Promotion'}):</span>
+          <span>-${order.promotionDiscount.toFixed(2)}€</span>
+        </div>
+        ` : ''}
         <div style="border-top: 2px solid black; padding-top: 5px; font-weight: 900; font-size: 14px; display: flex; justify-content: space-between;">
           <span>TOTAL:</span>
           <span>${order.total.toFixed(2)}€</span>
@@ -395,6 +403,12 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             }).join('')}
           </div>
 
+          ${order.promotionDiscount && order.promotionDiscount > 0 ? `
+          <div style="display: flex; justify-content: space-between; padding: 5px 0; border-top: 1px dashed #999;">
+            <span style="font-size: 12px;">Remise (${order.promotionDescription || 'Promotion'}):</span>
+            <span style="font-size: 12px;">-${order.promotionDiscount.toFixed(2)}€</span>
+          </div>
+          ` : ''}
           <div class="total">
             <span>TOTAL:</span>
             <span>${order.total.toFixed(2)}€</span>
@@ -441,7 +455,7 @@ Paiement: ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}
 ARTICLES
 ${order.items.map(item => `${item.quantity}x ${formatProductName(item)} - ${(item.quantity * item.price).toFixed(2)}€`).join('\n')}
 
-TOTAL: ${order.total.toFixed(2)}€
+${order.promotionDiscount && order.promotionDiscount > 0 ? `Remise (${order.promotionDescription || 'Promotion'}): -${order.promotionDiscount.toFixed(2)}€\n` : ''}TOTAL: ${order.total.toFixed(2)}€
 
 MERCI POUR VOTRE COMMANDE !
 BON APPÉTIT !
@@ -558,6 +572,16 @@ BON APPÉTIT !
               </div>
             </div>
 
+            {/* Promotion */}
+            {order.promotionDiscount && order.promotionDiscount > 0 && (
+              <div className="border-t border-dashed border-gray-300 pt-2 pb-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600">Remise ({order.promotionDescription || 'Promotion'}):</span>
+                  <span className="text-green-600 font-medium">-{order.promotionDiscount.toFixed(2)}€</span>
+                </div>
+              </div>
+            )}
+            
             {/* Total */}
             <div className="border-t-2 border-black pt-2">
               <div className="flex justify-between items-center font-black text-lg">

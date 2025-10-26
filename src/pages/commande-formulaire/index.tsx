@@ -258,13 +258,13 @@ export default function CommandeFormulairePage() {
 
           {/* Résumé de la commande */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 sticky top-24">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 sticky top-24 max-h-[calc(100vh-6rem)] flex flex-col">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 Résumé de la commande
               </h3>
 
-              {/* Articles */}
-              <div className="space-y-3 mb-6">
+              {/* Articles - Scrollable */}
+              <div className="space-y-3 mb-6 overflow-y-auto flex-1 pr-2">
                 {items.map((item) => (
                   <div key={item._id} className="flex items-center space-x-3">
                     <div className="relative w-12 h-12 flex-shrink-0">
@@ -288,9 +288,9 @@ export default function CommandeFormulairePage() {
                   </div>
                 ))}
               </div>
-
-              {/* Total */}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6 flex-shrink-0">
+                {/* Total */}
                 {/* Promotion */}
                 {promotionDiscount > 0 && (
                   <>
@@ -308,10 +308,8 @@ export default function CommandeFormulairePage() {
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Livraison incluse
                 </p>
-              </div>
-
-              {/* Bouton de confirmation */}
-              <div className="mt-6">
+                {/* Bouton de confirmation */}
+                <div className="mt-6">
                 <Button
                   onClick={handleFinalizeOrder}
                   fullWidth
@@ -321,6 +319,7 @@ export default function CommandeFormulairePage() {
                 >
                   {isLoading ? 'Traitement en cours...' : 'Confirmer la commande'}
                 </Button>
+              </div>
               </div>
             </div>
           </div>

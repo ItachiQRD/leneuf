@@ -30,13 +30,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const menuItems = [
-    { href: '/', label: 'Accueil' },
-    { href: '/menu', label: 'Menu' },
-    { href: '/a-propos', label: 'À propos' },
-    { href: '/contact', label: 'Contact' },
-  ];
-
   const handleLogout = () => {
     logout();
   };
@@ -50,52 +43,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          {/* Logo / Home Link */}
-          <Link 
-            href="/"
-            className="flex items-center hover:opacity-80 transition-opacity"
-          >
-            <Image
-              src="/images/logo.png"
-              alt="Le 9 Logo"
-              width={60}
-              height={60}
-              className=""
-              style={{ width: 'auto', height: 'auto' }}
-            />
-          </Link>
-
-          {/* Navigation centrée */}
-          <div className="hidden md:flex items-center space-x-12">
-            <Link
-              href="/contact"
-              className={`${textColor} hover:text-primary transition-colors font-medium text-sm`}
-            >
-              Contact
-            </Link>
-            <Link
-              href="/menu"
-              className={`${textColor} hover:text-primary transition-colors font-bold text-xl`}
-            >
-              Menu
-            </Link>
-            <Link
-              href="/commander"
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-full font-bold text-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-            >
-              🍔 Commander
-            </Link>
-            <Link
-              href="/a-propos"
-              className={`${textColor} hover:text-primary transition-colors font-medium text-sm`}
-            >
-              À propos
-            </Link>
-          </div>
-
-          {/* Actions à droite */}
-          <div className="flex items-center space-x-4">
-            {/* Theme Toggle - Desktop only */}
+          {/* Actions à gauche - Theme Toggle */}
+          <div className="flex items-center space-x-2">
             <button
               onClick={toggleTheme}
               className={`hidden md:block p-2 rounded-lg hover:bg-gray-100/10 transition-colors ${textColor}`}
@@ -124,7 +73,54 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 />
               </Link>
             </div>
+          </div>
 
+          {/* Navigation centrée avec logo au milieu - Desktop */}
+          <div className="hidden md:flex items-center space-x-8 flex-1 justify-center">
+            <Link
+              href="/menu"
+              className={`${textColor} hover:text-red-600 transition-colors font-semibold text-lg`}
+            >
+              Menu
+            </Link>
+            <Link
+              href="/a-propos"
+              className={`${textColor} hover:text-red-600 transition-colors font-semibold text-lg`}
+            >
+              À propos
+            </Link>
+            
+            {/* Logo au centre - GROS */}
+            <Link 
+              href="/"
+              className="flex items-center hover:opacity-80 transition-opacity mx-4"
+            >
+              <Image
+                src="/images/logo.png"
+                alt="Le 9 Logo"
+                width={120}
+                height={120}
+                className=""
+                style={{ width: 'auto', height: 'auto' }}
+              />
+            </Link>
+            
+            <Link
+              href="/commander"
+              className={`${textColor} hover:text-red-600 transition-colors font-semibold text-lg`}
+            >
+              Commander
+            </Link>
+            <Link
+              href="/contact"
+              className={`${textColor} hover:text-red-600 transition-colors font-semibold text-lg`}
+            >
+              Contact
+            </Link>
+          </div>
+
+          {/* Actions à droite */}
+          <div className="flex items-center space-x-2">
             {/* Auth - Desktop only */}
             <div className="hidden md:block">
               {isAuthenticated ? (
@@ -178,17 +174,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               )}
             </div>
 
-            {/* Commander - Mobile only */}
-            <div className="md:hidden">
-              <Link
-                href="/commander"
-                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 rounded-full font-bold text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2"
-              >
-                <span className="text-lg">🍔</span>
-                <span>Commander</span>
-              </Link>
-            </div>
-
             {/* Cart Button */}
             <button
               onClick={onOpenCart}
@@ -202,153 +187,71 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 </span>
               )}
             </button>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <Menu className="w-7 h-7" />
+            </button>
           </div>
-
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            {isMobileMenuOpen ? (
-              <Menu className="w-7 h-7" />
-            ) : (
-              <Menu className="w-7 h-7" />
-            )}
-          </button>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-20 right-0 w-full max-w-sm">
-            <nav className={`flex flex-col space-y-4 p-6 rounded-bl-xl shadow-lg ${
-              isScrolled 
-                ? 'bg-white dark:bg-gray-900' 
-                : 'bg-white/95 backdrop-blur-sm'
-            }`}>
-              {/* Connexion/Profil en mobile */}
-              {isAuthenticated ? (
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {user?.name || 'Mon compte'}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Connecté
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Link
-                      href="/profile"
-                      className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <User className="w-5 h-5" />
-                      <span>Mon Profil</span>
-                    </Link>
-                    {user?.isAdmin && (
-                      <Link
-                        href="/admin"
-                        className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <Shield className="w-5 h-5" />
-                        <span>Administration</span>
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="flex items-center space-x-3 text-lg font-medium text-red-600 hover:text-red-700 w-full text-left"
-                    >
-                      <LogOut className="w-5 h-5" />
-                      <span>Déconnexion</span>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <Link
-                  href="/auth/login"
-                  className="flex items-center space-x-3 text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-primary p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <User className="w-5 h-5" />
-                  <span>Connexion</span>
-                </Link>
-              )}
-              
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
-                <Link
-                  href="/contact"
-                  className={`flex items-center space-x-3 text-lg font-medium ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300'
-                      : 'text-gray-900'
-                  } hover:text-primary`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span>Contact</span>
-                </Link>
-                <Link
-                  href="/menu"
-                  className={`flex items-center space-x-3 text-lg font-medium ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300'
-                      : 'text-gray-900'
-                  } hover:text-primary`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                  <span>Menu</span>
-                </Link>
-                <Link
-                  href="/a-propos"
-                  className={`flex items-center space-x-3 text-lg font-medium ${
-                    isScrolled
-                      ? 'text-gray-700 dark:text-gray-300'
-                      : 'text-gray-900'
-                  } hover:text-primary`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>À propos</span>
-                </Link>
-              </div>
-              <button
-                onClick={() => {
-                  onOpenCart();
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`flex items-center space-x-2 text-lg font-medium ${
-                  isScrolled
-                    ? 'text-gray-700 dark:text-gray-300'
-                    : 'text-gray-900'
-                } hover:text-primary`}
+          <div className="md:hidden absolute top-20 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg">
+            <nav className="flex flex-col p-6 space-y-4">
+              <Link
+                href="/menu"
+                className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
+                onClick={() => setIsMobileMenuOpen(false)}
               >
-                <ShoppingCart className="w-5 h-5" />
-                <span>Panier</span>
-              </button>
+                <span>📋</span>
+                <span>Menu</span>
+              </Link>
+              <Link
+                href="/a-propos"
+                className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span>ℹ️</span>
+                <span>À propos</span>
+              </Link>
+              <Link
+                href="/commander"
+                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-3 rounded-lg font-bold text-lg text-center hover:from-red-700 hover:to-red-800 transition-all duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🍔 Commander
+              </Link>
+              <Link
+                href="/contact"
+                className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span>📧</span>
+                <span>Contact</span>
+              </Link>
+              
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <button
+                  onClick={() => {
+                    onOpenCart();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center space-x-3 text-lg font-medium ${textColor} w-full`}
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  <span>Panier ({itemCount})</span>
+                </button>
+              </div>
+
               {isAuthenticated ? (
                 <>
                   <Link
                     href="/profile"
-                    className={`flex items-center space-x-2 text-lg font-medium ${
-                      isScrolled
-                        ? 'text-gray-700 dark:text-gray-300'
-                        : 'text-gray-900'
-                    } hover:text-primary`}
+                    className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <User className="w-5 h-5" />
@@ -357,11 +260,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                   {user?.isAdmin && (
                     <Link
                       href="/admin"
-                      className={`flex items-center space-x-2 text-lg font-medium ${
-                        isScrolled
-                          ? 'text-gray-700 dark:text-gray-300'
-                          : 'text-gray-900'
-                      } hover:text-primary`}
+                      className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <Shield className="w-5 h-5" />
@@ -370,10 +269,10 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                   )}
                   <button
                     onClick={() => {
-                      logout();
+                      handleLogout();
                       setIsMobileMenuOpen(false);
                     }}
-                    className="flex items-center space-x-2 text-lg font-medium text-red-600 hover:text-red-700"
+                    className="flex items-center space-x-3 text-lg font-medium text-red-600 hover:text-red-700 w-full text-left"
                   >
                     <LogOut className="w-5 h-5" />
                     <span>Déconnexion</span>
@@ -381,12 +280,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 </>
               ) : (
                 <Link
-                  href="/login"
-                  className={`flex items-center space-x-2 text-lg font-medium ${
-                    isScrolled
-                      ? 'text-primary hover:text-primary-600'
-                      : 'text-primary hover:text-primary-700'
-                  }`}
+                  href="/auth/login"
+                  className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <User className="w-5 h-5" />

@@ -281,17 +281,28 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                drinkName.includes('1500ml') ||
                drinkName.includes('1500 ml');
       });
-    } else if (size.includes('33cl')) {
-      // Filtrer pour n'afficher que les boissons 33cl
+    } else if (size.includes('33')) {
+      // Filtrer pour n'afficher que les boissons 33cl/330ml (canettes)
       return drinks.filter(drink => {
         if (drink.sizes && Array.isArray(drink.sizes)) {
           return drink.sizes.some((size: any) => {
             const volume = size.volume?.toLowerCase() || '';
-            return volume.includes('33cl') || volume.includes('33 cl');
+            return volume.includes('33cl') || 
+                   volume.includes('33 cl') || 
+                   volume.includes('330ml') || 
+                   volume.includes('330 ml') ||
+                   volume.includes('33ml') ||
+                   volume.includes('33 ml');
           });
         }
         const drinkName = drink.name.toLowerCase();
-        return drinkName.includes('33cl') || drinkName.includes('33 cl');
+        return drinkName.includes('33cl') || 
+               drinkName.includes('33 cl') || 
+               drinkName.includes('330ml') || 
+               drinkName.includes('330 ml') ||
+               drinkName.includes('33ml') ||
+               drinkName.includes('33 ml') ||
+               drinkName.includes('canette');
       });
     }
     

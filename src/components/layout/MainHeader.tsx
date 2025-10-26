@@ -41,16 +41,16 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="container mx-auto px-4 relative">
-        <div className="flex items-center justify-between h-24">
+      <div className="container mx-auto px-8 relative">
+        <div className="flex items-center h-24">
           {/* Actions à gauche */}
-          <div className="flex items-center space-x-4 flex-1">
+          <div className="flex items-center flex-1">
             {/* Theme Toggle */}
             <motion.button
               onClick={toggleTheme}
               whileHover={{ scale: 1.1, rotate: 180 }}
               whileTap={{ scale: 0.9 }}
-              className={`hidden md:block p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
+              className={`hidden md:block p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor} ml-4`}
               aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
             >
               {theme === 'dark' ? (
@@ -64,30 +64,30 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             <div className="md:hidden">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link href="/">
-                  <Image
-                    src="/images/logo.png"
-                    alt="Le 9 Logo"
+            <Image
+              src="/images/logo.png"
+              alt="Le 9 Logo"
                     width={40}
                     height={40}
                     className="drop-shadow-lg"
-                    style={{ width: 'auto', height: 'auto' }}
-                  />
-                </Link>
+              style={{ width: 'auto', height: 'auto' }}
+            />
+          </Link>
               </motion.div>
             </div>
 
-            {/* Liens à gauche - Menu */}
-            <div className="hidden md:flex items-center space-x-6">
+            {/* À propos - Rapproché du centre */}
+            <div className="hidden md:flex items-center ml-auto mr-auto">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
-                <Link
+            <Link
                   href="/a-propos"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-4 py-2 rounded-lg`}
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-5 py-2 rounded-lg`}
                 >
                   À propos
                   <motion.span
-                    className="absolute -bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    className="absolute -bottom-1 left-5 right-5 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
                     initial={{ width: 0 }}
-                    whileHover={{ width: 'calc(100% - 2rem)' }}
+                    whileHover={{ width: 'calc(100% - 2.5rem)' }}
                     transition={{ duration: 0.3 }}
                   />
                 </Link>
@@ -96,7 +96,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Section centrale avec logo entouré par Menu et Commander */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center space-x-3">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center space-x-4 z-10">
             {/* Menu à gauche du logo */}
             <motion.div
               whileHover={{ scale: 1.1, x: -5 }}
@@ -105,15 +105,15 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             >
               <Link
                 href="/menu"
-                className="block px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group"
+                className="block px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group whitespace-nowrap"
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
                   animate={{ x: ['-100%', '100%'] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                 />
-                Menu
-              </Link>
+              Menu
+            </Link>
             </motion.div>
 
             {/* Logo centré */}
@@ -156,7 +156,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                     style={{ width: 'auto', height: 'auto' }}
                   />
                 </div>
-              </Link>
+            </Link>
             </motion.div>
 
             {/* Commander à droite du logo */}
@@ -165,40 +165,40 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               whileTap={{ scale: 0.95 }}
               className="relative"
             >
-              <Link
-                href="/commander"
-                className="block px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group"
-              >
+            <Link
+              href="/commander"
+                className="block px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-red-500 hover:border-red-400 relative overflow-hidden group whitespace-nowrap"
+            >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20"
                   animate={{ x: ['-100%', '100%'] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                 />
-                🍔 Commander
-              </Link>
+              🍔 Commander
+            </Link>
             </motion.div>
           </div>
 
           {/* Actions à droite */}
-          <div className="flex items-center space-x-4 flex-1 justify-end">
-            {/* Liens à droite - Contact */}
-            <div className="hidden md:flex items-center space-x-6">
+          <div className="flex items-center flex-1 justify-end">
+            {/* Contact - Rapproché du centre */}
+            <div className="hidden md:flex items-center mr-auto">
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
                   href="/contact"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-4 py-2 rounded-lg`}
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-5 py-2 rounded-lg`}
                 >
                   Contact
                   <motion.span
-                    className="absolute -bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    className="absolute -bottom-1 left-5 right-5 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
                     initial={{ width: 0 }}
-                    whileHover={{ width: 'calc(100% - 2rem)' }}
+                    whileHover={{ width: 'calc(100% - 2.5rem)' }}
                     transition={{ duration: 0.3 }}
                   />
                 </Link>
               </motion.div>
             </div>
-
+            
             {/* Auth - Desktop only */}
             <div className="hidden md:block">
               {isAuthenticated ? (
@@ -207,51 +207,51 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                     className={`flex items-center space-x-2 p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
                   >
                     <User className="w-5 h-5" />
-                    <span className={`${textColor} text-sm font-medium`}>
-                      {user?.name || 'Profil'}
-                    </span>
-                  </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                    <div className="py-1">
+                  <span className={`${textColor} text-sm font-medium`}>
+                    {user?.name || 'Profil'}
+                  </span>
+                </button>
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="py-1">
+                    <Link
+                      href="/profile"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <User className="w-4 h-4 mr-2" />
+                      Mon Profil
+                    </Link>
+                    {user?.isAdmin && (
                       <Link
-                        href="/profile"
+                        href="/admin"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
-                        <User className="w-4 h-4 mr-2" />
-                        Mon Profil
+                        <Shield className="w-4 h-4 mr-2" />
+                        Administration
                       </Link>
-                      {user?.isAdmin && (
-                        <Link
-                          href="/admin"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                          <Shield className="w-4 h-4 mr-2" />
-                          Administration
-                        </Link>
-                      )}
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <LogOut className="w-4 h-4 mr-2" />
-                        Déconnexion
-                      </button>
-                    </div>
+                    )}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Déconnexion
+                    </button>
                   </div>
+                </div>
                 </motion.div>
-              ) : (
+            ) : (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link
-                    href="/auth/login"
+              <Link
+                href="/auth/login"
                     className={`flex items-center space-x-2 p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
-                  >
-                    <User className="w-5 h-5" />
-                    <span className={`${textColor} text-sm font-medium`}>
-                      Connexion
-                    </span>
-                  </Link>
+              >
+                <User className="w-5 h-5" />
+                <span className={`${textColor} text-sm font-medium`}>
+                  Connexion
+                </span>
+              </Link>
                 </motion.div>
-              )}
+            )}
             </div>
 
             {/* Cart Button avec animation */}
@@ -274,13 +274,13 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               )}
             </motion.button>
 
-            {/* Mobile Menu Button */}
+          {/* Mobile Menu Button */}
             <motion.button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               className="md:hidden p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300"
-            >
+          >
               <Menu className="w-7 h-7" />
             </motion.button>
           </div>
@@ -323,16 +323,16 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               </Link>
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                <button
-                  onClick={() => {
-                    onOpenCart();
-                    setIsMobileMenuOpen(false);
-                  }}
+              <button
+                onClick={() => {
+                  onOpenCart();
+                  setIsMobileMenuOpen(false);
+                }}
                   className={`flex items-center space-x-3 text-lg font-medium ${textColor} w-full`}
-                >
-                  <ShoppingCart className="w-5 h-5" />
+              >
+                <ShoppingCart className="w-5 h-5" />
                   <span>Panier ({itemCount})</span>
-                </button>
+              </button>
               </div>
 
               {isAuthenticated ? (

@@ -75,7 +75,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Centrage des liens de navigation */}
-          <div className="hidden md:flex items-center justify-center flex-1 space-x-6">
+          <div className="hidden md:flex items-center justify-end flex-1 space-x-8 pr-32">
             {/* À propos */}
             <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
               <Link
@@ -158,7 +158,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Partie droite : Commander, Contact, Auth, Cart */}
-          <div className="hidden md:flex items-center justify-center flex-1 space-x-6">
+          <div className="hidden md:flex items-center justify-start flex-1 space-x-8 pl-32">
             {/* Commander */}
             <motion.div
               whileHover={{ scale: 1.1, x: 5 }}
@@ -201,56 +201,116 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             {/* Auth */}
             <div className="hidden md:block">
               {isAuthenticated ? (
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative group">
+                <motion.div 
+                  initial={{ scale: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative group"
+                >
                   <button 
                     className={`flex items-center space-x-2 p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
                   >
-                    <User className="w-5 h-5" />
-                  <span className={`${textColor} text-sm font-medium`}>
-                    {user?.name || 'Profil'}
-                  </span>
-                </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <div className="py-1">
-                    <Link
-                      href="/profile"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 0.3 }}
                     >
-                      <User className="w-4 h-4 mr-2" />
-                      Mon Profil
-                    </Link>
-                    {user?.isAdmin && (
-                      <Link
-                        href="/admin"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      <User className="w-5 h-5" />
+                    </motion.div>
+                    <span className={`${textColor} text-sm font-medium`}>
+                      {user?.name || 'Profil'}
+                    </span>
+                  </button>
+                  
+                  {/* Dropdown avec animations améliorées */}
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    whileHover={{ opacity: 1, y: 0, scale: 1 }}
+                    className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl py-2 border border-gray-200 dark:border-gray-700 origin-top-right"
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                  >
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-orange-500/5 rounded-xl pointer-events-none"
+                    />
+                    
+                    <div className="relative z-10">
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        whileHover={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.1 }}
                       >
-                        <Shield className="w-4 h-4 mr-2" />
-                        Administration
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Déconnexion
-                    </button>
-                  </div>
-                </div>
+                        <Link
+                          href="/profile"
+                          className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 dark:hover:from-red-900/20 dark:hover:to-orange-900/20 transition-all duration-200 group"
+                        >
+                          <motion.div whileHover={{ scale: 1.2, rotate: 5 }}>
+                            <User className="w-4 h-4 mr-3 text-gray-600 dark:text-gray-400 group-hover:text-red-600" />
+                          </motion.div>
+                          <span className="group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">Mon Profil</span>
+                        </Link>
+                      </motion.div>
+                      
+                      {user?.isAdmin && (
+                        <motion.div
+                          initial={{ x: -20, opacity: 0 }}
+                          whileHover={{ x: 0, opacity: 1 }}
+                          transition={{ delay: 0.15 }}
+                        >
+                          <Link
+                            href="/admin"
+                            className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 dark:hover:from-red-900/20 dark:hover:to-orange-900/20 transition-all duration-200 group"
+                          >
+                            <motion.div whileHover={{ scale: 1.2, rotate: 5 }}>
+                              <Shield className="w-4 h-4 mr-3 text-gray-600 dark:text-gray-400 group-hover:text-red-600" />
+                            </motion.div>
+                            <span className="group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">Administration</span>
+                          </Link>
+                        </motion.div>
+                      )}
+                      
+                      <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
+                      
+                      <motion.div
+                        initial={{ x: -20, opacity: 0 }}
+                        whileHover={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 dark:hover:from-red-900/20 dark:hover:to-orange-900/20 transition-all duration-200 group"
+                        >
+                          <motion.div whileHover={{ scale: 1.2, rotate: -5 }}>
+                            <LogOut className="w-4 h-4 mr-3 group-hover:text-red-700" />
+                          </motion.div>
+                          <span className="group-hover:text-red-700 transition-colors">Déconnexion</span>
+                        </button>
+                      </motion.div>
+                    </div>
+                  </motion.div>
                 </motion.div>
-            ) : (
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                href="/auth/login"
+              ) : (
+                <motion.div 
+                  initial={{ scale: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link
+                    href="/auth/login"
                     className={`flex items-center space-x-2 p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
-              >
-                <User className="w-5 h-5" />
-                <span className={`${textColor} text-sm font-medium`}>
-                  Connexion
-                </span>
-              </Link>
+                  >
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <User className="w-5 h-5" />
+                    </motion.div>
+                    <span className={`${textColor} text-sm font-medium`}>
+                      Connexion
+                    </span>
+                  </Link>
                 </motion.div>
-            )}
+              )}
             </div>
 
             {/* Cart Button avec animation */}

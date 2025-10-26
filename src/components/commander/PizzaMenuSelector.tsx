@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Minus } from 'lucide-react';
 import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface PizzaMenuSelectorProps {
   isOpen: boolean;
@@ -126,22 +127,44 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   };
 
   const handleAddToCart = () => {
-    // Créer un objet de configuration pour le menu
+    // Créer un objet de configuration détaillé pour le menu
     const config: any = {
-      pizzas: selectedPizzas,
+      menuId: menu.id,
+      menuName: menu.name,
+      pizzas: selectedPizzas.map(({ pizza, quantity }) => ({
+        _id: pizza._id,
+        name: pizza.name,
+        image: pizza.image,
+        price: pizza.price,
+        quantity
+      })),
+      drinks: selectedDrinks.map(({ drink, quantity }) => ({
+        _id: drink._id,
+        name: drink.name,
+        image: drink.image,
+        price: drink.price,
+        quantity
+      })),
       quantity
     };
 
-    if (selectedDrinks.length > 0) {
-      config.drinks = selectedDrinks;
-    }
-
+    // Ajouter nuggets/wings si présents
     if (selectedPetiteFaim) {
-      config.petiteFaim = selectedPetiteFaim;
+      config.petiteFaim = {
+        _id: selectedPetiteFaim._id,
+        name: selectedPetiteFaim.name,
+        image: selectedPetiteFaim.image,
+        quantity: 6
+      };
     }
 
-    if (selectedDesserts.length > 0) {
-      config.desserts = selectedDesserts;
+    // Ajouter brownies si c'est le menu couple
+    if (menu.id === 'menu-couple') {
+      config.brownies = {
+        name: 'Brownies',
+        quantity: 2,
+        included: true
+      };
     }
 
     const cartItem = {
@@ -335,7 +358,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
   };
 
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const isMobile = useIsMobile();
 
   if (!isOpen) return null;
 
@@ -497,29 +520,28 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       Choisissez 6 Nuggets ou Wings
                     </h3>
-                    <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-2'} gap-3`}>
+                    <div className="grid grid-cols-2 gap-4 sm:gap-6">
                       {petiteFaimItems
                         .filter(item => item.name.toLowerCase().includes('nugget') || item.name.toLowerCase().includes('hot wing') || item.name.toLowerCase().includes('wing'))
                         .map((item) => (
                           <button
                             key={item._id}
                             onClick={() => setSelectedPetiteFaim(item)}
-                            className={`p-4 border-2 rounded-lg text-center ${
-                              selectedPetiteFaim?._id === item._id
-                                ? 'border-red-600 bg-red-50'
-                                : 'border-gray-300 hover:border-gray-400'
+                            className={`text-center cursor-pointer transition-transform duration-300 hover:scale-110 ${
+                              selectedPetiteFaim?._id === item._id ? 'scale-105' : ''
                             }`}
                           >
-                            <div className="relative w-16 h-16 mx-auto mb-2">
+                            <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-2 sm:mb-3 transition-all duration-300">
                               <Image
                                 src={item.image || '/images/placeholder-food.jpg'}
                                 alt={item.name}
-                                width={64}
-                                height={64}
-                                className="object-cover rounded"
+                                fill
+                                className="object-cover rounded-full shadow-lg"
                               />
                             </div>
-                            <div className="font-medium text-sm">{item.name}</div>
+                            <div className={`font-medium text-sm sm:text-base ${selectedPetiteFaim?._id === item._id ? 'text-red-600' : 'text-gray-700'}`}>
+                              {item.name}
+                            </div>
                           </button>
                         ))}
                     </div>

@@ -232,12 +232,6 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu }: PizzaMenuSe
     // Vérifier nuggets/wings pour le menu couple
     if (menu.id === 'menu-couple' && !selectedPetiteFaim) return false;
 
-    // Vérifier les desserts pour le menu couple
-    if (menu.id === 'menu-couple') {
-      const totalDessertQuantity = selectedDesserts.reduce((sum, d) => sum + d.quantity, 0);
-      if (totalDessertQuantity < 2) return false;
-    }
-
     return true;
   };
 
@@ -444,56 +438,20 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu }: PizzaMenuSe
                   </div>
                 )}
 
-                {/* Sélection desserts pour menu couple */}
+                {/* Affichage brownies inclus pour menu couple */}
                 {menu.id === 'menu-couple' && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      Choisissez 2 Brownies
+                      2 Brownies Inclus
                     </h3>
-                    <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-3'} gap-3`}>
-                      {desserts
-                        .filter(dessert => dessert.name.toLowerCase().includes('brownie'))
-                        .map((dessert) => {
-                          const quantity = getDessertQuantity(dessert._id);
-                          return (
-                            <div
-                              key={dessert._id}
-                              className={`p-3 border-2 rounded-lg flex items-center space-x-3 ${
-                                quantity > 0
-                                  ? 'border-red-600 bg-red-50'
-                                  : 'border-gray-300 hover:border-gray-400'
-                              }`}
-                            >
-                              <div className="relative w-12 h-12 flex-shrink-0 bg-gray-50 rounded flex items-center justify-center">
-                                <Image
-                                  src={dessert.image || '/images/placeholder-food.jpg'}
-                                  alt={dessert.name}
-                                  width={48}
-                                  height={48}
-                                  className="object-cover rounded"
-                                />
-                              </div>
-                              <div className="flex-1">
-                                <div className="font-medium text-sm">{dessert.name}</div>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <button
-                                  onClick={() => handleDessertQuantity(dessert, -1)}
-                                  className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                                >
-                                  <Minus className="w-3 h-3" />
-                                </button>
-                                <span className="w-6 text-center font-medium text-sm">{quantity}</span>
-                                <button
-                                  onClick={() => handleDessertQuantity(dessert, 1)}
-                                  className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
-                                >
-                                  <Plus className="w-3 h-3" />
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
+                    <div className="bg-gray-100 p-4 rounded-lg border-2 border-gray-300">
+                      <div className="flex items-center space-x-3">
+                        <div className="text-4xl">🍫</div>
+                        <div>
+                          <div className="font-semibold text-gray-700">2 Brownies</div>
+                          <div className="text-sm text-gray-500">Inclus dans le menu</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}

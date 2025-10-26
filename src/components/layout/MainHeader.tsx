@@ -44,7 +44,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-between h-24 px-8">
           {/* Section gauche : Theme Toggle + Menu + À propos */}
-          <div className="flex items-center space-x-4 flex-1">
+          <div className="flex items-center space-x-3 flex-1 justify-end">
             {/* Theme Toggle */}
             <motion.button
               onClick={toggleTheme}
@@ -100,13 +100,13 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
                   href="/a-propos"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-4 py-2 rounded-lg`}
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-3 py-2 rounded-lg`}
                 >
                   À propos
                   <motion.span
-                    className="absolute -bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    className="absolute -bottom-1 left-3 right-3 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
                     initial={{ width: 0 }}
-                    whileHover={{ width: 'calc(100% - 2rem)' }}
+                    whileHover={{ width: 'calc(100% - 1.5rem)' }}
                     transition={{ duration: 0.3 }}
                   />
                 </Link>
@@ -160,7 +160,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
           </div>
 
           {/* Section droite : Commander + Contact + Auth + Cart */}
-          <div className="flex items-center space-x-4 flex-1 justify-end">
+          <div className="flex items-center space-x-3 flex-1 justify-start">
             {/* Commander */}
             <motion.div
               whileHover={{ scale: 1.1, x: 5 }}
@@ -185,13 +185,13 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                 <Link
                   href="/contact"
-                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-4 py-2 rounded-lg`}
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-base relative group px-3 py-2 rounded-lg`}
                 >
                   Contact
                   <motion.span
-                    className="absolute -bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    className="absolute -bottom-1 left-3 right-3 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
                     initial={{ width: 0 }}
-                    whileHover={{ width: 'calc(100% - 2rem)' }}
+                    whileHover={{ width: 'calc(100% - 1.5rem)' }}
                     transition={{ duration: 0.3 }}
                   />
                 </Link>

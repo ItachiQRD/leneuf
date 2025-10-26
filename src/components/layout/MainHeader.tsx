@@ -41,13 +41,14 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative">
         <div className="flex items-center justify-between h-24">
-          {/* Actions à gauche - Theme Toggle */}
+          {/* Actions à gauche */}
           <div className="flex items-center space-x-4 flex-1">
+            {/* Theme Toggle */}
             <motion.button
               onClick={toggleTheme}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.1, rotate: 180 }}
               whileTap={{ scale: 0.9 }}
               className={`hidden md:block p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
               aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
@@ -61,100 +62,140 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
 
             {/* Logo - Mobile only */}
             <div className="md:hidden">
-              <Link 
-                href="/"
-                className="flex items-center hover:opacity-80 transition-opacity"
-              >
-                <Image
-                  src="/images/logo.png"
-                  alt="Le 9 Logo"
-                  width={40}
-                  height={40}
-                  className=""
-                  style={{ width: 'auto', height: 'auto' }}
-                />
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/">
+                  <Image
+                    src="/images/logo.png"
+                    alt="Le 9 Logo"
+                    width={40}
+                    height={40}
+                    className="drop-shadow-lg"
+                    style={{ width: 'auto', height: 'auto' }}
+                  />
+                </Link>
+              </motion.div>
+            </div>
+
+            {/* Liens à gauche - Menu et À propos */}
+            <div className="hidden md:flex items-center space-x-6">
+              <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+                <Link
+                  href="/menu"
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-lg relative group`}
+                >
+                  Menu
+                  <motion.span
+                    className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    initial={{ width: 0 }}
+                    whileHover={{ width: '100%' }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </Link>
+              </motion.div>
+
+              <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+                <Link
+                  href="/a-propos"
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-lg relative group`}
+                >
+                  À propos
+                  <motion.span
+                    className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    initial={{ width: 0 }}
+                    whileHover={{ width: '100%' }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </Link>
+              </motion.div>
             </div>
           </div>
 
-          {/* Navigation centrée avec logo au milieu - Desktop */}
-          <div className="hidden md:flex items-center space-x-6 flex-1 justify-center">
-            <motion.div whileHover={{ y: -2 }}>
-              <Link
-                href="/menu"
-                className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-lg px-3 py-2 relative group`}
-              >
-                Menu
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            </motion.div>
-            
-            <motion.div whileHover={{ y: -2 }}>
-              <Link
-                href="/a-propos"
-                className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-lg px-3 py-2 relative group`}
-              >
-                À propos
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            </motion.div>
-            
-            {/* Logo au centre - TRÈS ÉLÉGANT avec animation */}
+          {/* Logo centré - GRANDE taille avec animations */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block">
             <motion.div
-              whileHover={{ scale: 1.1, rotate: [0, -5, 5, -5, 0] }}
+              whileHover={{ scale: 1.15, rotate: [0, -5, 5, -5, 0] }}
               whileTap={{ scale: 0.95 }}
-              className="relative"
+              animate={{
+                y: [0, -10, 0],
+              }}
+              transition={{
+                y: {
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }
+              }}
             >
-              <Link 
-                href="/"
-                className="flex items-center hover:opacity-90 transition-opacity mx-6"
-              >
-                {/* Effet de halo autour du logo */}
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 rounded-full blur-xl opacity-20"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-lg opacity-10"></div>
+              <Link href="/" className="relative">
+                {/* Effet de halo pulsant */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 rounded-full blur-2xl opacity-30"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.2, 0.4, 0.2],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
                 
-                <div className="relative transform transition-transform duration-300 hover:rotate-12">
+                <div className="relative">
                   <Image
                     src="/images/logo.png"
                     alt="Le 9 Logo"
                     width={140}
                     height={140}
-                    className="drop-shadow-2xl"
+                    className="drop-shadow-2xl filter brightness-105"
                     style={{ width: 'auto', height: 'auto' }}
                   />
                 </div>
-              </Link>
-            </motion.div>
-            
-            <motion.div whileHover={{ y: -2 }}>
-              <Link
-                href="/commander"
-                className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-lg px-3 py-2 relative group`}
-              >
-                Commander
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-            </motion.div>
-            
-            <motion.div whileHover={{ y: -2 }}>
-              <Link
-                href="/contact"
-                className={`${textColor} hover:text-red-600 transition-all duration-300 font-semibold text-lg px-3 py-2 relative group`}
-              >
-                Contact
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </motion.div>
           </div>
 
           {/* Actions à droite */}
           <div className="flex items-center space-x-4 flex-1 justify-end">
+            {/* Liens à droite - Commander et Contact */}
+            <div className="hidden md:flex items-center space-x-6">
+              <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+                <Link
+                  href="/commander"
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-lg relative group`}
+                >
+                  Commander
+                  <motion.span
+                    className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    initial={{ width: 0 }}
+                    whileHover={{ width: '100%' }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </Link>
+              </motion.div>
+
+              <motion.div whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+                <Link
+                  href="/contact"
+                  className={`${textColor} hover:text-red-600 transition-all duration-300 font-bold text-lg relative group`}
+                >
+                  Contact
+                  <motion.span
+                    className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-red-600 to-orange-500"
+                    initial={{ width: 0 }}
+                    whileHover={{ width: '100%' }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </Link>
+              </motion.div>
+            </div>
+
             {/* Auth - Desktop only */}
             <div className="hidden md:block">
               {isAuthenticated ? (
-                <div className="relative group">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative group">
                   <button 
-                    className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
+                    className={`flex items-center space-x-2 p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
                   >
                     <User className="w-5 h-5" />
                     <span className={`${textColor} text-sm font-medium`}>
@@ -188,21 +229,23 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                       </button>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ) : (
-                <Link
-                  href="/auth/login"
-                  className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/10 ${textColor}`}
-                >
-                  <User className="w-5 h-5" />
-                  <span className={`${textColor} text-sm font-medium`}>
-                    Connexion
-                  </span>
-                </Link>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link
+                    href="/auth/login"
+                    className={`flex items-center space-x-2 p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
+                  >
+                    <User className="w-5 h-5" />
+                    <span className={`${textColor} text-sm font-medium`}>
+                      Connexion
+                    </span>
+                  </Link>
+                </motion.div>
               )}
             </div>
 
-            {/* Cart Button */}
+            {/* Cart Button avec animation */}
             <motion.button
               onClick={onOpenCart}
               whileHover={{ scale: 1.1 }}
@@ -236,75 +279,51 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="md:hidden absolute top-24 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-2xl"
-          >
-            <nav className="flex flex-col p-6 space-y-3">
-              <motion.div whileHover={{ x: 5 }}>
-                <Link
-                  href="/menu"
-                  className={`flex items-center space-x-3 text-lg font-medium ${textColor} py-3 px-4 rounded-lg hover:bg-red-50 dark:hover:bg-gray-800 transition-all duration-200`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="text-2xl">📋</span>
-                  <span>Menu</span>
-                </Link>
-              </motion.div>
-              
-              <motion.div whileHover={{ x: 5 }}>
-                <Link
-                  href="/a-propos"
-                  className={`flex items-center space-x-3 text-lg font-medium ${textColor} py-3 px-4 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 transition-all duration-200`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="text-2xl">ℹ️</span>
-                  <span>À propos</span>
-                </Link>
-              </motion.div>
-              
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link
-                  href="/commander"
-                  className="bg-gradient-to-r from-red-600 via-red-600 to-red-700 text-white px-6 py-4 rounded-xl font-bold text-lg text-center hover:from-red-700 hover:via-red-700 hover:to-red-800 transition-all duration-300 shadow-lg hover:shadow-xl transform"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="text-2xl mr-2">🍔</span>
-                  Commander
-                </Link>
-              </motion.div>
-              
-              <motion.div whileHover={{ x: 5 }}>
-                <Link
-                  href="/contact"
-                  className={`flex items-center space-x-3 text-lg font-medium ${textColor} py-3 px-4 rounded-lg hover:bg-green-50 dark:hover:bg-gray-800 transition-all duration-200`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <span className="text-2xl">📧</span>
-                  <span>Contact</span>
-                </Link>
-              </motion.div>
+          <div className="md:hidden absolute top-24 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg">
+            <nav className="flex flex-col p-6 space-y-4">
+              <Link
+                href="/menu"
+                className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span>📋</span>
+                <span>Menu</span>
+              </Link>
+              <Link
+                href="/a-propos"
+                className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span>ℹ️</span>
+                <span>À propos</span>
+              </Link>
+              <Link
+                href="/commander"
+                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-3 rounded-lg font-bold text-lg text-center hover:from-red-700 hover:to-red-800 transition-all duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🍔 Commander
+              </Link>
+              <Link
+                href="/contact"
+                className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span>📧</span>
+                <span>Contact</span>
+              </Link>
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={() => {
                     onOpenCart();
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`flex items-center space-x-3 text-lg font-medium ${textColor} w-full py-3 px-4 rounded-lg hover:bg-yellow-50 dark:hover:bg-gray-800 transition-all duration-200`}
+                  className={`flex items-center space-x-3 text-lg font-medium ${textColor} w-full`}
                 >
-                  <ShoppingCart className="w-6 h-6" />
-                  <span>Panier</span>
-                  {itemCount > 0 && (
-                    <span className="ml-auto bg-red-600 text-white text-sm px-3 py-1 rounded-full font-bold">
-                      {itemCount}
-                    </span>
-                  )}
-                </motion.button>
+                  <ShoppingCart className="w-5 h-5" />
+                  <span>Panier ({itemCount})</span>
+                </button>
               </div>
 
               {isAuthenticated ? (
@@ -349,7 +368,7 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
                 </Link>
               )}
             </nav>
-          </motion.div>
+          </div>
         )}
       </div>
     </motion.header>

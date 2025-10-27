@@ -18,8 +18,6 @@ interface Pizza {
   name: string;
   price: number;
   image?: string;
-  baseIngredients?: string[];
-  description?: string;
 }
 
 interface Drink {
@@ -138,9 +136,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
         name: pizza.name,
         image: pizza.image,
         price: pizza.price,
-        quantity,
-        ingredients: pizza.baseIngredients || [], // Ingrédients de base
-        description: pizza.description // Description complète si disponible
+        quantity
       })),
       drinks: selectedDrinks.map(({ drink, quantity }) => ({
         _id: drink._id,

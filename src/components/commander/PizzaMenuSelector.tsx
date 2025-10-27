@@ -136,7 +136,9 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
         name: pizza.name,
         image: pizza.image,
         price: pizza.price,
-        quantity
+        quantity,
+        ingredients: pizza.baseIngredients || [], // Ingrédients de base
+        description: pizza.description // Description complète si disponible
       })),
       drinks: selectedDrinks.map(({ drink, quantity }) => ({
         _id: drink._id,
@@ -627,7 +629,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                 {menu.id === 'menu-couple' && (
                   <div className="space-y-2">
                     <h4 className="font-semibold text-gray-700">Brownies Inclus</h4>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg opacity-60">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <div className="relative w-16 h-16">
                         {desserts.filter(dessert => dessert.name.toLowerCase().includes('brownie')).map((dessert) => (
                           <div key={dessert._id}>
@@ -642,9 +644,9 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                         ))}
                       </div>
                       <div className="flex-1">
-                        <div className="font-medium text-gray-500">2 Brownies Inclus</div>
+                        <div className="font-medium text-gray-900">2 Brownies Inclus</div>
                       </div>
-                      <div className="text-sm text-gray-500">Inclus</div>
+                      <div className="text-sm text-gray-600 font-semibold">Inclus</div>
                     </div>
                   </div>
                 )}

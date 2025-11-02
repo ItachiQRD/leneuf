@@ -405,26 +405,44 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                     {texMexIngredients.map((ingredient) => {
                       const isSelected = config.selectedIngredients.some(ing => ing._id === ingredient._id);
                       return (
-                        <button
+                        <motion.button
                           key={ingredient._id}
                           onClick={() => handleIngredientSelect(ingredient)}
-                          className={`flex flex-col items-center p-2 transition-all duration-200 ${
+                          whileHover={{ scale: 1.08, y: -5 }}
+                          whileTap={{ scale: 0.95 }}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: isSelected ? 1 : 0.8, y: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className={`flex flex-col items-center p-3 transition-all duration-200 ${
                             isSelected
-                              ? 'opacity-100'
-                              : 'opacity-70 hover:opacity-100'
+                              ? ''
+                              : 'hover:opacity-100'
                           }`}
                         >
-                          <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center">
+                          <motion.div 
+                            className={`w-28 h-28 lg:w-32 lg:h-32 mb-2 lg:mb-3 flex items-center justify-center rounded-lg ${
+                              isSelected ? 'ring-2 ring-primary' : 'ring-1 ring-gray-200'
+                            }`}
+                            animate={isSelected ? { 
+                              scale: [1, 1.1, 1],
+                              rotate: [0, 5, -5, 0]
+                            } : {}}
+                            transition={{ 
+                              duration: 0.4,
+                              ease: "easeInOut"
+                            }}
+                            whileHover={{ scale: 1.1 }}
+                          >
                             <Image
                               src={ingredient.image}
                               alt={ingredient.name}
-                              width={64}
-                              height={64}
+                              width={128}
+                              height={128}
                               className="object-contain"
                             />
-                          </div>
+                          </motion.div>
                           <span className="text-xs lg:text-sm text-center font-medium">{ingredient.name}</span>
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -780,3 +798,4 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
     </AnimatePresence>
   );
 }
+

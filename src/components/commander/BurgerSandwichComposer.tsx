@@ -56,7 +56,6 @@ const getSteps = (productType: 'burger' | 'sandwich') => {
     return [
       { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
       { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
-      { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
       { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
       { id: 'drink', title: 'Boisson', description: 'Sélectionnez votre boisson' },
       { id: 'summary', title: 'Récapitulatif', description: 'Vérifiez votre commande' }
@@ -66,7 +65,6 @@ const getSteps = (productType: 'burger' | 'sandwich') => {
       { id: 'menu', title: 'Menu', description: 'Choisissez votre option menu' },
       { id: 'bread', title: 'Classic', description: 'Durum ou pain pour sandwichs' },
       { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
-      { id: 'fries', title: 'Frites', description: 'Avec ou sans frites' },
       { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
       { id: 'drink', title: 'Boisson', description: 'Sélectionnez votre boisson' },
       { id: 'summary', title: 'Récapitulatif', description: 'Vérifiez votre commande' }
@@ -86,21 +84,6 @@ const MENU_OPTIONS: MenuOption[] = [
     name: 'Avec frites + boisson',
     price: 0,
     description: 'Produit + frites + boisson (inclus)'
-  }
-];
-
-const FRIES_OPTIONS = [
-  {
-    id: 'avec-frites',
-    name: 'Avec frites',
-    price: 0,
-    description: 'Frites incluses'
-  },
-  {
-    id: 'sans-frites',
-    name: 'Sans frites',
-    price: 0,
-    description: 'Pas de frites'
   }
 ];
 
@@ -124,7 +107,6 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     menuOption: 'avec-frites' as string,
     breadType: 'pain' as string,
     selectedVegetables: [] as string[],
-    friesOption: 'avec-frites' as string,
     withFries: true,
     selectedSauce: null as Sauce | null,
     selectedDrink: null as Drink | null,
@@ -139,7 +121,6 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
         menuOption: 'avec-frites',
         breadType: 'pain',
         selectedVegetables: [],
-        friesOption: 'avec-frites',
         withFries: true,
         selectedSauce: null,
         selectedDrink: null,
@@ -217,13 +198,6 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     }));
   };
 
-  const handleFriesSelect = (friesId: string) => {
-    setConfig(prev => ({
-      ...prev,
-      friesOption: friesId,
-      withFries: friesId === 'avec-frites'
-    }));
-  };
 
 
   const handleSauceSelect = (sauce: Sauce) => {
@@ -298,7 +272,6 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       menuOption: 'avec-frites',
       breadType: 'pain',
       selectedVegetables: [],
-      friesOption: 'avec-frites',
       withFries: true,
       selectedSauce: null,
       selectedDrink: null,
@@ -315,7 +288,6 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
       case 'menu': return config.menuOption !== '';
       case 'bread': return config.breadType !== ''; // Pain obligatoire pour sandwichs
       case 'vegetables': return true; // Les crudités sont optionnelles
-      case 'fries': return config.friesOption !== ''; // Les frites sont obligatoires (avec ou sans)
       case 'sauce': return true; // Les sauces sont optionnelles
       case 'drink': return config.menuOption !== 'avec-frites-boisson' || config.selectedDrink !== null;
       case 'summary': return true; // Le récapitulatif
@@ -391,33 +363,62 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   <h3 className="text-base lg:text-xl font-semibold text-gray-900 mb-4">
                     Choisissez votre option menu
                   </h3>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                    {MENU_OPTIONS.map((option) => (
-                      <div
-                        key={option.id}
-                        onClick={() => handleMenuSelect(option.id)}
-                        className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                          config.menuOption === option.id
-                            ? 'border-green-500 bg-green-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="flex justify-between items-center">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-gray-900 text-sm lg:text-base">{option.name}</h4>
-                            <p className="text-xs lg:text-sm text-gray-600">{option.description}</p>
-                            {option.id === 'avec-frites' && (
-                              <div className="text-xs text-green-600 mt-1">-1€ sans boisson</div>
-                            )}
-                          </div>
-                          <div className="text-right flex-shrink-0">
-                            <div className="text-sm lg:text-lg font-semibold text-gray-900">
-                              Inclus
-                            </div>
-                          </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* Menu avec frites (sans boisson) */}
+                    <div
+                      onClick={() => handleMenuSelect('avec-frites')}
+                      className={`p-4 lg:p-6 border-2 rounded-xl cursor-pointer transition-all ${
+                        config.menuOption === 'avec-frites'
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center text-center">
+                        <div className="w-32 h-32 lg:w-40 lg:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden">
+                          <Image
+                            src="/images/menu/sansboisson.jpeg"
+                            alt="Sans boisson"
+                            width={160}
+                            height={160}
+                            className="object-contain"
+                          />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 text-base lg:text-lg mb-2">Avec frites</h4>
+                        <p className="text-sm lg:text-base text-gray-600 mb-2">Produit + frites (inclus)</p>
+                        <div className="text-sm font-semibold text-green-600 mb-2">Inclus</div>
+                        <div className="text-lg lg:text-xl font-bold text-gray-900">
+                          {(product.price - 1).toFixed(2)}€
                         </div>
                       </div>
-                    ))}
+                    </div>
+
+                    {/* Menu avec frites + boisson */}
+                    <div
+                      onClick={() => handleMenuSelect('avec-frites-boisson')}
+                      className={`p-4 lg:p-6 border-2 rounded-xl cursor-pointer transition-all ${
+                        config.menuOption === 'avec-frites-boisson'
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center text-center">
+                        <div className="w-32 h-32 lg:w-40 lg:h-40 mb-4 flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden">
+                          <Image
+                            src="/images/menu/avecboisson.jpeg"
+                            alt="Avec boisson"
+                            width={160}
+                            height={160}
+                            className="object-contain"
+                          />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 text-base lg:text-lg mb-2">Avec frites + boisson</h4>
+                        <p className="text-sm lg:text-base text-gray-600 mb-2">Produit + frites + boisson (inclus)</p>
+                        <div className="text-sm font-semibold text-green-600 mb-2">Inclus</div>
+                        <div className="text-lg lg:text-xl font-bold text-gray-900">
+                          {product.price.toFixed(2)}€
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -507,7 +508,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </div>
-                        <span className="text-xs lg:text-sm text-center font-medium">Aucun</span>
+                        <span className="text-xs lg:text-sm text-center font-medium">Sans crudités</span>
                       </button>
                       {ingredients.map((vegetable) => {
                         const isSelected = config.selectedVegetables.includes(vegetable.name);
@@ -551,59 +552,6 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                 </motion.div>
               )}
 
-              {/* Étape Frites */}
-              {steps[currentStep]?.id === 'fries' && (
-                <motion.div
-                  key="fries"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-4"
-                >
-                  <h3 className="text-base lg:text-xl font-semibold text-gray-900 mb-4">
-                    Frites
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                    {FRIES_OPTIONS.map((option) => (
-                      <div
-                        key={option.id}
-                        onClick={() => handleFriesSelect(option.id)}
-                        className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                          config.friesOption === option.id
-                            ? 'border-green-500 bg-green-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="flex items-center">
-                          <div className="w-16 h-16 lg:w-20 lg:h-20 bg-yellow-100 rounded-lg flex items-center justify-center mr-3 lg:mr-4">
-                            {option.id === 'avec-frites' ? (
-                              <Image
-                                src="/images/menu/frites.jpeg"
-                                alt="Frites"
-                                width={64}
-                                height={64}
-                                className="object-contain"
-                              />
-                            ) : (
-                              <svg className="w-8 h-8 lg:w-10 lg:h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-gray-900 text-sm lg:text-base">{option.name}</h4>
-                            <p className="text-xs lg:text-sm text-gray-600">{option.description}</p>
-                          </div>
-                          {config.friesOption === option.id && (
-                            <Check className="w-5 h-5 lg:w-6 lg:h-6 text-green-500" />
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
 
               {/* Étape Sauce */}
               {steps[currentStep]?.id === 'sauce' && (
@@ -817,16 +765,21 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                         </div>
                       )}
                       
-                      {config.selectedVegetables.length > 0 && (
+                      {config.selectedVegetables.length > 0 ? (
                         <div className="flex justify-between">
                           <span>Crudités:</span>
                           <span>{config.selectedVegetables.join(', ')}</span>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between">
+                          <span>Crudités:</span>
+                          <span>Sans crudités</span>
                         </div>
                       )}
                       
                       <div className="flex justify-between">
                         <span>Frites:</span>
-                        <span>{config.friesOption === 'avec-frites' ? 'Oui' : 'Non'}</span>
+                        <span>Oui (inclus)</span>
                       </div>
                       
                       <div className="flex justify-between">

@@ -8,6 +8,7 @@ interface OrderItem {
   quantity: number;
   price: number;
   options?: any;
+  customIngredients?: any;
 }
 
 interface CustomerData {
@@ -245,10 +246,10 @@ export default function CommandeConfirmeePage() {
                       Quantité: {item.quantity} × {item.price.toFixed(2)} €
                     </div>
                     {/* Afficher les détails du menu pizza si config existe */}
-                    {(item.config || item.customIngredients?.menuId) && (
+                    {item.customIngredients?.menuId && (
                       <div className="text-xs text-gray-600 dark:text-gray-400 mt-1 space-y-0.5">
                         {(() => {
-                          const config = item.config || item.customIngredients;
+                          const config = item.customIngredients;
                           if (!config) return null;
                           
                           const details: string[] = [];
@@ -285,7 +286,7 @@ export default function CommandeConfirmeePage() {
                         })()}
                       </div>
                     )}
-                    {item.options && !item.config && !item.customIngredients?.menuId && (
+                    {item.options && !item.customIngredients?.menuId && (
                       <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                         {item.options.customIngredients ? 'Produit personnalisé' : 'Avec options'}
                       </div>

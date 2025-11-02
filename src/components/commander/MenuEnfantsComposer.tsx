@@ -18,20 +18,56 @@ interface Sauce {
   image: string;
 }
 
+interface Vegetable {
+  _id: string;
+  name: string;
+  image: string;
+}
+
+const STEPS = [
+  { id: 'vegetables', title: 'Crudités', description: 'Salade, tomate, oignons ou rien' },
+  { id: 'sauce', title: 'Sauce', description: 'Sélectionnez votre sauce' },
+  { id: 'summary', title: 'Récapitulatif', description: 'Vérifiez votre commande' }
+];
+
 export default function MenuEnfantsComposer({ isOpen, onClose, onAddToCart, product }: MenuEnfantsComposerProps) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [ingredients, setIngredients] = useState<Vegetable[]>([]);
   const [sauces, setSauces] = useState<Sauce[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedVegetables, setSelectedVegetables] = useState<string[]>([]);
   const [selectedSauce, setSelectedSauce] = useState<Sauce | null>(null);
   const [quantity, setQuantity] = useState(1);
 
   // Réinitialiser le formulaire quand il s'ouvre
   useEffect(() => {
     if (isOpen) {
+      setCurrentStep(0);
+      setSelectedVegetables([]);
       setSelectedSauce(null);
       setQuantity(1);
+      fetchIngredients();
       fetchSauces();
     }
   }, [isOpen]);
+
+  const fetchIngredients = async () => {
+    try {
+      const response = await fetch('/api/ingredients/vegetables');
+      const data = await response.json();
+      if (data.success) {
+        // Filtrer pour n'afficher que salade, tomate, oignons
+        const filteredVegetables = data.vegetables.filter((vegetable: Vegetable) => 
+          vegetable.name.toLowerCase().includes('salade') || 
+          vegetable.name.toLowerCase().includes('tomate') || 
+          vegetable.name.toLowerCase().includes('oignon')
+        );
+        setIngredients(filteredVegetables);
+      }
+    } catch (error) {
+      console.error('Error fetching vegetables:', error);
+    }
+  };
 
   const fetchSauces = async () => {
     try {
@@ -61,6 +97,27 @@ export default function MenuEnfantsComposer({ isOpen, onClose, onAddToCart, prod
     setSelectedSauce(null);
   };
 
+  const handleNext = () => {
+    if (currentStep < STEPS.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const canProceed = () => {
+    switch (currentStep) {
+      case 0: return true; // Les crudités sont optionnelles
+      case 1: return true; // Les sauces sont optionnelles
+      case 2: return true; // Le récapitulatif
+      default: return true;
+    }
+  };
+
   const handleAddToCart = () => {
     const cartItem = {
       _id: `menu-enfants-${Date.now()}`,
@@ -70,6 +127,7 @@ export default function MenuEnfantsComposer({ isOpen, onClose, onAddToCart, prod
       category: 'menu-enfants',
       type: 'menu',
       customIngredients: {
+        vegetables: selectedVegetables,
         sauce: selectedSauce,
         quantity: quantity
       }
@@ -80,6 +138,8 @@ export default function MenuEnfantsComposer({ isOpen, onClose, onAddToCart, prod
   };
 
   const handleClose = () => {
+    setCurrentStep(0);
+    setSelectedVegetables([]);
     setSelectedSauce(null);
     setQuantity(1);
     onClose();

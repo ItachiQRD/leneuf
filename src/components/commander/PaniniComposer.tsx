@@ -108,8 +108,16 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
     });
   };
 
-  const handleSauceToggle = (sauce: Ingredient) => {
+  const handleSauceToggle = (sauce: Ingredient | null) => {
     setSelectedIngredients(prev => {
+      if (sauce === null) {
+        // Décocher la sauce
+        return {
+          ...prev,
+          sauce: null
+        };
+      }
+      
       const isSelected = prev.sauce?._id === sauce._id;
       if (isSelected) {
         // Décocher la sauce
@@ -302,35 +310,58 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                 {currentStep === 1 && (
                   <div className="space-y-4">
                     <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Choisissez votre sauce (1 maximum)</h3>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-                      {sauces.map((sauce) => {
-                        const isSelected = selectedIngredients.sauce?._id === sauce._id;
-                        return (
-                          <motion.button
-                            key={sauce._id}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => handleSauceToggle(sauce)}
-                            className={`p-3 lg:p-4 border-2 rounded-lg text-left transition-colors relative overflow-hidden ${
-                              isSelected 
-                                ? 'border-orange-500 bg-orange-50' 
-                                : 'border-gray-200 hover:border-orange-300'
-                            }`}
-                          >
-                            <div className="relative w-full h-28 lg:h-36 mb-2 lg:mb-3">
-                              <Image
-                                src={sauce.image}
-                                alt={sauce.name}
-                                fill
-                                className="object-cover rounded-md"
-                              />
-                            </div>
-                            <h4 className="font-medium text-gray-900 text-sm lg:text-base">{sauce.name}</h4>
-                            <p className="text-xs lg:text-sm text-gray-600">Gratuit</p>
-                            {isSelected && <Check className="w-4 h-4 lg:w-5 lg:h-5 text-orange-500 absolute top-2 right-2" />}
-                          </motion.button>
-                        );
-                      })}
+                    <div className="space-y-4">
+                      {/* Grille responsive des sauces */}
+                      <div className={`grid gap-3 ${
+                        sauces.length <= 2 ? 'grid-cols-2' : 
+                        sauces.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' : 
+                        'grid-cols-2 lg:grid-cols-3'
+                      }`}>
+                        {/* Option "Sans sauce" - Alignée comme les crudités */}
+                        <button
+                          onClick={() => handleSauceToggle(null)}
+                          className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                            !selectedIngredients.sauce
+                              ? 'border-primary bg-primary/10 text-primary'
+                              : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                          }`}
+                        >
+                          <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </div>
+                          <span className="text-xs lg:text-sm text-center font-medium">Sans sauce</span>
+                        </button>
+                        
+                        {sauces.map((sauce) => {
+                          const isSelected = selectedIngredients.sauce?._id === sauce._id;
+                          return (
+                            <motion.button
+                              key={sauce._id}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => handleSauceToggle(sauce)}
+                              className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                                isSelected 
+                                  ? 'border-primary bg-primary/10 text-primary'
+                                  : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                              }`}
+                            >
+                              <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                                <Image
+                                  src={sauce.image}
+                                  alt={sauce.name}
+                                  width={64}
+                                  height={64}
+                                  className="object-contain rounded-lg"
+                                />
+                              </div>
+                              <span className="text-xs lg:text-sm text-center font-medium">{sauce.name}</span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 )}

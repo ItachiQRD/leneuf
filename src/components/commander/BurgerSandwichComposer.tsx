@@ -108,7 +108,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     breadType: 'pain' as string,
     selectedVegetables: [] as string[],
     withFries: true,
-    selectedSauce: null as Sauce | null,
+    selectedSauces: [] as Sauce[],
     selectedDrink: null as Drink | null,
     quantity: 1
   });
@@ -122,7 +122,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
         breadType: 'pain',
         selectedVegetables: [],
         withFries: true,
-        selectedSauce: null,
+        selectedSauces: [],
         selectedDrink: null,
         quantity: 1
       });
@@ -201,10 +201,25 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
 
 
   const handleSauceSelect = (sauce: Sauce) => {
-    setConfig(prev => ({
-      ...prev,
-      selectedSauce: sauce
-    }));
+    setConfig(prev => {
+      const isSelected = prev.selectedSauces.some(s => s._id === sauce._id);
+      let newSauces = [...prev.selectedSauces];
+      
+      if (isSelected) {
+        // Retirer la sauce
+        newSauces = newSauces.filter(s => s._id !== sauce._id);
+      } else {
+        // Ajouter la sauce si moins de 2
+        if (newSauces.length < 2) {
+          newSauces.push(sauce);
+        }
+      }
+      
+      return {
+        ...prev,
+        selectedSauces: newSauces
+      };
+    });
   };
 
   const handleDrinkSelect = (drink: Drink) => {
@@ -256,7 +271,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
         breadType: config.breadType,
         vegetables: config.selectedVegetables,
         withFries: config.withFries,
-        sauce: config.selectedSauce,
+        sauces: config.selectedSauces,
         drink: config.selectedDrink,
         quantity: config.quantity
       }
@@ -271,13 +286,13 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
     setConfig({
       menuOption: 'avec-frites',
       breadType: 'pain',
-      selectedVegetables: [],
-      withFries: true,
-      selectedSauce: null,
-      selectedDrink: null,
-      quantity: 1
-    });
-    onClose();
+        selectedVegetables: [],
+        withFries: true,
+        selectedSauces: [],
+        selectedDrink: null,
+        quantity: 1
+      });
+      onClose();
   };
 
   const canProceed = () => {
@@ -563,59 +578,63 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                   className="space-y-4"
                 >
                   <h3 className="text-base lg:text-xl font-semibold text-gray-900 mb-4">
-                    Sauce (optionnel)
+                    Sauce (optionnel, maximum 2)
                   </h3>
                   
-                  {/* Option "Aucune" */}
-                  <div
-                    onClick={() => setConfig(prev => ({ ...prev, selectedSauce: null }))}
-                    className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      !config.selectedSauce
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3 lg:mr-4">
-                        <X className="w-5 h-5 lg:w-6 lg:h-6 text-gray-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 text-sm lg:text-base">Sans sauce</h4>
-                        <p className="text-xs lg:text-sm text-gray-600">Pas de sauce</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Sauces disponibles */}
-                  <div className={`grid gap-3 ${
-                    sauces.length <= 2 ? 'grid-cols-2' : 
-                    sauces.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' : 
-                    'grid-cols-2 lg:grid-cols-3'
-                  }`}>
-                    {sauces.map((sauce) => (
-                      <div
-                        key={sauce._id}
-                        onClick={() => handleSauceSelect(sauce)}
-                        className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                          config.selectedSauce?._id === sauce._id
-                            ? 'border-green-500 bg-green-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                  <div className="space-y-4">
+                    {/* Grille responsive des sauces - S'adapte au nombre d'éléments */}
+                    <div className={`grid gap-3 ${
+                      sauces.length <= 2 ? 'grid-cols-2' : 
+                      sauces.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' : 
+                      'grid-cols-2 lg:grid-cols-3'
+                    }`}>
+                      {/* Option "Sans sauce" - Alignée comme les crudités */}
+                      <button
+                        onClick={() => setConfig(prev => ({ ...prev, selectedSauces: [] }))}
+                        className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                          config.selectedSauces.length === 0
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
                         }`}
                       >
-                        <div className="text-center">
-                          <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
-                            <Image
-                              src={sauce.image || '/images/placeholder-sauce.jpg'}
-                              alt={sauce.name}
-                              width={64}
-                              height={64}
-                              className="object-contain rounded-lg"
-                            />
-                          </div>
-                          <h4 className="font-medium text-gray-900 text-xs lg:text-sm">{sauce.name}</h4>
+                        <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
                         </div>
-                      </div>
-                    ))}
+                        <span className="text-xs lg:text-sm text-center font-medium">Sans sauce</span>
+                      </button>
+                      
+                      {sauces.map((sauce) => {
+                        const isSelected = config.selectedSauces.some(s => s._id === sauce._id);
+                        const canSelect = !isSelected && config.selectedSauces.length < 2;
+                        return (
+                          <button
+                            key={sauce._id}
+                            onClick={() => handleSauceSelect(sauce)}
+                            disabled={!canSelect && !isSelected}
+                            className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                              isSelected
+                                ? 'border-primary bg-primary/10 text-primary'
+                                : canSelect
+                                  ? 'border-gray-200 hover:border-gray-300 text-gray-700'
+                                  : 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
+                            }`}
+                          >
+                            <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                              <Image
+                                src={sauce.image || '/images/placeholder-sauce.jpg'}
+                                alt={sauce.name}
+                                width={64}
+                                height={64}
+                                className="object-contain rounded-lg"
+                              />
+                            </div>
+                            <span className="text-xs lg:text-sm text-center font-medium">{sauce.name}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -784,7 +803,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                       
                       <div className="flex justify-between">
                         <span>Sauce:</span>
-                        <span>{config.selectedSauce ? config.selectedSauce.name : 'Aucune'}</span>
+                        <span>{config.selectedSauces.length > 0 ? config.selectedSauces.map(s => s.name).join(', ') : 'Aucune'}</span>
                       </div>
                       
                       <div className="flex justify-between">

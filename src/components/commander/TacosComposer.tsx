@@ -60,6 +60,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
     meats: [] as SelectedMeat[],
     meatCounts: {} as Record<string, number>, // Pour compter les occurrences de chaque viande
     sauces: [] as SelectedSauce[],
+    noSauce: false, // Indicateur pour "Sans sauce"
     ingredients: [] as SelectedIngredient[],
     quantity: 1
   });
@@ -74,6 +75,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
         meats: [],
         meatCounts: {},
         sauces: [],
+        noSauce: false,
         ingredients: [],
         quantity: 1
       });
@@ -205,6 +207,11 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
 
   const handleSauceToggle = (sauce: any) => {
     setConfig(prev => {
+      // Si "Sans sauce" est activé, on ne peut pas sélectionner de sauces
+      if (prev.noSauce) {
+        return prev;
+      }
+      
       const isSelected = prev.sauces.some(s => s.id === sauce._id);
       let newSauces = [...prev.sauces];
       
@@ -230,6 +237,14 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       
       return { ...prev, sauces: newSauces };
     });
+  };
+  
+  const handleNoSauceToggle = () => {
+    setConfig(prev => ({
+      ...prev,
+      noSauce: !prev.noSauce,
+      sauces: prev.noSauce ? prev.sauces : [] // Vider les sauces si on active "Sans sauce"
+    }));
   };
 
   const handleIngredientToggle = (ingredient: any) => {
@@ -543,49 +558,66 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                 {currentStep === 3 && (
                   <div className="space-y-4">
                     <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">
-                      Choisissez vos sauces (1 minimum, 3 maximum)
+                      Choisissez vos sauces (3 maximum)
                     </h3>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-                      {options.sauces.map((sauce) => {
-                        const isSelected = config.sauces.some(s => s.id === sauce._id);
-                        const canSelect = !isSelected && config.sauces.length < 3;
-                        const canDeselect = isSelected && !sauce.name.toLowerCase().includes('fromagère');
+                    <div className="space-y-4">
+                      {/* Grille responsive des sauces */}
+                      <div className={`grid gap-3 ${
+                        options.sauces.length <= 2 ? 'grid-cols-2' : 
+                        options.sauces.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' : 
+                        'grid-cols-2 lg:grid-cols-3'
+                      }`}>
+                        {/* Option "Sans sauce" - Alignée comme les crudités */}
+                        <button
+                          onClick={handleNoSauceToggle}
+                          className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                            config.noSauce
+                              ? 'border-primary bg-primary/10 text-primary'
+                              : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                          }`}
+                        >
+                          <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </div>
+                          <span className="text-xs lg:text-sm text-center font-medium">Sans sauce</span>
+                        </button>
                         
-                        return (
-                          <motion.button
-                            key={sauce._id}
-                            whileHover={{ scale: (canSelect || canDeselect) ? 1.02 : 1 }}
-                            whileTap={{ scale: (canSelect || canDeselect) ? 0.98 : 1 }}
-                            onClick={() => (canSelect || canDeselect) && handleSauceToggle(sauce)}
-                            disabled={!canSelect && !canDeselect}
-                            className={`p-3 lg:p-4 border-2 rounded-lg text-left transition-colors ${
-                              isSelected 
-                                ? 'border-orange-500 bg-orange-50' 
-                                : canSelect
-                                  ? 'border-gray-200 hover:border-orange-300'
-                                  : 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
-                            }`}
-                          >
-                            <div className="relative w-full h-16 lg:h-20 mb-2">
-                              <Image
-                                src={sauce.image}
-                                alt={sauce.name}
-                                fill
-                                className="object-cover rounded-md"
-                              />
-                            </div>
-                            <h4 className="font-medium text-gray-900 text-xs lg:text-sm">{sauce.name}</h4>
-                            <p className="text-xs text-gray-600">Gratuit</p>
-                            {isSelected && <Check className="w-3 h-3 lg:w-4 lg:h-4 text-orange-500 absolute top-2 right-2" />}
-                          </motion.button>
-                        );
-                      })}
-                    </div>
-                    
-                    {/* Option sans sauces */}
-                    <div className="mt-4 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
-                      <p className="text-gray-600">Pas de sauces ?</p>
-                      <p className="text-sm text-gray-500">Vous devez sélectionner au moins une sauce</p>
+                        {options.sauces.map((sauce) => {
+                          const isSelected = config.sauces.some(s => s.id === sauce._id);
+                          const canSelect = !isSelected && !config.noSauce && config.sauces.length < 3;
+                          const canDeselect = isSelected && !config.noSauce && !sauce.name.toLowerCase().includes('fromagère');
+                          
+                          return (
+                            <motion.button
+                              key={sauce._id}
+                              whileHover={{ scale: (canSelect || canDeselect) ? 1.02 : 1 }}
+                              whileTap={{ scale: (canSelect || canDeselect) ? 0.98 : 1 }}
+                              onClick={() => (canSelect || canDeselect) && handleSauceToggle(sauce)}
+                              disabled={!canSelect && !canDeselect}
+                              className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                                isSelected 
+                                  ? 'border-primary bg-primary/10 text-primary'
+                                  : canSelect
+                                    ? 'border-gray-200 hover:border-gray-300 text-gray-700'
+                                    : 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
+                              }`}
+                            >
+                              <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                                <Image
+                                  src={sauce.image}
+                                  alt={sauce.name}
+                                  width={64}
+                                  height={64}
+                                  className="object-contain rounded-lg"
+                                />
+                              </div>
+                              <span className="text-xs lg:text-sm text-center font-medium">{sauce.name}</span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 )}

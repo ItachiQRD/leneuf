@@ -470,49 +470,77 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                       'grid-cols-2 lg:grid-cols-3'
                     }`}>
                       {/* Option "Sans sauce" - Alignée comme les crudités */}
-                      <button
+                      <motion.button
                         onClick={() => setConfig(prev => ({ ...prev, selectedSauces: [] }))}
-                        className={`flex flex-col items-center p-2 transition-all duration-200 ${
-                          config.selectedSauces.length === 0
-                            ? 'opacity-100'
-                            : 'opacity-70 hover:opacity-100'
-                        }`}
+                        whileHover={{ scale: 1.08, y: -5 }}
+                        whileTap={{ scale: 0.95 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: config.selectedSauces.length === 0 ? 1 : 0.8, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex flex-col items-center p-3 transition-all duration-200 hover:opacity-100"
                       >
-                        <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center">
-                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <motion.div 
+                          className={`w-28 h-28 lg:w-32 lg:h-32 mb-2 lg:mb-3 flex items-center justify-center rounded-lg ${
+                            config.selectedSauces.length === 0 ? 'ring-2 ring-primary' : 'ring-1 ring-gray-200'
+                          }`}
+                          animate={config.selectedSauces.length === 0 ? { 
+                            scale: [1, 1.1, 1],
+                            rotate: [0, 5, -5, 0]
+                          } : {}}
+                          transition={{ 
+                            duration: 0.4,
+                            ease: "easeInOut"
+                          }}
+                          whileHover={{ scale: 1.1 }}
+                        >
+                          <svg className="w-12 h-12 lg:w-14 lg:h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
-                        </div>
+                        </motion.div>
                         <span className="text-xs lg:text-sm text-center font-medium">Sans sauce</span>
-                      </button>
+                      </motion.button>
                       
                       {sauces.map((sauce) => {
                         const isSelected = config.selectedSauces.some(s => s._id === sauce._id);
                         const canSelect = !isSelected && config.selectedSauces.length < 2;
                         return (
-                          <button
+                          <motion.button
                             key={sauce._id}
                             onClick={() => handleSauceSelect(sauce)}
                             disabled={!canSelect && !isSelected}
-                            className={`flex flex-col items-center p-2 transition-all duration-200 ${
-                              isSelected
-                                ? 'opacity-100'
-                                : canSelect
-                                  ? 'opacity-70 hover:opacity-100'
-                                  : 'opacity-30 cursor-not-allowed'
+                            whileHover={canSelect || isSelected ? { scale: 1.08, y: -5 } : {}}
+                            whileTap={canSelect || isSelected ? { scale: 0.95 } : {}}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: isSelected ? 1 : (canSelect ? 0.8 : 0.3), y: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className={`flex flex-col items-center p-3 transition-all duration-200 ${
+                              canSelect || isSelected ? 'hover:opacity-100' : ''
                             }`}
                           >
-                            <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center">
+                            <motion.div 
+                              className={`w-28 h-28 lg:w-32 lg:h-32 mb-2 lg:mb-3 flex items-center justify-center rounded-lg ${
+                                isSelected ? 'ring-2 ring-primary' : 'ring-1 ring-gray-200'
+                              }`}
+                              animate={isSelected ? { 
+                                scale: [1, 1.1, 1],
+                                rotate: [0, 5, -5, 0]
+                              } : {}}
+                              transition={{ 
+                                duration: 0.4,
+                                ease: "easeInOut"
+                              }}
+                              whileHover={canSelect || isSelected ? { scale: 1.1 } : {}}
+                            >
                               <Image
                                 src={sauce.image || '/images/placeholder-sauce.jpg'}
                                 alt={sauce.name}
-                                width={64}
-                                height={64}
+                                width={128}
+                                height={128}
                                 className="object-contain"
                               />
-                            </div>
+                            </motion.div>
                             <span className="text-xs lg:text-sm text-center font-medium">{sauce.name}</span>
-                          </button>
+                          </motion.button>
                         );
                       })}
                     </div>
@@ -554,7 +582,11 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                   </div>
 
                   {/* Boissons disponibles */}
-                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                  <div className={`grid gap-3 ${
+                    getDrinkOptions().length <= 2 ? 'grid-cols-2' : 
+                    getDrinkOptions().length <= 4 ? 'grid-cols-2 lg:grid-cols-4' : 
+                    'grid-cols-2 lg:grid-cols-3'
+                  }`}>
                     {getDrinkOptions().map((drink) => {
                       const currentCount = config.drinkCounts[drink._id] || 0;
                       const maxDrinks = getMaxDrinks();
@@ -563,31 +595,45 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                       const isSelected = currentCount > 0;
                       
                       return (
-                        <div
+                        <motion.button
                           key={drink._id}
                           onClick={() => handleDrinkToggle(drink)}
-                          className={`p-3 lg:p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                            isSelected
-                              ? 'border-green-500 bg-green-50'
-                              : canAdd
-                              ? 'border-gray-200 hover:border-gray-300'
-                              : 'border-gray-200 opacity-50 cursor-not-allowed'
+                          disabled={!canAdd && !isSelected}
+                          whileHover={canAdd || isSelected ? { scale: 1.08, y: -5 } : {}}
+                          whileTap={canAdd || isSelected ? { scale: 0.95 } : {}}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: isSelected ? 1 : (canAdd ? 0.8 : 0.3), y: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className={`flex flex-col items-center p-3 transition-all duration-200 ${
+                            canAdd || isSelected ? 'hover:opacity-100' : ''
                           }`}
                         >
-                          <div className="text-center">
-                          <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                          <motion.div 
+                            className={`w-28 h-28 lg:w-32 lg:h-32 mb-2 lg:mb-3 flex items-center justify-center rounded-lg ${
+                              isSelected ? 'ring-2 ring-primary' : 'ring-1 ring-gray-200'
+                            }`}
+                            animate={isSelected ? { 
+                              scale: [1, 1.1, 1],
+                              rotate: [0, 5, -5, 0]
+                            } : {}}
+                            transition={{ 
+                              duration: 0.4,
+                              ease: "easeInOut"
+                            }}
+                            whileHover={canAdd || isSelected ? { scale: 1.1 } : {}}
+                          >
                             <Image
                               src={drink.image || '/images/placeholder-drink.jpg'}
                               alt={drink.name}
-                              width={48}
-                              height={48}
-                              className="max-w-full max-h-full object-contain"
+                              width={128}
+                              height={128}
+                              className="object-contain"
                             />
-                          </div>
-                          <h4 className="font-medium text-gray-900 text-xs lg:text-sm">{drink.name}</h4>
-                          <p className="text-xs lg:text-sm text-gray-600">
+                          </motion.div>
+                          <span className="text-xs lg:text-sm text-center font-medium">{drink.name}</span>
+                          <span className="text-xs text-gray-500 mt-1">
                             {product?.name.toLowerCase().includes('20 pièces') ? '1.5L' : '33cl'}
-                          </p>
+                          </span>
                           {currentCount > 0 && (
                             <div className="mt-1 flex items-center justify-center space-x-1">
                               <button
@@ -622,7 +668,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                               >
                                 -
                               </button>
-                              <span className="text-sm font-bold text-green-600">{currentCount}</span>
+                              <span className="text-sm font-bold text-primary">{currentCount}</span>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -654,7 +700,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                                 disabled={!canAdd}
                                 className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
                                   canAdd 
-                                    ? 'bg-green-500 text-white hover:bg-green-600' 
+                                    ? 'bg-primary text-white hover:bg-primary/80' 
                                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                 }`}
                               >
@@ -662,8 +708,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                               </button>
                             </div>
                           )}
-                        </div>
-                      </div>
+                        </motion.button>
                       );
                     })}
                   </div>

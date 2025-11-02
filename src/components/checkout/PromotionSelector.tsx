@@ -195,25 +195,6 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
               Aucune promotion disponible pour votre panier actuel
             </p>
             
-            {/* Debug info */}
-            <div className="bg-gray-50 rounded-lg p-4 text-left mb-4">
-              <h4 className="font-semibold text-gray-800 mb-2">
-                🔍 Debug - Contenu du panier :
-              </h4>
-              <div className="text-sm text-gray-600 space-y-1">
-                {items.length === 0 ? (
-                  <p>Panier vide</p>
-                ) : (
-                  items.map((item, index) => (
-                    <div key={index} className="flex justify-between">
-                      <span>{item.name}</span>
-                      <span>{item.price}€ x{item.quantity}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-            
             <div className="bg-blue-50 rounded-lg p-4 text-left">
               <h4 className="font-semibold text-blue-800 mb-2">
                 💡 Comment bénéficier des promotions ?

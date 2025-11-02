@@ -113,7 +113,7 @@ export default function MenuOffers() {
             </h2>
           </div>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Découvrez nos menus complets à prix avantageux, parfaits pour partager en famille ou entre amis
+            Profitez de nos promotions exclusives
           </p>
         </motion.div>
 
@@ -124,15 +124,6 @@ export default function MenuOffers() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-12"
         >
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              🎉 Offres Spéciales
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Profitez de nos promotions exclusives
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {staticOffers.map((offer, index) => (
               <motion.div
@@ -140,9 +131,9 @@ export default function MenuOffers() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ${offer.bgColor} dark:bg-gray-800 border-2 border-dashed border-gray-300 hover:border-gray-400`}
+                className={`relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ${offer.bgColor} dark:bg-gray-800 border-2 border-dashed border-gray-300 hover:border-gray-400 flex flex-col h-full`}
               >
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-grow">
                   <div className="flex items-center mb-4">
                     <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${offer.color} flex items-center justify-center mr-4`}>
                       <offer.icon className="w-6 h-6 text-white" />
@@ -158,14 +149,14 @@ export default function MenuOffers() {
                     {offer.description}
                   </p>
 
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">
                     {offer.condition}
                   </p>
 
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r ${offer.color} hover:shadow-lg transition-all duration-200`}
+                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r ${offer.color} hover:shadow-lg transition-all duration-200 mt-auto`}
                     onClick={() => {
                       // Logique pour appliquer l'offre
                       alert(`Offre "${offer.title}" sera appliquée après la confirmation du panier. Les conditions seront vérifiées lors de la commande.`);
@@ -178,58 +169,6 @@ export default function MenuOffers() {
             ))}
           </div>
         </motion.div>
-
-        {/* Grille des menus */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {menuOffers.map((offer, index) => (
-            <motion.div
-              key={offer.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="relative group"
-            >
-              {/* Carte de l'offre */}
-              <div className={`relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 group-hover:scale-105 ${offer.bgColor} dark:bg-gray-800`}>
-                {/* Header avec gradient */}
-                <div className={`h-24 bg-gradient-to-r ${offer.color} relative`}>
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                  <div className="relative h-full flex items-center justify-center">
-                    <offer.icon className="w-12 h-12 text-white" />
-                  </div>
-                </div>
-
-                {/* Contenu */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className={`text-xl font-bold ${offer.textColor} dark:text-white`}>
-                      {offer.title}
-                    </h3>
-                    <div className={`text-2xl font-bold ${offer.textColor} dark:text-white`}>
-                      {offer.price}
-                    </div>
-                  </div>
-
-                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
-                    {offer.description}
-                  </p>
-
-                  {/* Bouton d'action */}
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r ${offer.color} hover:shadow-lg transition-all duration-200`}
-                  >
-                    Commander maintenant
-                  </motion.button>
-                </div>
-
-                {/* Effet de brillance au survol */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 group-hover:animate-pulse"></div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
 
         {/* Section d'informations supplémentaires */}
         <motion.div

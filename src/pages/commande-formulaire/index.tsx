@@ -72,7 +72,7 @@ export default function CommandeFormulairePage() {
           price: item.price,
           image: item.image,
           options: item.options || [],
-          customIngredients: item.customIngredients || null
+          customIngredients: item.config || item.customIngredients || null
         })),
         total: finalTotal,
         status: 'pending',

@@ -716,6 +716,29 @@ function OrderDetailModal({
 
     const details = [];
 
+    // Informations pour menus pizzas
+    if (customIngredients.menuId || customIngredients.menuName) {
+      if (customIngredients.pizzas && customIngredients.pizzas.length > 0) {
+        customIngredients.pizzas.forEach((pizza: any) => {
+          details.push(`${pizza.quantity}x ${pizza.name}`);
+        });
+      }
+      
+      if (customIngredients.drinks && customIngredients.drinks.length > 0) {
+        customIngredients.drinks.forEach((drink: any) => {
+          details.push(`${drink.quantity}x ${drink.name}`);
+        });
+      }
+      
+      if (customIngredients.petiteFaim) {
+        details.push(`6x ${customIngredients.petiteFaim.name}`);
+      }
+      
+      if (customIngredients.brownies) {
+        details.push(`${customIngredients.brownies.quantity}x ${customIngredients.brownies.name} (inclus)`);
+      }
+    }
+
     // Informations de base pour burgers/sandwichs
     if (customIngredients.menuOption) {
       details.push(`Menu: ${customIngredients.menuOption}`);

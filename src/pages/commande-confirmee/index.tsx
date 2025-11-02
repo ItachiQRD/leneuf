@@ -244,7 +244,48 @@ export default function CommandeConfirmeePage() {
                     <div className="text-sm text-gray-600 dark:text-gray-400">
                       Quantité: {item.quantity} × {item.price.toFixed(2)} €
                     </div>
-                    {item.options && (
+                    {/* Afficher les détails du menu pizza si config existe */}
+                    {(item.config || item.customIngredients?.menuId) && (
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1 space-y-0.5">
+                        {(() => {
+                          const config = item.config || item.customIngredients;
+                          if (!config) return null;
+                          
+                          const details: string[] = [];
+                          
+                          // Pizzas
+                          if (config.pizzas && config.pizzas.length > 0) {
+                            config.pizzas.forEach((pizza: any) => {
+                              details.push(`${pizza.quantity}x ${pizza.name}`);
+                            });
+                          }
+                          
+                          // Boissons
+                          if (config.drinks && config.drinks.length > 0) {
+                            config.drinks.forEach((drink: any) => {
+                              details.push(`${drink.quantity}x ${drink.name}`);
+                            });
+                          }
+                          
+                          // Nuggets/Wings
+                          if (config.petiteFaim) {
+                            details.push(`6x ${config.petiteFaim.name}`);
+                          }
+                          
+                          // Brownies
+                          if (config.brownies) {
+                            details.push(`${config.brownies.quantity}x ${config.brownies.name} (inclus)`);
+                          }
+                          
+                          return details.length > 0 ? (
+                            details.map((detail, idx) => (
+                              <div key={idx} className="text-xs">• {detail}</div>
+                            ))
+                          ) : null;
+                        })()}
+                      </div>
+                    )}
+                    {item.options && !item.config && !item.customIngredients?.menuId && (
                       <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                         {item.options.customIngredients ? 'Produit personnalisé' : 'Avec options'}
                       </div>

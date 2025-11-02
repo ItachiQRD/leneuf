@@ -64,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           quantity: item.quantity || 1,
           price: item.price || 0,
           options: item.options || [],
-          customIngredients: item.customIngredients || null
+          customIngredients: item.config || item.customIngredients || null
         })),
         total: total || 0,
         status: status || 'pending',

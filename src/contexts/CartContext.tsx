@@ -11,6 +11,7 @@ interface CartItem {
   image?: string;
   customIngredients?: any; // Pour les compositions personnalisées (tacos, paninis)
   options?: any[]; // Pour les options sélectionnées (sauces, boissons, etc.)
+  config?: any; // Pour les menus pizzas avec tous les détails (pizzas, boissons, nuggets/wings, brownies)
 }
 
 interface CartContextType {

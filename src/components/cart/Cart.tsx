@@ -98,6 +98,48 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                                     <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
                                       {item.name}
                                     </h4>
+                                    {/* Afficher les détails du menu pizza si config existe */}
+                                    {(item.config || item.customIngredients?.menuId) && (
+                                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1 space-y-0.5">
+                                        {(() => {
+                                          const config = item.config || item.customIngredients;
+                                          if (!config) return null;
+                                          
+                                          const details: string[] = [];
+                                          
+                                          // Pizzas
+                                          if (config.pizzas && config.pizzas.length > 0) {
+                                            config.pizzas.forEach((pizza: any) => {
+                                              details.push(`${pizza.quantity}x ${pizza.name}`);
+                                            });
+                                          }
+                                          
+                                          // Boissons
+                                          if (config.drinks && config.drinks.length > 0) {
+                                            config.drinks.forEach((drink: any) => {
+                                              details.push(`${drink.quantity}x ${drink.name}`);
+                                            });
+                                          }
+                                          
+                                          // Nuggets/Wings
+                                          if (config.petiteFaim) {
+                                            details.push(`6x ${config.petiteFaim.name}`);
+                                          }
+                                          
+                                          // Brownies
+                                          if (config.brownies) {
+                                            details.push(`${config.brownies.quantity}x ${config.brownies.name} (inclus)`);
+                                          }
+                                          
+                                          return details.length > 0 ? (
+                                            <div className="text-xs">
+                                              {details.slice(0, 2).join(', ')}
+                                              {details.length > 2 && ` +${details.length - 2} autres`}
+                                            </div>
+                                          ) : null;
+                                        })()}
+                                      </div>
+                                    )}
                                     <p className="text-sm text-gray-500 dark:text-gray-400">
                                       {(item.price * item.quantity).toFixed(2)} €
                                     </p>

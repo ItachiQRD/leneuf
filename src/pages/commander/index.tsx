@@ -1389,9 +1389,6 @@ export default function CommanderPage() {
                         />
                       </div>
                       <h4 className="font-medium text-gray-900 text-sm">{sauce.name}</h4>
-                      <p className="text-xs text-gray-600 mt-1">
-                        {productForSize.selectedSize.price.toFixed(2)} €
-                      </p>
                     </div>
                   </button>
                   ))}

@@ -297,7 +297,6 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                               />
                             </div>
                             <h4 className="font-medium text-gray-900 text-sm lg:text-base">{ingredient.name}</h4>
-                            <p className="text-xs lg:text-sm text-gray-600">{ingredient.price}€</p>
                             {isSelected && <Check className="w-4 h-4 lg:w-5 lg:h-5 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>
                         );
@@ -413,7 +412,6 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
                         {selectedIngredients.baseIngredients.map((ingredient, index) => (
                           <div key={index} className="flex justify-between">
                             <span>{ingredient.name}</span>
-                            <span>{ingredient.price}€</span>
                           </div>
                         ))}
                         {selectedIngredients.sauce && (

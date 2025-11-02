@@ -408,13 +408,13 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                         <button
                           key={ingredient._id}
                           onClick={() => handleIngredientSelect(ingredient)}
-                          className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                          className={`flex flex-col items-center p-2 transition-all duration-200 ${
                             isSelected
-                              ? 'border-primary bg-primary/10 text-primary'
-                              : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                              ? 'opacity-100'
+                              : 'opacity-70 hover:opacity-100'
                           }`}
                         >
-                          <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                          <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center">
                             <Image
                               src={ingredient.image}
                               alt={ingredient.name}
@@ -454,13 +454,13 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                       {/* Option "Sans sauce" - Alignée comme les crudités */}
                       <button
                         onClick={() => setConfig(prev => ({ ...prev, selectedSauces: [] }))}
-                        className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                        className={`flex flex-col items-center p-2 transition-all duration-200 ${
                           config.selectedSauces.length === 0
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                            ? 'opacity-100'
+                            : 'opacity-70 hover:opacity-100'
                         }`}
                       >
-                        <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                        <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center">
                           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
@@ -476,21 +476,21 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                             key={sauce._id}
                             onClick={() => handleSauceSelect(sauce)}
                             disabled={!canSelect && !isSelected}
-                            className={`flex flex-col items-center p-3 lg:p-4 border-2 rounded-xl transition-all duration-200 ${
+                            className={`flex flex-col items-center p-2 transition-all duration-200 ${
                               isSelected
-                                ? 'border-primary bg-primary/10 text-primary'
+                                ? 'opacity-100'
                                 : canSelect
-                                  ? 'border-gray-200 hover:border-gray-300 text-gray-700'
-                                  : 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
+                                  ? 'opacity-70 hover:opacity-100'
+                                  : 'opacity-30 cursor-not-allowed'
                             }`}
                           >
-                            <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
+                            <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center">
                               <Image
                                 src={sauce.image || '/images/placeholder-sauce.jpg'}
                                 alt={sauce.name}
                                 width={64}
                                 height={64}
-                                className="object-contain rounded-lg"
+                                className="object-contain"
                               />
                             </div>
                             <span className="text-xs lg:text-sm text-center font-medium">{sauce.name}</span>

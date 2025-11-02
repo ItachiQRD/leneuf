@@ -520,7 +520,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                               />
                             </div>
                             <h4 className="font-medium text-gray-900 text-sm lg:text-base">{meat.name}</h4>
-                            <p className="text-xs lg:text-sm text-gray-600">Gratuit</p>
+                            <p className="text-xs lg:text-sm text-gray-600">Inclus</p>
                             {currentCount > 0 && (
                               <div className="mt-1 flex items-center justify-center space-x-1">
                                 <button
@@ -681,7 +681,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                           return meat ? (
                             <div key={meatId} className="flex justify-between">
                               <span>Viande : {meat.name} {count > 1 ? `(x${count})` : ''}</span>
-                              <span>Gratuit</span>
+                              <span>Inclus</span>
                             </div>
                           ) : null;
                         })}

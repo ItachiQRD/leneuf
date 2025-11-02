@@ -338,6 +338,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       meats: [],
       meatCounts: {},
       sauces: [],
+      noSauce: false,
       ingredients: [],
       quantity: 1
     });

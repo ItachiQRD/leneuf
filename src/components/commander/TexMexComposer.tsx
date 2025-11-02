@@ -609,7 +609,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                           }`}
                         >
                           <motion.div 
-                            className={`w-28 h-28 lg:w-32 lg:h-32 mb-2 lg:mb-3 flex items-center justify-center rounded-lg ${
+                            className={`w-28 h-28 lg:w-32 lg:h-32 mb-2 lg:mb-3 flex items-center justify-center rounded-lg overflow-hidden ${
                               isSelected ? 'ring-2 ring-primary' : 'ring-1 ring-gray-200'
                             }`}
                             animate={isSelected ? { 
@@ -622,13 +622,15 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                             }}
                             whileHover={canAdd || isSelected ? { scale: 1.1 } : {}}
                           >
-                            <Image
-                              src={drink.image || '/images/placeholder-drink.jpg'}
-                              alt={drink.name}
-                              width={128}
-                              height={128}
-                              className="object-contain"
-                            />
+                            <div className="relative w-full h-full">
+                              <Image
+                                src={drink.image || '/images/placeholder-drink.jpg'}
+                                alt={drink.name}
+                                fill
+                                className="object-contain p-2"
+                                sizes="(max-width: 768px) 112px, 128px"
+                              />
+                            </div>
                           </motion.div>
                           <span className="text-xs lg:text-sm text-center font-medium">{drink.name}</span>
                           <span className="text-xs text-gray-500 mt-1">

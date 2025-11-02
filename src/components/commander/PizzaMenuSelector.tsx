@@ -171,7 +171,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
       _id: `pizza-menu-${menu.id}-${Date.now()}`,
       name: menu.name,
       price: calculatePrice(),
-      image: menu.image,
+      image: '/images/menu/pizza-menu.jpeg',
       category: 'pizza-menu',
       type: 'food' as const,
       config

@@ -114,9 +114,10 @@ export default function CommandeFormulairePage() {
         
         // Nettoyer les données temporaires
         localStorage.removeItem('customerData');
+        localStorage.removeItem('orderType');
         
-        // Rediriger vers la page de confirmation
-        router.push('/commande-confirmee');
+        // Rediriger vers l'accueil avec un message de succès
+        router.push('/?orderSuccess=true');
       } else {
         const errorData = await response.json();
         alert(`Erreur lors de la commande: ${errorData.error || 'Erreur inconnue'}`);

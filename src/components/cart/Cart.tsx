@@ -26,8 +26,12 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   };
 
   const handleCheckout = () => {
-    // Afficher le modal pour choisir le type de commande
-    setShowOrderTypeModal(true);
+    // Fermer le panier d'abord
+    onClose();
+    // Afficher le modal pour choisir le type de commande après un court délai
+    setTimeout(() => {
+      setShowOrderTypeModal(true);
+    }, 300);
   };
 
   const handleOrderTypeSelect = (type: 'delivery' | 'pickup') => {

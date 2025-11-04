@@ -1,9 +1,13 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRight, Utensils, Clock, Award, Star, MapPin, Phone, Navigation, Calendar, Users, Heart, ChefHat, Pizza, Wine, Coffee } from 'lucide-react';
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
+import { ChevronRight, Utensils, Clock, Award, Star, MapPin, Phone, Navigation, Calendar, Users, Heart, ChefHat, Pizza, Wine, Coffee, CheckCircle } from 'lucide-react';
 import SmartImage from '@/components/common/SmartImage';
 import MenuOffers from '@/components/menu/MenuOffers';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -20,6 +24,18 @@ const staggerContainer = {
 };
 
 export default function Home() {
+  const router = useRouter();
+  const [showOrderSuccess, setShowOrderSuccess] = useState(false);
+
+  // Vérifier si on vient d'une commande réussie
+  useEffect(() => {
+    if (router.query.orderSuccess === 'true') {
+      setShowOrderSuccess(true);
+      // Nettoyer l'URL
+      router.replace('/', undefined, { shallow: true });
+    }
+  }, [router.query, router]);
+
   // Slogans proposés pour la section Hero
   const heroSlogans = [
     "L'art culinaire à son apogée",
@@ -82,6 +98,62 @@ export default function Home() {
   ];
 
   return (
+    <>
+      {/* Modal de succès de commande */}
+      <Transition show={showOrderSuccess} as={Fragment}>
+        <Dialog onClose={() => setShowOrderSuccess(false)} className="relative z-50">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-8 text-center shadow-xl transition-all">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    className="flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mb-6"
+                  >
+                    <CheckCircle className="w-12 h-12 text-white" />
+                  </motion.div>
+
+                  <Dialog.Title className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                    Commande confirmée !
+                  </Dialog.Title>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">
+                    Votre commande a été prise en compte et sera préparée dans les plus brefs délais.
+                  </p>
+                  <button
+                    onClick={() => setShowOrderSuccess(false)}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-all font-medium"
+                  >
+                    Parfait
+                  </button>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
     <div className="flex flex-col min-h-screen bg-white">
       {/* Hero Section - Design Minimaliste Élégant */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-800">
@@ -613,5 +685,6 @@ export default function Home() {
         </div>
       </section>
     </div>
+    </>
   );
 }

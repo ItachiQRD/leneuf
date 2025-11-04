@@ -27,7 +27,6 @@ const publicRoutes = [
   '/contact',
   '/checkout',
   '/commande-formulaire',
-  '/commande-confirmee',
   '/api/public',
   '/api/menu',
   '/api/products',

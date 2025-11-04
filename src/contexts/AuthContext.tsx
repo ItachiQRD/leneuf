@@ -33,7 +33,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       '/promos',
       '/checkout',
       '/commande-formulaire',
-      '/commande-confirmee'
     ];
     
     // Vérifier si la route actuelle est publique

@@ -25,6 +25,8 @@ import { Select } from '@/components/ui/Select';
 import { Modal } from '@/components/ui/Modal';
 import { useAuth } from '@/contexts/AuthContext';
 import { OrderTicket } from '@/components/admin/OrderTicket';
+import OrderNotification from '@/components/admin/OrderNotification';
+import { useRouter } from 'next/router';
 
 // Fonction utilitaire pour formater les noms de produits
 const formatProductName = (item: any) => {
@@ -137,6 +139,7 @@ const paymentStatusConfig = {
 
 export default function AdminOrdersPage() {
   const { isAuthenticated, user } = useAuth();
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -148,12 +151,45 @@ export default function AdminOrdersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [updating, setUpdating] = useState(false);
+  const [newOrderNotification, setNewOrderNotification] = useState<Order | null>(null);
+  const [showNotification, setShowNotification] = useState(false);
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchOrders();
     }
   }, [isAuthenticated, currentPage, statusFilter]);
+
+  // Polling pour détecter les nouvelles commandes
+  useEffect(() => {
+    if (!isAuthenticated || !user?.isAdmin) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await fetch('/api/admin/orders?limit=1&status=pending');
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.length > 0) {
+          const latestOrder = data.data[0];
+          
+          // Si c'est une nouvelle commande (différente de la dernière)
+          if (latestOrder._id !== lastOrderId && latestOrder.status === 'pending') {
+            setNewOrderNotification(latestOrder);
+            setShowNotification(true);
+            setLastOrderId(latestOrder._id);
+            
+            // Rafraîchir la liste des commandes
+            fetchOrders();
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors du polling des commandes:', error);
+      }
+    }, 5000); // Vérifier toutes les 5 secondes
+
+    return () => clearInterval(pollInterval);
+  }, [isAuthenticated, user, lastOrderId]);
 
   const fetchOrders = async () => {
     try {
@@ -170,6 +206,11 @@ export default function AdminOrdersPage() {
       if (data.success) {
         setOrders(data.data);
         setTotalPages(data.pagination.total);
+        
+        // Mettre à jour lastOrderId avec la commande la plus récente si c'est la première fois
+        if (data.data && data.data.length > 0 && !lastOrderId) {
+          setLastOrderId(data.data[0]._id);
+        }
       } else {
         setError(data.message || 'Erreur lors du chargement des commandes');
       }
@@ -681,6 +722,20 @@ export default function AdminOrdersPage() {
             onClose={() => {
               setShowTicket(false);
               setSelectedOrder(null);
+            }}
+          />
+        )}
+
+        {/* Notification de nouvelle commande */}
+        {newOrderNotification && (
+          <OrderNotification
+            isOpen={showNotification}
+            order={newOrderNotification}
+            onClose={() => {
+              setShowNotification(false);
+            }}
+            onViewOrder={() => {
+              router.push('/admin/orders');
             }}
           />
         )}

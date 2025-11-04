@@ -21,7 +21,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       '/commander': 'Commander',
       '/checkout': 'Checkout',
       '/commande-formulaire': 'Formulaire de commande',
-      '/commande-confirmee': 'Commande confirmée',
       '/contact': 'Contact',
       '/a-propos': 'À propos',
     };

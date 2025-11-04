@@ -8,18 +8,26 @@ interface DeliveryFormProps {
   onSubmit: (data: CustomerData) => void;
   isLoading?: boolean;
   onShowAccountModal?: () => void;
+  orderType?: 'delivery' | 'pickup';
 }
 
-export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccountModal }: DeliveryFormProps) {
+export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccountModal, orderType = 'delivery' }: DeliveryFormProps) {
   const { customerData, updateCustomerData } = useCustomerData();
   const [formData, setFormData] = useState<CustomerData>(customerData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
+  const [isAddressConfirmed, setIsAddressConfirmed] = useState(false);
 
   // Mettre à jour le formulaire quand les données des cookies changent
   useEffect(() => {
     setFormData(customerData);
-  }, [customerData]);
+    // Si l'adresse est déjà en session, la pré-remplir mais ne pas la confirmer automatiquement
+    if (customerData.address && orderType === 'delivery') {
+      // Réinitialiser la confirmation pour forcer la sélection
+      setIsAddressConfirmed(false);
+      setSelectedAddress(null);
+    }
+  }, [customerData, orderType]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -34,10 +42,12 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
       newErrors.phone = 'Le numéro de téléphone n\'est pas valide';
     }
 
-    if (!formData.address.trim()) {
-      newErrors.address = 'L\'adresse est requise';
-    } else if (!selectedAddress) {
-      newErrors.address = 'Veuillez sélectionner une adresse valide dans la liste';
+    if (orderType === 'delivery') {
+      if (!formData.address.trim()) {
+        newErrors.address = 'L\'adresse est requise';
+      } else if (!selectedAddress || !isAddressConfirmed) {
+        newErrors.address = 'Veuillez sélectionner et confirmer une adresse valide dans la liste';
+      }
     }
 
     setErrors(newErrors);
@@ -61,6 +71,7 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
 
   const handleAddressSelect = (address: any) => {
     setSelectedAddress(address);
+    setIsAddressConfirmed(true);
     // Effacer l'erreur d'adresse si elle existe
     if (errors.address) {
       setErrors(prev => ({
@@ -87,7 +98,7 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        Informations de livraison
+        {orderType === 'pickup' ? 'Informations de commande' : 'Informations de livraison'}
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">

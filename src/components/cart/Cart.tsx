@@ -1,10 +1,11 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { X, Plus, Minus, Trash2, UserPlus } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
 import Link from 'next/link';
+import OrderTypeModal from '@/components/checkout/OrderTypeModal';
 
 interface CartProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface CartProps {
 export default function Cart({ isOpen, onClose }: CartProps) {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount } = useCart();
   const { isAuthenticated } = useAuth();
+  const [showOrderTypeModal, setShowOrderTypeModal] = useState(false);
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -24,6 +26,13 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   };
 
   const handleCheckout = () => {
+    // Afficher le modal pour choisir le type de commande
+    setShowOrderTypeModal(true);
+  };
+
+  const handleOrderTypeSelect = (type: 'delivery' | 'pickup') => {
+    // Sauvegarder le type de commande dans localStorage
+    localStorage.setItem('orderType', type);
     // Rediriger vers la page de checkout
     window.location.href = '/checkout';
   };
@@ -226,6 +235,13 @@ export default function Cart({ isOpen, onClose }: CartProps) {
           </div>
         </div>
       </Dialog>
+
+      {/* Modal de sélection du type de commande */}
+      <OrderTypeModal
+        isOpen={showOrderTypeModal}
+        onClose={() => setShowOrderTypeModal(false)}
+        onSelect={handleOrderTypeSelect}
+      />
     </Transition>
   );
 }

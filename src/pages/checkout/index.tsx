@@ -118,6 +118,7 @@ export default function CheckoutPage() {
               onSubmit={handleOrderSubmit}
               isLoading={isLoading}
               onShowAccountModal={() => setShowAccountModal(true)}
+              orderType={orderType}
             />
           </div>
 
@@ -220,13 +221,20 @@ export default function CheckoutPage() {
               {customerData.name && (
                 <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <h4 className="font-medium text-gray-900 dark:text-white mb-2">
-                    Livraison à :
+                    {orderType === 'pickup' ? 'Mode de commande' : 'Livraison à :'}
                   </h4>
                   <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                    <div className="flex items-center">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      {customerData.address}
-                    </div>
+                    {orderType === 'pickup' ? (
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        À emporter
+                      </div>
+                    ) : (
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        {customerData.address}
+                      </div>
+                    )}
                     <div className="flex items-center">
                       <Clock className="w-4 h-4 mr-2" />
                       {customerData.paymentMethod === 'card' ? 'Carte bancaire' : 'Espèces'}

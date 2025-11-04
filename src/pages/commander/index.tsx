@@ -12,6 +12,7 @@ import BurgerSandwichComposer from '@/components/commander/BurgerSandwichCompose
 import TexMexComposer from '@/components/commander/TexMexComposer';
 import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
 import PizzaMenuSelector from '@/components/commander/PizzaMenuSelector';
+import OrderTypeModal from '@/components/checkout/OrderTypeModal';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -41,6 +42,7 @@ export default function CommanderPage() {
   const [selectedMenuOption, setSelectedMenuOption] = useState<string>(''); // 'frites' ou 'frites-boisson'
   const [selectedDrinks, setSelectedDrinks] = useState<any[]>([]);
   const [drinks, setDrinks] = useState<any[]>([]);
+  const [showOrderTypeModal, setShowOrderTypeModal] = useState(false);
 
   // Données de menu
   const menuCategories = [
@@ -620,6 +622,13 @@ export default function CommanderPage() {
       return;
     }
 
+    // Afficher le modal pour choisir le type de commande
+    setShowOrderTypeModal(true);
+  };
+
+  const handleOrderTypeSelect = (type: 'delivery' | 'pickup') => {
+    // Sauvegarder le type de commande dans localStorage
+    localStorage.setItem('orderType', type);
     // Rediriger vers la page de checkout
     window.location.href = '/checkout';
   };
@@ -1617,6 +1626,13 @@ export default function CommanderPage() {
           </div>
         </div>
       )}
+
+      {/* Modal de sélection du type de commande */}
+      <OrderTypeModal
+        isOpen={showOrderTypeModal}
+        onClose={() => setShowOrderTypeModal(false)}
+        onSelect={handleOrderTypeSelect}
+      />
     </div>
   );
 }

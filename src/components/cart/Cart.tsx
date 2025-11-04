@@ -239,13 +239,14 @@ export default function Cart({ isOpen, onClose }: CartProps) {
           </div>
         </div>
       </Dialog>
+      </Transition>
 
-      {/* Modal de sélection du type de commande */}
+      {/* Modal de sélection du type de commande - en dehors du Transition du panier */}
       <OrderTypeModal
         isOpen={showOrderTypeModal}
         onClose={() => setShowOrderTypeModal(false)}
         onSelect={handleOrderTypeSelect}
       />
-    </Transition>
+    </>
   );
 }

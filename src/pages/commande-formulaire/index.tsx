@@ -15,6 +15,7 @@ export default function CommandeFormulairePage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
   
   // Calculer le total final avec promotion
   const finalTotal = total - promotionDiscount;
@@ -27,6 +28,12 @@ export default function CommandeFormulairePage() {
     } else {
       // Rediriger vers checkout si pas de données client
       router.push('/checkout');
+    }
+
+    // Charger le type de commande depuis localStorage
+    const savedOrderType = localStorage.getItem('orderType');
+    if (savedOrderType === 'pickup' || savedOrderType === 'delivery') {
+      setOrderType(savedOrderType);
     }
   }, [router]);
 

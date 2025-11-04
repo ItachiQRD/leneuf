@@ -138,47 +138,67 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
           {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
         </div>
 
-        {/* Adresse */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            <MapPin className="w-4 h-4 inline mr-2" />
-            Adresse de livraison *
-          </label>
-          <AddressAutocomplete
-            value={formData.address}
-            onChange={(value) => handleInputChange('address', value)}
-            onAddressSelect={handleAddressSelect}
-            placeholder="Rechercher votre adresse..."
-            className={errors.address ? 'border-red-500' : ''}
-          />
-          {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
-          {selectedAddress && (
-            <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex items-center text-sm text-green-700">
-                <MapPin className="w-4 h-4 mr-2" />
-                <span className="font-medium">Adresse validée :</span>
+        {/* Adresse - seulement pour livraison */}
+        {orderType === 'delivery' ? (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <MapPin className="w-4 h-4 inline mr-2" />
+              Adresse de livraison *
+            </label>
+            <AddressAutocomplete
+              value={formData.address}
+              onChange={(value) => {
+                handleInputChange('address', value);
+                setIsAddressConfirmed(false);
+                setSelectedAddress(null);
+              }}
+              onAddressSelect={handleAddressSelect}
+              placeholder="Rechercher votre adresse..."
+              className={errors.address ? 'border-red-500' : ''}
+            />
+            {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
+            {selectedAddress && isAddressConfirmed && (
+              <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center text-sm text-green-700">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  <span className="font-medium">Adresse validée :</span>
+                </div>
+                <div className="text-sm text-green-600 mt-1">
+                  {(() => {
+                    const address = selectedAddress.address;
+                    if (!address) return selectedAddress.display_name;
+                    
+                    const parts = [];
+                    if (address.house_number && address.road) {
+                      parts.push(`${address.house_number} ${address.road}`);
+                    } else if (address.road) {
+                      parts.push(address.road);
+                    }
+                    if (address.postcode && address.city) {
+                      parts.push(`${address.postcode} ${address.city}`);
+                    }
+                    
+                    return parts.join(', ') || selectedAddress.display_name;
+                  })()}
+                </div>
               </div>
-              <div className="text-sm text-green-600 mt-1">
-                {(() => {
-                  const address = selectedAddress.address;
-                  if (!address) return selectedAddress.display_name;
-                  
-                  const parts = [];
-                  if (address.house_number && address.road) {
-                    parts.push(`${address.house_number} ${address.road}`);
-                  } else if (address.road) {
-                    parts.push(address.road);
-                  }
-                  if (address.postcode && address.city) {
-                    parts.push(`${address.postcode} ${address.city}`);
-                  }
-                  
-                  return parts.join(', ') || selectedAddress.display_name;
-                })()}
+            )}
+          </div>
+        ) : (
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center">
+              <MapPin className="w-5 h-5 text-blue-600 mr-3" />
+              <div>
+                <p className="font-medium text-blue-900 dark:text-blue-100">
+                  À emporter
+                </p>
+                <p className="text-sm text-blue-700 dark:text-blue-200">
+                  Vous récupérerez votre commande sur place
+                </p>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Mode de paiement */}
         <div>

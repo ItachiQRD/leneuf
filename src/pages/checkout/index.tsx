@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useCart } from '@/contexts/CartContext';
 import { useCustomerData, CustomerData } from '@/hooks/useCustomerData';
@@ -17,6 +17,15 @@ export default function CheckoutPage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
+
+  // Charger le type de commande depuis localStorage
+  useEffect(() => {
+    const savedOrderType = localStorage.getItem('orderType');
+    if (savedOrderType === 'pickup' || savedOrderType === 'delivery') {
+      setOrderType(savedOrderType);
+    }
+  }, []);
 
   // Rediriger si le panier est vide
   if (!items || items.length === 0) {

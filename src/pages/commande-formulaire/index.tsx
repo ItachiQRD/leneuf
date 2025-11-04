@@ -218,12 +218,16 @@ export default function CommandeFormulairePage() {
                   </div>
                 </div>
 
-                {/* Adresse */}
+                {/* Adresse ou mode de commande */}
                 <div className="flex items-start">
                   <MapPin className="w-5 h-5 text-gray-400 mr-3 mt-0.5" />
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Adresse</p>
-                    <p className="font-medium text-gray-900 dark:text-white">{customerData.address}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {orderType === 'pickup' ? 'Mode de commande' : 'Adresse'}
+                    </p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {orderType === 'pickup' ? 'À emporter' : customerData.address}
+                    </p>
                   </div>
                 </div>
 
@@ -252,6 +256,39 @@ export default function CommandeFormulairePage() {
                     </div>
                   </div>
                 )}
+
+                {/* Message de paiement selon le type de commande */}
+                <div className={`mt-4 p-4 rounded-lg ${
+                  orderType === 'pickup' 
+                    ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800' 
+                    : 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800'
+                }`}>
+                  <div className="flex items-start">
+                    <CreditCard className={`w-5 h-5 mr-3 mt-0.5 ${
+                      orderType === 'pickup' ? 'text-blue-600' : 'text-amber-600'
+                    }`} />
+                    <div>
+                      <p className={`text-sm font-medium ${
+                        orderType === 'pickup' 
+                          ? 'text-blue-900 dark:text-blue-100' 
+                          : 'text-amber-900 dark:text-amber-100'
+                      }`}>
+                        {orderType === 'pickup' 
+                          ? '💳 Paiement sur place' 
+                          : '💳 Paiement auprès du livreur'}
+                      </p>
+                      <p className={`text-xs mt-1 ${
+                        orderType === 'pickup' 
+                          ? 'text-blue-700 dark:text-blue-200' 
+                          : 'text-amber-700 dark:text-amber-200'
+                      }`}>
+                        {orderType === 'pickup' 
+                          ? 'Le paiement se fera directement sur place lors de la récupération de votre commande.'
+                          : 'Le paiement se fera directement auprès du livreur lors de la livraison.'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

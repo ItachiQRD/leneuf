@@ -42,6 +42,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   };
 
   return (
+    <>
     <Transition show={isOpen} as={Fragment}>
       <Dialog onClose={onClose} className="relative z-50">
         <Transition.Child
@@ -239,14 +240,14 @@ export default function Cart({ isOpen, onClose }: CartProps) {
           </div>
         </div>
       </Dialog>
-      </Transition>
+    </Transition>
 
-      {/* Modal de sélection du type de commande - en dehors du Transition du panier */}
-      <OrderTypeModal
-        isOpen={showOrderTypeModal}
-        onClose={() => setShowOrderTypeModal(false)}
-        onSelect={handleOrderTypeSelect}
-      />
-    </>
+    {/* Modal de sélection du type de commande - en dehors du Transition du panier */}
+    <OrderTypeModal
+      isOpen={showOrderTypeModal}
+      onClose={() => setShowOrderTypeModal(false)}
+      onSelect={handleOrderTypeSelect}
+    />
+  </>
   );
 }

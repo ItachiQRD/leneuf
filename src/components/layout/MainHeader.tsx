@@ -369,6 +369,14 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
         {isMobileMenuOpen && (
           <div className="md:hidden absolute top-24 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg">
             <nav className="flex flex-col p-6 space-y-4">
+              {/* Commander - en premier */}
+              <Link
+                href="/commander"
+                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-3 rounded-lg font-bold text-lg text-center hover:from-red-700 hover:to-red-800 transition-all duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🍔 Commander
+              </Link>
               <Link
                 href="/menu"
                 className={`flex items-center space-x-3 text-lg font-medium ${textColor}`}
@@ -384,13 +392,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               >
                 <span>ℹ️</span>
                 <span>À propos</span>
-              </Link>
-              <Link
-                href="/commander"
-                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-3 rounded-lg font-bold text-lg text-center hover:from-red-700 hover:to-red-800 transition-all duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                🍔 Commander
               </Link>
               <Link
                 href="/contact"

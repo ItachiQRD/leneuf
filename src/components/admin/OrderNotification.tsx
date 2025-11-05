@@ -14,20 +14,50 @@ interface OrderNotificationProps {
 export default function OrderNotification({ isOpen, order, onClose, onViewOrder }: OrderNotificationProps) {
   const router = useRouter();
 
-  // Jouer un son de notification
+  // Jouer un son de notification en continu et fort
   useEffect(() => {
-    if (isOpen && order) {
+    if (!isOpen || !order) return;
+
+    let audio: HTMLAudioElement | null = null;
+    let intervalId: NodeJS.Timeout | null = null;
+
+    const playSound = () => {
       try {
-        // Le fichier est dans public/ avec underscore
-        const audio = new Audio('/meteor_samsung.mp3');
-        audio.volume = 0.5;
+        audio = new Audio('/meteor_samsung.mp3');
+        audio.volume = 1.0; // Volume maximum (100%)
         audio.play().catch(error => {
           console.error('Erreur lors de la lecture du son:', error);
         });
       } catch (error) {
         console.error('Erreur lors de la lecture du son:', error);
       }
-    }
+    };
+
+    // Jouer immédiatement
+    playSound();
+
+    // Répéter toutes les 2 secondes
+    intervalId = setInterval(() => {
+      if (audio) {
+        audio.currentTime = 0; // Réinitialiser pour rejouer depuis le début
+        audio.play().catch(error => {
+          console.error('Erreur lors de la répétition du son:', error);
+        });
+      } else {
+        playSound();
+      }
+    }, 2000);
+
+    // Nettoyer quand le modal se ferme ou quand on clique sur imprimer
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    };
   }, [isOpen, order]);
 
   if (!order) return null;
@@ -137,6 +167,13 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
 
   // Fonction pour imprimer directement
   const handlePrint = () => {
+    // Arrêter le son quand on imprime
+    const audioElements = document.querySelectorAll('audio');
+    audioElements.forEach(audio => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+
     const printContent = `
       <!DOCTYPE html>
       <html>
@@ -144,69 +181,120 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
           <title>Ticket de Commande - LE NEUF</title>
           <meta charset="UTF-8">
           <style>
+            @page {
+              size: auto;
+              margin: 5mm;
+            }
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
             body {
-              font-family: 'Courier New', monospace;
-              font-size: 14px;
-              line-height: 1.2;
+              font-family: 'Courier New', 'Courier', monospace;
+              font-size: 12px;
+              line-height: 1.4;
               color: black;
               background: white;
               margin: 0;
-              padding: 10px;
+              padding: 5mm;
+              width: 100%;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
             }
             h1 {
-              font-size: 18px;
+              font-size: 16px;
               font-weight: 900;
-              margin: 0 0 5px 0;
+              margin: 0 0 3px 0;
               text-align: center;
+              letter-spacing: 1px;
             }
             h2 {
-              font-size: 16px;
-              font-weight: 800;
-              margin: 10px 0 5px 0;
+              font-size: 14px;
+              font-weight: 900;
+              margin: 8px 0 4px 0;
+              letter-spacing: 0.5px;
             }
             .header {
               text-align: center;
               border-bottom: 2px solid black;
-              padding-bottom: 10px;
-              margin-bottom: 10px;
+              padding-bottom: 6px;
+              margin-bottom: 8px;
             }
             .section {
-              margin-bottom: 10px;
+              margin-bottom: 8px;
               border-bottom: 1px solid black;
-              padding-bottom: 5px;
+              padding-bottom: 4px;
             }
             .item {
-              margin-bottom: 5px;
-              padding-bottom: 5px;
+              margin-bottom: 4px;
+              padding-bottom: 4px;
               border-bottom: 1px solid #ccc;
             }
             .item-header {
               display: flex;
               justify-content: space-between;
               font-weight: 900;
+              font-size: 12px;
+              letter-spacing: 0.3px;
             }
             .item-details {
-              font-size: 12px;
-              color: #666;
+              font-size: 11px;
+              font-weight: 900;
               margin-top: 2px;
+              letter-spacing: 0.2px;
+              line-height: 1.3;
+            }
+            .item-details div {
+              font-weight: 900;
+              margin: 1px 0;
+            }
+            .client-info {
+              font-size: 12px;
+              font-weight: 900;
+              margin: 2px 0;
+              letter-spacing: 0.3px;
+              line-height: 1.4;
+            }
+            .promotion {
+              display: flex;
+              justify-content: space-between;
+              padding: 4px 0;
+              border-top: 1px dashed #999;
+              font-size: 12px;
+              font-weight: 900;
+              letter-spacing: 0.3px;
             }
             .total {
               border-top: 2px solid black;
-              padding-top: 5px;
+              padding-top: 4px;
               font-weight: 900;
-              font-size: 16px;
+              font-size: 14px;
               display: flex;
               justify-content: space-between;
+              letter-spacing: 0.5px;
             }
             .footer {
               text-align: center;
               border-top: 1px dashed #999;
-              padding-top: 5px;
-              margin-top: 10px;
+              padding-top: 4px;
+              margin-top: 8px;
+              font-weight: 900;
+              letter-spacing: 0.5px;
             }
-            .bold { font-weight: 700; }
+            .bold { 
+              font-weight: 900;
+              letter-spacing: 0.3px;
+            }
             @media print {
-              body { margin: 0; padding: 5px; }
+              body { 
+                margin: 0; 
+                padding: 5mm;
+                width: 100%;
+              }
+              @page {
+                margin: 5mm;
+              }
             }
           </style>
         </head>
@@ -220,12 +308,12 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
 
           <div class="section">
             <h2>CLIENT & LIVRAISON</h2>
-            <div class="bold"><strong>Nom:</strong> ${order.customer?.name || order.userId?.name || 'N/A'}</div>
-            <div class="bold"><strong>Tél:</strong> ${order.customer?.phone || order.userId?.phone || 'N/A'}</div>
-            <div class="bold"><strong>Adresse:</strong> ${order.deliveryAddress?.street || order.customer?.address || 'N/A'}</div>
-            ${order.deliveryAddress?.postalCode && order.deliveryAddress.postalCode !== '00000' ? `<div class="bold">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city || ''}</div>` : ''}
-            ${order.deliveryAddress?.complement ? `<div class="bold"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
-            <div class="bold"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
+            <div class="client-info"><strong>Nom:</strong> ${order.customer?.name || order.userId?.name || 'N/A'}</div>
+            <div class="client-info"><strong>Tél:</strong> ${order.customer?.phone || order.userId?.phone || 'N/A'}</div>
+            <div class="client-info"><strong>Adresse:</strong> ${order.deliveryAddress?.street || order.customer?.address || 'N/A'}</div>
+            ${order.deliveryAddress?.postalCode && order.deliveryAddress.postalCode !== '00000' ? `<div class="client-info">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city || ''}</div>` : ''}
+            ${order.deliveryAddress?.complement ? `<div class="client-info"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
+            <div class="client-info"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
           </div>
 
           <div class="section">
@@ -240,7 +328,7 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
                   </div>
                   ${customDetails && customDetails.length > 0 ? `
                     <div class="item-details">
-                      ${customDetails.map((detail: string) => `<div class="bold">• ${detail}</div>`).join('')}
+                      ${customDetails.map((detail: string) => `<div>• ${detail}</div>`).join('')}
                     </div>
                   ` : ''}
                 </div>
@@ -249,9 +337,9 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
           </div>
 
           ${order.promotionDiscount && order.promotionDiscount > 0 ? `
-          <div style="display: flex; justify-content: space-between; padding: 5px 0; border-top: 1px dashed #999;">
-            <span style="font-size: 12px;">Remise (${order.promotionDescription || 'Promotion'}):</span>
-            <span style="font-size: 12px;">-${order.promotionDiscount.toFixed(2)}€</span>
+          <div class="promotion">
+            <span>Remise (${order.promotionDescription || 'Promotion'}):</span>
+            <span>-${order.promotionDiscount.toFixed(2)}€</span>
           </div>
           ` : ''}
           <div class="total">
@@ -260,22 +348,35 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
           </div>
 
           <div class="footer">
-            <div style="font-weight: 900;">MERCI POUR VOTRE COMMANDE !</div>
-            <div class="bold">BON APPÉTIT !</div>
+            <div>MERCI POUR VOTRE COMMANDE !</div>
+            <div>BON APPÉTIT !</div>
           </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
         </body>
       </html>
     `;
 
-    const printWindow = window.open('', '_blank');
+    // Créer une fenêtre d'impression et imprimer directement
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (printWindow) {
       printWindow.document.write(printContent);
       printWindow.document.close();
-      printWindow.focus();
-      // Attendre que le contenu soit chargé avant d'imprimer
-      setTimeout(() => {
-        printWindow.print();
-      }, 250);
+      
+      // Imprimer immédiatement après le chargement
+      printWindow.onload = function() {
+        setTimeout(() => {
+          printWindow.print();
+          // Fermer la fenêtre après impression (ou laisser ouverte si l'utilisateur annule)
+          setTimeout(() => {
+            printWindow.close();
+          }, 100);
+        }, 100);
+      };
     } else {
       alert('Impossible d\'ouvrir la fenêtre d\'impression. Veuillez autoriser les pop-ups pour ce site.');
     }

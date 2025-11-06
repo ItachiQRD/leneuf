@@ -488,7 +488,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                       {config.type === 'bowl' && <span className="text-xs lg:text-sm text-gray-600 ml-2">(1 maximum)</span>}
                       {config.type === 'tacos' && <span className="text-xs lg:text-sm text-gray-600 ml-2">({config.size === 'M' ? '1' : config.size === 'L' ? '2' : '3'} maximum)</span>}
                     </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
                       {options.meats.map((meat) => {
                         const currentCount = config.meatCounts[meat._id] || 0;
                         const maxMeats = getMaxMeats();
@@ -511,7 +511,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                                   : 'border-gray-100 bg-gray-50 opacity-50 cursor-not-allowed'
                             }`}
                           >
-                            <div className="relative w-full h-20 lg:h-24 mb-2">
+                            <div className="relative w-full h-16 lg:h-24 mb-2">
                               <Image
                                 src={meat.image}
                                 alt={meat.name}
@@ -519,8 +519,8 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                                 className="object-cover rounded-md"
                               />
                             </div>
-                            <h4 className="font-medium text-gray-900 text-sm lg:text-base">{meat.name}</h4>
-                            <p className="text-xs lg:text-sm text-gray-600">Inclus</p>
+                            <h4 className="font-medium text-gray-900 text-xs lg:text-base">{meat.name}</h4>
+                            <p className="text-xs text-gray-600">Inclus</p>
                             {currentCount > 0 && (
                               <div className="mt-1 flex items-center justify-center space-x-1">
                                 <button
@@ -547,7 +547,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                                 </button>
                               </div>
                             )}
-                            {isSelected && <Check className="w-4 h-4 lg:w-5 lg:h-5 text-orange-500 absolute top-2 right-2" />}
+                            {isSelected && <Check className="w-3 h-3 lg:w-4 lg:h-4 text-orange-500 absolute top-2 right-2" />}
                           </motion.button>
                         );
                       })}

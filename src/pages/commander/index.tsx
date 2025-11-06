@@ -39,7 +39,7 @@ export default function CommanderPage() {
   const [productForCustomization, setProductForCustomization] = useState<any>(null);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [selectedSauceForProduct, setSelectedSauceForProduct] = useState<any>(null);
-  const [selectedMenuOption, setSelectedMenuOption] = useState<string>(''); // 'frites' ou 'frites-boisson'
+  const [selectedMenuOption, setSelectedMenuOption] = useState<string>(''); 
   const [selectedDrinks, setSelectedDrinks] = useState<any[]>([]);
   const [drinks, setDrinks] = useState<any[]>([]);
   const [showOrderTypeModal, setShowOrderTypeModal] = useState(false);

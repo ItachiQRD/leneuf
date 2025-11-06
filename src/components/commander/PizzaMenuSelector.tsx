@@ -375,25 +375,25 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+          className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] lg:max-h-[90vh] overflow-hidden flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">{menu.name}</h2>
-              <p className="text-sm text-gray-600">{menu.description}</p>
+          <div className="flex items-center justify-between p-4 lg:p-6 border-b flex-shrink-0">
+            <div className="flex-1 min-w-0 pr-2">
+              <h2 className="text-lg lg:text-2xl font-bold text-gray-900 truncate">{menu.name}</h2>
+              <p className="text-xs lg:text-sm text-gray-600 truncate">{menu.description}</p>
             </div>
             <button
               onClick={handleClose}
-              className="p-2 hover:bg-gray-100 rounded-full"
+              className="p-2 hover:bg-gray-100 rounded-full flex-shrink-0"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 lg:w-6 lg:h-6" />
             </button>
           </div>
 
           {/* Content - Scrollable */}
-          <div className="p-6 overflow-y-auto flex-1">
+          <div className="p-4 lg:p-6 overflow-y-auto flex-1">
             {loading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
@@ -403,7 +403,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                 {/* Étape 1: Pizzas */}
                 {currentStep === 'pizzas' && (
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    <h3 className="text-base lg:text-xl font-bold text-gray-900 mb-3">
                       🍕 Choisissez vos pizzas
                     </h3>
                   <div className="space-y-2">
@@ -412,13 +412,13 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                       return (
                         <div
                           key={pizza._id}
-                          className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all ${
+                          className={`flex items-center gap-2 lg:gap-4 p-3 lg:p-4 rounded-xl border-2 transition-all ${
                             qty > 0
                               ? 'border-red-500 bg-red-50'
                               : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                           }`}
                         >
-                          <div className="relative w-20 h-20 flex-shrink-0">
+                          <div className="relative w-16 h-16 lg:w-20 lg:h-20 flex-shrink-0">
                             <Image
                               src={pizza.image || '/images/placeholder-food.jpg'}
                               alt={pizza.name}
@@ -427,26 +427,26 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-gray-900">{pizza.name}</h4>
+                            <h4 className="font-semibold text-sm lg:text-base text-gray-900 truncate">{pizza.name}</h4>
                             {pizza.baseIngredients && (
-                              <p className="text-xs text-gray-500 mt-1">
+                              <p className="text-xs text-gray-500 mt-1 line-clamp-1">
                                 {pizza.baseIngredients.join(', ')}
                               </p>
                             )}
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 lg:gap-3 flex-shrink-0">
                             <button
                               onClick={() => handlePizzaQuantity(pizza, -1)}
-                              className="w-10 h-10 rounded-lg bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors"
+                              className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors"
                             >
-                              <Minus className="w-5 h-5" />
+                              <Minus className="w-4 h-4 lg:w-5 lg:h-5" />
                             </button>
-                            <span className="w-8 text-center font-bold text-lg">{qty}</span>
+                            <span className="w-6 lg:w-8 text-center font-bold text-base lg:text-lg">{qty}</span>
                             <button
                               onClick={() => handlePizzaQuantity(pizza, 1)}
-                              className="w-10 h-10 rounded-lg bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
+                              className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
                             >
-                              <Plus className="w-5 h-5" />
+                              <Plus className="w-4 h-4 lg:w-5 lg:h-5" />
                             </button>
                           </div>
                         </div>
@@ -459,25 +459,25 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                 {/* Étape 2: Boissons */}
                 {currentStep === 'drinks' && menu.drinkCount > 0 && (
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    <h3 className="text-base lg:text-xl font-bold text-gray-900 mb-3">
                       🥤 Choisissez vos boissons
                     </h3>
-                    <div className="text-sm text-gray-600 mb-4">
+                    <div className="text-xs lg:text-sm text-gray-600 mb-4">
                       Choisissez {menu.drinkCount} boisson{menu.drinkCount > 1 ? 's' : ''} ({selectedDrinks.reduce((sum, d) => sum + d.quantity, 0)}/{menu.drinkCount} sélectionnées)
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {getFilteredDrinks().length > 0 ? getFilteredDrinks().map((drink) => {
                         const qty = getDrinkQuantity(drink._id);
                         return (
                           <div
                             key={drink._id}
-                            className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${
+                            className={`flex items-center gap-2 lg:gap-3 p-2 lg:p-3 rounded-xl border-2 transition-all ${
                               qty > 0
                                 ? 'border-red-500 bg-red-50'
                                 : 'border-gray-200'
                             }`}
                           >
-                            <div className="relative w-14 h-14 flex-shrink-0">
+                            <div className="relative w-12 h-12 lg:w-14 lg:h-14 flex-shrink-0">
                               <Image
                                 src={drink.image || '/images/placeholder-drink.jpg'}
                                 alt={drink.name}
@@ -485,28 +485,28 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                                 className="object-contain rounded"
                               />
                             </div>
-                            <div className="flex-1 text-left">
-                              <div className="font-medium text-sm">{drink.name}</div>
+                            <div className="flex-1 text-left min-w-0">
+                              <div className="font-medium text-xs lg:text-sm truncate">{drink.name}</div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1 lg:gap-2 flex-shrink-0">
                               <button
                                 onClick={() => handleDrinkQuantity(drink, -1)}
-                                className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                                className="w-7 h-7 lg:w-8 lg:h-8 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
                               >
-                                <Minus className="w-4 h-4" />
+                                <Minus className="w-3 h-3 lg:w-4 lg:h-4" />
                               </button>
-                              <span className="w-6 text-center font-bold">{qty}</span>
+                              <span className="w-5 lg:w-6 text-center font-bold text-sm lg:text-base">{qty}</span>
                               <button
                                 onClick={() => handleDrinkQuantity(drink, 1)}
-                                className="w-8 h-8 rounded bg-red-500 hover:bg-red-600 text-white flex items-center justify-center"
+                                className="w-7 h-7 lg:w-8 lg:h-8 rounded bg-red-500 hover:bg-red-600 text-white flex items-center justify-center"
                               >
-                                <Plus className="w-4 h-4" />
+                                <Plus className="w-3 h-3 lg:w-4 lg:h-4" />
                               </button>
                             </div>
                           </div>
                         );
                       }) : (
-                        <div className="col-span-3 text-center py-8 text-gray-500">
+                        <div className="col-span-full text-center py-8 text-gray-500 text-sm lg:text-base">
                           Aucune boisson disponible pour ce menu
                         </div>
                       )}
@@ -517,10 +517,10 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                 {/* Étape 3: Nuggets/Wings pour menu couple */}
                 {currentStep === 'petite-faim' && menu.id === 'menu-couple' && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">
                       Choisissez 6 Nuggets ou Wings
                     </h3>
-                    <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-2 gap-3 lg:gap-6">
                       {petiteFaimItems
                         .filter(item => item.name.toLowerCase().includes('nugget') || item.name.toLowerCase().includes('hot wing') || item.name.toLowerCase().includes('wing'))
                         .map((item) => (
@@ -531,7 +531,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                               selectedPetiteFaim?._id === item._id ? 'scale-105' : ''
                             }`}
                           >
-                            <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-2 sm:mb-3 transition-all duration-300">
+                            <div className="relative w-20 h-20 lg:w-32 lg:h-32 mx-auto mb-2 lg:mb-3 transition-all duration-300">
                               <Image
                                 src={item.image || '/images/placeholder-food.jpg'}
                                 alt={item.name}
@@ -539,7 +539,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                                 className="object-cover rounded-full shadow-lg"
                               />
                             </div>
-                            <div className={`font-medium text-sm sm:text-base ${selectedPetiteFaim?._id === item._id ? 'text-red-600' : 'text-gray-700'}`}>
+                            <div className={`font-medium text-xs lg:text-base ${selectedPetiteFaim?._id === item._id ? 'text-red-600' : 'text-gray-700'}`}>
                               {item.name}
                             </div>
                           </button>
@@ -554,7 +554,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
             {/* Étape 4: Récapitulatif */}
             {currentStep === 'summary' && (
               <div className="space-y-4">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">📋 Récapitulatif</h3>
+                <h3 className="text-lg lg:text-2xl font-bold text-gray-900 mb-4 lg:mb-6">📋 Récapitulatif</h3>
                 
                 {/* Pizzas sélectionnées */}
                 {selectedPizzas.length > 0 && (
@@ -673,7 +673,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
           </div>
 
           {/* Footer - Always visible */}
-          <div className="flex items-center justify-between p-6 border-t bg-gray-50 flex-shrink-0">
+          <div className="flex items-center justify-between p-4 lg:p-6 border-t bg-gray-50 flex-shrink-0 gap-2 lg:gap-4">
             <button
               onClick={() => {
                 if (currentStep === 'drinks') setCurrentStep('pizzas');
@@ -684,14 +684,14 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                 }
               }}
               disabled={currentStep === 'pizzas'}
-              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+              className="px-4 lg:px-6 py-2 lg:py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors text-sm lg:text-base"
             >
               Précédent
             </button>
             
-            <div>
-              <div className="text-sm text-gray-600">Total</div>
-              <div className="text-2xl font-bold text-red-600">
+            <div className="text-center flex-shrink-0">
+              <div className="text-xs lg:text-sm text-gray-600">Total</div>
+              <div className="text-lg lg:text-2xl font-bold text-red-600">
                 {calculatePrice().toFixed(2)} €
               </div>
             </div>
@@ -700,9 +700,10 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
               <button
                 onClick={handleAddToCart}
                 disabled={!canAddToCart()}
-                className="px-8 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                className="px-4 lg:px-8 py-2 lg:py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm lg:text-base"
               >
-                Ajouter au panier
+                <span className="hidden lg:inline">Ajouter au panier</span>
+                <span className="lg:hidden">Ajouter</span>
               </button>
             ) : (
               <button
@@ -714,7 +715,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                   }
                   else if (currentStep === 'petite-faim') setCurrentStep('summary');
                 }}
-                className="px-6 py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors"
+                className="px-4 lg:px-6 py-2 lg:py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors text-sm lg:text-base"
               >
                 Suivant
               </button>

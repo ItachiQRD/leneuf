@@ -456,19 +456,19 @@ export default function AboutPage() {
                   name: "Chef Principal",
                   role: "Direction Culinaire",
                   description: "15 ans d'expérience dans la restauration rapide de qualité",
-                  image: scrollImages[0]
+                  image: '/images/a-propos/chef.png'
                 },
                 {
                   name: "Équipe de Service",
                   role: "Service Client",
                   description: "Formés pour vous offrir le meilleur accueil possible",
-                  image: scrollImages[1]
+                  image: '/images/a-propos/team.png'
                 },
                 {
                   name: "Équipe de Cuisine",
                   role: "Préparation",
                   description: "Experts en préparation rapide et efficace",
-                  image: scrollImages[2]
+                  image: '/images/a-propos/cuisine.png'
                 }
               ].map((member, index) => (
                 <motion.div

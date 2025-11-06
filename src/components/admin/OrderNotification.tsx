@@ -174,12 +174,8 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
       audio.currentTime = 0;
     });
 
-    // Créer un élément caché pour l'impression directe
-    const printContainer = document.createElement('div');
-    printContainer.style.position = 'absolute';
-    printContainer.style.left = '-9999px';
-    printContainer.style.top = '-9999px';
-    printContainer.innerHTML = `
+    // Créer le contenu HTML pour l'impression
+    const printContent = `
       <!DOCTYPE html>
       <html>
         <head>

@@ -18,6 +18,7 @@ interface Pizza {
   name: string;
   price: number;
   image?: string;
+  baseIngredients?: string[];
 }
 
 interface Drink {

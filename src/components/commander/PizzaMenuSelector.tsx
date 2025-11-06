@@ -429,7 +429,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-sm lg:text-base text-gray-900 truncate">{pizza.name}</h4>
                             {pizza.baseIngredients && (
-                              <p className="text-xs text-gray-500 mt-1 line-clamp-1">
+                              <p className="text-xs text-gray-500 mt-1 line-clamp-2 lg:line-clamp-1">
                                 {pizza.baseIngredients.join(', ')}
                               </p>
                             )}
@@ -557,12 +557,12 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                 <h3 className="text-lg lg:text-2xl font-bold text-gray-900 mb-4 lg:mb-6">📋 Récapitulatif</h3>
                 
                 {/* Pizzas sélectionnées */}
-                {selectedPizzas.length > 0 && (
+                {selectedPizzas.length > 0 ? (
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-gray-700">Pizzas</h4>
+                    <h4 className="font-semibold text-sm lg:text-base text-gray-700">Pizzas</h4>
                     {selectedPizzas.map(({ pizza, quantity }) => (
-                      <div key={pizza._id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <div className="relative w-16 h-16">
+                      <div key={pizza._id} className="flex items-center gap-2 lg:gap-3 p-2 lg:p-3 bg-gray-50 rounded-lg">
+                        <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
                           <Image
                             src={pizza.image || '/images/placeholder-food.jpg'}
                             alt={pizza.name}
@@ -570,22 +570,29 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                             className="object-cover rounded"
                           />
                         </div>
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-900">{pizza.name}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-xs lg:text-sm text-gray-900 truncate">{pizza.name}</div>
+                          {pizza.baseIngredients && (
+                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                              {pizza.baseIngredients.join(', ')}
+                            </p>
+                          )}
                         </div>
-                        <div className="text-lg font-bold text-red-600">x{quantity}</div>
+                        <div className="text-base lg:text-lg font-bold text-red-600 flex-shrink-0">x{quantity}</div>
                       </div>
                     ))}
                   </div>
+                ) : (
+                  <div className="text-sm text-gray-500 text-center py-4">Aucune pizza sélectionnée</div>
                 )}
 
                 {/* Boissons sélectionnées */}
-                {selectedDrinks.length > 0 && (
+                {selectedDrinks.length > 0 ? (
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-gray-700">Boissons</h4>
+                    <h4 className="font-semibold text-sm lg:text-base text-gray-700">Boissons</h4>
                     {selectedDrinks.map(({ drink, quantity }) => (
-                      <div key={drink._id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <div className="relative w-16 h-16">
+                      <div key={drink._id} className="flex items-center gap-2 lg:gap-3 p-2 lg:p-3 bg-gray-50 rounded-lg">
+                        <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
                           <Image
                             src={drink.image || '/images/placeholder-drink.jpg'}
                             alt={drink.name}
@@ -593,78 +600,85 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                             className="object-contain rounded"
                           />
                         </div>
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-900">{drink.name}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-xs lg:text-sm text-gray-900 truncate">{drink.name}</div>
                         </div>
-                        <div className="text-lg font-bold text-red-600">x{quantity}</div>
+                        <div className="text-base lg:text-lg font-bold text-red-600 flex-shrink-0">x{quantity}</div>
                       </div>
                     ))}
                   </div>
+                ) : menu.drinkCount > 0 && (
+                  <div className="text-sm text-gray-500 text-center py-4">Aucune boisson sélectionnée</div>
                 )}
 
                 {/* Nuggets/Wings pour menu couple */}
-                {selectedPetiteFaim && menu.id === 'menu-couple' && (
+                {menu.id === 'menu-couple' && (
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-gray-700">6 Nuggets ou Wings</h4>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <div className="relative w-16 h-16">
-                        <Image
-                          src={selectedPetiteFaim.image || '/images/placeholder-food.jpg'}
-                          alt={selectedPetiteFaim.name}
-                          fill
-                          className="object-cover rounded"
-                        />
+                    <h4 className="font-semibold text-sm lg:text-base text-gray-700">6 Nuggets ou Wings</h4>
+                    {selectedPetiteFaim ? (
+                      <div className="flex items-center gap-2 lg:gap-3 p-2 lg:p-3 bg-gray-50 rounded-lg">
+                        <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
+                          <Image
+                            src={selectedPetiteFaim.image || '/images/placeholder-food.jpg'}
+                            alt={selectedPetiteFaim.name}
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-xs lg:text-sm text-gray-900">{selectedPetiteFaim.name}</div>
+                        </div>
+                        <div className="text-base lg:text-lg font-bold text-red-600 flex-shrink-0">x6</div>
                       </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900">{selectedPetiteFaim.name}</div>
-                      </div>
-                      <div className="text-lg font-bold text-red-600">x6</div>
-                    </div>
+                    ) : (
+                      <div className="text-sm text-gray-500 text-center py-2">Non sélectionné</div>
+                    )}
                   </div>
                 )}
 
                 {/* Brownies inclus pour menu couple */}
                 {menu.id === 'menu-couple' && (
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-gray-700">Brownies Inclus</h4>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <div className="relative w-16 h-16">
-                        {desserts.filter(dessert => dessert.name.toLowerCase().includes('brownie')).map((dessert) => (
-                          <div key={dessert._id}>
-                            <Image
-                              src={dessert.image || '/images/placeholder-food.jpg'}
-                              alt={dessert.name}
-                              width={64}
-                              height={64}
-                              className="object-cover rounded"
-                            />
+                    <h4 className="font-semibold text-sm lg:text-base text-gray-700">Brownies Inclus</h4>
+                    <div className="flex items-center gap-2 lg:gap-3 p-2 lg:p-3 bg-gray-50 rounded-lg">
+                      <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
+                        {desserts.filter(dessert => dessert.name.toLowerCase().includes('brownie')).length > 0 ? (
+                          <Image
+                            src={desserts.find(d => d.name.toLowerCase().includes('brownie'))?.image || '/images/placeholder-food.jpg'}
+                            alt="Brownie"
+                            fill
+                            className="object-cover rounded"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
+                            <span className="text-xs">🍫</span>
                           </div>
-                        ))}
+                        )}
                       </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900">2 Brownies Inclus</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-xs lg:text-sm text-gray-900">2 Brownies Inclus</div>
                       </div>
-                      <div className="text-sm text-gray-600 font-semibold">Inclus</div>
+                      <div className="text-xs lg:text-sm text-gray-600 font-semibold flex-shrink-0">Inclus</div>
                     </div>
                   </div>
                 )}
 
                 {/* Quantité */}
                 <div className="border-t pt-4">
-                  <h4 className="font-semibold text-gray-700 mb-3">Quantité</h4>
+                  <h4 className="font-semibold text-sm lg:text-base text-gray-700 mb-3">Quantité</h4>
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                      className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-3 h-3 lg:w-4 lg:h-4" />
                     </button>
-                    <span className="w-12 text-center font-medium text-lg">{quantity}</span>
+                    <span className="w-10 lg:w-12 text-center font-medium text-base lg:text-lg">{quantity}</span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+                      className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-3 h-3 lg:w-4 lg:h-4" />
                     </button>
                   </div>
                 </div>

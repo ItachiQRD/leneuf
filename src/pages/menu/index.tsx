@@ -142,9 +142,29 @@ export default function MenuPage() {
       let count = 0;
       switch (category.id) {
         case 'pizza':
+          count = foods.filter((food: any) => food.type === 'pizza').length;
+          break;
         case 'burger':
+          count = foods.filter((food: any) => food.type === 'burger').length;
+          break;
         case 'salad':
-          count = foods.filter((food: any) => food.type === category.id).length;
+          // Compter les salades et assiettes
+          count = foods.filter((food: any) => 
+            food.type === 'salad' || 
+            food.type === 'plate' ||
+            food.type === 'plates' ||
+            food.category === 'assiettes' ||
+            food.name?.toLowerCase().includes('assiette')
+          ).length;
+          break;
+        case 'sandwich':
+          // Compter les sandwichs
+          count = foods.filter((food: any) => 
+            food.type === 'sandwich' || 
+            food.type === 'sandwich_durum' ||
+            food.category === 'sandwichs' ||
+            (food.category === 'food' && food.name?.toLowerCase().includes('sandwich'))
+          ).length;
           break;
         case 'drink':
           count = drinks.length;

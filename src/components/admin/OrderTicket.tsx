@@ -57,33 +57,91 @@ interface OrderTicketProps {
 
 export function OrderTicket({ order, onClose }: OrderTicketProps) {
   const isMobile = useIsMobile();
+  // Fonction pour déterminer la catégorie à partir du nom ou des customIngredients
+  const getCategoryName = (item: any): string => {
+    // Si la catégorie est directement disponible
+    if (item.category) {
+      const categoryMap: Record<string, string> = {
+        'burgers': 'Burger',
+        'sandwichs': 'Sandwich',
+        'pizzas': 'Pizza',
+        'tacos': 'Tacos',
+        'paninis': 'Panini',
+        'tex-mex': 'Tex-Mex',
+        'assiettes': 'Assiette',
+        'ptite-faim': 'P\'tite Faim',
+        'menu-enfants': 'Menu Enfant',
+        'accompagnements': 'Accompagnement',
+        'boissons': 'Boisson',
+        'desserts': 'Dessert'
+      };
+      return categoryMap[item.category] || '';
+    }
+
+    // Déterminer la catégorie à partir du nom du produit
+    const productName = item.productName?.toLowerCase() || '';
+    if (productName.includes('burger')) return 'Burger';
+    if (productName.includes('sandwich')) return 'Sandwich';
+    if (productName.includes('pizza')) return 'Pizza';
+    if (productName.includes('tacos')) return 'Tacos';
+    if (productName.includes('panini')) return 'Panini';
+    if (productName.includes('tex-mex') || productName.includes('texmex')) return 'Tex-Mex';
+    if (productName.includes('assiette')) return 'Assiette';
+    if (productName.includes('nuggets') || productName.includes('wings')) return 'P\'tite Faim';
+    if (productName.includes('menu enfant') || productName.includes('menu-enfant')) return 'Menu Enfant';
+    if (productName.includes('menu')) return 'Menu';
+
+    // Déterminer à partir des customIngredients
+    if (item.customIngredients) {
+      if (item.customIngredients.type === 'burger') return 'Burger';
+      if (item.customIngredients.type === 'sandwich') return 'Sandwich';
+      if (item.customIngredients.type === 'tacos') return 'Tacos';
+      if (item.customIngredients.type === 'bowl') return 'Tex-Mex';
+      if (item.customIngredients.menuId || item.customIngredients.menuName) return 'Menu';
+    }
+
+    return '';
+  };
+
   const formatProductName = (item: any) => {
+    const category = getCategoryName(item);
+    let productName = '';
+
     if (item.productName && item.productName !== 'Produit personnalisé') {
       // Pour les pizzas, remplacer la taille par "Pizza"
       if (item.productName.toLowerCase().includes('pizza')) {
-        return item.productName.replace(/\s+(Junior|Senior|Mega|XL|L|M|S)\s*$/, ' Pizza');
+        productName = item.productName.replace(/\s+(Junior|Senior|Mega|XL|L|M|S)\s*$/, ' Pizza');
       }
       // Pour les tacos, garder seulement "Tacos" + taille
-      if (item.productName.toLowerCase().includes('tacos')) {
+      else if (item.productName.toLowerCase().includes('tacos')) {
         const sizeMatch = item.productName.match(/\s+(Junior|Senior|Mega|XL|L|M|S)\s*$/);
         if (sizeMatch) {
-          return `Tacos ${sizeMatch[1]}`;
+          productName = `Tacos ${sizeMatch[1]}`;
+        } else {
+          productName = 'Tacos';
         }
-        return 'Tacos';
+      } else {
+        productName = item.productName;
       }
-      return item.productName;
-    }
-    
-    if (item.options && item.options.length > 0) {
+    } else if (item.options && item.options.length > 0) {
       const mainOption = item.options.find((opt: any) => 
         opt.name === 'Viandes' || opt.name === 'Ingrédients de base'
       );
       if (mainOption) {
-        return `${mainOption.choice.name} (Personnalisé)`;
+        productName = mainOption.choice.name;
+      } else {
+        productName = 'Produit personnalisé';
       }
+    } else {
+      productName = 'Produit personnalisé';
     }
-    
-    return 'Produit personnalisé';
+
+    // Ajouter la catégorie avant le nom si elle existe et n'est pas déjà dans le nom
+    if (category && !productName.toLowerCase().includes(category.toLowerCase())) {
+      return `${category} ${productName}`;
+    }
+
+    return productName;
   };
 
   const renderCustomIngredients = (customIngredients: any) => {
@@ -114,9 +172,7 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
       }
     }
 
-    if (customIngredients.menuOption) {
-      details.push(`Menu: ${customIngredients.menuOption}`);
-    }
+    // On ne montre plus le menu dans les détails
 
     if (customIngredients.breadType) {
       details.push(`Pain: ${customIngredients.breadType}`);
@@ -215,13 +271,13 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           ${order.items.map(item => {
             const customDetails = renderCustomIngredients(item.customIngredients);
             return `
-              <div style="margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid #ccc;">
-                <div style="display: flex; justify-content: space-between; font-weight: 900;">
+              <div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #ccc;">
+                <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 15px; letter-spacing: 0.5px; margin-bottom: 4px;">
                   <span>${item.quantity}x ${formatProductName(item)}</span>
                   <span>${(item.quantity * item.price).toFixed(2)}€</span>
                 </div>
                 ${customDetails && customDetails.length > 0 ? `
-                  <div style="font-size: 10px; color: #666; margin-top: 2px;">
+                  <div style="font-size: 11px; color: #666; margin-top: 6px; padding-left: 8px;">
                     ${customDetails.map(detail => `<div style="font-weight: 700;">• ${detail}</div>`).join('')}
                   </div>
                 ` : ''}
@@ -334,11 +390,15 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
               display: flex;
               justify-content: space-between;
               font-weight: 900;
+              font-size: 15px;
+              letter-spacing: 0.5px;
+              margin-bottom: 4px;
             }
             .item-details {
               font-size: 12px;
               color: #666;
-              margin-top: 2px;
+              margin-top: 6px;
+              padding-left: 8px;
             }
             .total {
               border-top: 2px solid black;
@@ -568,15 +628,15 @@ BON APPÉTIT !
                   const customDetails = renderCustomIngredients(item.customIngredients);
                   
                   return (
-                    <div key={index} className="text-sm border-b border-gray-300 pb-2">
+                    <div key={index} className="text-sm border-b border-gray-300 pb-3">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <div className="font-black">
+                          <div className="font-black text-base mb-2 tracking-wide">
                             {item.quantity}x {formatProductName(item)}
                           </div>
                           
                           {customDetails && customDetails.length > 0 && (
-                            <div className="text-sm text-gray-600 mt-1">
+                            <div className="text-sm text-gray-600 mt-2 pl-2">
                               {customDetails.map((detail, detailIndex) => (
                                 <div key={detailIndex} className="font-bold">
                                   • {detail}

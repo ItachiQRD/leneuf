@@ -28,23 +28,79 @@ import { OrderTicket } from '@/components/admin/OrderTicket';
 import OrderNotification from '@/components/admin/OrderNotification';
 import { useRouter } from 'next/router';
 
-// Fonction utilitaire pour formater les noms de produits
-const formatProductName = (item: any) => {
-  if (item.productName && item.productName !== 'Produit personnalisé') {
-    return item.productName;
+// Fonction pour déterminer la catégorie à partir du nom ou des customIngredients
+const getCategoryName = (item: any): string => {
+  // Si la catégorie est directement disponible
+  if (item.category) {
+    const categoryMap: Record<string, string> = {
+      'burgers': 'Burger',
+      'sandwichs': 'Sandwich',
+      'pizzas': 'Pizza',
+      'tacos': 'Tacos',
+      'paninis': 'Panini',
+      'tex-mex': 'Tex-Mex',
+      'assiettes': 'Assiette',
+      'ptite-faim': 'P\'tite Faim',
+      'menu-enfants': 'Menu Enfant',
+      'accompagnements': 'Accompagnement',
+      'boissons': 'Boisson',
+      'desserts': 'Dessert'
+    };
+    return categoryMap[item.category] || '';
   }
-  
-  // Pour les produits personnalisés, créer un nom basé sur les options
-  if (item.options && item.options.length > 0) {
+
+  // Déterminer la catégorie à partir du nom du produit
+  const productName = item.productName?.toLowerCase() || '';
+  if (productName.includes('burger')) return 'Burger';
+  if (productName.includes('sandwich')) return 'Sandwich';
+  if (productName.includes('pizza')) return 'Pizza';
+  if (productName.includes('tacos')) return 'Tacos';
+  if (productName.includes('panini')) return 'Panini';
+  if (productName.includes('tex-mex') || productName.includes('texmex')) return 'Tex-Mex';
+  if (productName.includes('assiette')) return 'Assiette';
+  if (productName.includes('nuggets') || productName.includes('wings')) return 'P\'tite Faim';
+  if (productName.includes('menu enfant') || productName.includes('menu-enfant')) return 'Menu Enfant';
+  if (productName.includes('menu')) return 'Menu';
+
+  // Déterminer à partir des customIngredients
+  if (item.customIngredients) {
+    if (item.customIngredients.type === 'burger') return 'Burger';
+    if (item.customIngredients.type === 'sandwich') return 'Sandwich';
+    if (item.customIngredients.type === 'tacos') return 'Tacos';
+    if (item.customIngredients.type === 'bowl') return 'Tex-Mex';
+    if (item.customIngredients.menuId || item.customIngredients.menuName) return 'Menu';
+  }
+
+  return '';
+};
+
+// Fonction utilitaire pour formater les noms de produits avec catégorie
+const formatProductName = (item: any) => {
+  const category = getCategoryName(item);
+  let productName = '';
+
+  if (item.productName && item.productName !== 'Produit personnalisé') {
+    productName = item.productName;
+  } else if (item.options && item.options.length > 0) {
+    // Pour les produits personnalisés, créer un nom basé sur les options
     const mainOption = item.options.find((opt: any) => 
       opt.name === 'Viandes' || opt.name === 'Ingrédients de base'
     );
     if (mainOption) {
-      return `${mainOption.choice.name} (Personnalisé)`;
+      productName = mainOption.choice.name;
+    } else {
+      productName = 'Produit personnalisé';
     }
+  } else {
+    productName = 'Produit personnalisé';
   }
-  
-  return 'Produit personnalisé';
+
+  // Ajouter la catégorie avant le nom si elle existe et n'est pas déjà dans le nom
+  if (category && !productName.toLowerCase().includes(category.toLowerCase())) {
+    return `${category} ${productName}`;
+  }
+
+  return productName;
 };
 
 // Fonction utilitaire pour formater les options
@@ -795,10 +851,7 @@ function OrderDetailModal({
       }
     }
 
-    // Informations de base pour burgers/sandwichs
-    if (customIngredients.menuOption) {
-      details.push(`Menu: ${customIngredients.menuOption}`);
-    }
+    // Informations de base pour burgers/sandwichs (on ne montre plus le menu dans les détails)
 
     if (customIngredients.breadType) {
       details.push(`Type: pain`);

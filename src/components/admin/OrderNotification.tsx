@@ -75,32 +75,89 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
     return 'En livraison';
   };
 
+  // Fonction pour déterminer la catégorie à partir du nom ou des customIngredients
+  const getCategoryName = (item: any): string => {
+    // Si la catégorie est directement disponible
+    if (item.category) {
+      const categoryMap: Record<string, string> = {
+        'burgers': 'Burger',
+        'sandwichs': 'Sandwich',
+        'pizzas': 'Pizza',
+        'tacos': 'Tacos',
+        'paninis': 'Panini',
+        'tex-mex': 'Tex-Mex',
+        'assiettes': 'Assiette',
+        'ptite-faim': 'P\'tite Faim',
+        'menu-enfants': 'Menu Enfant',
+        'accompagnements': 'Accompagnement',
+        'boissons': 'Boisson',
+        'desserts': 'Dessert'
+      };
+      return categoryMap[item.category] || '';
+    }
+
+    // Déterminer la catégorie à partir du nom du produit
+    const productName = item.productName?.toLowerCase() || '';
+    if (productName.includes('burger')) return 'Burger';
+    if (productName.includes('sandwich')) return 'Sandwich';
+    if (productName.includes('pizza')) return 'Pizza';
+    if (productName.includes('tacos')) return 'Tacos';
+    if (productName.includes('panini')) return 'Panini';
+    if (productName.includes('tex-mex') || productName.includes('texmex')) return 'Tex-Mex';
+    if (productName.includes('assiette')) return 'Assiette';
+    if (productName.includes('nuggets') || productName.includes('wings')) return 'P\'tite Faim';
+    if (productName.includes('menu enfant') || productName.includes('menu-enfant')) return 'Menu Enfant';
+    if (productName.includes('menu')) return 'Menu';
+
+    // Déterminer à partir des customIngredients
+    if (item.customIngredients) {
+      if (item.customIngredients.type === 'burger') return 'Burger';
+      if (item.customIngredients.type === 'sandwich') return 'Sandwich';
+      if (item.customIngredients.type === 'tacos') return 'Tacos';
+      if (item.customIngredients.type === 'bowl') return 'Tex-Mex';
+      if (item.customIngredients.menuId || item.customIngredients.menuName) return 'Menu';
+    }
+
+    return '';
+  };
+
   // Fonction pour formater le nom du produit (similaire à OrderTicket)
   const formatProductName = (item: any) => {
+    const category = getCategoryName(item);
+    let productName = '';
+
     if (item.productName && item.productName !== 'Produit personnalisé') {
       if (item.productName.toLowerCase().includes('pizza')) {
-        return item.productName.replace(/\s+(Junior|Senior|Mega|XL|L|M|S)\s*$/, ' Pizza');
-      }
-      if (item.productName.toLowerCase().includes('tacos')) {
+        productName = item.productName.replace(/\s+(Junior|Senior|Mega|XL|L|M|S)\s*$/, ' Pizza');
+      } else if (item.productName.toLowerCase().includes('tacos')) {
         const sizeMatch = item.productName.match(/\s+(Junior|Senior|Mega|XL|L|M|S)\s*$/);
         if (sizeMatch) {
-          return `Tacos ${sizeMatch[1]}`;
+          productName = `Tacos ${sizeMatch[1]}`;
+        } else {
+          productName = 'Tacos';
         }
-        return 'Tacos';
+      } else {
+        productName = item.productName;
       }
-      return item.productName;
-    }
-    
-    if (item.options && item.options.length > 0) {
+    } else if (item.options && item.options.length > 0) {
       const mainOption = item.options.find((opt: any) => 
         opt.name === 'Viandes' || opt.name === 'Ingrédients de base'
       );
       if (mainOption) {
-        return `${mainOption.choice.name} (Personnalisé)`;
+        productName = mainOption.choice.name;
+      } else {
+        productName = 'Produit personnalisé';
       }
+    } else {
+      productName = 'Produit personnalisé';
     }
-    
-    return 'Produit personnalisé';
+
+    // Ajouter la catégorie avant le nom si elle existe et n'est pas déjà dans le nom
+    if (category && !productName.toLowerCase().includes(category.toLowerCase())) {
+      return `${category} ${productName}`;
+    }
+
+    return productName;
   };
 
   // Fonction pour rendre les ingrédients personnalisés (similaire à OrderTicket)
@@ -236,17 +293,19 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
               display: flex;
               justify-content: space-between;
               font-weight: 900;
-              font-size: 14px;
-              letter-spacing: 0.5px;
+              font-size: 15px;
+              letter-spacing: 0.6px;
               text-transform: uppercase;
+              margin-bottom: 6px;
             }
             .item-details {
-              font-size: 13px;
+              font-size: 12px;
               font-weight: 900;
-              margin-top: 2px;
+              margin-top: 6px;
               letter-spacing: 0.4px;
               line-height: 1.5;
               text-transform: uppercase;
+              padding-left: 8px;
             }
             .item-details div {
               font-weight: 900;

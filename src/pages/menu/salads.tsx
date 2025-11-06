@@ -76,6 +76,8 @@ export default function SaladsPage() {
   const salads = foods.filter((food: any) => 
     food.type === 'salad' || 
     food.type === 'plate' ||
+    food.type === 'plates' ||
+    food.category === 'assiettes' ||
     food.name.toLowerCase().includes('assiette')
   );
   

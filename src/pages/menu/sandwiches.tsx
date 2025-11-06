@@ -80,6 +80,8 @@ export default function SandwichesPage() {
   // Filtrer les sandwichs
   const sandwiches = foods.filter((food: any) => 
     food.type === 'sandwich' || 
+    food.type === 'sandwich_durum' ||
+    food.category === 'sandwichs' ||
     (food.category === 'food' && food.name.toLowerCase().includes('sandwich'))
   );
 

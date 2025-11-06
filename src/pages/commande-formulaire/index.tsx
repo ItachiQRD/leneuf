@@ -72,6 +72,7 @@ export default function CommandeFormulairePage() {
       // Préparer les données de la commande
       const orderData = {
         customer: customerData,
+        orderType: orderType, // Inclure le type de commande
         items: items.map(item => ({
           productId: item._id || 'custom-product',
           productName: item.name,

@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log('Order data received:', JSON.stringify(req.body, null, 2));
       
       // Valider les données de la commande
-      const { customer, items, total, status, userId, deliveryAddress, paymentStatus, paymentMethod, notes } = req.body;
+      const { customer, items, total, status, userId, deliveryAddress, paymentStatus, paymentMethod, notes, orderType } = req.body;
       
       if ((!customer && !userId) || !items || !Array.isArray(items) || items.length === 0) {
         return res.status(400).json({ 
@@ -54,10 +54,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
       
+      // Déterminer l'adresse selon le type de commande
+      let finalDeliveryAddress;
+      if (orderType === 'pickup') {
+        // Pour les commandes à emporter, mettre "À emporter"
+        finalDeliveryAddress = {
+          street: 'À emporter',
+          city: '',
+          postalCode: '',
+          complement: ''
+        };
+      } else if (customer && customer.address) {
+        // Pour les livraisons, utiliser l'adresse du client
+        finalDeliveryAddress = {
+          street: customer.address,
+          city: 'Ville', // À extraire de l'adresse si nécessaire
+          postalCode: '00000', // À extraire de l'adresse si nécessaire
+          complement: customer.deliveryInstructions || ''
+        };
+      } else {
+        // Fallback
+        finalDeliveryAddress = deliveryAddress || {
+          street: 'Adresse par défaut',
+          city: 'Ville',
+          postalCode: '00000',
+          complement: ''
+        };
+      }
+      
       // Créer la commande avec validation
       const orderData = {
         userId: userId || null, // Optionnel pour les commandes sans compte
         customer: customer || null, // Nouveau format avec informations client
+        orderType: orderType || 'delivery', // Type de commande
         items: items.map((item: any) => ({
           productId: item.productId || 'custom-product',
           productName: item.productName || 'Produit personnalisé',
@@ -68,17 +97,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })),
         total: total || 0,
         status: status || 'pending',
-        deliveryAddress: customer ? {
-          street: customer.address,
-          city: 'Ville', // À extraire de l'adresse si nécessaire
-          postalCode: '00000', // À extraire de l'adresse si nécessaire
-          complement: customer.deliveryInstructions || ''
-        } : (deliveryAddress || {
-          street: 'Adresse par défaut',
-          city: 'Ville',
-          postalCode: '00000',
-          complement: ''
-        }),
+        deliveryAddress: finalDeliveryAddress,
         paymentStatus: paymentStatus || 'pending',
         paymentMethod: customer ? customer.paymentMethod : (paymentMethod || 'cash'),
         notes: customer ? customer.deliveryInstructions : (notes || '')

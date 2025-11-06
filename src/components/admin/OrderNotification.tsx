@@ -174,7 +174,12 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
       audio.currentTime = 0;
     });
 
-    const printContent = `
+    // Créer un élément caché pour l'impression directe
+    const printContainer = document.createElement('div');
+    printContainer.style.position = 'absolute';
+    printContainer.style.left = '-9999px';
+    printContainer.style.top = '-9999px';
+    printContainer.innerHTML = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -235,15 +240,17 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
               display: flex;
               justify-content: space-between;
               font-weight: 900;
-              font-size: 12px;
-              letter-spacing: 0.3px;
+              font-size: 14px;
+              letter-spacing: 0.5px;
+              text-transform: uppercase;
             }
             .item-details {
-              font-size: 11px;
+              font-size: 13px;
               font-weight: 900;
               margin-top: 2px;
-              letter-spacing: 0.2px;
-              line-height: 1.3;
+              letter-spacing: 0.4px;
+              line-height: 1.5;
+              text-transform: uppercase;
             }
             .item-details div {
               font-weight: 900;
@@ -310,8 +317,8 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
             <h2>CLIENT & LIVRAISON</h2>
             <div class="client-info"><strong>Nom:</strong> ${order.customer?.name || order.userId?.name || 'N/A'}</div>
             <div class="client-info"><strong>Tél:</strong> ${order.customer?.phone || order.userId?.phone || 'N/A'}</div>
-            <div class="client-info"><strong>Adresse:</strong> ${order.deliveryAddress?.street || order.customer?.address || 'N/A'}</div>
-            ${order.deliveryAddress?.postalCode && order.deliveryAddress.postalCode !== '00000' ? `<div class="client-info">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city || ''}</div>` : ''}
+            <div class="client-info"><strong>Adresse:</strong> ${order.orderType === 'pickup' ? 'À emporter' : (order.deliveryAddress?.street || order.customer?.address || 'N/A')}</div>
+            ${order.orderType !== 'pickup' && order.deliveryAddress?.postalCode && order.deliveryAddress.postalCode !== '00000' ? `<div class="client-info">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city || ''}</div>` : ''}
             ${order.deliveryAddress?.complement ? `<div class="client-info"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
             <div class="client-info"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
           </div>
@@ -320,15 +327,16 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
             <h2>ARTICLES</h2>
             ${order.items.map((item: any) => {
               const customDetails = renderCustomIngredients(item.customIngredients);
+              const productName = formatProductName(item).toUpperCase();
               return `
                 <div class="item">
                   <div class="item-header">
-                    <span>${item.quantity}x ${formatProductName(item)}</span>
+                    <span>${item.quantity}X ${productName}</span>
                     <span>${(item.quantity * item.price).toFixed(2)}€</span>
                   </div>
                   ${customDetails && customDetails.length > 0 ? `
                     <div class="item-details">
-                      ${customDetails.map((detail: string) => `<div>• ${detail}</div>`).join('')}
+                      ${customDetails.map((detail: string) => `<div>• ${detail.toUpperCase()}</div>`).join('')}
                     </div>
                   ` : ''}
                 </div>
@@ -351,34 +359,66 @@ export default function OrderNotification({ isOpen, order, onClose, onViewOrder 
             <div>MERCI POUR VOTRE COMMANDE !</div>
             <div>BON APPÉTIT !</div>
           </div>
-
-          <script>
-            window.onload = function() {
-              window.print();
-            };
-          </script>
         </body>
       </html>
     `;
 
-    // Créer une fenêtre d'impression et imprimer directement
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    if (printWindow) {
-      printWindow.document.write(printContent);
-      printWindow.document.close();
-      
-      // Imprimer immédiatement après le chargement
-      printWindow.onload = function() {
+    // Créer un iframe caché pour l'impression directe
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '-9999px';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
+    
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (iframeDoc) {
+      iframeDoc.open();
+      iframeDoc.write(printContent);
+      iframeDoc.close();
+
+      // Attendre que le contenu soit chargé puis imprimer directement
+      iframe.onload = () => {
         setTimeout(() => {
-          printWindow.print();
-          // Fermer la fenêtre après impression (ou laisser ouverte si l'utilisateur annule)
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+          
+          // Nettoyer après impression
           setTimeout(() => {
-            printWindow.close();
-          }, 100);
+            if (iframe.parentNode) {
+              document.body.removeChild(iframe);
+            }
+          }, 500);
         }, 100);
       };
+      
+      // Fallback si onload ne se déclenche pas
+      setTimeout(() => {
+        if (iframe.contentWindow) {
+          iframe.contentWindow.focus();
+          iframe.contentWindow.print();
+          setTimeout(() => {
+            if (iframe.parentNode) {
+              document.body.removeChild(iframe);
+            }
+          }, 500);
+        }
+      }, 200);
     } else {
-      alert('Impossible d\'ouvrir la fenêtre d\'impression. Veuillez autoriser les pop-ups pour ce site.');
+      // Fallback : utiliser window.print() directement si iframe ne fonctionne pas
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+          setTimeout(() => printWindow.close(), 100);
+        }, 100);
+      }
     }
   };
 

@@ -35,6 +35,7 @@ interface Order {
   promotionDiscount?: number;
   promotionDescription?: string;
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
+  orderType?: 'delivery' | 'pickup';
   deliveryAddress: {
     street: string;
     city: string;
@@ -203,9 +204,9 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
           <div style="font-weight: 800; font-size: 14px; margin-bottom: 5px;">CLIENT & LIVRAISON</div>
           <div style="font-weight: 700;"><strong>Nom:</strong> ${order.userId?.name || order.customer?.name || 'N/A'}</div>
           <div style="font-weight: 700;"><strong>Tél:</strong> ${order.userId?.phone || order.customer?.phone || 'N/A'}</div>
-          <div style="font-weight: 700;"><strong>Adresse:</strong> ${order.deliveryAddress.street}</div>
-          ${order.deliveryAddress.postalCode !== '00000' ? `<div style="font-weight: 700;">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
-          ${order.deliveryAddress.complement ? `<div style="font-weight: 700;"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
+          <div style="font-weight: 700;"><strong>Adresse:</strong> ${order.orderType === 'pickup' ? 'À emporter' : order.deliveryAddress.street}</div>
+          ${order.orderType !== 'pickup' && order.deliveryAddress.postalCode !== '00000' ? `<div style="font-weight: 700;">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
+          ${order.orderType !== 'pickup' && order.deliveryAddress.complement ? `<div style="font-weight: 700;"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
           <div style="font-weight: 700;"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
         </div>
 
@@ -400,8 +401,8 @@ export function OrderTicket({ order, onClose }: OrderTicketProps) {
             <h2>CLIENT & LIVRAISON</h2>
             <div class="bold"><strong>Nom:</strong> ${order.userId?.name || order.customer?.name || 'N/A'}</div>
             <div class="bold"><strong>Tél:</strong> ${order.userId?.phone || order.customer?.phone || 'N/A'}</div>
-            <div class="bold"><strong>Adresse:</strong> ${order.deliveryAddress.street}</div>
-            ${order.deliveryAddress.postalCode !== '00000' ? `<div class="bold">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
+            <div class="bold"><strong>Adresse:</strong> ${order.orderType === 'pickup' ? 'À emporter' : order.deliveryAddress.street}</div>
+            ${order.orderType !== 'pickup' && order.deliveryAddress.postalCode !== '00000' ? `<div class="bold">${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}</div>` : ''}
             ${order.deliveryAddress.complement ? `<div class="bold"><strong>Instructions:</strong> ${order.deliveryAddress.complement}</div>` : ''}
             <div class="bold"><strong>Paiement:</strong> ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>
           </div>
@@ -471,8 +472,7 @@ ${new Date(order.createdAt).toLocaleDateString('fr-FR')} à ${new Date(order.cre
 CLIENT & LIVRAISON
 Nom: ${order.userId?.name || order.customer?.name || 'N/A'}
 Tél: ${order.userId?.phone || order.customer?.phone || 'N/A'}
-Adresse: ${order.deliveryAddress.street}
-${order.deliveryAddress.postalCode !== '00000' ? `${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}` : ''}
+Adresse: ${order.orderType === 'pickup' ? 'À emporter' : `${order.deliveryAddress.street}${order.deliveryAddress.postalCode !== '00000' ? ` ${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}` : ''}`}
 Paiement: ${order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}
 
 ARTICLES
@@ -548,11 +548,11 @@ BON APPÉTIT !
                 <div className="text-sm space-y-1">
                   <div className="font-bold"><strong>Nom:</strong> {order.userId?.name || order.customer?.name || 'N/A'}</div>
                   <div className="font-bold"><strong>Tél:</strong> {order.userId?.phone || order.customer?.phone || 'N/A'}</div>
-                  <div className="font-bold"><strong>Adresse:</strong> {order.deliveryAddress.street}</div>
-                  {order.deliveryAddress.postalCode !== '00000' && (
+                  <div className="font-bold"><strong>Adresse:</strong> {order.orderType === 'pickup' ? 'À emporter' : order.deliveryAddress.street}</div>
+                  {order.orderType !== 'pickup' && order.deliveryAddress.postalCode !== '00000' && (
                     <div className="font-bold">{order.deliveryAddress.postalCode} {order.deliveryAddress.city}</div>
                   )}
-                  {order.deliveryAddress.complement && (
+                  {order.orderType !== 'pickup' && order.deliveryAddress.complement && (
                     <div className="font-bold"><strong>Instructions:</strong> {order.deliveryAddress.complement}</div>
                   )}
                   <div className="font-bold"><strong>Paiement:</strong> {order.paymentMethod === 'card' ? 'CARTE' : 'ESPECES'}</div>

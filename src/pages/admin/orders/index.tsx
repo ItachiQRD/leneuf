@@ -94,6 +94,7 @@ interface Order {
   promotionDiscount?: number;
   promotionDescription?: string;
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
+  orderType?: 'delivery' | 'pickup';
   deliveryAddress: {
     street: string;
     city: string;
@@ -608,7 +609,7 @@ export default function AdminOrdersPage() {
                       <div className="flex items-center">
                         <MapPin className="w-4 h-4 text-gray-400 mr-2" />
                         <span className="text-sm text-gray-600">
-                          {order.deliveryAddress.street}, {order.deliveryAddress.city}
+                          {order.orderType === 'pickup' ? 'À emporter' : `${order.deliveryAddress.street}${order.deliveryAddress.city ? `, ${order.deliveryAddress.city}` : ''}`}
                         </span>
                       </div>
                     </div>
@@ -1009,16 +1010,17 @@ function OrderDetailModal({
             <div className="flex items-start">
               <MapPin className="w-4 h-4 text-gray-400 mr-3 mt-0.5" />
               <div>
-                <span className="text-sm font-medium text-gray-700">Adresse de livraison:</span>
+                <span className="text-sm font-medium text-gray-700">
+                  {order.orderType === 'pickup' ? 'Mode de commande:' : 'Adresse de livraison:'}
+                </span>
                 <div className="text-sm text-gray-600 mt-1">
                   <div className="font-medium">
-                    {order.deliveryAddress.street}
-                    {order.deliveryAddress.postalCode && order.deliveryAddress.city && 
-                      order.deliveryAddress.postalCode !== '00000' && 
-                      `, ${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}`
+                    {order.orderType === 'pickup' 
+                      ? 'À emporter' 
+                      : `${order.deliveryAddress.street}${order.deliveryAddress.postalCode && order.deliveryAddress.city && order.deliveryAddress.postalCode !== '00000' ? `, ${order.deliveryAddress.postalCode} ${order.deliveryAddress.city}` : ''}`
                     }
                   </div>
-                  {order.deliveryAddress.complement && (
+                  {order.orderType !== 'pickup' && order.deliveryAddress.complement && (
                     <div className="italic mt-1">{order.deliveryAddress.complement}</div>
                   )}
                 </div>

@@ -72,6 +72,11 @@ const orderSchema = createBaseSchema<OrderModel>({
     enum: ['pending', 'processing', 'completed', 'cancelled'],
     default: 'pending'
   },
+  orderType: {
+    type: String,
+    enum: ['delivery', 'pickup'],
+    default: 'delivery'
+  },
   deliveryAddress: {
     street: {
       type: String,

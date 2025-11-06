@@ -223,13 +223,11 @@ export default function SidesPage() {
                   whileHover="hover"
                   className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
                 >
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden bg-gray-100">
                     <SmartImage
                       src={side.image || '/images/placeholder-side.jpg'}
                       alt={side.name}
-                      width={400}
-                      height={192}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                     />
                     
                     {/* Badges */}

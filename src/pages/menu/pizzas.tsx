@@ -284,7 +284,7 @@ export default function PizzasPage() {
                       : 'bg-white border-gray-100 hover:border-gray-200'
                   }`}
                 >
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
                     <ProductImage
                       src={pizza.image}
                       alt={pizza.name}

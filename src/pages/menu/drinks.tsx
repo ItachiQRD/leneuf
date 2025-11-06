@@ -218,13 +218,11 @@ export default function DrinksPage() {
                   whileHover="hover"
                   className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
                 >
-                  <div className="relative h-48 overflow-hidden bg-gray-50 flex items-center justify-center">
+                  <div className="relative h-48 overflow-hidden bg-gray-100 flex items-center justify-center">
                     <SmartImage
                       src={drink.image || '/images/placeholder-drink.jpg'}
                       alt={drink.name}
-                      width={400}
-                      height={192}
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
                     />
                     
                     {/* Badges */}

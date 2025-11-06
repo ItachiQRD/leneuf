@@ -88,11 +88,17 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
       return;
     }
 
+    // Pour les commandes à emporter, mettre une adresse par défaut
+    const dataToSave = { ...formData };
+    if (orderType === 'pickup') {
+      dataToSave.address = 'À emporter';
+    }
+
     // Sauvegarder dans les cookies
-    updateCustomerData(formData);
+    updateCustomerData(dataToSave);
     
     // Soumettre le formulaire
-    onSubmit(formData);
+    onSubmit(dataToSave);
   };
 
   return (

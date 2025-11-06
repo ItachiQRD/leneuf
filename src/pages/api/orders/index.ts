@@ -47,10 +47,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Valider les données de la commande
       const { customer, items, total, status, userId, deliveryAddress, paymentStatus, paymentMethod, notes, orderType } = req.body;
       
-      if ((!customer && !userId) || !items || !Array.isArray(items) || items.length === 0) {
+      // Pour pickup, customer peut être minimal (nom et téléphone suffisent)
+      // Pour delivery, customer avec adresse est requis
+      if (orderType === 'pickup') {
+        // Pour pickup, vérifier au moins que customer existe avec nom et téléphone
+        if (!customer || !customer.name || !customer.phone) {
+          return res.status(400).json({ 
+            error: 'Données de commande invalides',
+            details: 'Pour une commande à emporter, le nom et le téléphone sont requis'
+          });
+        }
+      } else {
+        // Pour delivery, vérifier customer avec adresse
+        if ((!customer && !userId) || (customer && !customer.address)) {
+          return res.status(400).json({ 
+            error: 'Données de commande invalides',
+            details: 'Pour une livraison, une adresse est requise'
+          });
+        }
+      }
+      
+      if (!items || !Array.isArray(items) || items.length === 0) {
         return res.status(400).json({ 
           error: 'Données de commande invalides',
-          details: 'customer (ou userId) et items sont requis'
+          details: 'Les articles sont requis'
         });
       }
       
@@ -60,8 +80,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Pour les commandes à emporter, mettre "À emporter"
         finalDeliveryAddress = {
           street: 'À emporter',
-          city: '',
-          postalCode: '',
+          city: 'N/A', // Valeur par défaut pour satisfaire le modèle
+          postalCode: 'N/A', // Valeur par défaut pour satisfaire le modèle
           complement: ''
         };
       } else if (customer && customer.address) {

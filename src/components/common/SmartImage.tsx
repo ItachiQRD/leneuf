@@ -65,30 +65,60 @@ export default function SmartImage({
 
   const optimalSrc = getOptimalImageSrc(imgSrc, width);
 
+  // Si className contient w-full et h-full, utiliser fill pour un meilleur contrôle
+  const useFill = className.includes('w-full') && className.includes('h-full');
+  
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <div className={`relative overflow-hidden ${useFill ? 'w-full h-full' : className.includes('w-') || className.includes('h-') ? className : ''}`}>
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-10">
           <div className="w-8 h-8 border-2 border-gray-300 border-t-amber-500 rounded-full animate-spin"></div>
         </div>
       )}
-      <Image
-        src={optimalSrc}
-        alt={alt}
-        width={width}
-        height={height}
-        className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-        priority={priority}
-        sizes={sizes}
-        quality={quality}
-        onError={handleError}
-        onLoad={handleLoad}
-        style={{
-          width: 'auto',
-          height: 'auto',
-          objectFit: 'cover'
-        }}
-      />
+      {useFill ? (
+        <Image
+          src={optimalSrc}
+          alt={alt}
+          fill
+          priority={priority}
+          sizes={sizes}
+          quality={quality}
+          onError={handleError}
+          onLoad={handleLoad}
+          className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'} ${className.includes('object-contain') ? 'object-contain' : 'object-cover'} ${className.includes('object-center') ? 'object-center' : ''}`}
+        />
+      ) : width && height ? (
+        <div className="relative w-full h-full flex items-center justify-center">
+          <Image
+            src={optimalSrc}
+            alt={alt}
+            width={width}
+            height={height}
+            priority={priority}
+            sizes={sizes}
+            quality={quality}
+            onError={handleError}
+            onLoad={handleLoad}
+            className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'} max-w-full max-h-full ${className.includes('object-contain') ? 'object-contain' : 'object-cover'}`}
+            style={{
+              width: 'auto',
+              height: 'auto',
+            }}
+          />
+        </div>
+      ) : (
+        <Image
+          src={optimalSrc}
+          alt={alt}
+          fill
+          priority={priority}
+          sizes={sizes}
+          quality={quality}
+          onError={handleError}
+          onLoad={handleLoad}
+          className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'} ${className.includes('object-contain') ? 'object-contain' : 'object-cover'} ${className.includes('object-center') ? 'object-center' : ''}`}
+        />
+      )}
     </div>
   );
 }

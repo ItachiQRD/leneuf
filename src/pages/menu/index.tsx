@@ -1,140 +1,135 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
-  Search, 
-  Filter, 
-  Star, 
-  Clock, 
-  Utensils, 
   Pizza, 
-  Coffee, 
-  IceCream, 
+  Utensils, 
+  Leaf, 
+  IceCream,
   ChevronRight,
-  Heart,
-  ShoppingCart,
-  Flame,
-  Leaf,
-  Zap
+  ArrowRight,
+  Sparkles,
+  Flame
 } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
 import MenuOffers from '@/components/menu/MenuOffers';
 
-// Configuration des catégories de menu avec icônes et couleurs
+// Configuration des catégories de menu
 const menuCategories = [
   {
     id: 'pizza',
-    title: "Pizzas",
-    description: "Pâte maison, cuisson au feu de bois, ingrédients frais",
+    title: "PIZZAS",
+    subtitle: "Au feu de bois",
+    description: "Pâte maison, cuisson traditionnelle, ingrédients frais",
     icon: Pizza,
-    color: "from-red-500 to-orange-500",
-    bgColor: "bg-red-50",
+    color: "from-red-500 via-orange-500 to-red-600",
+    bgColor: "bg-red-500",
     textColor: "text-red-600",
     href: "/menu/pizzas",
+    image: "/images/menu/pizza-hero.jpg",
     count: 0
   },
   {
     id: 'burger',
-    title: "Burgers",
+    title: "BURGERS",
+    subtitle: "Gourmands & savoureux",
     description: "Viandes sélectionnées, pains artisanaux, sauces maison",
     icon: Utensils,
-    color: "from-amber-500 to-yellow-500",
-    bgColor: "bg-amber-50",
+    color: "from-amber-500 via-yellow-500 to-orange-500",
+    bgColor: "bg-amber-500",
     textColor: "text-amber-600",
     href: "/menu/burgers",
+    image: "/images/menu/burger-hero.jpg",
     count: 0
   },
   {
     id: 'salad',
-    title: "Salades et assiettes",
+    title: "SALADES & ASSIETTES",
+    subtitle: "Fraîches & équilibrées",
     description: "Légumes frais, protéines de qualité, vinaigrettes maison",
     icon: Leaf,
-    color: "from-green-500 to-emerald-500",
-    bgColor: "bg-green-50",
+    color: "from-green-500 via-emerald-500 to-teal-500",
+    bgColor: "bg-green-500",
     textColor: "text-green-600",
     href: "/menu/salads",
+    image: "/images/menu/salad-hero.jpg",
     count: 0
   },
   {
     id: 'sandwich',
-    title: "Sandwichs",
+    title: "SANDWICHS",
+    subtitle: "Garnis & généreux",
     description: "Pains frais, garnitures variées, sauces maison",
     icon: Utensils,
-    color: "from-orange-500 to-amber-500",
-    bgColor: "bg-orange-50",
+    color: "from-orange-500 via-amber-500 to-yellow-500",
+    bgColor: "bg-orange-500",
     textColor: "text-orange-600",
     href: "/menu/sandwiches",
+    image: "/images/menu/sandwich-hero.jpg",
     count: 0
   },
   {
     id: 'dessert',
-    title: "Desserts",
+    title: "DESSERTS",
+    subtitle: "Douceurs & gourmandises",
     description: "Pâtisseries maison, glaces artisanales, douceurs",
     icon: IceCream,
-    color: "from-pink-500 to-purple-500",
-    bgColor: "bg-pink-50",
+    color: "from-pink-500 via-purple-500 to-indigo-500",
+    bgColor: "bg-pink-500",
     textColor: "text-pink-600",
     href: "/menu/desserts",
+    image: "/images/menu/dessert-hero.jpg",
     count: 0
   }
 ];
 
-// Animations avancées
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  show: { 
+// Animations
+const fadeInUp = {
+  hidden: { opacity: 0, y: 60 },
+  visible: { 
     opacity: 1, 
-    y: 0, 
+    y: 0,
+    transition: { duration: 0.8, ease: "easeOut" }
+  }
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { 
+    opacity: 1, 
     scale: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 15
-    }
+    transition: { duration: 0.6, ease: "easeOut" }
   }
 };
 
-const hoverVariants = {
-  hover: {
-    scale: 1.05,
-    y: -10,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 20
-    }
+const slideInLeft = {
+  hidden: { opacity: 0, x: -100 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.8, ease: "easeOut" }
   }
 };
 
-const pulseVariants = {
-  pulse: {
-    scale: [1, 1.1, 1],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
+const slideInRight = {
+  hidden: { opacity: 0, x: 100 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.8, ease: "easeOut" }
   }
 };
 
 export default function MenuPage() {
   const { foods, drinks, desserts, sides, sauces } = useProducts();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
   // Calculer le nombre de produits par catégorie
   useEffect(() => {
@@ -148,7 +143,6 @@ export default function MenuPage() {
           count = foods.filter((food: any) => food.type === 'burger').length;
           break;
         case 'salad':
-          // Compter les salades et assiettes
           count = foods.filter((food: any) => 
             food.type === 'salad' || 
             food.type === 'plate' ||
@@ -158,16 +152,12 @@ export default function MenuPage() {
           ).length;
           break;
         case 'sandwich':
-          // Compter les sandwichs
           count = foods.filter((food: any) => 
             food.type === 'sandwich' || 
             food.type === 'sandwich_durum' ||
             food.category === 'sandwichs' ||
             (food.category === 'food' && food.name?.toLowerCase().includes('sandwich'))
           ).length;
-          break;
-        case 'drink':
-          count = drinks.length;
           break;
         case 'dessert':
           count = desserts.length;
@@ -176,7 +166,6 @@ export default function MenuPage() {
       return { ...category, count };
     });
     
-    // Mettre à jour les catégories avec les comptes
     menuCategories.forEach((category, index) => {
       menuCategories[index].count = categoriesWithCount[index].count;
     });
@@ -184,12 +173,10 @@ export default function MenuPage() {
     setIsLoading(false);
   }, [foods, drinks, desserts, sides, sauces]);
 
-  // Produits en vedette (bestsellers)
-  const featuredProducts = [
-    ...foods.filter((food: any) => food.category === 'bestseller').slice(0, 3),
-    ...drinks.filter((drink: any) => drink.category === 'bestseller').slice(0, 1),
-    ...desserts.filter((dessert: any) => dessert.category === 'bestseller').slice(0, 1)
-  ].slice(0, 5);
+  // Animation de parallaxe pour les images
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0.6]);
 
   return (
     <>
@@ -201,272 +188,305 @@ export default function MenuPage() {
         />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50">
-        {/* Hero Section */}
+      <div ref={containerRef} className="min-h-screen bg-black">
+        {/* Hero Section - Immense et impactant */}
         <motion.section 
-          className="relative py-24 bg-gradient-to-r from-gray-900 via-black to-gray-800 overflow-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
+          className="relative h-screen flex items-center justify-center overflow-hidden"
+          initial="hidden"
+          animate="visible"
         >
-          <div className="absolute inset-0">
+          {/* Image de fond avec parallaxe */}
+          <motion.div 
+            className="absolute inset-0 z-0"
+            style={{ y: y1, opacity }}
+          >
             <Image
               src="/images/bg-hero.webp"
               alt="Menu background"
               fill
-              className="object-cover opacity-30"
+              className="object-cover"
+              priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-          </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90" />
+          </motion.div>
 
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div
-              className="text-center max-w-4xl mx-auto"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.3 }}
+          {/* Contenu principal */}
+          <motion.div
+            className="relative z-10 text-center px-4"
+            variants={fadeInUp}
+          >
+            <motion.h1 
+              className="text-8xl md:text-[12rem] font-black text-white mb-8 tracking-tight leading-none"
+              variants={scaleIn}
             >
-              <motion.h1 
-                className="text-6xl md:text-8xl font-light text-white mb-8 font-serif"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.5 }}
-              >
-                Notre <span className="text-amber-400">Carte</span>
-              </motion.h1>
-              
-              <motion.p 
-                className="text-2xl text-gray-300 mb-12 font-light max-w-2xl mx-auto"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7 }}
-              >
-                Une cuisine qui allie tradition et modernité, 
-                préparée avec passion par nos chefs
-              </motion.p>
+              NOTRE
+              <br />
+              <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-red-500 bg-clip-text text-transparent">
+                CARTE
+              </span>
+            </motion.h1>
+            
+            <motion.p 
+              className="text-3xl md:text-5xl text-gray-300 mb-12 font-light max-w-4xl mx-auto"
+              variants={fadeInUp}
+            >
+              Une expérience culinaire
+              <br />
+              <span className="text-white font-medium">exceptionnelle</span>
+            </motion.p>
 
-              {/* Barre de recherche */}
-              <motion.div
-                className="max-w-md mx-auto relative"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.9 }}
-              >
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    placeholder="Rechercher un plat..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
-                  />
-                </div>
-              </motion.div>
+            {/* Effet de particules animées */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 2 }}
+            >
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 bg-amber-400 rounded-full"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                  }}
+                  animate={{
+                    y: [0, -30, 0],
+                    opacity: [0, 1, 0],
+                    scale: [0, 1, 0],
+                  }}
+                  transition={{
+                    duration: 3 + Math.random() * 2,
+                    repeat: Infinity,
+                    delay: Math.random() * 2,
+                  }}
+                />
+              ))}
             </motion.div>
-          </div>
+          </motion.div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <ChevronRight className="w-8 h-8 text-white rotate-90" />
+          </motion.div>
         </motion.section>
 
         {/* Section Offres Spéciales */}
-        <MenuOffers />
+        <section className="relative py-20 bg-gradient-to-b from-black via-gray-900 to-black">
+          <MenuOffers />
+        </section>
 
-        {/* Section Produits en Vedette */}
-        {featuredProducts.length > 0 && (
-          <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="text-center mb-16"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-              >
-                <h2 className="text-5xl font-light text-gray-900 mb-6 font-serif">
-                  Nos <span className="text-amber-600">Spécialités</span>
-                </h2>
-                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                  Les plats les plus appréciés de nos clients
-            </p>
-          </motion.div>
-
-              <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-              >
-                {featuredProducts.map((product: any, index) => (
-                  <motion.div
-                    key={product._id || product.id || index}
-                    variants={itemVariants}
-                    whileHover="hover"
-                    className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
-                  >
-                    <div className="relative h-48 overflow-hidden">
-                      <Image
-                        src={product.image || '/images/menu/default.jpg'}
-                        alt={product.name || 'Produit'}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute top-4 right-4">
-                        <motion.div
-                          variants={pulseVariants}
-                          animate="pulse"
-                          className="bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center"
-                        >
-                          <Star className="w-4 h-4 mr-1 fill-current" />
-                          Bestseller
-                        </motion.div>
-                      </div>
-                    </div>
-                    
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors">
-                        {product.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                        {product.description || product.baseIngredients?.join(', ') || 'Délicieux plat préparé avec soin'}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-amber-600">
-                          {product.price}€
-                        </span>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          className="bg-amber-500 text-white p-2 rounded-full hover:bg-amber-600 transition-colors"
-                        >
-                          <ShoppingCart className="w-5 h-5" />
-                        </motion.button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
-          </section>
-        )}
-
-        {/* Section Catégories */}
-        <section className="py-20 bg-gradient-to-br from-gray-50 to-amber-50">
+        {/* Catégories - Immenses cartes avec images */}
+        <section className="relative py-20 bg-black">
           <div className="container mx-auto px-4">
             <motion.div
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              className="text-center mb-20"
+              initial="hidden"
+              whileInView="visible"
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              variants={fadeInUp}
             >
-              <h2 className="text-5xl font-light text-gray-900 mb-6 font-serif">
-                Explorez nos <span className="text-amber-600">Catégories</span>
+              <h2 className="text-7xl md:text-9xl font-black text-white mb-6 tracking-tight">
+                EXPLOREZ
               </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Chaque catégorie regorge de saveurs uniques et authentiques
+              <p className="text-2xl md:text-4xl text-gray-400 font-light">
+                Nos univers culinaires
               </p>
             </motion.div>
 
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-            >
+            <div className="space-y-32">
               {menuCategories.map((category, index) => {
                 const Icon = category.icon;
+                const isEven = index % 2 === 0;
+                
                 return (
                   <motion.div
                     key={category.id}
-                    variants={itemVariants}
-                    whileHover="hover"
-                    className="group cursor-pointer"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={isEven ? slideInLeft : slideInRight}
+                    className="relative"
                   >
                     <Link href={category.href}>
-                      <div className={`${category.bgColor} rounded-2xl p-8 h-full border border-gray-200 hover:border-gray-300 transition-all duration-300 group-hover:shadow-xl`}>
-                        <div className="text-center">
+                      <motion.div
+                        className="relative group cursor-pointer overflow-hidden rounded-3xl"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        {/* Image de fond - Immense */}
+                        <div className="relative h-[600px] md:h-[800px] overflow-hidden">
                           <motion.div
-                            className={`w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r ${category.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
-                            whileHover={{ rotate: 360 }}
+                            className="absolute inset-0"
+                            whileHover={{ scale: 1.1 }}
                             transition={{ duration: 0.6 }}
                           >
-                            <Icon className="w-10 h-10 text-white" />
+                            <Image
+                              src={category.image || '/images/menu/default.jpg'}
+                              alt={category.title}
+                              fill
+                              className="object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/images/placeholder-food.jpg';
+                              }}
+                            />
+                            <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-80 group-hover:opacity-70 transition-opacity duration-500`} />
                           </motion.div>
-                          
-                          <h3 className={`text-2xl font-semibold ${category.textColor} mb-4 group-hover:text-gray-900 transition-colors`}>
-                            {category.title}
-                          </h3>
-                          
-                          <p className="text-gray-600 mb-6 leading-relaxed">
-                            {category.description}
-                          </p>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-500">
-                              {category.count} produit{category.count > 1 ? 's' : ''}
-                            </span>
+
+                          {/* Contenu superposé */}
+                          <div className="relative z-10 h-full flex flex-col justify-center items-center text-center p-12">
+                            {/* Icône animée */}
                             <motion.div
-                              className={`${category.textColor} group-hover:text-gray-900 transition-colors`}
-                              whileHover={{ x: 5 }}
+                              className={`w-32 h-32 ${category.bgColor} rounded-full flex items-center justify-center mb-8 shadow-2xl`}
+                              whileHover={{ rotate: 360, scale: 1.2 }}
+                              transition={{ duration: 0.6 }}
                             >
-                              <ChevronRight className="w-5 h-5" />
+                              <Icon className="w-16 h-16 text-white" />
                             </motion.div>
+
+                            {/* Titre - ÉNORME */}
+                            <motion.h3
+                              className="text-6xl md:text-8xl font-black text-white mb-4 tracking-tight"
+                              whileHover={{ scale: 1.05 }}
+                            >
+                              {category.title}
+                            </motion.h3>
+
+                            {/* Sous-titre */}
+                            <motion.p
+                              className="text-2xl md:text-4xl text-white/90 mb-6 font-light"
+                              whileHover={{ x: 10 }}
+                            >
+                              {category.subtitle}
+                            </motion.p>
+
+                            {/* Description */}
+                            <motion.p
+                              className="text-lg md:text-xl text-white/80 max-w-2xl mb-8"
+                              whileHover={{ x: 10 }}
+                            >
+                              {category.description}
+                            </motion.p>
+
+                            {/* Compteur et bouton */}
+                            <div className="flex items-center gap-6">
+                              <motion.span
+                                className="text-2xl md:text-3xl text-white font-bold"
+                                whileHover={{ scale: 1.1 }}
+                              >
+                                {category.count} produit{category.count > 1 ? 's' : ''}
+                              </motion.span>
+                              
+                              <motion.div
+                                className="flex items-center gap-2 text-white text-xl font-bold"
+                                whileHover={{ x: 10 }}
+                              >
+                                <span>Découvrir</span>
+                                <ArrowRight className="w-6 h-6" />
+                              </motion.div>
+                            </div>
                           </div>
+
+                          {/* Effet de brillance au survol */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
+                            style={{ width: '200%' }}
+                          />
                         </div>
-                      </div>
+                      </motion.div>
                     </Link>
                   </motion.div>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
         </section>
 
-        {/* Section CTA */}
-        <section className="py-20 bg-gradient-to-r from-amber-600 to-orange-600">
-          <div className="container mx-auto px-4 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+        {/* Section CTA finale - Immense */}
+        <motion.section 
+          className="relative py-32 bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 overflow-hidden"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInUp}
+        >
+          {/* Effets de particules */}
+          <div className="absolute inset-0 overflow-hidden">
+            {[...Array(30)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-3 h-3 bg-white/30 rounded-full"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  y: [0, -50, 0],
+                  opacity: [0, 1, 0],
+                  scale: [0, 1.5, 0],
+                }}
+                transition={{
+                  duration: 4 + Math.random() * 2,
+                  repeat: Infinity,
+                  delay: Math.random() * 3,
+                }}
+              />
+            ))}
+          </div>
+
+          <div className="container mx-auto px-4 text-center relative z-10">
+            <motion.h2
+              className="text-7xl md:text-9xl font-black text-white mb-8 tracking-tight"
+              variants={scaleIn}
             >
-              <h2 className="text-4xl font-light text-white mb-6 font-serif">
-                Prêt à commander ?
-              </h2>
-              <p className="text-xl text-amber-100 mb-8 max-w-2xl mx-auto">
-                Découvrez nos spécialités et laissez-vous tenter par nos créations culinaires
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+              PRÊT À
+              <br />
+              COMMANDER ?
+            </motion.h2>
+            
+            <motion.p
+              className="text-3xl md:text-5xl text-white/90 mb-12 font-light max-w-4xl mx-auto"
+              variants={fadeInUp}
+            >
+              Découvrez nos spécialités et laissez-vous tenter
+            </motion.p>
+
+            <motion.div
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+              variants={fadeInUp}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/menu/pizzas"
+                  className="inline-flex items-center px-12 py-6 bg-white text-orange-600 font-black text-2xl rounded-full shadow-2xl hover:shadow-amber-500/50 transition-all"
                 >
-                  <Link
-                    href="/menu/pizzas"
-                    className="inline-flex items-center px-8 py-4 bg-white text-amber-600 font-semibold rounded-full hover:bg-gray-100 transition-colors"
-                  >
-                    <Pizza className="w-5 h-5 mr-2" />
-                    Voir les Pizzas
-                  </Link>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  <Pizza className="w-8 h-8 mr-3" />
+                  VOIR LES PIZZAS
+                </Link>
+              </motion.div>
+              
+              <motion.div
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/commander"
+                  className="inline-flex items-center px-12 py-6 border-4 border-white text-white font-black text-2xl rounded-full hover:bg-white hover:text-orange-600 transition-all"
                 >
-                  <Link
-                    href="tel:0326407967"
-                    className="inline-flex items-center px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-amber-600 transition-colors"
-                  >
-                    <Utensils className="w-5 h-5 mr-2" />
-                    Commander
-                  </Link>
-                </motion.div>
-              </div>
-          </motion.div>
-        </div>
-        </section>
+                  <Utensils className="w-8 h-8 mr-3" />
+                  COMMANDER
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </motion.section>
       </div>
     </>
   );

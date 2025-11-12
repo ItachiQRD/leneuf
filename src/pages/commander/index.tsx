@@ -13,6 +13,7 @@ import TexMexComposer from '@/components/commander/TexMexComposer';
 import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
 import PizzaMenuSelector from '@/components/commander/PizzaMenuSelector';
 import OrderTypeModal from '@/components/checkout/OrderTypeModal';
+import PizzaPromoBanner from '@/components/commander/PizzaPromoBanner';
 
 export default function CommanderPage() {
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -704,6 +705,34 @@ export default function CommanderPage() {
           ) : selectedCategory === 'pizzas' ? (
             /* Section Pizzas avec menus */
             <div className="space-y-6">
+              {/* Bannières promotionnelles */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <PizzaPromoBanner
+                  title="OFFRE"
+                  description="2 pizzas senior achetées = la 3ème offerte"
+                  pizzaSize="senior"
+                  onClick={() => {
+                    const seniorMenu = pizzaMenus.find(m => m.id === 'menu-senior');
+                    if (seniorMenu) {
+                      setSelectedPizzaMenu(seniorMenu);
+                      setShowPizzaMenuSelector(true);
+                    }
+                  }}
+                />
+                <PizzaPromoBanner
+                  title="OFFRE"
+                  description="2 pizzas mega achetées = la 3ème offerte"
+                  pizzaSize="mega"
+                  onClick={() => {
+                    const megaMenu = pizzaMenus.find(m => m.pizzaSize === 'méga' || m.pizzaSize === 'mega');
+                    if (megaMenu) {
+                      setSelectedPizzaMenu(megaMenu);
+                      setShowPizzaMenuSelector(true);
+                    }
+                  }}
+                />
+              </div>
+
               {/* Menus Pizza - Discret */}
               <div className="mb-4">
                 <h3 className="text-sm font-semibold text-gray-600 mb-2">Menus Disponibles</h3>

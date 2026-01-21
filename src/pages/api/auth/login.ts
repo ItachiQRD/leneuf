@@ -6,7 +6,7 @@ import { serialize } from 'cookie';
 import { Document } from 'mongoose';
 
 interface UserDocument extends Document {
-  _id: string;
+  _id: any;
   name: string;
   email: string;
   password: string;

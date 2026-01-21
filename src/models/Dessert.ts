@@ -62,7 +62,7 @@ const dessertSchema = new mongoose.Schema({
 }, {
   timestamps: true,
   toJSON: {
-    transform(_, ret) {
+    transform(_: any, ret: any) {
       ret.id = ret._id;
       delete ret._id;
       delete ret.__v;

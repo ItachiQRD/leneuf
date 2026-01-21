@@ -66,7 +66,7 @@ export class VercelImageService {
       console.log('📤 Upload buffer Vercel:', { filename, category, size: buffer.length });
 
       // Créer un blob à partir du buffer
-      const blob = new Blob([buffer]);
+      const blob = new Blob([new Uint8Array(buffer)]);
       const file = new File([blob], filename, { type: 'image/jpeg' });
 
       return await this.uploadImage(file, category);

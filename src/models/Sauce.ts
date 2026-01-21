@@ -78,10 +78,10 @@ const sauceSchema = new mongoose.Schema({
 }, {
   timestamps: true,
   toJSON: {
-    transform: (_, ret) => {
-      ret._id = ret._id.toString();
-      ret.createdAt = ret.createdAt.toISOString();
-      ret.updatedAt = ret.updatedAt.toISOString();
+    transform: (_: any, ret: any) => {
+      if (ret._id) ret._id = ret._id.toString();
+      if (ret.createdAt) ret.createdAt = ret.createdAt.toISOString();
+      if (ret.updatedAt) ret.updatedAt = ret.updatedAt.toISOString();
       return ret;
     }
   }

@@ -124,8 +124,8 @@ const menuSchema = new mongoose.Schema({
 }, {
   timestamps: true,
   toJSON: {
-    transform(_, ret) {
-      ret._id = ret._id.toString();
+    transform(_: any, ret: any) {
+      if (ret._id) ret._id = ret._id.toString();
       return ret;
     }
   }

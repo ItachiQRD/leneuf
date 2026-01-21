@@ -107,9 +107,9 @@ const foodSchema = new mongoose.Schema({
 }, {
   timestamps: true,
   toJSON: {
-    transform(_, ret) {
+    transform(_: any, ret: any) {
       // Toujours convertir l'ID en string
-      ret._id = ret._id.toString();
+      if (ret._id) ret._id = ret._id.toString();
       return ret;
     }
   }

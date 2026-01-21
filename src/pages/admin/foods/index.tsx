@@ -1,28 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useProducts } from '@/contexts/ProductContext';
-import { Plus, Edit, Trash2, Clock, Star, Filter, ChefHat, Flame } from 'lucide-react';
+import { Plus, Edit, Trash2, Clock, Star, ChefHat, Flame } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
-import { Select } from '@/components/ui/Select';
 import FoodForm from '@/components/admin/foods/FoodForm';
-import { Food, FoodType, FOOD_TYPES } from '@/types/food';
+import { Food, FoodType } from '@/types/food';
 
 export default function AdminFoodsPage() {
   const { foods, loading, error, createFood, updateFood, deleteFood } = useProducts();
   const [editingFood, setEditingFood] = useState<Food | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [typeFilter, setTypeFilter] = useState<string>('all');
-
-  // Filtrer les plats par type
-  const filteredFoods = useMemo(() => {
-    if (typeFilter === 'all') return foods;
-    return foods.filter(food => food.type === typeFilter);
-  }, [foods, typeFilter]);
-
-  // Options pour le filtre de type
-  const typeFilterOptions = [
-    { value: 'all', label: 'Tous les types' },
-    ...FOOD_TYPES
-  ];
 
   if (loading) {
     return (
@@ -86,7 +72,7 @@ export default function AdminFoodsPage() {
             <div className="mt-4 sm:mt-0">
               <div className="flex items-center space-x-2 text-blue-100">
                 <Star className="h-5 w-5" />
-                <span className="text-lg font-semibold">{filteredFoods.length} plats</span>
+                <span className="text-lg font-semibold">{foods.length} plats</span>
               </div>
             </div>
           </div>
@@ -100,7 +86,7 @@ export default function AdminFoodsPage() {
                 <ChefHat className="mr-2 h-6 w-6" />
                 Plats
               </h1>
-              <p className="text-blue-100 text-sm">{filteredFoods.length} plats</p>
+              <p className="text-blue-100 text-sm">{foods.length} plats</p>
             </div>
             <div className="flex items-center space-x-2 text-blue-100">
               <Star className="h-4 w-4" />
@@ -111,27 +97,13 @@ export default function AdminFoodsPage() {
         {/* Contrôles */}
         {!isCreating && !editingFood && (
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-8">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                onClick={handleCreate} 
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <Plus className="mr-2 h-5 w-5" />
-                Ajouter un plat
-              </Button>
-              
-              <div className="flex-1 max-w-sm">
-                <div className="relative">
-                  <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Select
-                    value={typeFilter}
-                    onChange={(e) => setTypeFilter(e.target.value)}
-                    options={typeFilterOptions}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-            </div>
+            <Button 
+              onClick={handleCreate} 
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Plus className="mr-2 h-5 w-5" />
+              Ajouter un plat
+            </Button>
           </div>
         )}
 
@@ -148,9 +120,9 @@ export default function AdminFoodsPage() {
         )}
 
         {/* Grille des plats - Desktop */}
-        {!isCreating && !editingFood && filteredFoods && filteredFoods.length > 0 && (
+        {!isCreating && !editingFood && foods && foods.length > 0 && (
           <div className="hidden lg:grid gap-6 grid-cols-3 xl:grid-cols-4">
-            {filteredFoods.map((food) => (
+            {foods.map((food) => (
               <div
                 key={food._id?.toString() || ''}
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
@@ -279,9 +251,9 @@ export default function AdminFoodsPage() {
       )}
 
         {/* Grille des plats - Mobile */}
-        {!isCreating && !editingFood && filteredFoods && filteredFoods.length > 0 && (
+        {!isCreating && !editingFood && foods && foods.length > 0 && (
           <div className="lg:hidden grid gap-4 grid-cols-1">
-            {filteredFoods.map((food) => (
+            {foods.map((food) => (
               <div
                 key={food._id?.toString() || ''}
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
@@ -399,17 +371,17 @@ export default function AdminFoodsPage() {
         )}
 
         {/* État vide */}
-        {!isCreating && !editingFood && (!filteredFoods || filteredFoods.length === 0) && (
+        {!isCreating && !editingFood && (!foods || foods.length === 0) && (
           <div className="text-center py-16">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-12 max-w-md mx-auto">
               <div className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-4xl">🍽️</span>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                {typeFilter === 'all' ? 'Aucun plat trouvé' : `Aucun plat de type "${typeFilterOptions.find(opt => opt.value === typeFilter)?.label}"`}
+                Aucun plat trouvé
               </h3>
               <p className="text-gray-500 dark:text-gray-400 mb-6">
-                {typeFilter === 'all' ? 'Commencez par ajouter votre premier plat' : 'Essayez un autre filtre ou ajoutez un nouveau plat'}
+                Commencez par ajouter votre premier plat
               </p>
               <Button 
                 onClick={handleCreate}

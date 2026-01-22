@@ -40,18 +40,98 @@ export class CloudinaryStorageService {
 
   /**
    * Convertit un fichier formidable en buffer
+   * Gère les fichiers sur disque, en mémoire, et les arrays
    */
   private async fileToBuffer(file: any): Promise<Buffer> {
+    // Si c'est déjà un Buffer
     if (Buffer.isBuffer(file)) {
       return file;
     }
 
-    if (file.filepath) {
-      const fs = await import('fs');
-      return fs.readFileSync(file.filepath);
+    // Si c'est un array (formidable peut retourner un array)
+    if (Array.isArray(file)) {
+      file = file[0];
     }
 
-    throw new Error('Impossible de convertir le fichier en buffer');
+    // Si le fichier a un filepath (fichier sur disque)
+    if (file.filepath) {
+      try {
+        const fs = await import('fs');
+        const fsPromises = fs.promises || require('fs').promises;
+        return await fsPromises.readFile(file.filepath);
+      } catch (error) {
+        console.error('[CloudinaryStorage] Erreur lecture filepath:', error);
+        // Continuer pour essayer d'autres méthodes
+      }
+    }
+
+    // Si le fichier est en mémoire (Vercel/serverless)
+    // Formidable peut stocker le contenu directement dans buffer
+    if (file.buffer) {
+      return Buffer.isBuffer(file.buffer) ? file.buffer : Buffer.from(file.buffer);
+    }
+
+    // Sur Vercel, formidable peut stocker dans _buf
+    if (file._buf) {
+      return Buffer.isBuffer(file._buf) ? file._buf : Buffer.from(file._buf);
+    }
+
+    // Essayer de lire depuis un stream si disponible
+    if (file.toBuffer && typeof file.toBuffer === 'function') {
+      try {
+        return await file.toBuffer();
+      } catch (error) {
+        console.error('[CloudinaryStorage] Erreur toBuffer:', error);
+      }
+    }
+
+    // Si c'est un objet File de formidable, essayer de lire depuis le stream
+    if (file instanceof require('formidable').File || (file.constructor && file.constructor.name === 'File')) {
+      try {
+        // Lire depuis le filepath si disponible
+        if (file.filepath) {
+          const fs = await import('fs');
+          const fsPromises = fs.promises || require('fs').promises;
+          return await fsPromises.readFile(file.filepath);
+        }
+        // Sinon, essayer de lire depuis le buffer interne
+        if (file._buf || file.buffer) {
+          const buf = file._buf || file.buffer;
+          return Buffer.isBuffer(buf) ? buf : Buffer.from(buf);
+        }
+      } catch (error) {
+        console.error('[CloudinaryStorage] Erreur lecture File object:', error);
+      }
+    }
+
+    // Dernière tentative : essayer de lire le contenu directement
+    if (file._writeStream || file._readStream) {
+      try {
+        const chunks: Buffer[] = [];
+        const stream = file._readStream || file._writeStream;
+        
+        return new Promise((resolve, reject) => {
+          stream.on('data', (chunk: Buffer) => chunks.push(chunk));
+          stream.on('end', () => resolve(Buffer.concat(chunks)));
+          stream.on('error', reject);
+        });
+      } catch (error) {
+        console.error('[CloudinaryStorage] Erreur lecture stream:', error);
+      }
+    }
+
+    // Log détaillé pour debug
+    console.error('[CloudinaryStorage] Structure du fichier:', {
+      type: typeof file,
+      isArray: Array.isArray(file),
+      hasFilepath: !!file.filepath,
+      hasBuffer: !!file.buffer,
+      hasToBuffer: typeof file.toBuffer === 'function',
+      keys: Object.keys(file || {}),
+      constructor: file?.constructor?.name
+    });
+
+    throw new Error(`Impossible de convertir le fichier en buffer. Type: ${typeof file}, Structure: ${JSON.stringify(Object.keys(file || {}))}`);
   }
 
   /**
@@ -60,51 +140,87 @@ export class CloudinaryStorageService {
   async uploadImage(imageFile: any, category: string = 'foods', productName?: string): Promise<UploadResult> {
     try {
       console.log(`[CloudinaryStorage] Uploading image to category: ${category}`);
+      console.log(`[CloudinaryStorage] File type:`, typeof imageFile, imageFile?.constructor?.name);
 
       // Vérifier la configuration
       if (!this.config.cloudName || !this.config.apiKey || !this.config.apiSecret) {
         throw new Error('Configuration Cloudinary incomplète');
       }
 
-      // Convertir le fichier en buffer
-      const imageBuffer = await this.fileToBuffer(imageFile);
-      console.log(`[CloudinaryStorage] Image buffer size: ${imageBuffer.length} bytes`);
-
-      // Créer un stream à partir du buffer
-      const imageStream = new Readable();
-      imageStream.push(imageBuffer);
-      imageStream.push(null);
-
       // Générer un nom de fichier basé sur le nom du produit
       const publicId = this.generatePublicId(productName, category);
 
-      // Upload vers Cloudinary
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            public_id: publicId,
-            folder: `fast-food-app/${category}`,
-            resource_type: 'auto',
-            transformation: [
-              { width: 800, height: 600, crop: 'limit', quality: 'auto' },
-              { format: 'webp' }
-            ]
-          },
-          (error, result) => {
-            if (error) {
-              console.error('[CloudinaryStorage] Upload error:', error);
-              reject(error);
-            } else {
-              console.log('[CloudinaryStorage] Upload successful:', result?.secure_url);
-              resolve(result);
+      // Essayer d'utiliser directement le stream si disponible (plus efficace)
+      let uploadPromise: Promise<any>;
+
+      // Si le fichier a un filepath, utiliser directement le stream
+      if (imageFile?.filepath) {
+        console.log(`[CloudinaryStorage] Using filepath stream: ${imageFile.filepath}`);
+        const fs = await import('fs');
+        const fileStream = fs.createReadStream(imageFile.filepath);
+        
+        uploadPromise = new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              public_id: publicId,
+              folder: `fast-food-app/${category}`,
+              resource_type: 'auto',
+              transformation: [
+                { width: 800, height: 600, crop: 'limit', quality: 'auto' },
+                { format: 'webp' }
+              ]
+            },
+            (error, result) => {
+              if (error) {
+                console.error('[CloudinaryStorage] Upload error:', error);
+                reject(error);
+              } else {
+                console.log('[CloudinaryStorage] Upload successful:', result?.secure_url);
+                resolve(result);
+              }
             }
-          }
-        );
+          );
 
-        imageStream.pipe(uploadStream);
-      });
+          fileStream.pipe(uploadStream);
+        });
+      } else {
+        // Sinon, convertir en buffer puis stream
+        console.log(`[CloudinaryStorage] Converting to buffer first`);
+        const imageBuffer = await this.fileToBuffer(imageFile);
+        console.log(`[CloudinaryStorage] Image buffer size: ${imageBuffer.length} bytes`);
 
-      const uploadResult = result as any;
+        // Créer un stream à partir du buffer
+        const imageStream = new Readable();
+        imageStream.push(imageBuffer);
+        imageStream.push(null);
+
+        uploadPromise = new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              public_id: publicId,
+              folder: `fast-food-app/${category}`,
+              resource_type: 'auto',
+              transformation: [
+                { width: 800, height: 600, crop: 'limit', quality: 'auto' },
+                { format: 'webp' }
+              ]
+            },
+            (error, result) => {
+              if (error) {
+                console.error('[CloudinaryStorage] Upload error:', error);
+                reject(error);
+              } else {
+                console.log('[CloudinaryStorage] Upload successful:', result?.secure_url);
+                resolve(result);
+              }
+            }
+          );
+
+          imageStream.pipe(uploadStream);
+        });
+      }
+
+      const uploadResult = await uploadPromise;
 
       return {
         success: true,

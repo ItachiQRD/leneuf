@@ -24,10 +24,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
 
     // Configuration formidable pour Vercel
+    // Sur Vercel, les fichiers sont stockés en mémoire (pas de filepath)
     const form = formidable({
       keepExtensions: true,
       maxFiles: 1,
       maxFileSize: 10 * 1024 * 1024, // 10MB
+      // Sur Vercel/serverless, ne pas spécifier uploadDir pour stocker en mémoire
+      // uploadDir sera géré automatiquement
       filter: ({ mimetype }) => {
         const isValid = Boolean(mimetype && mimetype.includes('image'));
 
@@ -54,12 +57,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('📁 [Upload API] Fichiers reçus:', Object.keys(files));
 
     const fileKey = Object.keys(files)[0];
-    const file = files[fileKey] as unknown as FormidableFile;
+    let file = files[fileKey] as unknown as FormidableFile | FormidableFile[];
+
+    // Formidable peut retourner un array de fichiers
+    if (Array.isArray(file)) {
+      file = file[0];
+    }
 
     if (!file) {
       console.error('❌ [Upload API] Aucun fichier reçu');
       return res.status(400).json({ message: 'No image uploaded' });
     }
+
+    // Log pour debug
+    console.log('📄 [Upload API] Structure du fichier:', {
+      hasFilepath: !!(file as any).filepath,
+      hasBuffer: !!(file as any).buffer,
+      hasBuf: !!(file as any)._buf,
+      size: (file as any).size,
+      mimetype: (file as any).mimetype,
+      keys: Object.keys(file || {})
+    });
 
     // Utiliser Cloudinary pour tous les environnements
     const category = Array.isArray(fields.category) ? fields.category[0] : fields.category || 'foods';

@@ -4,17 +4,20 @@ import { Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 import { useToast } from '@/hooks/use-toast';
+import { uploadToCloudinary } from '@/utils/cloudinaryUpload';
 
 interface ImageUploadProps {
   value?: string | File | null;
   onChange?: (file: File | string) => void;
   error?: string;
   label?: string;
+  category?: string; // Catégorie pour l'upload Cloudinary
 }
 
-export function ImageUpload({ value, onChange, error, label }: ImageUploadProps) {
+export function ImageUpload({ value, onChange, error, label, category = 'foods' }: ImageUploadProps) {
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { toast } = useToast();
 
   // Mettre à jour l'URL de prévisualisation quand la valeur change
@@ -66,24 +69,36 @@ export function ImageUpload({ value, onChange, error, label }: ImageUploadProps)
 
     try {
       setIsUploading(true);
-      onChange(file);
+      setUploadProgress(0);
 
-      toast({
-        title: "Succès",
-        description: "Image sélectionnée avec succès",
-        variant: "success",
+      // Upload direct vers Cloudinary depuis le client
+      const result = await uploadToCloudinary(file, category, (progress) => {
+        setUploadProgress(progress);
       });
+
+      if (result.success && result.url) {
+        // Passer l'URL Cloudinary au lieu du fichier
+        onChange(result.url);
+        toast({
+          title: "Succès",
+          description: "Image uploadée avec succès",
+          variant: "success",
+        });
+      } else {
+        throw new Error(result.error || 'Erreur lors de l\'upload');
+      }
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur upload:', error);
       toast({
         title: "Erreur",
-        description: "La sélection de l'image a échoué",
+        description: error instanceof Error ? error.message : "L'upload de l'image a échoué",
         variant: "destructive"
       });
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
     }
-  }, [onChange, toast]);
+  }, [onChange, toast, category]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -125,9 +140,13 @@ export function ImageUpload({ value, onChange, error, label }: ImageUploadProps)
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90"
+              className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-90 z-10"
             >
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500" />
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4" />
+              <p className="text-sm text-gray-600">Upload en cours...</p>
+              {uploadProgress > 0 && (
+                <p className="text-xs text-gray-500 mt-1">{uploadProgress}%</p>
+              )}
             </motion.div>
           )}
 

@@ -62,6 +62,7 @@ export default function BasicDessertInfo({ form }: BasicDessertInfoProps) {
           value={watch('image')}
           onChange={(file: string | File) => setValue('image', file as any)}
           error={errors.image?.message}
+          category="desserts"
         />
       </div>
 

@@ -201,6 +201,7 @@ export default function BasicFoodInfo({ form, type }: BasicFoodInfoProps) {
           value={watchedImage}
           onChange={(file: string | File) => setValue('image', file as any)}
           error={errors.image?.message}
+          category="foods"
         />
       </div>
 

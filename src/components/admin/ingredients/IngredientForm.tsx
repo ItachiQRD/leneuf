@@ -202,6 +202,7 @@ export default function IngredientForm({ initialData, onSubmit, onCancel, onDele
                   onChange={handleImageChange}
                   error={getErrorMessage(errors.image)}
                   label="Image de l'ingrédient"
+                  category="ingredients"
                 />
 
                 <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">

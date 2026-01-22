@@ -60,6 +60,7 @@ export default function BasicSideInfo({ form, category }: BasicSideInfoProps) {
             value={watch('image')}
             onChange={(value: string | File) => setValue('image', value as any)}
             error={errors.image?.message}
+            category="sides"
           />
         </div>
 

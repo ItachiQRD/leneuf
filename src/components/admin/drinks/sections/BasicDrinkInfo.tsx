@@ -61,6 +61,7 @@ export default function BasicDrinkInfo({ form }: BasicDrinkInfoProps) {
           onChange={handleImageChange}
           error={getErrorMessage(errors.image)}
           label="Image du produit"
+          category="drinks"
         />
         </div>
 

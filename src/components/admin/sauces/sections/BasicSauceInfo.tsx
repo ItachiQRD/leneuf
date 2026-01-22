@@ -77,6 +77,7 @@ export default function BasicSauceInfo({ form }: BasicSauceInfoProps) {
           value={watch('image')}
           onChange={(value: string | File) => setValue('image', value as any)}
           error={errors.image?.message}
+          category="sauces"
         />
       </div>
 

@@ -22,7 +22,7 @@ export async function handleUpload(req: NextApiRequest): Promise<UploadResult> {
     uploadDir,
     keepExtensions: true,
     maxFiles: 1,
-    maxFileSize: 5 * 1024 * 1024, // 5MB
+    maxFileSize: 10 * 1024 * 1024, // 10MB
     filter: function ({ mimetype }) {
       // Accepter uniquement les images
       return mimetype?.includes('image/') ?? false;

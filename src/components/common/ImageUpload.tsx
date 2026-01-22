@@ -33,9 +33,36 @@ export function ImageUpload({ value, onChange, error, label }: ImageUploadProps)
     }
   }, [value]);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[], rejectedFiles: any[]) => {
+    // Vérifier les fichiers rejetés (trop volumineux)
+    if (rejectedFiles && rejectedFiles.length > 0) {
+      const rejectedFile = rejectedFiles[0];
+      if (rejectedFile.errors && rejectedFile.errors.length > 0) {
+        const error = rejectedFile.errors[0];
+        if (error.code === 'file-too-large') {
+          toast({
+            title: "Fichier trop volumineux",
+            description: `L'image dépasse la limite de 10MB. Taille actuelle: ${(rejectedFile.file.size / (1024 * 1024)).toFixed(2)}MB`,
+            variant: "destructive"
+          });
+          return;
+        }
+      }
+    }
+
     const file = acceptedFiles[0];
     if (!file || !onChange) return;
+
+    // Vérification supplémentaire de la taille (10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      toast({
+        title: "Fichier trop volumineux",
+        description: `L'image dépasse la limite de 10MB. Taille actuelle: ${(file.size / (1024 * 1024)).toFixed(2)}MB`,
+        variant: "destructive"
+      });
+      return;
+    }
 
     try {
       setIsUploading(true);
@@ -64,7 +91,7 @@ export function ImageUpload({ value, onChange, error, label }: ImageUploadProps)
       'image/*': ['.png', '.jpg', '.jpeg', '.webp']
     },
     maxFiles: 1,
-    maxSize: 5 * 1024 * 1024, // 5MB
+    maxSize: 10 * 1024 * 1024, // 10MB
     disabled: !onChange // Désactiver si pas de onChange
   });
 
@@ -134,7 +161,7 @@ export function ImageUpload({ value, onChange, error, label }: ImageUploadProps)
                 }
               </p>
               <p className="text-xs text-gray-500">
-                PNG, JPG, WEBP jusqu'à 5MB
+                PNG, JPG, WEBP jusqu'à 10MB
               </p>
             </div>
           )}

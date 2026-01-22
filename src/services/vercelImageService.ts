@@ -23,9 +23,9 @@ export class VercelImageService {
         type: file.type 
       });
 
-      // Vérifier la taille du fichier (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error('Le fichier est trop volumineux (max 5MB)');
+      // Vérifier la taille du fichier (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error('Le fichier est trop volumineux (max 10MB)');
       }
 
       // Vérifier le type de fichier

@@ -34,7 +34,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             // FormData avec image
             const form = formidable({
               keepExtensions: true,
-              maxFileSize: 5 * 1024 * 1024, // 5MB
+              maxFileSize: 10 * 1024 * 1024, // 10MB
             });
 
             const { fields, files } = await new Promise((resolve, reject) => {

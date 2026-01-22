@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const form = formidable({
       keepExtensions: true,
       maxFiles: 1,
-      maxFileSize: 5 * 1024 * 1024, // 5MB
+      maxFileSize: 10 * 1024 * 1024, // 10MB
       filter: ({ mimetype }) => {
         const isValid = Boolean(mimetype && mimetype.includes('image'));
 

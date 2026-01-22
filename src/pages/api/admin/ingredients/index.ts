@@ -29,7 +29,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     case 'POST':
       try {
         const form = formidable({
-          maxFileSize: 5 * 1024 * 1024, // 5MB
+          maxFileSize: 10 * 1024 * 1024, // 10MB
         });
 
         const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {

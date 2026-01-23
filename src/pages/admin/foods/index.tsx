@@ -6,6 +6,18 @@ import { Select } from '@/components/ui/Select';
 import FoodForm from '@/components/admin/foods/FoodForm';
 import { Food, FoodType, FOOD_TYPES } from '@/types/food';
 
+// Helper pour vérifier si une URL d'image est valide (évite les anciennes URLs /uploads/)
+const isValidImageUrl = (url: string): boolean => {
+  if (!url || typeof url !== 'string') return false;
+  // Ignorer les anciennes URLs locales /uploads/
+  if (url.startsWith('/uploads/')) return false;
+  // Accepter les URLs complètes (http/https) et les URLs Cloudinary
+  return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:');
+};
+
+// Placeholder SVG inline
+const PLACEHOLDER_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5BdWN1bmUgaW1hZ2U8L3RleHQ+PC9zdmc+';
+
 export default function AdminFoodsPage() {
   const { foods, loading, error, createFood, updateFood, deleteFood } = useProducts();
   const [editingFood, setEditingFood] = useState<Food | null>(null);
@@ -151,7 +163,7 @@ export default function AdminFoodsPage() {
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
               >
                 {/* Image avec overlay */}
-                {typeof food.image === 'string' && food.image && food.image.trim() !== '' ? (
+                {typeof food.image === 'string' && food.image && food.image.trim() !== '' && isValidImageUrl(food.image) ? (
                   <div className="relative h-48 overflow-hidden">
                     <img
                       src={food.image}
@@ -159,7 +171,7 @@ export default function AdminFoodsPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
                         // Utiliser un placeholder inline si l'image échoue
-                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5BdWN1bmUgaW1hZ2U8L3RleHQ+PC9zdmc+';
+                        e.currentTarget.src = PLACEHOLDER_IMAGE;
                         e.currentTarget.onerror = null; // Éviter les boucles infinies
                       }}
                     />
@@ -286,7 +298,7 @@ export default function AdminFoodsPage() {
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
               >
                 {/* Image avec overlay */}
-                {typeof food.image === 'string' && food.image && food.image.trim() !== '' ? (
+                {typeof food.image === 'string' && food.image && food.image.trim() !== '' && isValidImageUrl(food.image) ? (
                   <div className="relative h-32 overflow-hidden">
                     <img
                       src={food.image}
@@ -294,7 +306,7 @@ export default function AdminFoodsPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
                         // Utiliser un placeholder inline si l'image échoue
-                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5BdWN1bmUgaW1hZ2U8L3RleHQ+PC9zdmc+';
+                        e.currentTarget.src = PLACEHOLDER_IMAGE;
                         e.currentTarget.onerror = null; // Éviter les boucles infinies
                       }}
                     />

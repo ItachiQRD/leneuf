@@ -19,27 +19,30 @@ export async function uploadToCloudinary(
 ): Promise<CloudinaryUploadResult> {
   try {
     // Vérifier la configuration Cloudinary
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+    // Essayer d'abord avec NEXT_PUBLIC_ (pour le client)
+    // Puis sans préfixe (pour compatibilité)
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 
+                      (typeof window !== 'undefined' ? (window as any).__CLOUDINARY_CLOUD_NAME__ : undefined);
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ||
+                          (typeof window !== 'undefined' ? (window as any).__CLOUDINARY_UPLOAD_PRESET__ : undefined);
 
     // Limite Vercel pour les serverless functions
     const VERCEL_MAX_SIZE = 4.5 * 1024 * 1024; // 4.5MB
     const fileSizeMB = file.size / (1024 * 1024);
 
     if (!cloudName || !uploadPreset) {
-      // Si le fichier est > 4.5MB et Cloudinary n'est pas configuré, refuser directement
-      if (file.size > VERCEL_MAX_SIZE) {
-        return {
-          success: false,
-          error: `Fichier trop volumineux (${fileSizeMB.toFixed(2)}MB). Cloudinary doit être configuré pour les fichiers > 4.5MB. Veuillez configurer NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME et NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET dans vos variables d'environnement.`
-        };
-      }
-      
-      // Fallback: utiliser l'API route uniquement pour les fichiers <= 4.5MB
-      console.warn('[CloudinaryUpload] Configuration manquante, fallback vers API route (limite 4.5MB):', {
+      // Si les variables client ne sont pas configurées, utiliser l'API route
+      // qui utilise les variables serveur (CLOUDINARY_CLOUD_NAME, etc.)
+      // Cette route gère les fichiers jusqu'à 10MB via stream
+      console.warn('[CloudinaryUpload] Variables client non configurées, utilisation de l\'API route avec variables serveur:', {
         cloudName: !!cloudName,
         uploadPreset: !!uploadPreset,
-        fileSize: `${fileSizeMB.toFixed(2)}MB`
+        fileSize: `${fileSizeMB.toFixed(2)}MB`,
+        serverVarsAvailable: {
+          CLOUDINARY_CLOUD_NAME: !!process.env.CLOUDINARY_CLOUD_NAME,
+          CLOUDINARY_API_KEY: !!process.env.CLOUDINARY_API_KEY,
+          CLOUDINARY_API_SECRET: !!process.env.CLOUDINARY_API_SECRET
+        }
       });
       
       return await uploadViaApiRoute(file, category);
@@ -89,7 +92,8 @@ export async function uploadToCloudinary(
 }
 
 /**
- * Fallback: Upload via API route (limite 4.5MB sur Vercel)
+ * Fallback: Upload via API route qui utilise les variables serveur Cloudinary
+ * Cette route utilise un stream pour gérer les fichiers jusqu'à 10MB
  */
 async function uploadViaApiRoute(
   file: File,
@@ -100,18 +104,13 @@ async function uploadViaApiRoute(
     formData.append('image', file);
     formData.append('category', category);
 
-    const response = await fetch('/api/upload', {
+    // Utiliser la nouvelle route qui gère les gros fichiers avec stream
+    const response = await fetch('/api/upload-cloudinary', {
       method: 'POST',
       body: formData
     });
 
     if (!response.ok) {
-      if (response.status === 413) {
-        return {
-          success: false,
-          error: 'Fichier trop volumineux pour l\'upload via API. Veuillez configurer Cloudinary pour les fichiers > 4.5MB.'
-        };
-      }
       const errorData = await response.json().catch(() => ({ message: 'Erreur inconnue' }));
       return {
         success: false,

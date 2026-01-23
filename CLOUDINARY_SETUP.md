@@ -1,38 +1,62 @@
-# Configuration Cloudinary pour l'upload direct depuis le client
+# Configuration Cloudinary pour l'upload d'images
 
 ## Problème résolu
 
-L'upload d'images via les API routes Vercel était limité à 4.5MB (limite de payload des fonctions serverless). Pour permettre des uploads jusqu'à 10MB, l'application utilise maintenant l'upload direct vers Cloudinary depuis le client.
+L'upload d'images via les API routes Vercel était limité à 4.5MB (limite de payload des fonctions serverless). Pour permettre des uploads jusqu'à 10MB, l'application utilise deux méthodes :
 
-## Variables d'environnement requises
+1. **Upload direct client** (recommandé pour fichiers > 4.5MB) : Upload direct depuis le navigateur vers Cloudinary
+2. **Upload via API route** (pour fichiers ≤ 4.5MB) : Upload via `/api/upload-cloudinary` qui utilise les variables serveur
 
-Ajoutez ces variables dans votre fichier `.env.local` :
+## Configuration actuelle
 
-```env
-# Cloudinary - Configuration existante (côté serveur)
-CLOUDINARY_CLOUD_NAME=votre_cloud_name
-CLOUDINARY_API_KEY=votre_api_key
-CLOUDINARY_API_SECRET=votre_api_secret
+Vous avez déjà configuré dans Vercel :
+- ✅ `CLOUDINARY_CLOUD_NAME`
+- ✅ `CLOUDINARY_API_KEY`
+- ✅ `CLOUDINARY_API_SECRET`
 
-# Cloudinary - Configuration pour upload client (NEXT_PUBLIC_*)
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=votre_cloud_name
-NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=votre_upload_preset
+Ces variables fonctionnent pour l'upload via API route (fichiers ≤ 4.5MB).
+
+## Pour activer l'upload direct client (fichiers > 4.5MB)
+
+### Étape 1 : Créer un Upload Preset dans Cloudinary
+
+1. Connectez-vous à votre compte Cloudinary : https://cloudinary.com/console
+2. Allez dans **Settings** > **Upload** (onglet en haut)
+3. Faites défiler jusqu'à la section **Upload presets**
+4. Cliquez sur **Add upload preset**
+5. Configurez le preset :
+   - **Preset name** : `fast-food-upload` (ou un nom de votre choix)
+   - **Signing mode** : Sélectionnez **Unsigned** ⚠️ (IMPORTANT : doit être unsigned pour l'upload client)
+   - **Folder** : `fast-food-app/` (optionnel)
+   - **Format** : `webp` (recommandé)
+   - **Transformation** : Optionnel
+6. Cliquez sur **Save**
+
+### Étape 2 : Ajouter les variables dans Vercel
+
+Ajoutez ces **deux nouvelles variables** dans Vercel (Settings > Environment Variables) :
+
+```
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME = [votre_cloud_name] (même valeur que CLOUDINARY_CLOUD_NAME)
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET = [nom_du_preset] (ex: fast-food-upload)
 ```
 
-## Configuration de l'Upload Preset dans Cloudinary
+⚠️ **Important** : Les variables doivent commencer par `NEXT_PUBLIC_` pour être accessibles côté client.
 
-1. Connectez-vous à votre compte Cloudinary
-2. Allez dans **Settings** > **Upload**
-3. Créez un nouvel **Upload Preset** ou utilisez un existant
-4. Configurez le preset :
-   - **Signing mode**: `Unsigned` (pour permettre l'upload depuis le client)
-   - **Folder**: `fast-food-app/` (optionnel, sera surchargé par le code)
-   - **Format**: `webp` (recommandé pour la performance)
-   - **Transformation**: Optionnel, peut être configuré dans le preset
+### Étape 3 : Redéployer
 
-## Avantages de cette approche
+Après avoir ajouté les variables, redéployez votre application sur Vercel.
 
-- ✅ Pas de limite de taille de fichier côté Vercel (jusqu'à 10MB)
+## Comment ça fonctionne maintenant
+
+- **Fichiers ≤ 4.5MB** : Utilise automatiquement `/api/upload-cloudinary` avec vos variables serveur existantes
+- **Fichiers > 4.5MB** : 
+  - Si `NEXT_PUBLIC_CLOUDINARY_*` sont configurés → Upload direct client
+  - Sinon → Erreur avec message explicatif
+
+## Avantages de l'upload direct client
+
+- ✅ Pas de limite de taille de fichier (jusqu'à 10MB)
 - ✅ Upload direct depuis le client, plus rapide
 - ✅ Pas de charge sur les API routes Vercel
 - ✅ Meilleure expérience utilisateur avec barre de progression

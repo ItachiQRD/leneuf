@@ -116,7 +116,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     bufferStream.push(null);
 
     // Upload vers Cloudinary avec stream
-    const uploadResult = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
+    const uploadResult = await new Promise<{
+      secure_url: string;
+      public_id: string;
+    }>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: `fast-food-app/${category}`,
@@ -132,7 +135,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             reject(error);
           } else if (result) {
             console.log('✅ [Upload Cloudinary API] Upload réussi:', result.secure_url);
-            resolve(result);
+            resolve({
+              secure_url: result.secure_url,
+              public_id: result.public_id
+            });
           } else {
             reject(new Error('Aucun résultat de l\'upload'));
           }

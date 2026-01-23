@@ -151,17 +151,17 @@ export default function AdminFoodsPage() {
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
               >
                 {/* Image avec overlay */}
-                {typeof food.image === 'string' && (
+                {typeof food.image === 'string' && food.image && food.image.trim() !== '' ? (
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={food.image || '/images/placeholder-food.jpg'}
+                      src={food.image}
                       alt={food.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
-                        console.error('Erreur chargement image:', food.image, e);
-                        e.currentTarget.src = '/images/placeholder-food.jpg';
+                        // Utiliser un placeholder inline si l'image échoue
+                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5BdWN1bmUgaW1hZ2U8L3RleHQ+PC9zdmc+';
+                        e.currentTarget.onerror = null; // Éviter les boucles infinies
                       }}
-                      onLoad={() => console.log('Image chargée avec succès:', food.image)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute top-3 right-3">
@@ -174,6 +174,10 @@ export default function AdminFoodsPage() {
                          food.category === 'new' ? '🆕 Nouveau' : 'Regular'}
                       </span>
                     </div>
+                  </div>
+                ) : (
+                  <div className="relative h-48 overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                    <span className="text-gray-400 dark:text-gray-500 text-sm">Aucune image</span>
                   </div>
                 )}
                 
@@ -282,17 +286,17 @@ export default function AdminFoodsPage() {
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
               >
                 {/* Image avec overlay */}
-                {typeof food.image === 'string' && (
+                {typeof food.image === 'string' && food.image && food.image.trim() !== '' ? (
                   <div className="relative h-32 overflow-hidden">
                     <img
-                      src={food.image || '/images/placeholder-food.jpg'}
+                      src={food.image}
                       alt={food.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
-                        console.error('Erreur chargement image mobile:', food.image, e);
-                        e.currentTarget.src = '/images/placeholder-food.jpg';
+                        // Utiliser un placeholder inline si l'image échoue
+                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2YzZjRmNiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5BdWN1bmUgaW1hZ2U8L3RleHQ+PC9zdmc+';
+                        e.currentTarget.onerror = null; // Éviter les boucles infinies
                       }}
-                      onLoad={() => console.log('Image mobile chargée avec succès:', food.image)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute top-3 right-3">
@@ -305,6 +309,10 @@ export default function AdminFoodsPage() {
                          food.category === 'new' ? '🆕 Nouveau' : 'Regular'}
                       </span>
                     </div>
+                  </div>
+                ) : (
+                  <div className="relative h-32 overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                    <span className="text-gray-400 dark:text-gray-500 text-xs">Aucune image</span>
                   </div>
                 )}
                 

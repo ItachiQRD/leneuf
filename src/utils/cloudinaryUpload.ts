@@ -53,10 +53,8 @@ export async function uploadToCloudinary(
     formData.append('file', file);
     formData.append('upload_preset', uploadPreset);
     formData.append('folder', `fast-food-app/${category}`);
-    formData.append('transformation', JSON.stringify([
-      { width: 800, height: 600, crop: 'limit', quality: 'auto' },
-      { format: 'webp' }
-    ]));
+    // Les transformations sont configurées dans le preset Cloudinary
+    // Si vous voulez des transformations spécifiques, configurez-les dans le preset
 
     // Upload vers Cloudinary
     const response = await fetch(

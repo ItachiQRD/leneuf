@@ -8,10 +8,11 @@ import { Food, FoodType, FOOD_TYPES } from '@/types/food';
 
 // Helper pour vérifier si une URL d'image est valide (évite les anciennes URLs /uploads/)
 const isValidImageUrl = (url: string): boolean => {
-  if (!url || typeof url !== 'string') return false;
+  if (!url || typeof url !== 'string' || url.trim() === '') return false;
   // Ignorer les anciennes URLs locales /uploads/
   if (url.startsWith('/uploads/')) return false;
-  // Accepter les URLs complètes (http/https) et les URLs Cloudinary
+  // Accepter les URLs complètes (http/https), les URLs Cloudinary, et les data URIs
+  // Les URLs Cloudinary commencent par https://res.cloudinary.com
   return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:');
 };
 
@@ -163,7 +164,7 @@ export default function AdminFoodsPage() {
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
               >
                 {/* Image avec overlay */}
-                {typeof food.image === 'string' && food.image && food.image.trim() !== '' && isValidImageUrl(food.image) ? (
+                {typeof food.image === 'string' && food.image && food.image.trim() !== '' && !food.image.startsWith('/uploads/') ? (
                   <div className="relative h-48 overflow-hidden">
                     <img
                       src={food.image}
@@ -298,7 +299,7 @@ export default function AdminFoodsPage() {
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600"
               >
                 {/* Image avec overlay */}
-                {typeof food.image === 'string' && food.image && food.image.trim() !== '' && isValidImageUrl(food.image) ? (
+                {typeof food.image === 'string' && food.image && food.image.trim() !== '' && !food.image.startsWith('/uploads/') ? (
                   <div className="relative h-32 overflow-hidden">
                     <img
                       src={food.image}

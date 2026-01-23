@@ -68,9 +68,18 @@ export async function uploadToCloudinary(
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: { message: 'Erreur inconnue' } }));
       console.error('[CloudinaryUpload] Erreur upload:', errorData);
+      
+      // Gérer spécifiquement l'erreur "upload preset not found"
+      const errorMessage = errorData.error?.message || 'Erreur lors de l\'upload de l\'image';
+      if (errorMessage.includes('preset') || errorMessage.includes('Upload preset') || errorMessage.includes('Invalid preset')) {
+        // Fallback vers l'API route si le preset n'est pas trouvé
+        console.warn('[CloudinaryUpload] Preset non trouvé, fallback vers API route');
+        return await uploadViaApiRoute(file, category);
+      }
+      
       return {
         success: false,
-        error: errorData.error?.message || 'Erreur lors de l\'upload de l\'image'
+        error: errorMessage
       };
     }
 

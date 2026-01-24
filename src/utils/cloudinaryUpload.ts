@@ -82,7 +82,7 @@ export async function uploadToCloudinary(
         if (file.size > VERCEL_MAX_SIZE) {
           return {
             success: false,
-            error: `Upload preset "${uploadPreset}" non trouvé dans Cloudinary.\n\nPour les fichiers > 4.5MB, vous devez :\n1. Vérifier que le preset "${uploadPreset}" existe dans Cloudinary (Settings > Upload)\n2. Vérifier que le preset est en mode "Unsigned"\n3. Vérifier que NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET correspond exactement au nom du preset`
+            error: `❌ Upload preset "${uploadPreset}" non trouvé dans Cloudinary.\n\n🔍 Le preset recherché est : "${uploadPreset}"\n\n✅ Pour corriger :\n1. Allez dans Cloudinary Console > Settings > Upload\n2. Vérifiez le nom EXACT de votre preset (ex: "fast-food-upload")\n3. Dans Vercel, modifiez NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET pour qu'il corresponde EXACTEMENT (même casse, mêmes caractères)\n4. Vérifiez que le preset est en mode "Unsigned"\n5. Redéployez l'application après modification`
           };
         }
         

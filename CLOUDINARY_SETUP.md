@@ -41,7 +41,10 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME = [votre_cloud_name] (même valeur que CLOUDIN
 NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET = [nom_du_preset] (ex: fast-food-upload)
 ```
 
-⚠️ **Important** : Les variables doivent commencer par `NEXT_PUBLIC_` pour être accessibles côté client.
+⚠️ **IMPORTANT** : 
+- Les variables doivent commencer par `NEXT_PUBLIC_` pour être accessibles côté client
+- **Le nom du preset dans `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` doit correspondre EXACTEMENT au nom du preset dans Cloudinary** (respecter la casse et les caractères)
+- Si votre preset s'appelle `fast-food-upload` dans Cloudinary, la variable doit être `fast-food-upload` (pas `fast-food-uploads` ou autre)
 
 ### Étape 3 : Redéployer
 

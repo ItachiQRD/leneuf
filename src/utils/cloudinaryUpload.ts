@@ -31,9 +31,15 @@ export async function uploadToCloudinary(
     const fileSizeMB = file.size / (1024 * 1024);
 
     if (!cloudName || !uploadPreset) {
-      // Si les variables client ne sont pas configurées, utiliser l'API route
-      // qui utilise les variables serveur (CLOUDINARY_CLOUD_NAME, etc.)
-      // Cette route gère les fichiers jusqu'à 10MB via stream
+      // Si le fichier est > 4.5MB, on NE PEUT PAS utiliser l'API route (limite Vercel)
+      if (file.size > VERCEL_MAX_SIZE) {
+        return {
+          success: false,
+          error: `Fichier trop volumineux (${fileSizeMB.toFixed(2)}MB). Pour les fichiers > 4.5MB, vous devez configurer l'upload direct client.\n\nVeuillez :\n1. Créer un preset unsigned dans Cloudinary (Settings > Upload)\n2. Ajouter dans Vercel :\n   - NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME = ${process.env.CLOUDINARY_CLOUD_NAME || 'votre_cloud_name'}\n   - NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET = [nom_du_preset]\n3. Redéployer l'application`
+        };
+      }
+      
+      // Pour les fichiers ≤ 4.5MB, utiliser l'API route avec variables serveur
       console.warn('[CloudinaryUpload] Variables client non configurées, utilisation de l\'API route avec variables serveur:', {
         cloudName: !!cloudName,
         uploadPreset: !!uploadPreset,
@@ -72,7 +78,15 @@ export async function uploadToCloudinary(
       // Gérer spécifiquement l'erreur "upload preset not found"
       const errorMessage = errorData.error?.message || 'Erreur lors de l\'upload de l\'image';
       if (errorMessage.includes('preset') || errorMessage.includes('Upload preset') || errorMessage.includes('Invalid preset')) {
-        // Fallback vers l'API route si le preset n'est pas trouvé
+        // Si le fichier est > 4.5MB, on ne peut pas fallback vers l'API route
+        if (file.size > VERCEL_MAX_SIZE) {
+          return {
+            success: false,
+            error: `Upload preset "${uploadPreset}" non trouvé dans Cloudinary.\n\nPour les fichiers > 4.5MB, vous devez :\n1. Vérifier que le preset "${uploadPreset}" existe dans Cloudinary (Settings > Upload)\n2. Vérifier que le preset est en mode "Unsigned"\n3. Vérifier que NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET correspond exactement au nom du preset`
+          };
+        }
+        
+        // Pour les fichiers ≤ 4.5MB, fallback vers l'API route
         console.warn('[CloudinaryUpload] Preset non trouvé, fallback vers API route');
         return await uploadViaApiRoute(file, category);
       }

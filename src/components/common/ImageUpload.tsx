@@ -89,10 +89,14 @@ export function ImageUpload({ value, onChange, error, label, category = 'foods' 
       }
     } catch (error) {
       console.error('Erreur upload:', error);
+      const errorMessage = error instanceof Error ? error.message : "L'upload de l'image a échoué";
+      // Remplacer les \n par des espaces pour l'affichage dans le toast
+      const displayMessage = errorMessage.replace(/\n/g, ' ');
       toast({
         title: "Erreur",
-        description: error instanceof Error ? error.message : "L'upload de l'image a échoué",
-        variant: "destructive"
+        description: displayMessage,
+        variant: "destructive",
+        duration: 10000 // Afficher plus longtemps pour les messages importants
       });
     } finally {
       setIsUploading(false);

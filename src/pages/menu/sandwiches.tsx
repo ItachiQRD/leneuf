@@ -285,7 +285,7 @@ export default function SandwichesPage() {
                   {/* Image */}
                   <div className="relative h-64 overflow-hidden bg-gray-100">
                     <SmartImage
-                      src={typeof sandwich.image === 'string' ? sandwich.image : '/images/menu/default-sandwich.jpg'}
+                      src={typeof sandwich.image === 'string' ? sandwich.image : '/images/menu/panini.jpeg'}
                       alt={sandwich.name}
                       className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                     />

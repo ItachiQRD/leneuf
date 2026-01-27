@@ -68,7 +68,7 @@ export default function CommanderPage() {
       name: 'MENU SENIOR',
       price: 25,
       description: '2 pizzas séniors + 1 boisson 1,5L',
-      image: '/images/menu/menu-senior.jpg',
+      image: '/images/menu/pizzas.jpg',
       pizzaCount: 2,
       pizzaSize: 'sénior',
       drinkCount: 1,
@@ -79,7 +79,7 @@ export default function CommanderPage() {
       name: 'MENU TRIO',
       price: 25,
       description: '3 Juniors + 1 boisson 1,5L',
-      image: '/images/menu/menu-trio.jpg',
+      image: '/images/menu/pizza-menu.jpeg',
       pizzaCount: 3,
       pizzaSize: 'junior',
       drinkCount: 1,
@@ -90,7 +90,7 @@ export default function CommanderPage() {
       name: 'MENU COUPLE',
       price: 19,
       description: '1 pizza sénior + 6 Nuggets ou Wings + 2 boissons 33cl + 2 Brownie',
-      image: '/images/menu/menu-couple.jpg',
+      image: '/images/menu/avecboisson.jpeg',
       pizzaCount: 1,
       pizzaSize: 'sénior',
       drinkCount: 2,
@@ -101,7 +101,7 @@ export default function CommanderPage() {
       name: 'MENU FAMILLE',
       price: 34,
       description: '2 pizzas mégas + 1 boisson 1,5L',
-      image: '/images/menu/menu-famille.jpg',
+      image: '/images/menu/mega.jpg',
       pizzaCount: 2,
       pizzaSize: 'méga',
       drinkCount: 1,
@@ -112,7 +112,7 @@ export default function CommanderPage() {
       name: 'MENU LE NEUF',
       price: 34,
       description: '4 pizzas Junior + 1 boisson 1,5L',
-      image: '/images/menu/menu-le-neuf.jpg',
+      image: '/images/menu/leneuf.jpg',
       pizzaCount: 4,
       pizzaSize: 'junior',
       drinkCount: 1,
@@ -123,7 +123,7 @@ export default function CommanderPage() {
       name: 'MENU TOP',
       price: 51,
       description: '5 pizzas séniors + 2 boisson 1,5L',
-      image: '/images/menu/menu-top.jpg',
+      image: '/images/menu/royale.jpg',
       pizzaCount: 5,
       pizzaSize: 'sénior',
       drinkCount: 2,
@@ -776,7 +776,7 @@ export default function CommanderPage() {
                       >
                         <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
                           <Image
-                            src={item.image || '/images/placeholder-food.jpg'}
+                            src={item.image || '/images/placeholder-food.svg'}
                             alt={item.name}
                             fill
                             className="rounded-lg object-cover"
@@ -836,7 +836,7 @@ export default function CommanderPage() {
                   >
                     <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
                       <Image
-                        src={item.image || '/images/placeholder-food.jpg'}
+                        src={item.image || '/images/placeholder-food.svg'}
                         alt={item.name}
                         fill
                         className={`rounded-lg ${selectedCategory === 'boissons' ? 'object-contain' : 'object-cover'}`}
@@ -908,7 +908,7 @@ export default function CommanderPage() {
                   <div key={item._id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                     <div className="relative w-12 h-12 flex-shrink-0">
                       <Image
-                        src={item.image || '/images/placeholder-food.jpg'}
+                        src={item.image || '/images/placeholder-food.svg'}
                         alt={item.name}
                         fill
                         className="object-cover rounded"
@@ -1077,7 +1077,7 @@ export default function CommanderPage() {
                         <div className="flex items-start space-x-4">
                           <div className="relative w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
                             <Image
-                              src={item.image || '/images/placeholder-food.jpg'}
+                              src={item.image || '/images/placeholder-food.svg'}
                               alt={item.name}
                               fill
                               className="object-cover rounded-lg"
@@ -1145,7 +1145,7 @@ export default function CommanderPage() {
                     <div className="flex items-start space-x-4">
                       <div className="relative w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
                         <Image
-                          src={item.image || '/images/placeholder-food.jpg'}
+                          src={item.image || '/images/placeholder-food.svg'}
                           alt={item.name}
                           fill
                           className={`rounded-lg ${selectedCategory === 'boissons' ? 'object-contain' : 'object-cover'}`}
@@ -1419,7 +1419,7 @@ export default function CommanderPage() {
                     <div className="text-center">
                       <div className="w-12 h-12 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
                         <Image
-                          src={sauce.image || '/images/placeholder-sauce.jpg'}
+                          src={sauce.image || '/images/placeholder-food.svg'}
                           alt={sauce.name}
                           width={48}
                           height={48}
@@ -1586,7 +1586,7 @@ export default function CommanderPage() {
                         } ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                           <div className="relative w-full h-16 mb-2 bg-gray-50 rounded-md flex items-center justify-center">
                             <Image
-                              src={drink.image || '/images/placeholder-drink.jpg'}
+                              src={drink.image || '/images/placeholder-food.svg'}
                               alt={drink.name}
                               fill
                               className="object-contain rounded-md"

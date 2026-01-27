@@ -225,7 +225,7 @@ export default function SidesPage() {
                 >
                   <div className="relative h-48 overflow-hidden bg-gray-100">
                     <SmartImage
-                      src={side.image || '/images/placeholder-side.jpg'}
+                      src={side.image || '/images/placeholder-food.svg'}
                       alt={side.name}
                       className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                     />

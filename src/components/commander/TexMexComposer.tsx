@@ -532,7 +532,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                               whileHover={canSelect || isSelected ? { scale: 1.1 } : {}}
                             >
                               <Image
-                                src={sauce.image || '/images/placeholder-sauce.jpg'}
+                                src={sauce.image || '/images/placeholder-food.svg'}
                                 alt={sauce.name}
                                 width={128}
                                 height={128}
@@ -624,7 +624,7 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
                           >
                             <div className="relative w-full h-full">
                               <Image
-                                src={drink.image || '/images/placeholder-drink.jpg'}
+                                src={drink.image || '/images/placeholder-food.svg'}
                                 alt={drink.name}
                                 fill
                                 className="object-contain p-2"

@@ -315,7 +315,7 @@ export default function CommandeFormulairePage() {
                   <div key={item._id} className="flex items-center space-x-3">
                     <div className="relative w-12 h-12 flex-shrink-0">
                       <img
-                        src={item.image || '/images/placeholder-food.jpg'}
+                        src={item.image || '/images/placeholder-food.svg'}
                         alt={item.name}
                         className="w-full h-full object-cover rounded"
                       />

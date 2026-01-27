@@ -220,7 +220,7 @@ export default function DrinksPage() {
                 >
                   <div className="relative h-48 overflow-hidden bg-gray-100 flex items-center justify-center">
                     <SmartImage
-                      src={drink.image || '/images/placeholder-drink.jpg'}
+                      src={drink.image || '/images/placeholder-food.svg'}
                       alt={drink.name}
                       className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
                     />

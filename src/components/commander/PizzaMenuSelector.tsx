@@ -421,7 +421,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                         >
                           <div className="relative w-16 h-16 lg:w-20 lg:h-20 flex-shrink-0">
                             <Image
-                              src={pizza.image || '/images/placeholder-food.jpg'}
+                              src={pizza.image || '/images/placeholder-food.svg'}
                               alt={pizza.name}
                               fill
                               className="object-cover rounded-lg"
@@ -480,7 +480,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                           >
                             <div className="relative w-12 h-12 lg:w-14 lg:h-14 flex-shrink-0">
                               <Image
-                                src={drink.image || '/images/placeholder-drink.jpg'}
+                                src={drink.image || '/images/placeholder-food.svg'}
                                 alt={drink.name}
                                 fill
                                 className="object-contain rounded"
@@ -534,7 +534,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                           >
                             <div className="relative w-20 h-20 lg:w-32 lg:h-32 mx-auto mb-2 lg:mb-3 transition-all duration-300">
                               <Image
-                                src={item.image || '/images/placeholder-food.jpg'}
+                                src={item.image || '/images/placeholder-food.svg'}
                                 alt={item.name}
                                 fill
                                 className="object-cover rounded-full shadow-lg"
@@ -565,7 +565,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                       <div key={pizza._id} className="flex items-center gap-2 lg:gap-3 p-2 lg:p-3 bg-gray-50 rounded-lg">
                         <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
                           <Image
-                            src={pizza.image || '/images/placeholder-food.jpg'}
+                            src={pizza.image || '/images/placeholder-food.svg'}
                             alt={pizza.name}
                             fill
                             className="object-cover rounded"
@@ -595,7 +595,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                       <div key={drink._id} className="flex items-center gap-2 lg:gap-3 p-2 lg:p-3 bg-gray-50 rounded-lg">
                         <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
                           <Image
-                            src={drink.image || '/images/placeholder-drink.jpg'}
+                            src={drink.image || '/images/placeholder-food.svg'}
                             alt={drink.name}
                             fill
                             className="object-contain rounded"
@@ -620,7 +620,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                       <div className="flex items-center gap-2 lg:gap-3 p-2 lg:p-3 bg-gray-50 rounded-lg">
                         <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
                           <Image
-                            src={selectedPetiteFaim.image || '/images/placeholder-food.jpg'}
+                            src={selectedPetiteFaim.image || '/images/placeholder-food.svg'}
                             alt={selectedPetiteFaim.name}
                             fill
                             className="object-cover rounded"
@@ -645,7 +645,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                       <div className="relative w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0">
                         {desserts.filter(dessert => dessert.name.toLowerCase().includes('brownie')).length > 0 ? (
                           <Image
-                            src={desserts.find(d => d.name.toLowerCase().includes('brownie'))?.image || '/images/placeholder-food.jpg'}
+                            src={desserts.find(d => d.name.toLowerCase().includes('brownie'))?.image || '/images/placeholder-food.svg'}
                             alt="Brownie"
                             fill
                             className="object-cover rounded"

@@ -219,7 +219,7 @@ export default function DessertsPage() {
                 >
                   <div className="relative h-64 overflow-hidden bg-gray-100">
                     <SmartImage
-                      src={dessert.image || '/images/placeholder-dessert.jpg'}
+                      src={dessert.image || '/images/placeholder-food.svg'}
                       alt={dessert.name}
                       className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                     />

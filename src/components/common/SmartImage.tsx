@@ -1,5 +1,8 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+// SVG placeholder as data URL - no external file needed
+const PLACEHOLDER_SVG = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect fill='%23f3f4f6' width='400' height='300'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='%239ca3af'%3EImage%3C/text%3E%3C/svg%3E`;
 
 interface SmartImageProps {
   src: string;
@@ -22,10 +25,24 @@ export default function SmartImage({
   priority = false,
   sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
   quality = 90,
-  fallback = '/images/placeholder.jpg'
+  fallback
 }: SmartImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
+  const [imgSrc, setImgSrc] = useState(src || PLACEHOLDER_SVG);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  // Reset state when src changes
+  useEffect(() => {
+    if (src) {
+      setImgSrc(src);
+      setHasError(false);
+      setIsLoading(true);
+    } else {
+      setImgSrc(PLACEHOLDER_SVG);
+      setHasError(true);
+      setIsLoading(false);
+    }
+  }, [src]);
 
   // Fonction pour déterminer la meilleure taille d'image à utiliser
   const getOptimalImageSrc = (originalSrc: string, targetWidth?: number) => {
@@ -55,7 +72,11 @@ export default function SmartImage({
   };
 
   const handleError = () => {
-    setImgSrc(fallback);
+    if (!hasError) {
+      setHasError(true);
+      // Use fallback if provided, otherwise use the inline SVG placeholder
+      setImgSrc(fallback || PLACEHOLDER_SVG);
+    }
     setIsLoading(false);
   };
 

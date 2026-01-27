@@ -131,7 +131,7 @@ export default function FoodManager({
             <TableRow key={item._id}>
               <TableCell>
                 <ProductImage
-                  src={typeof item.image === 'string' ? item.image : '/images/placeholder.jpg'}
+                  src={typeof item.image === 'string' ? item.image : '/images/placeholder.svg'}
                   alt={item.name}
                   className="w-12 h-12"
                 />

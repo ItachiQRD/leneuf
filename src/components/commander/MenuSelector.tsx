@@ -203,7 +203,7 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
             <div className="flex items-center space-x-4 mb-6">
               <div className="relative w-20 h-20 flex-shrink-0">
                 <Image
-                  src={product.image || '/images/placeholder-food.jpg'}
+                  src={product.image || '/images/placeholder-food.svg'}
                   alt={product.name}
                   fill
                   className="object-cover rounded-lg"
@@ -287,7 +287,7 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
                         >
                           <div className="relative w-10 h-10 flex-shrink-0">
                             <Image
-                              src={side.image || '/images/placeholder-food.jpg'}
+                              src={side.image || '/images/placeholder-food.svg'}
                               alt={side.name}
                               fill
                               className="object-cover rounded"
@@ -329,7 +329,7 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
                         >
                           <div className="relative w-10 h-10 flex-shrink-0 bg-gray-50 rounded flex items-center justify-center">
                             <Image
-                              src={drink.image || '/images/placeholder-drink.jpg'}
+                              src={drink.image || '/images/placeholder-food.svg'}
                               alt={drink.name}
                               fill
                               className="object-contain rounded"

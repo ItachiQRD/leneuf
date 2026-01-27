@@ -623,7 +623,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                           >
                             <div className="w-16 h-16 lg:w-20 lg:h-20 mb-2 lg:mb-3 flex items-center justify-center bg-gray-50 rounded-lg">
                               <Image
-                                src={sauce.image || '/images/placeholder-sauce.jpg'}
+                                src={sauce.image || '/images/placeholder-food.svg'}
                                 alt={sauce.name}
                                 width={64}
                                 height={64}
@@ -671,7 +671,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                           <div className="text-center">
                             <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                               <Image
-                                src={drink.image || '/images/placeholder-drink.jpg'}
+                                src={drink.image || '/images/placeholder-food.svg'}
                                 alt={drink.name}
                                 width={48}
                                 height={48}
@@ -725,7 +725,7 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
                             <div className="text-center">
                               <div className="w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                                 <Image
-                                  src={drink.image || '/images/placeholder-drink.jpg'}
+                                  src={drink.image || '/images/placeholder-food.svg'}
                                   alt={drink.name}
                                   width={48}
                                   height={48}

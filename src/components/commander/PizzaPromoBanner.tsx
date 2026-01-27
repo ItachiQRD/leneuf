@@ -65,12 +65,12 @@ export default function PizzaPromoBanner({ title, description, pizzaSize, onClic
           >
             <div className="relative w-full aspect-square">
               <Image
-                src="/images/menu/pizza-pepperoni.jpg"
+                src="/images/menu/pizzas.jpg"
                 alt="Pizza pepperoni"
                 fill
                 className="object-cover rounded-lg shadow-lg"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/images/placeholder-food.jpg';
+                  (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
             </div>
@@ -85,12 +85,12 @@ export default function PizzaPromoBanner({ title, description, pizzaSize, onClic
           >
             <div className="relative w-full aspect-square">
               <Image
-                src="/images/menu/pizza-vegetarian.jpg"
+                src="/images/menu/pizza-menu.jpeg"
                 alt="Pizza végétarienne"
                 fill
                 className="object-cover rounded-lg shadow-lg"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/images/placeholder-food.jpg';
+                  (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
             </div>
@@ -105,12 +105,12 @@ export default function PizzaPromoBanner({ title, description, pizzaSize, onClic
           >
             <div className="relative w-full aspect-square">
               <Image
-                src="/images/menu/pizza-mixed.jpg"
+                src="/images/menu/royale.jpg"
                 alt="Pizza mixte"
                 fill
                 className="object-cover rounded-lg shadow-lg"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/images/placeholder-food.jpg';
+                  (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
             </div>

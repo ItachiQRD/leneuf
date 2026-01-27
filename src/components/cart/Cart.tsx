@@ -101,7 +101,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                                 <div key={item._id} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                   <div className="relative w-16 h-16 flex-shrink-0">
                                     <Image
-                                      src={item.image || '/images/placeholder-food.jpg'}
+                                      src={item.image || '/images/placeholder-food.svg'}
                                       alt={item.name}
                                       fill
                                       className="object-cover rounded"

@@ -13,7 +13,7 @@ interface ProductImageProps {
 export default function ProductImage({ 
   src, 
   alt, 
-  fallback = '/images/placeholder-food.jpg',
+  fallback = '/images/placeholder-food.svg',
   className = '',
   priority = false
 }: ProductImageProps) {

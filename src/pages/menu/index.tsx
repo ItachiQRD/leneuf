@@ -28,7 +28,7 @@ const menuCategories = [
     bgColor: "bg-red-500",
     textColor: "text-red-600",
     href: "/menu/pizzas",
-    image: "/images/menu/pizza-hero.jpg",
+    image: "/images/menu/pizzas.jpg",
     count: 0
   },
   {
@@ -41,7 +41,7 @@ const menuCategories = [
     bgColor: "bg-amber-500",
     textColor: "text-amber-600",
     href: "/menu/burgers",
-    image: "/images/menu/burger-hero.jpg",
+    image: "/images/menu/burgers.jpg",
     count: 0
   },
   {
@@ -54,7 +54,7 @@ const menuCategories = [
     bgColor: "bg-green-500",
     textColor: "text-green-600",
     href: "/menu/salads",
-    image: "/images/menu/salad-hero.jpg",
+    image: "/images/menu/bowl.jpeg",
     count: 0
   },
   {
@@ -67,7 +67,7 @@ const menuCategories = [
     bgColor: "bg-orange-500",
     textColor: "text-orange-600",
     href: "/menu/sandwiches",
-    image: "/images/menu/sandwich-hero.jpg",
+    image: "/images/menu/signature.jpg",
     count: 0
   },
   {
@@ -80,7 +80,7 @@ const menuCategories = [
     bgColor: "bg-pink-500",
     textColor: "text-pink-600",
     href: "/menu/desserts",
-    image: "/images/menu/dessert-hero.jpg",
+    image: "/images/menu/frites.jpeg",
     count: 0
   }
 ];
@@ -326,12 +326,13 @@ export default function MenuPage() {
                             transition={{ duration: 0.6 }}
                           >
                             <Image
-                              src={category.image || '/images/menu/default.jpg'}
+                              src={category.image || '/images/menu/pizzas.jpg'}
                               alt={category.title}
                               fill
                               className="object-cover"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/images/placeholder-food.jpg';
+                                // Hide the broken image and rely on the gradient overlay
+                                (e.target as HTMLImageElement).style.display = 'none';
                               }}
                             />
                             <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-80 group-hover:opacity-70 transition-opacity duration-500`} />

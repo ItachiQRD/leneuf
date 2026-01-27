@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { 
   Search, 
   Star, 
@@ -9,7 +9,9 @@ import {
   ShoppingCart,
   Zap,
   Leaf,
-  Cake
+  Cake,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
 import SmartImage from '@/components/common/SmartImage';
@@ -99,6 +101,15 @@ export default function DessertsPage() {
           name="description" 
           content="Découvrez nos délicieux desserts : pâtisseries maison, glaces artisanales et douceurs." 
         />
+        <style jsx global>{`
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
       </Head>
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-pink-50">
@@ -169,35 +180,197 @@ export default function DessertsPage() {
           </div>
         </motion.section>
 
-        {/* Filtres */}
-        <section className="py-8 bg-white border-b">
+        {/* Filtres avec scroll 3D */}
+        <section className="py-12 bg-gradient-to-b from-white via-pink-50/30 to-white overflow-hidden">
           <div className="container mx-auto px-4">
-            <motion.div
-              className="flex flex-wrap gap-4 justify-center"
-              initial={{ opacity: 0, y: 20 }}
+            <motion.h2
+              className="text-3xl font-bold text-center mb-8 text-gray-900"
+              initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              {dessertFilters.map((filter) => {
-                const Icon = filter.icon;
-                return (
-                  <motion.button
+              Explorez nos catégories
+            </motion.h2>
+            
+            <div className="relative">
+              {/* Scroll horizontal avec effet 3D */}
+              <div 
+                className="overflow-x-auto scrollbar-hide pb-8" 
+                style={{ 
+                  scrollSnapType: 'x mandatory',
+                  scrollBehavior: 'smooth',
+                  WebkitOverflowScrolling: 'touch'
+                }}
+              >
+                <div className="flex gap-8 px-4 py-4" style={{ width: 'max-content' }}>
+                  {dessertFilters.map((filter, index) => {
+                    const Icon = filter.icon;
+                    const isActive = selectedFilter === filter.id;
+                    
+                    return (
+                      <motion.div
+                        key={filter.id}
+                        className="flex-shrink-0"
+                        style={{ scrollSnapAlign: 'center' }}
+                        initial={{ opacity: 0, scale: 0.8, rotateY: -45 }}
+                        animate={{ 
+                          opacity: 1, 
+                          scale: isActive ? 1.1 : 1,
+                          rotateY: 0,
+                          z: isActive ? 50 : 0
+                        }}
+                        whileHover={{ 
+                          scale: 1.15,
+                          rotateY: 15,
+                          z: 100,
+                          transition: { duration: 0.3 }
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ 
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 20,
+                          delay: index * 0.1
+                        }}
+                        onClick={() => setSelectedFilter(filter.id)}
+                      >
+                        <div
+                          className={`relative w-64 h-80 rounded-3xl cursor-pointer transition-all duration-500 overflow-hidden ${
+                            isActive 
+                              ? 'shadow-2xl ring-4 ring-pink-500 ring-opacity-50' 
+                              : 'shadow-lg hover:shadow-xl'
+                          }`}
+                          style={{
+                            transformStyle: 'preserve-3d',
+                            perspective: '1000px',
+                            background: isActive
+                              ? 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #ec4899 100%)'
+                              : 'linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)',
+                          }}
+                        >
+                          {/* Effet de brillance animé */}
+                          <motion.div
+                            className="absolute inset-0 opacity-20"
+                            style={{
+                              background: 'linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%)',
+                            }}
+                            animate={{
+                              x: ['-100%', '200%'],
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              repeatDelay: 2,
+                              ease: 'linear'
+                            }}
+                          />
+                          
+                          {/* Effet de profondeur 3D */}
+                          <div 
+                            className="absolute inset-0 rounded-3xl"
+                            style={{
+                              background: isActive
+                                ? 'linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)'
+                                : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(249, 250, 251, 0.8) 100%)',
+                              backdropFilter: 'blur(10px)',
+                              transform: 'translateZ(20px)',
+                            }}
+                          />
+                          
+                          {/* Contenu de la carte */}
+                          <div className="relative h-full flex flex-col items-center justify-center p-6" style={{ transform: 'translateZ(30px)' }}>
+                            {/* Icône avec effet 3D */}
+                            <motion.div
+                              className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 ${
+                                isActive 
+                                  ? 'bg-white/20 backdrop-blur-sm shadow-lg' 
+                                  : 'bg-gradient-to-br from-pink-100 to-purple-100 shadow-md'
+                              }`}
+                              whileHover={{ 
+                                rotateY: 360,
+                                scale: 1.1
+                              }}
+                              transition={{ duration: 0.8, ease: "easeInOut" }}
+                            >
+                              <Icon className={`w-12 h-12 ${isActive ? 'text-white' : 'text-pink-600'}`} />
+                            </motion.div>
+                            
+                            {/* Nom de la catégorie */}
+                            <motion.h3 
+                              className={`text-2xl font-bold mb-2 ${isActive ? 'text-white' : 'text-gray-900'}`}
+                              whileHover={{ scale: 1.05 }}
+                            >
+                              {filter.name}
+                            </motion.h3>
+                            
+                            {/* Ligne décorative */}
+                            <motion.div 
+                              className={`w-16 h-1 rounded-full mb-4 ${isActive ? 'bg-white/50' : 'bg-pink-500'}`}
+                              whileHover={{ width: '80px' }}
+                              transition={{ duration: 0.3 }}
+                            />
+                            
+                            {/* Description */}
+                            <p className={`text-sm text-center px-4 ${isActive ? 'text-white/90' : 'text-gray-600'}`}>
+                              {filter.id === 'all' && 'Tous nos desserts'}
+                              {filter.id === 'ice_cream' && 'Glaces artisanales'}
+                              {filter.id === 'cake' && 'Gâteaux maison'}
+                              {filter.id === 'vegan' && 'Options végétaliennes'}
+                              {filter.id === 'signature' && 'Nos spécialités'}
+                            </p>
+                            
+                            {/* Badge actif */}
+                            {isActive && (
+                              <motion.div
+                                className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1"
+                                initial={{ scale: 0, rotate: -180 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ type: "spring", stiffness: 300 }}
+                              >
+                                <span className="text-white text-xs font-semibold">Actif</span>
+                              </motion.div>
+                            )}
+                          </div>
+                          
+                          {/* Ombre portée 3D animée */}
+                          <motion.div 
+                            className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-3/4 h-8 rounded-full blur-xl"
+                            style={{
+                              background: isActive ? '#ec4899' : '#9ca3af',
+                              transform: 'translateZ(-50px)',
+                            }}
+                            animate={{
+                              opacity: isActive ? [0.3, 0.5, 0.3] : 0.3,
+                              scale: isActive ? [1, 1.1, 1] : 1,
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              ease: "easeInOut"
+                            }}
+                          />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              {/* Indicateurs de scroll */}
+              <div className="flex justify-center gap-2 mt-6">
+                {dessertFilters.map((filter) => (
+                  <button
                     key={filter.id}
                     onClick={() => setSelectedFilter(filter.id)}
-                    className={`flex items-center px-6 py-3 rounded-full border-2 transition-all duration-300 ${
-                      selectedFilter === filter.id
-                        ? 'border-pink-500 bg-pink-500 text-white'
-                        : 'border-gray-300 text-gray-700 hover:border-pink-300 hover:bg-pink-50'
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      selectedFilter === filter.id 
+                        ? 'bg-pink-500 w-8' 
+                        : 'bg-gray-300 hover:bg-gray-400'
                     }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Icon className="w-5 h-5 mr-2" />
-                    {filter.name}
-                  </motion.button>
-                );
-              })}
-            </motion.div>
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -221,7 +394,7 @@ export default function DessertsPage() {
                     <SmartImage
                       src={dessert.image || '/images/placeholder-food.svg'}
                       alt={dessert.name}
-                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
                     />
                     
                     {/* Badges */}

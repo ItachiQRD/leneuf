@@ -25,9 +25,9 @@ export default function SmartImage({
   priority = false,
   sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
   quality = 90,
-  fallback
+  fallback = '/images/placeholder-food.svg'
 }: SmartImageProps) {
-  const [imgSrc, setImgSrc] = useState(src || PLACEHOLDER_SVG);
+  const [imgSrc, setImgSrc] = useState<string>(src || fallback || PLACEHOLDER_SVG);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -38,15 +38,15 @@ export default function SmartImage({
       setHasError(false);
       setIsLoading(true);
     } else {
-      setImgSrc(PLACEHOLDER_SVG);
+      setImgSrc(fallback || PLACEHOLDER_SVG);
       setHasError(true);
       setIsLoading(false);
     }
-  }, [src]);
+  }, [src, fallback]);
 
   // Fonction pour déterminer la meilleure taille d'image à utiliser
-  const getOptimalImageSrc = (originalSrc: string, targetWidth?: number) => {
-    if (!originalSrc) return fallback;
+  const getOptimalImageSrc = (originalSrc: string, targetWidth?: number): string => {
+    if (!originalSrc) return fallback || PLACEHOLDER_SVG;
 
     // Si c'est une image uploadée avec des variantes
     if (originalSrc.includes('/uploads/') && originalSrc.includes('-')) {
@@ -72,10 +72,11 @@ export default function SmartImage({
   };
 
   const handleError = () => {
+    // Empêcher les tentatives infinies - une fois l'erreur détectée, utiliser le fallback définitivement
     if (!hasError) {
       setHasError(true);
-      // Use fallback if provided, otherwise use the inline SVG placeholder
-      setImgSrc(fallback || PLACEHOLDER_SVG);
+      const finalFallback = fallback || PLACEHOLDER_SVG;
+      setImgSrc(finalFallback);
     }
     setIsLoading(false);
   };
@@ -84,7 +85,8 @@ export default function SmartImage({
     setIsLoading(false);
   };
 
-  const optimalSrc = getOptimalImageSrc(imgSrc, width);
+  // S'assurer que optimalSrc est toujours une string
+  const optimalSrc: string = getOptimalImageSrc(imgSrc, width);
 
   // Si className contient w-full et h-full, utiliser fill pour un meilleur contrôle
   const useFill = className.includes('w-full') && className.includes('h-full');

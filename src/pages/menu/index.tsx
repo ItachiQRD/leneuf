@@ -280,11 +280,14 @@ export default function MenuPage() {
           <MenuOffers />
         </section>
 
-        {/* Catégories - Immenses cartes avec images */}
-        <section className="relative py-20 bg-black">
+        {/* Catégories - Scroll 3D avec effet de profondeur */}
+        <section 
+          className="relative py-40 bg-gradient-to-b from-black via-gray-900 to-black overflow-hidden"
+          style={{ perspective: '2000px' }}
+        >
           <div className="container mx-auto px-4">
             <motion.div
-              className="text-center mb-20"
+              className="text-center mb-32"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
@@ -294,36 +297,68 @@ export default function MenuPage() {
                 EXPLOREZ
               </h2>
               <p className="text-2xl md:text-4xl text-gray-400 font-light">
-                Nos univers culinaires
+                Nos univers culinaires en 3D
               </p>
             </motion.div>
 
-            <div className="space-y-32">
+            {/* Container 3D pour les cartes */}
+            <div 
+              className="relative"
+              style={{ 
+                transformStyle: 'preserve-3d',
+                perspective: '2000px'
+              }}
+            >
               {menuCategories.map((category, index) => {
                 const Icon = category.icon;
-                const isEven = index % 2 === 0;
                 
                 return (
                   <motion.div
                     key={category.id}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "-100px" }}
-                    variants={isEven ? slideInLeft : slideInRight}
-                    className="relative"
+                    className="relative mb-64"
+                    initial={{ 
+                      opacity: 0.3,
+                      rotateY: index % 2 === 0 ? -45 : 45,
+                      translateZ: -200,
+                      scale: 0.8
+                    }}
+                    whileInView={{ 
+                      opacity: 1,
+                      rotateY: 0,
+                      translateZ: 0,
+                      scale: 1
+                    }}
+                    viewport={{ once: false, margin: "-200px" }}
+                    transition={{ 
+                      duration: 1,
+                      ease: "easeOut"
+                    }}
+                    style={{
+                      transformStyle: 'preserve-3d',
+                    }}
                   >
                     <Link href={category.href}>
                       <motion.div
                         className="relative group cursor-pointer overflow-hidden rounded-3xl"
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ type: "spring", stiffness: 300 }}
+                        whileHover={{ 
+                          scale: 1.05,
+                          rotateY: 5,
+                          transition: { duration: 0.3 }
+                        }}
+                        style={{
+                          transformStyle: 'preserve-3d',
+                          backfaceVisibility: 'hidden',
+                        }}
                       >
-                        {/* Image de fond - Immense */}
-                        <div className="relative h-[600px] md:h-[800px] overflow-hidden">
+                        {/* Image de fond avec effet 3D */}
+                        <div className="relative h-[500px] md:h-[700px] overflow-hidden">
                           <motion.div
                             className="absolute inset-0"
-                            whileHover={{ scale: 1.1 }}
+                            whileHover={{ scale: 1.15 }}
                             transition={{ duration: 0.6 }}
+                            style={{
+                              transformStyle: 'preserve-3d',
+                            }}
                           >
                             <Image
                               src={category.image || '/images/menu/pizzas.jpg'}
@@ -331,28 +366,53 @@ export default function MenuPage() {
                               fill
                               className="object-cover"
                               onError={(e) => {
-                                // Hide the broken image and rely on the gradient overlay
                                 (e.target as HTMLImageElement).style.display = 'none';
                               }}
                             />
-                            <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-80 group-hover:opacity-70 transition-opacity duration-500`} />
+                            <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-75 group-hover:opacity-60 transition-opacity duration-500`} />
+                            
+                            {/* Effet de lumière 3D */}
+                            <motion.div
+                              className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent"
+                              animate={{
+                                opacity: [0.3, 0.6, 0.3],
+                              }}
+                              transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                              }}
+                            />
                           </motion.div>
 
-                          {/* Contenu superposé */}
+                          {/* Contenu superposé avec effet 3D */}
                           <div className="relative z-10 h-full flex flex-col justify-center items-center text-center p-12">
-                            {/* Icône animée */}
+                            {/* Icône animée avec effet 3D */}
                             <motion.div
                               className={`w-32 h-32 ${category.bgColor} rounded-full flex items-center justify-center mb-8 shadow-2xl`}
-                              whileHover={{ rotate: 360, scale: 1.2 }}
-                              transition={{ duration: 0.6 }}
+                              whileHover={{ 
+                                rotateY: 360, 
+                                scale: 1.2,
+                                transition: { duration: 0.8 }
+                              }}
+                              style={{
+                                transformStyle: 'preserve-3d',
+                              }}
                             >
                               <Icon className="w-16 h-16 text-white" />
                             </motion.div>
 
-                            {/* Titre - ÉNORME */}
+                            {/* Titre avec effet de profondeur */}
                             <motion.h3
                               className="text-6xl md:text-8xl font-black text-white mb-4 tracking-tight"
-                              whileHover={{ scale: 1.05 }}
+                              whileHover={{ 
+                                scale: 1.05,
+                                textShadow: '0 0 30px rgba(255,255,255,0.5)'
+                              }}
+                              style={{
+                                textShadow: '0 10px 40px rgba(0,0,0,0.5)',
+                                transform: 'translateZ(50px)',
+                              }}
                             >
                               {category.title}
                             </motion.h3>
@@ -360,7 +420,10 @@ export default function MenuPage() {
                             {/* Sous-titre */}
                             <motion.p
                               className="text-2xl md:text-4xl text-white/90 mb-6 font-light"
-                              whileHover={{ x: 10 }}
+                              whileHover={{ 
+                                x: 10,
+                                transform: 'translateZ(30px)'
+                              }}
                             >
                               {category.subtitle}
                             </motion.p>
@@ -368,13 +431,21 @@ export default function MenuPage() {
                             {/* Description */}
                             <motion.p
                               className="text-lg md:text-xl text-white/80 max-w-2xl mb-8"
-                              whileHover={{ x: 10 }}
+                              whileHover={{ 
+                                x: 10,
+                                transform: 'translateZ(20px)'
+                              }}
                             >
                               {category.description}
                             </motion.p>
 
-                            {/* Compteur et bouton */}
-                            <div className="flex items-center gap-6">
+                            {/* Compteur et bouton avec effet 3D */}
+                            <motion.div 
+                              className="flex items-center gap-6"
+                              style={{
+                                transform: 'translateZ(40px)',
+                              }}
+                            >
                               <motion.span
                                 className="text-2xl md:text-3xl text-white font-bold"
                                 whileHover={{ scale: 1.1 }}
@@ -383,21 +454,40 @@ export default function MenuPage() {
                               </motion.span>
                               
                               <motion.div
-                                className="flex items-center gap-2 text-white text-xl font-bold"
-                                whileHover={{ x: 10 }}
+                                className="flex items-center gap-2 text-white text-xl font-bold bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20"
+                                whileHover={{ 
+                                  x: 10,
+                                  scale: 1.1,
+                                  backgroundColor: 'rgba(255,255,255,0.2)'
+                                }}
                               >
                                 <span>Découvrir</span>
                                 <ArrowRight className="w-6 h-6" />
                               </motion.div>
-                            </div>
+                            </motion.div>
                           </div>
 
-                          {/* Effet de brillance au survol */}
+                          {/* Effet de brillance 3D au survol */}
                           <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
-                            style={{ width: '200%' }}
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                            initial={{ x: '-100%', rotateY: 90 }}
+                            whileHover={{ 
+                              x: '200%',
+                              transition: { duration: 0.8 }
+                            }}
+                            style={{
+                              transformStyle: 'preserve-3d',
+                            }}
                           />
                         </div>
+
+                        {/* Ombre portée 3D */}
+                        <motion.div
+                          className="absolute -inset-4 bg-black/50 blur-2xl -z-10"
+                          style={{
+                            transform: 'translateZ(-100px)',
+                          }}
+                        />
                       </motion.div>
                     </Link>
                   </motion.div>

@@ -503,20 +503,20 @@ export default function MenuPage() {
           )}
         </section>
 
-        {/* Section CTA finale - Immense */}
+        {/* Section CTA finale - compacte sur mobile */}
         <motion.section 
-          className="relative py-32 bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 overflow-hidden"
+          className="relative py-12 sm:py-20 md:py-28 lg:py-32 bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 overflow-hidden"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={fadeInUp}
         >
           {/* Effets de particules */}
-          <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {[...Array(30)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute w-3 h-3 bg-white/30 rounded-full"
+                className="absolute w-2 h-2 md:w-3 md:h-3 bg-white/30 rounded-full"
                 style={{
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
@@ -537,7 +537,7 @@ export default function MenuPage() {
 
           <div className="container mx-auto px-4 text-center relative z-10">
             <motion.h2
-              className="text-7xl md:text-9xl font-black text-white mb-8 tracking-tight"
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl xl:text-9xl font-black text-white mb-4 md:mb-8 tracking-tight leading-tight"
               variants={scaleIn}
             >
               PRÊT À
@@ -546,14 +546,14 @@ export default function MenuPage() {
             </motion.h2>
             
             <motion.p
-              className="text-3xl md:text-5xl text-white/90 mb-12 font-light max-w-4xl mx-auto"
+              className="text-base sm:text-lg md:text-2xl lg:text-4xl xl:text-5xl text-white/90 mb-6 md:mb-12 font-light max-w-4xl mx-auto"
               variants={fadeInUp}
             >
               Découvrez nos spécialités et laissez-vous tenter
             </motion.p>
 
             <motion.div
-              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 justify-center items-center"
               variants={fadeInUp}
             >
               <motion.div
@@ -562,9 +562,9 @@ export default function MenuPage() {
               >
                 <Link
                   href="/menu/pizzas"
-                  className="inline-flex items-center px-12 py-6 bg-white text-orange-600 font-black text-2xl rounded-full shadow-2xl hover:shadow-amber-500/50 transition-all"
+                  className="inline-flex items-center px-6 py-3.5 sm:px-8 sm:py-4 md:px-12 md:py-6 bg-white text-orange-600 font-black text-sm sm:text-base md:text-xl lg:text-2xl rounded-full shadow-2xl hover:shadow-amber-500/50 transition-all"
                 >
-                  <Pizza className="w-8 h-8 mr-3" />
+                  <Pizza className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 mr-2 sm:mr-3 shrink-0" />
                   VOIR LES PIZZAS
                 </Link>
               </motion.div>
@@ -575,9 +575,9 @@ export default function MenuPage() {
               >
                 <Link
                   href="/commander"
-                  className="inline-flex items-center px-12 py-6 border-4 border-white text-white font-black text-2xl rounded-full hover:bg-white hover:text-orange-600 transition-all"
+                  className="inline-flex items-center px-6 py-3.5 sm:px-8 sm:py-4 md:px-12 md:py-6 border-2 md:border-4 border-white text-white font-black text-sm sm:text-base md:text-xl lg:text-2xl rounded-full hover:bg-white hover:text-orange-600 transition-all"
                 >
-                  <Utensils className="w-8 h-8 mr-3" />
+                  <Utensils className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 mr-2 sm:mr-3 shrink-0" />
                   COMMANDER
                 </Link>
               </motion.div>

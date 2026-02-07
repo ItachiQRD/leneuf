@@ -17,10 +17,10 @@ import {
   Moon,
   Sandwich
 } from 'lucide-react';
+import Link from 'next/link';
 import { useProducts } from '@/contexts/ProductContext';
 import ProductImage from '@/components/common/ProductImage';
 import SmartImage from '@/components/common/SmartImage';
-import { useCart } from '@/contexts/CartContext';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import OrderButton from '@/components/common/OrderButton';
 import DarkModeToggle from '@/components/common/DarkModeToggle';
@@ -71,7 +71,6 @@ const pulseVariants = {
 
 export default function SandwichesPage() {
   const { foods, loading } = useProducts();
-  const { addItem } = useCart();
   const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -132,17 +131,6 @@ export default function SandwichesPage() {
   };
 
   const sortedSandwiches = getSortedSandwiches();
-
-  const handleAddToCart = (sandwich: any) => {
-    addItem({
-      _id: sandwich._id || (sandwich as any).id,
-      name: sandwich.name,
-      price: sandwich.price || 0,
-      image: typeof sandwich.image === 'string' ? sandwich.image : undefined,
-      type: 'food',
-      category: sandwich.category
-    });
-  };
 
   return (
     <>
@@ -334,15 +322,15 @@ export default function SandwichesPage() {
                         </div>
                       </div>
 
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleAddToCart(sandwich)}
-                        className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-200 flex items-center space-x-2"
-                      >
-                        <ShoppingCart className="w-4 h-4" />
-                        <span>Commander</span>
-                      </motion.button>
+                      <Link href="/commander?category=sandwichs">
+                        <motion.span
+                          className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-200"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          Composer <ChevronRight className="w-4 h-4" />
+                        </motion.span>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>

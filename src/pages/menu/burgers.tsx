@@ -16,10 +16,10 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
+import Link from 'next/link';
 import { useProducts } from '@/contexts/ProductContext';
 import ProductImage from '@/components/common/ProductImage';
 import SmartImage from '@/components/common/SmartImage';
-import { useCart } from '@/contexts/CartContext';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import OrderButton from '@/components/common/OrderButton';
 import DarkModeToggle from '@/components/common/DarkModeToggle';
@@ -74,7 +74,6 @@ const hoverVariants = {
 
 export default function BurgersPage() {
   const { foods } = useProducts();
-  const { addItem } = useCart();
   const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -97,16 +96,6 @@ export default function BurgersPage() {
     
     return matchesSearch && matchesFilter;
   });
-
-  const handleAddToCart = (burger: any) => {
-    addItem({
-      _id: burger._id || burger.id,
-      name: burger.name,
-      price: burger.price,
-      image: burger.image,
-      type: 'food'
-    });
-  };
 
   const getSpicyIcon = (level: string) => {
     switch (level) {
@@ -327,14 +316,15 @@ export default function BurgersPage() {
                       <div className="text-2xl font-bold text-amber-600">
                         {burger.price}€
                       </div>
-                      <motion.button
-                        onClick={() => handleAddToCart(burger)}
-                        className="bg-amber-500 text-white p-3 rounded-full hover:bg-amber-600 transition-colors flex items-center"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <ShoppingCart className="w-5 h-5" />
-                      </motion.button>
+                      <Link href="/commander?category=burgers">
+                        <motion.span
+                          className="inline-flex items-center gap-2 bg-amber-500 text-white px-4 py-3 rounded-full hover:bg-amber-600 transition-colors font-medium"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          Composer <ChevronRight className="w-5 h-5" />
+                        </motion.span>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>

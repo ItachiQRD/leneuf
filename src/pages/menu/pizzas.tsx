@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
 import ProductImage from '@/components/common/ProductImage';
-import { useCart } from '@/contexts/CartContext';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import DarkModeToggle from '@/components/common/DarkModeToggle';
 import Link from 'next/link';
@@ -74,11 +73,9 @@ const hoverVariants = {
 
 export default function PizzasPage() {
   const { foods } = useProducts();
-  const { addItem } = useCart();
   const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [selectedSize, setSelectedSize] = useState<{ [key: string]: string }>({});
 
   // Filtrer les pizzas
   const pizzas = foods.filter((food: any) => food.type === 'pizza');
@@ -97,21 +94,6 @@ export default function PizzasPage() {
     
     return matchesSearch && matchesFilter;
   });
-
-  const handleAddToCart = (pizza: any) => {
-    const selectedPizzaSize = selectedSize[pizza._id || pizza.id] || 'M';
-    const pizzaSize = pizza.pizzaSizes?.find((size: any) => size.name === selectedPizzaSize);
-    
-    if (pizzaSize) {
-      addItem({
-        _id: pizza._id || pizza.id,
-        name: pizza.name,
-        price: pizzaSize.price,
-        image: pizza.image,
-        type: 'food'
-      });
-    }
-  };
 
   const getSpicyIcon = (level: string) => {
     switch (level) {
@@ -345,47 +327,19 @@ export default function PizzasPage() {
                       </p>
                     )}
 
-                    {/* Tailles de pizza */}
-                    {pizza.pizzaSizes && pizza.pizzaSizes.length > 0 && (
-                      <div className="mb-4">
-                        <p className={`text-sm font-medium mb-2 ${
-                          isDark ? 'text-gray-300' : 'text-gray-700'
-                        }`}>Tailles disponibles :</p>
-                        <div className="flex gap-2">
-                          {pizza.pizzaSizes.map((size: any) => (
-                            <button
-                              key={size.name}
-                              onClick={() => setSelectedSize(prev => ({
-                                ...prev,
-                                [pizza._id || pizza.id]: size.name
-                              }))}
-                              className={`px-3 py-1 text-sm rounded-full border transition-colors ${
-                                selectedSize[pizza._id || pizza.id] === size.name
-                                  ? 'border-red-500 bg-red-500 text-white'
-                                  : isDark
-                                  ? 'border-gray-600 text-gray-300 hover:border-red-400'
-                                  : 'border-gray-300 text-gray-700 hover:border-red-300'
-                              }`}
-                            >
-                              {size.name} - {size.price}€
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
                     <div className="flex items-center justify-between">
                       <div className="text-2xl font-bold text-red-600">
                         {pizza.price}€
                       </div>
-                      <motion.button
-                        onClick={() => handleAddToCart(pizza)}
-                        className="bg-red-500 text-white p-3 rounded-full hover:bg-red-600 transition-colors flex items-center"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <ShoppingCart className="w-5 h-5" />
-                      </motion.button>
+                      <Link href="/commander?category=pizzas">
+                        <motion.span
+                          className="inline-flex items-center gap-2 bg-red-500 text-white px-4 py-3 rounded-full hover:bg-red-600 transition-colors font-medium"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          Choisir taille & composer <ChevronRight className="w-5 h-5" />
+                        </motion.span>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>
@@ -412,7 +366,7 @@ export default function PizzasPage() {
         </section>
 
         {/* Bouton flottant de commande */}
-        <Link href="/commander">
+        <Link href="/commander?category=pizzas">
           <motion.button
             className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center"
             whileHover={{ scale: 1.1 }}

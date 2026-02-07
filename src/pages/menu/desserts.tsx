@@ -6,14 +6,14 @@ import {
   Star, 
   IceCream, 
   Heart,
-  ShoppingCart,
+  ChevronRight,
   Zap,
   Leaf,
   Cake
 } from 'lucide-react';
+import Link from 'next/link';
 import { useProducts } from '@/contexts/ProductContext';
 import SmartImage from '@/components/common/SmartImage';
-import { useCart } from '@/contexts/CartContext';
 
 // Filtres spécifiques aux desserts
 const dessertFilters = [
@@ -64,7 +64,6 @@ const hoverVariants = {
 
 export default function DessertsPage() {
   const { desserts } = useProducts();
-  const { addItem } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
@@ -80,16 +79,6 @@ export default function DessertsPage() {
     
     return matchesSearch && matchesFilter;
   });
-
-  const handleAddToCart = (dessert: any) => {
-    addItem({
-      _id: dessert._id || dessert.id,
-      name: dessert.name,
-      price: dessert.price,
-      image: dessert.image,
-      type: 'dessert'
-    });
-  };
 
   return (
     <>
@@ -291,14 +280,15 @@ export default function DessertsPage() {
                       <div className="text-2xl font-bold text-pink-600">
                         {dessert.price}€
                       </div>
-                      <motion.button
-                        onClick={() => handleAddToCart(dessert)}
-                        className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition-colors flex items-center"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <ShoppingCart className="w-5 h-5" />
-                      </motion.button>
+                      <Link href="/commander?category=desserts">
+                        <motion.span
+                          className="inline-flex items-center gap-2 bg-pink-500 text-white px-4 py-3 rounded-full hover:bg-pink-600 transition-colors font-medium"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          Composer <ChevronRight className="w-5 h-5" />
+                        </motion.span>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>

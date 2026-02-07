@@ -13,9 +13,9 @@ import {
   Heart,
   Droplets
 } from 'lucide-react';
+import Link from 'next/link';
 import { useProducts } from '@/contexts/ProductContext';
 import SmartImage from '@/components/common/SmartImage';
-import { useCart } from '@/contexts/CartContext';
 
 // Filtres spécifiques aux salades et assiettes
 const saladFilters = [
@@ -68,7 +68,6 @@ const hoverVariants = {
 
 export default function SaladsPage() {
   const { foods } = useProducts();
-  const { addItem } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
@@ -97,16 +96,6 @@ export default function SaladsPage() {
     
     return matchesSearch && matchesFilter;
   });
-
-  const handleAddToCart = (salad: any) => {
-    addItem({
-      _id: salad._id || salad.id,
-      name: salad.name,
-      price: salad.price,
-      image: salad.image,
-      type: 'food'
-    });
-  };
 
   const getSpicyIcon = (level: string) => {
     switch (level) {
@@ -345,14 +334,15 @@ export default function SaladsPage() {
                       <div className="text-2xl font-bold text-green-600">
                         {salad.price}€
                       </div>
-                      <motion.button
-                        onClick={() => handleAddToCart(salad)}
-                        className="bg-green-500 text-white p-3 rounded-full hover:bg-green-600 transition-colors flex items-center"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <ShoppingCart className="w-5 h-5" />
-                      </motion.button>
+                      <Link href="/commander?category=assiettes">
+                        <motion.span
+                          className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-3 rounded-full hover:bg-green-600 transition-colors font-medium"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          Composer <ChevronRight className="w-5 h-5" />
+                        </motion.span>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, Trash2, Clock, MapPin, Phone, Menu } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
@@ -16,6 +17,7 @@ import OrderTypeModal from '@/components/checkout/OrderTypeModal';
 import PizzaPromoBanner from '@/components/commander/PizzaPromoBanner';
 
 export default function CommanderPage() {
+  const router = useRouter();
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
   const { isAuthenticated, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -130,6 +132,23 @@ export default function CommanderPage() {
       drinkSize: '1.5L'
     }
   ];
+
+  // Lire ?category= et ?open= depuis l'URL (ex: depuis les pages menu)
+  useEffect(() => {
+    if (!router.isReady) return;
+    const category = router.query.category as string | undefined;
+    const open = router.query.open as string | undefined;
+    const validCategories = ['sandwichs', 'burgers', 'pizzas', 'assiettes', 'accompagnements', 'tacos', 'paninis', 'tex-mex', 'ptite-faim', 'menu-enfants', 'boissons', 'desserts'];
+    if (category && validCategories.includes(category)) {
+      setSelectedCategory(category);
+      // Optionnel : ouvrir directement le compositeur pour burgers/sandwichs
+      if (open === '1' && (category === 'burgers' || category === 'sandwichs')) {
+        setTimeout(() => setShowBurgerSandwichComposer(true), 400);
+      }
+      // Nettoyer l'URL sans recharger la page
+      router.replace('/commander', undefined, { shallow: true });
+    }
+  }, [router.isReady, router.query.category, router.query.open]);
 
   // Charger les produits quand la catégorie change
   useEffect(() => {

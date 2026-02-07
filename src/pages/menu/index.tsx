@@ -123,6 +123,88 @@ const slideInRight = {
   }
 };
 
+// Composant séparé pour chaque slide desktop : évite d'appeler des hooks dans une boucle (règles des Hooks).
+function DesktopCarouselSlide({
+  category,
+  index,
+  total,
+  carouselScrollProgress,
+}: {
+  category: (typeof menuCategories)[0];
+  index: number;
+  total: number;
+  carouselScrollProgress: ReturnType<typeof useScroll>['scrollYProgress'];
+}) {
+  const Icon = category.icon;
+  const rel = useTransform(carouselScrollProgress, [0, 1], [index, index - (total - 1)]);
+  const opacity = useTransform(rel, [-2, -1.2, -0.8, 0.8, 1.2, 2], [0, 0, 1, 1, 0, 0]);
+  const visibility = useTransform(rel, [-2, -1.15, 1.15, 2], ['hidden', 'visible', 'visible', 'hidden']);
+  const slideOffsetPx = 520;
+  const x = useTransform(rel, [-1, 0, 1], [-slideOffsetPx, 0, slideOffsetPx]);
+  const scale = useTransform(rel, [-1, 0, 1], [0.82, 1, 0.82]);
+  const z = useTransform(rel, [-1, 0, 1], [-80, 0, -80]);
+  return (
+    <motion.div
+      className="absolute flex items-center justify-center"
+      style={{
+        x,
+        z,
+        scale,
+        opacity,
+        visibility,
+        pointerEvents: 'none',
+      }}
+    >
+      <motion.div
+        className="w-[90vw] max-w-[520px] flex-shrink-0"
+        style={{ pointerEvents: 'auto' }}
+      >
+        <Link href={category.href} className="block">
+          <motion.div
+            className="relative group cursor-pointer overflow-hidden rounded-2xl shadow-2xl"
+            whileHover={{ scale: 1.03 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            <div className="relative aspect-[4/3] min-h-[300px] overflow-hidden">
+              <Image
+                src={category.image || '/images/menu/pizzas.jpg'}
+                alt={category.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+              <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent ${category.color} opacity-70`} />
+              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+                <motion.div
+                  className={`inline-flex w-14 h-14 rounded-full ${category.bgColor} items-center justify-center mb-4 shadow-xl`}
+                >
+                  <Icon className="w-7 h-7 text-white" />
+                </motion.div>
+                <h3 className="text-3xl md:text-5xl font-black text-white mb-2 tracking-tight">
+                  {category.title}
+                </h3>
+                <p className="text-base md:text-xl text-white/90 font-light mb-3">
+                  {category.subtitle}
+                </p>
+                <div className="flex items-center gap-3 text-white/90 text-sm md:text-base">
+                  <span className="font-semibold">
+                    {category.count} produit{category.count !== 1 ? 's' : ''}
+                  </span>
+                  <span className="flex items-center gap-2 font-semibold">
+                    Découvrir <ArrowRight className="w-5 h-5" />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </Link>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function MenuPage() {
   const { foods, drinks, desserts, sides, sauces } = useProducts();
   const [isLoading, setIsLoading] = useState(true);
@@ -406,88 +488,15 @@ export default function MenuPage() {
 
             {/* Desktop : 3 slides côte à côte, plus d'espace et cartes plus grandes */}
             <div className="relative w-full flex-1 flex items-center justify-center min-h-0">
-              {menuCategories.map((category, index) => {
-                const Icon = category.icon;
-                const n = menuCategories.length;
-                // Position relative continue : 0 = slide au centre, -1 = précédent, +1 = suivant
-                const rel = useTransform(
-                  carouselScrollProgress,
-                  [0, 1],
-                  [index, index - (n - 1)]
-                );
-                // Invisible si hors des 3 (rel < -1.5 ou rel > 1.5)
-                const opacity = useTransform(rel, [-2, -1.2, -0.8, 0.8, 1.2, 2], [0, 0, 1, 1, 0, 0]);
-                const visibility = useTransform(rel, [-2, -1.15, 1.15, 2], ['hidden', 'visible', 'visible', 'hidden']);
-                // Décalage horizontal : précédent à gauche, actuel au centre, suivant à droite (pas de chevauchement)
-                const slideOffsetPx = 520;
-                const x = useTransform(rel, [-1, 0, 1], [-slideOffsetPx, 0, slideOffsetPx]);
-                // Taille : actuel plus grand
-                const scale = useTransform(rel, [-1, 0, 1], [0.82, 1, 0.82]);
-                // Légère profondeur pour l’effet 3D
-                const z = useTransform(rel, [-1, 0, 1], [-80, 0, -80]);
-
-                return (
-                  <motion.div
-                    key={category.id}
-                    className="absolute flex items-center justify-center"
-                    style={{
-                      x,
-                      z,
-                      scale,
-                      opacity,
-                      visibility,
-                      pointerEvents: 'none',
-                    }}
-                  >
-                    <motion.div
-                      className="w-[90vw] max-w-[520px] flex-shrink-0"
-                      style={{ pointerEvents: 'auto' }}
-                    >
-                      <Link href={category.href} className="block">
-                        <motion.div
-                          className="relative group cursor-pointer overflow-hidden rounded-2xl shadow-2xl"
-                          whileHover={{ scale: 1.03 }}
-                          transition={{ type: 'spring', stiffness: 300 }}
-                        >
-                          <div className="relative aspect-[4/3] min-h-[300px] overflow-hidden">
-                            <Image
-                              src={category.image || '/images/menu/pizzas.jpg'}
-                              alt={category.title}
-                              fill
-                              className="object-cover group-hover:scale-105 transition-transform duration-500"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = 'none';
-                              }}
-                            />
-                            <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent ${category.color} opacity-70`} />
-                            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
-                              <motion.div
-                                className={`inline-flex w-14 h-14 rounded-full ${category.bgColor} items-center justify-center mb-4 shadow-xl`}
-                              >
-                                <Icon className="w-7 h-7 text-white" />
-                              </motion.div>
-                              <h3 className="text-3xl md:text-5xl font-black text-white mb-2 tracking-tight">
-                                {category.title}
-                              </h3>
-                              <p className="text-base md:text-xl text-white/90 font-light mb-3">
-                                {category.subtitle}
-                              </p>
-                              <div className="flex items-center gap-3 text-white/90 text-sm md:text-base">
-                                <span className="font-semibold">
-                                  {category.count} produit{category.count !== 1 ? 's' : ''}
-                                </span>
-                                <span className="flex items-center gap-2 font-semibold">
-                                  Découvrir <ArrowRight className="w-5 h-5" />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      </Link>
-                    </motion.div>
-                  </motion.div>
-                );
-              })}
+              {menuCategories.map((category, index) => (
+                <DesktopCarouselSlide
+                  key={category.id}
+                  category={category}
+                  index={index}
+                  total={menuCategories.length}
+                  carouselScrollProgress={carouselScrollProgress}
+                />
+              ))}
             </div>
           </div>
           </>

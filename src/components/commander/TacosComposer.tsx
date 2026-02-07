@@ -314,7 +314,7 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
       _id: `tacos-${Date.now()}`,
       name: `${config.type === 'bowl' ? 'Bowl' : `Tacos ${config.size}`} ${config.meats.map(m => m.name).join(', ')}`,
       price: calculatePrice(),
-      image: config.type === 'bowl' ? '/images/bowl.jpeg' : '/images/tacos.jpg',
+      image: config.type === 'bowl' ? '/images/menu/format-bowl.jpg' : '/images/menu/format-tacos.jpg',
       category: 'tacos',
       type: 'food',
       customIngredients: {
@@ -422,33 +422,53 @@ export default function TacosComposer({ isOpen, onClose, onAddToCart }: TacosCom
                     <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">Choisissez votre type</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
                       <motion.button
+                        type="button"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleTypeChange('tacos')}
-                        className={`p-4 lg:p-6 border-2 rounded-lg text-center transition-colors ${
+                        className={`overflow-hidden border-2 rounded-lg text-center transition-colors ${
                           config.type === 'tacos' 
                             ? 'border-orange-500 bg-orange-50' 
                             : 'border-gray-200 hover:border-orange-300'
                         }`}
                       >
-                        <div className="text-3xl lg:text-4xl mb-2">🌮</div>
-                        <h4 className="font-semibold text-base lg:text-lg">Tacos</h4>
-                        <p className="text-xs lg:text-sm text-gray-600">À partir de 6.50€</p>
+                        <div className="relative aspect-[4/3] w-full">
+                          <Image
+                            src="/images/menu/format-tacos.jpg"
+                            alt="Tacos"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="p-3 lg:p-4">
+                          <h4 className="font-semibold text-base lg:text-lg">Tacos</h4>
+                          <p className="text-xs lg:text-sm text-gray-600">À partir de 6.50€</p>
+                        </div>
                       </motion.button>
                       
                       <motion.button
+                        type="button"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleTypeChange('bowl')}
-                        className={`p-4 lg:p-6 border-2 rounded-lg text-center transition-colors ${
+                        className={`overflow-hidden border-2 rounded-lg text-center transition-colors ${
                           config.type === 'bowl' 
                             ? 'border-orange-500 bg-orange-50' 
                             : 'border-gray-200 hover:border-orange-300'
                         }`}
                       >
-                        <div className="text-3xl lg:text-4xl mb-2">🥗</div>
-                        <h4 className="font-semibold text-base lg:text-lg">Bowl</h4>
-                        <p className="text-xs lg:text-sm text-gray-600">7.50€ - 1 viande, 2 sauces max</p>
+                        <div className="relative aspect-[4/3] w-full">
+                          <Image
+                            src="/images/menu/format-bowl.jpg"
+                            alt="Bowl"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="p-3 lg:p-4">
+                          <h4 className="font-semibold text-base lg:text-lg">Bowl</h4>
+                          <p className="text-xs lg:text-sm text-gray-600">7.50€ - 1 viande, 2 sauces max</p>
+                        </div>
                       </motion.button>
                     </div>
                   </div>

@@ -707,7 +707,14 @@ export default function CommanderPage() {
           ) : selectedCategory === 'paninis' ? (
             /* Interface spéciale pour les paninis */
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">🥪</div>
+              <div className="relative w-40 h-40 mx-auto mb-6 rounded-xl overflow-hidden">
+                <Image
+                  src="/images/menu/panini.jpeg"
+                  alt="Panini"
+                  fill
+                  className="object-cover"
+                />
+              </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 Composez votre Panini
               </h2>
@@ -1035,7 +1042,14 @@ export default function CommanderPage() {
           ) : selectedCategory === 'paninis' ? (
             /* Interface spéciale pour les paninis */
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">🥪</div>
+              <div className="relative w-40 h-40 mx-auto mb-6 rounded-xl overflow-hidden">
+                <Image
+                  src="/images/menu/panini.jpeg"
+                  alt="Panini"
+                  fill
+                  className="object-cover"
+                />
+              </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 Composez votre Panini
               </h2>

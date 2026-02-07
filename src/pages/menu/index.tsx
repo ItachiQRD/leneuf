@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import {
   Leaf, 
   IceCream,
   ChevronRight,
+  ChevronLeft,
   ArrowRight,
   Sparkles,
   Flame
@@ -54,7 +55,7 @@ const menuCategories = [
     bgColor: "bg-green-500",
     textColor: "text-green-600",
     href: "/menu/salads",
-    image: "/images/menu/bowl.jpeg",
+    image: "/images/menu/sides.jpg",
     count: 0
   },
   {
@@ -67,7 +68,7 @@ const menuCategories = [
     bgColor: "bg-orange-500",
     textColor: "text-orange-600",
     href: "/menu/sandwiches",
-    image: "/images/menu/signature.jpg",
+    image: "/images/menu/sandwich.jpg",
     count: 0
   },
   {
@@ -80,7 +81,7 @@ const menuCategories = [
     bgColor: "bg-pink-500",
     textColor: "text-pink-600",
     href: "/menu/desserts",
-    image: "/images/menu/frites.jpeg",
+    image: "/images/menu/dessert.jpg",
     count: 0
   }
 ];
@@ -127,6 +128,8 @@ export default function MenuPage() {
   const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
+  const [isMobileCarousel, setIsMobileCarousel] = useState(false);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
@@ -135,6 +138,14 @@ export default function MenuPage() {
     target: carouselRef,
     offset: ["start start", "end end"]
   });
+
+  // Détection mobile pour le carousel (swipe/boutons au lieu du scroll)
+  useEffect(() => {
+    const check = () => setIsMobileCarousel(typeof window !== 'undefined' && window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Calculer le nombre de produits par catégorie
   useEffect(() => {
@@ -285,23 +296,115 @@ export default function MenuPage() {
           <MenuOffers />
         </section>
 
-        {/* Carousel des catégories - scroll vertical, 3 slides visibles (précédent, actuel, suivant) */}
+        {/* Carousel des catégories */}
         <section
           ref={carouselRef}
           className="relative bg-gradient-to-b from-black via-gray-900 to-black"
-          style={{ height: `${menuCategories.length * 100}vh` }}
+          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
-          <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
-            <div className="w-full flex-shrink-0 pt-8 pb-4 text-center">
-              <h2 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight">
-                EXPLOREZ
-              </h2>
-              <p className="text-lg md:text-xl text-gray-400 font-light">
-                Faites défiler pour découvrir les catégories
-              </p>
+          {/* Mobile : une slide à la fois, swipe + boutons (pas de scroll) */}
+          {isMobileCarousel ? (
+            <div className="py-12 px-4 min-h-[85vh] flex flex-col">
+              <div className="text-center mb-6">
+                <h2 className="text-3xl font-black text-white mb-1 tracking-tight">EXPLOREZ</h2>
+                <p className="text-gray-400 text-sm">Glissez ou utilisez les flèches</p>
+              </div>
+              <div className="flex-1 flex items-center justify-center relative">
+                <motion.button
+                  type="button"
+                  aria-label="Précédent"
+                  className="absolute left-2 z-10 w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white touch-none"
+                  onClick={() => setMobileCarouselIndex((i) => (i === 0 ? menuCategories.length - 1 : i - 1))}
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </motion.button>
+                <motion.button
+                  type="button"
+                  aria-label="Suivant"
+                  className="absolute right-2 z-10 w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white touch-none"
+                  onClick={() => setMobileCarouselIndex((i) => (i === menuCategories.length - 1 ? 0 : i + 1))}
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </motion.button>
+                <motion.div
+                  className="w-full max-w-[340px] mx-auto overflow-hidden touch-pan-y"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 60) setMobileCarouselIndex((i) => (i === 0 ? menuCategories.length - 1 : i - 1));
+                    if (info.offset.x < -60) setMobileCarouselIndex((i) => (i === menuCategories.length - 1 ? 0 : i + 1));
+                  }}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    {menuCategories.map((category, index) => {
+                      if (index !== mobileCarouselIndex) return null;
+                      const Icon = category.icon;
+                      return (
+                        <motion.div
+                          key={category.id}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ type: 'tween', duration: 0.25 }}
+                          className="w-full"
+                        >
+                          <Link href={category.href} className="block">
+                            <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+                              <div className="relative aspect-[4/3] overflow-hidden">
+                                <Image
+                                  src={category.image || '/images/menu/pizzas.jpg'}
+                                  alt={category.title}
+                                  fill
+                                  className="object-cover"
+                                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                />
+                                <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent ${category.color} opacity-70`} />
+                                <div className="absolute inset-0 flex flex-col justify-end p-5">
+                                  <div className={`inline-flex w-12 h-12 rounded-full ${category.bgColor} items-center justify-center mb-2 shadow-xl`}>
+                                    <Icon className="w-6 h-6 text-white" />
+                                  </div>
+                                  <h3 className="text-2xl font-black text-white tracking-tight">{category.title}</h3>
+                                  <p className="text-sm text-white/90 font-light mb-2">{category.subtitle}</p>
+                                  <div className="flex items-center gap-2 text-white/90 text-sm">
+                                    <span className="font-semibold">{category.count} produit{category.count !== 1 ? 's' : ''}</span>
+                                    <span className="flex items-center gap-1 font-semibold">Découvrir <ArrowRight className="w-4 h-4" /></span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+                </motion.div>
+              </div>
+              <div className="flex justify-center gap-2 mt-6">
+                {menuCategories.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    aria-label={`Slide ${i + 1}`}
+                    className={`w-2 h-2 rounded-full transition-colors ${i === mobileCarouselIndex ? 'bg-white w-6' : 'bg-white/40'}`}
+                    onClick={() => setMobileCarouselIndex(i)}
+                  />
+                ))}
+              </div>
             </div>
+          ) : (
+            <>
+            <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
+              <div className="w-full flex-shrink-0 pt-8 pb-4 text-center">
+                <h2 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight">
+                  EXPLOREZ
+                </h2>
+                <p className="text-lg md:text-xl text-gray-400 font-light">
+                  Faites défiler pour découvrir les catégories
+                </p>
+              </div>
 
-            {/* Conteneur des 3 slides côte à côte */}
+            {/* Desktop : 3 slides côte à côte, plus d'espace et cartes plus grandes */}
             <div className="relative w-full flex-1 flex items-center justify-center min-h-0">
               {menuCategories.map((category, index) => {
                 const Icon = category.icon;
@@ -316,7 +419,7 @@ export default function MenuPage() {
                 const opacity = useTransform(rel, [-2, -1.2, -0.8, 0.8, 1.2, 2], [0, 0, 1, 1, 0, 0]);
                 const visibility = useTransform(rel, [-2, -1.15, 1.15, 2], ['hidden', 'visible', 'visible', 'hidden']);
                 // Décalage horizontal : précédent à gauche, actuel au centre, suivant à droite (pas de chevauchement)
-                const slideOffsetPx = 380;
+                const slideOffsetPx = 520;
                 const x = useTransform(rel, [-1, 0, 1], [-slideOffsetPx, 0, slideOffsetPx]);
                 // Taille : actuel plus grand
                 const scale = useTransform(rel, [-1, 0, 1], [0.82, 1, 0.82]);
@@ -337,7 +440,7 @@ export default function MenuPage() {
                     }}
                   >
                     <motion.div
-                      className="w-[85vw] max-w-[420px] flex-shrink-0"
+                      className="w-[90vw] max-w-[520px] flex-shrink-0"
                       style={{ pointerEvents: 'auto' }}
                     >
                       <Link href={category.href} className="block">
@@ -346,7 +449,7 @@ export default function MenuPage() {
                           whileHover={{ scale: 1.03 }}
                           transition={{ type: 'spring', stiffness: 300 }}
                         >
-                          <div className="relative aspect-[4/3] min-h-[280px] overflow-hidden">
+                          <div className="relative aspect-[4/3] min-h-[300px] overflow-hidden">
                             <Image
                               src={category.image || '/images/menu/pizzas.jpg'}
                               alt={category.title}
@@ -357,24 +460,24 @@ export default function MenuPage() {
                               }}
                             />
                             <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent ${category.color} opacity-70`} />
-                            <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-6">
+                            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
                               <motion.div
-                                className={`inline-flex w-12 h-12 rounded-full ${category.bgColor} items-center justify-center mb-3 shadow-xl`}
+                                className={`inline-flex w-14 h-14 rounded-full ${category.bgColor} items-center justify-center mb-4 shadow-xl`}
                               >
-                                <Icon className="w-6 h-6 text-white" />
+                                <Icon className="w-7 h-7 text-white" />
                               </motion.div>
-                              <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight">
+                              <h3 className="text-3xl md:text-5xl font-black text-white mb-2 tracking-tight">
                                 {category.title}
                               </h3>
-                              <p className="text-sm md:text-lg text-white/90 font-light mb-2">
+                              <p className="text-base md:text-xl text-white/90 font-light mb-3">
                                 {category.subtitle}
                               </p>
-                              <div className="flex items-center gap-2 text-white/90 text-sm">
+                              <div className="flex items-center gap-3 text-white/90 text-sm md:text-base">
                                 <span className="font-semibold">
                                   {category.count} produit{category.count !== 1 ? 's' : ''}
                                 </span>
-                                <span className="flex items-center gap-1 font-semibold">
-                                  Découvrir <ArrowRight className="w-4 h-4" />
+                                <span className="flex items-center gap-2 font-semibold">
+                                  Découvrir <ArrowRight className="w-5 h-5" />
                                 </span>
                               </div>
                             </div>
@@ -387,6 +490,8 @@ export default function MenuPage() {
               })}
             </div>
           </div>
+          </>
+          )}
         </section>
 
         {/* Section CTA finale - Immense */}

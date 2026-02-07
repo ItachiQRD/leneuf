@@ -285,114 +285,107 @@ export default function MenuPage() {
           <MenuOffers />
         </section>
 
-        {/* Carousel des catégories - scroll vertical 3D */}
+        {/* Carousel des catégories - scroll vertical, 3 slides visibles (précédent, actuel, suivant) */}
         <section
           ref={carouselRef}
           className="relative bg-gradient-to-b from-black via-gray-900 to-black"
           style={{ height: `${menuCategories.length * 100}vh` }}
         >
-          <div className="sticky top-0 h-screen w-full overflow-hidden" style={{ perspective: '1200px' }}>
-            <motion.div
-              className="absolute inset-0 flex flex-col justify-center items-center pt-16 pb-8"
-              style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
-            >
-              <h2 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight z-10">
+          <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
+            <div className="w-full flex-shrink-0 pt-8 pb-4 text-center">
+              <h2 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight">
                 EXPLOREZ
               </h2>
-              <p className="text-lg md:text-xl text-gray-400 font-light mb-8 z-10">
+              <p className="text-lg md:text-xl text-gray-400 font-light">
                 Faites défiler pour découvrir les catégories
               </p>
-            </motion.div>
+            </div>
 
-            {menuCategories.map((category, index) => {
-              const Icon = category.icon;
-              const n = menuCategories.length;
-              const scale = useTransform(
-                carouselScrollProgress,
-                [(index - 0.5) / n, index / n, (index + 0.5) / n],
-                [0.75, 1, 0.75]
-              );
-              const y = useTransform(
-                carouselScrollProgress,
-                [(index - 0.5) / n, index / n, (index + 0.5) / n],
-                [120, 0, -120]
-              );
-              const z = useTransform(
-                carouselScrollProgress,
-                [(index - 0.5) / n, index / n, (index + 0.5) / n],
-                [-200, 0, -200]
-              );
-              const opacity = useTransform(
-                carouselScrollProgress,
-                [(index - 0.3) / n, index / n, (index + 0.3) / n],
-                [0.4, 1, 0.4]
-              );
-              const rotateX = useTransform(
-                carouselScrollProgress,
-                [(index - 0.5) / n, index / n, (index + 0.5) / n],
-                [25, 0, -25]
-              );
+            {/* Conteneur des 3 slides côte à côte */}
+            <div className="relative w-full flex-1 flex items-center justify-center min-h-0">
+              {menuCategories.map((category, index) => {
+                const Icon = category.icon;
+                const n = menuCategories.length;
+                // Position relative continue : 0 = slide au centre, -1 = précédent, +1 = suivant
+                const rel = useTransform(
+                  carouselScrollProgress,
+                  [0, 1],
+                  [index, index - (n - 1)]
+                );
+                // Invisible si hors des 3 (rel < -1.5 ou rel > 1.5)
+                const opacity = useTransform(rel, [-2, -1.2, -0.8, 0.8, 1.2, 2], [0, 0, 1, 1, 0, 0]);
+                const visibility = useTransform(rel, [-2, -1.15, 1.15, 2], ['hidden', 'visible', 'visible', 'hidden']);
+                // Décalage horizontal : précédent à gauche, actuel au centre, suivant à droite (pas de chevauchement)
+                const slideOffsetPx = 380;
+                const x = useTransform(rel, [-1, 0, 1], [-slideOffsetPx, 0, slideOffsetPx]);
+                // Taille : actuel plus grand
+                const scale = useTransform(rel, [-1, 0, 1], [0.82, 1, 0.82]);
+                // Légère profondeur pour l’effet 3D
+                const z = useTransform(rel, [-1, 0, 1], [-80, 0, -80]);
 
-              return (
-                <motion.div
-                  key={category.id}
-                  className="absolute inset-0 flex items-center justify-center px-4"
-                  style={{
-                    scale,
-                    y,
-                    z,
-                    opacity,
-                    rotateX,
-                    transformStyle: 'preserve-3d',
-                  }}
-                >
-                  <Link href={category.href} className="block w-full max-w-4xl">
+                return (
+                  <motion.div
+                    key={category.id}
+                    className="absolute flex items-center justify-center"
+                    style={{
+                      x,
+                      z,
+                      scale,
+                      opacity,
+                      visibility,
+                      pointerEvents: 'none',
+                    }}
+                  >
                     <motion.div
-                      className="relative group cursor-pointer overflow-hidden rounded-3xl shadow-2xl"
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ type: 'spring', stiffness: 300 }}
+                      className="w-[85vw] max-w-[420px] flex-shrink-0"
+                      style={{ pointerEvents: 'auto' }}
                     >
-                      <div className="relative h-[55vh] min-h-[320px] overflow-hidden">
-                        <Image
-                          src={category.image || '/images/menu/pizzas.jpg'}
-                          alt={category.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                        <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent ${category.color} opacity-70`} />
-                        <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
-                          <motion.div
-                            className={`inline-flex w-16 h-16 rounded-full ${category.bgColor} items-center justify-center mb-4 shadow-xl`}
-                          >
-                            <Icon className="w-8 h-8 text-white" />
-                          </motion.div>
-                          <h3 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight">
-                            {category.title}
-                          </h3>
-                          <p className="text-xl md:text-2xl text-white/90 font-light mb-4">
-                            {category.subtitle}
-                          </p>
-                          <p className="text-base text-white/80 mb-6 max-w-xl">
-                            {category.description}
-                          </p>
-                          <div className="flex items-center gap-4">
-                            <span className="text-white font-bold">
-                              {category.count} produit{category.count !== 1 ? 's' : ''}
-                            </span>
-                            <span className="flex items-center gap-2 text-white font-semibold">
-                              Découvrir <ArrowRight className="w-5 h-5" />
-                            </span>
+                      <Link href={category.href} className="block">
+                        <motion.div
+                          className="relative group cursor-pointer overflow-hidden rounded-2xl shadow-2xl"
+                          whileHover={{ scale: 1.03 }}
+                          transition={{ type: 'spring', stiffness: 300 }}
+                        >
+                          <div className="relative aspect-[4/3] min-h-[280px] overflow-hidden">
+                            <Image
+                              src={category.image || '/images/menu/pizzas.jpg'}
+                              alt={category.title}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                            <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent ${category.color} opacity-70`} />
+                            <div className="absolute inset-0 flex flex-col justify-end p-5 md:p-6">
+                              <motion.div
+                                className={`inline-flex w-12 h-12 rounded-full ${category.bgColor} items-center justify-center mb-3 shadow-xl`}
+                              >
+                                <Icon className="w-6 h-6 text-white" />
+                              </motion.div>
+                              <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight">
+                                {category.title}
+                              </h3>
+                              <p className="text-sm md:text-lg text-white/90 font-light mb-2">
+                                {category.subtitle}
+                              </p>
+                              <div className="flex items-center gap-2 text-white/90 text-sm">
+                                <span className="font-semibold">
+                                  {category.count} produit{category.count !== 1 ? 's' : ''}
+                                </span>
+                                <span className="flex items-center gap-1 font-semibold">
+                                  Découvrir <ArrowRight className="w-4 h-4" />
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
+                        </motion.div>
+                      </Link>
                     </motion.div>
-                  </Link>
-                </motion.div>
-              );
-            })}
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </section>
 

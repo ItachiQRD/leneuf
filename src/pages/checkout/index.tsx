@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useRouter } from 'next/router';
 import { useCart } from '@/contexts/CartContext';
 import { useCustomerData, CustomerData } from '@/hooks/useCustomerData';
@@ -7,8 +7,9 @@ import Cart from '@/components/cart/Cart';
 import DeliveryForm from '@/components/checkout/DeliveryForm';
 import AccountCreationModal from '@/components/checkout/AccountCreationModal';
 import PromotionSelector from '@/components/checkout/PromotionSelector';
-import { ShoppingCart, ArrowLeft, Clock, MapPin, UserPlus } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Clock, MapPin, UserPlus, Gift, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Dialog, Transition } from '@headlessui/react';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function CheckoutPage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [showPromotionModal, setShowPromotionModal] = useState(false);
   const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
 
   // Charger le type de commande depuis localStorage
@@ -26,6 +28,13 @@ export default function CheckoutPage() {
       setOrderType(savedOrderType);
     }
   }, []);
+
+  // Afficher le popup de confirmation de promotion quand une promotion est appliquée
+  useEffect(() => {
+    if (promotionDiscount > 0) {
+      setShowPromotionModal(true);
+    }
+  }, [promotionDiscount]);
 
   // Rediriger si le panier est vide
   if (!items || items.length === 0) {
@@ -69,6 +78,75 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Popup plein écran : confirmation de la promotion */}
+      <Transition show={showPromotionModal && promotionDiscount > 0} as={Fragment}>
+        <Dialog onClose={() => setShowPromotionModal(false)} className="relative z-[100]">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto flex items-center justify-center p-4">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-8 shadow-2xl transition-all border border-amber-200/50 dark:border-amber-500/30">
+                <div className="flex flex-col items-center text-center">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                    className="flex items-center justify-center w-20 h-20 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full mb-6"
+                  >
+                    <Gift className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <Dialog.Title className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    Promotion appliquée
+                  </Dialog.Title>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    {promotionDescription}
+                  </p>
+                  <div className="w-full space-y-2 rounded-xl bg-amber-50 dark:bg-amber-900/20 p-4 mb-6">
+                    <div className="flex justify-between text-gray-700 dark:text-gray-300">
+                      <span>Remise</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">-{promotionDiscount.toFixed(2)} €</span>
+                    </div>
+                    <div className="flex justify-between text-lg font-bold text-gray-900 dark:text-white pt-2 border-t border-amber-200 dark:border-amber-700">
+                      <span>Total après remise</span>
+                      <span>{(total - promotionDiscount).toFixed(2)} €</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    Cette remise sera bien déduite de votre commande.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowPromotionModal(false)}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl shadow-lg transition-all"
+                  >
+                    <CheckCircle className="w-5 h-5" />
+                    J&apos;ai compris, continuer
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
+
       <MainHeader onOpenCart={() => setIsCartOpen(true)} />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

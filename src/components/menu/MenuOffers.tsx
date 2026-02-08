@@ -1,208 +1,122 @@
 import { motion } from 'framer-motion';
-import { Star, Gift, Users, Clock, Pizza, Utensils, Coffee } from 'lucide-react';
+import { Star, Gift, Clock, Pizza, Coffee, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
-
-const menuOffers = [
-  {
-    id: 'menu-senior',
-    title: 'MENU SENIOR',
-    price: '25€',
-    description: '2 pizzas séniors + 1 boisson 1,5L',
-    icon: Pizza,
-    color: 'from-red-500 to-orange-500',
-    bgColor: 'bg-red-50',
-    textColor: 'text-red-600',
-    promotion: null
-  },
-  {
-    id: 'menu-trio',
-    title: 'MENU TRIO',
-    price: '25€',
-    description: '3 Juniors + 1 boisson 1,5L',
-    icon: Pizza,
-    color: 'from-blue-500 to-cyan-500',
-    bgColor: 'bg-blue-50',
-    textColor: 'text-blue-600',
-    promotion: null
-  },
-  {
-    id: 'menu-couple',
-    title: 'MENU COUPLE',
-    price: '19€',
-    description: '1 pizza sénior + 6 Nuggets ou Wings + 2 boissons 33cl + 2 Brownie',
-    icon: Utensils,
-    color: 'from-pink-500 to-rose-500',
-    bgColor: 'bg-pink-50',
-    textColor: 'text-pink-600',
-    promotion: null
-  },
-  {
-    id: 'menu-famille',
-    title: 'MENU FAMILLE',
-    price: '34€',
-    description: '2 pizzas mégas + 1 boisson 1,5L',
-    icon: Users,
-    color: 'from-green-500 to-emerald-500',
-    bgColor: 'bg-green-50',
-    textColor: 'text-green-600',
-    promotion: null
-  },
-  {
-    id: 'menu-le-neuf',
-    title: 'MENU LE NEUF',
-    price: '34€',
-    description: '4 pizzas Junior + 1 boisson 1,5L',
-    icon: Pizza,
-    color: 'from-purple-500 to-violet-500',
-    bgColor: 'bg-purple-50',
-    textColor: 'text-purple-600',
-    promotion: null
-  },
-  {
-    id: 'menu-top',
-    title: 'MENU TOP',
-    price: '51€',
-    description: '5 pizzas séniors + 2 boisson 1,5L',
-    icon: Star,
-    color: 'from-amber-500 to-yellow-500',
-    bgColor: 'bg-amber-50',
-    textColor: 'text-amber-600',
-    promotion: null
-  }
-];
-
-// Offres de promotion statiques
-const staticOffers = [
-  {
-    id: 'offer-senior',
-    title: 'Offre Senior',
-    description: '2 pizzas Senior achetées = 1 pizza Senior offerte',
-    condition: 'Achetez 2 pizzas de taille Senior et obtenez une pizza Senior gratuite',
-    icon: Pizza,
-    color: 'from-red-500 to-orange-500',
-    bgColor: 'bg-red-50',
-    textColor: 'text-red-600'
-  },
-  {
-    id: 'offer-mega',
-    title: 'Offre Méga',
-    description: '2 pizzas Méga achetées = 1 pizza Méga offerte',
-    condition: 'Achetez 2 pizzas de taille Méga et obtenez une pizza Méga gratuite',
-    icon: Pizza,
-    color: 'from-green-500 to-emerald-500',
-    bgColor: 'bg-green-50',
-    textColor: 'text-green-600'
-  }
-];
+import Link from 'next/link';
 
 export default function MenuOffers() {
   return (
-    <section className="py-16 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <section className="py-16 md:py-24 bg-gradient-to-br from-amber-50 via-orange-50/50 to-red-50 dark:from-gray-900 dark:to-gray-800" id="promotions">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* En-tête de la section */}
+        {/* Titre de section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-12 md:mb-16"
         >
           <div className="flex items-center justify-center mb-4">
-            <Gift className="w-8 h-8 text-primary mr-3" />
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white">
-              Offres Spéciales
+            <Gift className="w-8 h-8 text-amber-600 dark:text-amber-400 mr-3" />
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+              Promotion
             </h2>
           </div>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Profitez de nos promotions exclusives
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Une offre exceptionnelle sur nos pizzas
           </p>
         </motion.div>
 
-        {/* Section des offres de promotion statiques */}
+        {/* Bloc principal : image + description 3 achetées 1 offerte */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-12"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="relative overflow-hidden rounded-3xl shadow-2xl bg-white dark:bg-gray-800 border border-amber-200/50 dark:border-gray-700"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {staticOffers.map((offer, index) => (
-              <motion.div
-                key={offer.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ${offer.bgColor} dark:bg-gray-800 border-2 border-dashed border-gray-300 hover:border-gray-400 flex flex-col h-full`}
-              >
-                <div className="p-6 flex flex-col flex-grow">
-                  <div className="flex items-center mb-4">
-                    <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${offer.color} flex items-center justify-center mr-4`}>
-                      <offer.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h4 className={`text-lg font-bold ${offer.textColor} dark:text-white`}>
-                        {offer.title}
-                      </h4>
-                    </div>
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[320px] md:min-h-[380px]">
+            {/* Image */}
+            <div className="relative h-64 md:h-80 lg:h-auto lg:min-h-[380px] order-2 lg:order-1">
+              <Image
+                src="/images/menu/pizzas.jpg"
+                alt="Pizzas Le 9 - Promotion 3 achetées 1 offerte"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority={false}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-amber-900/40 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 lg:left-4 lg:right-auto lg:top-1/2 lg:-translate-y-1/2">
+                <span className="inline-block px-4 py-2 bg-amber-500 text-white font-bold text-sm md:text-base rounded-full shadow-lg">
+                  3 achetées · 1 offerte
+                </span>
+              </div>
+            </div>
 
-                  <p className="text-gray-700 dark:text-gray-300 mb-3 font-medium">
-                    {offer.description}
-                  </p>
-
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">
-                    {offer.condition}
-                  </p>
-
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white bg-gradient-to-r ${offer.color} hover:shadow-lg transition-all duration-200 mt-auto`}
-                    onClick={() => {
-                      // Logique pour appliquer l'offre
-                      alert(`Offre "${offer.title}" sera appliquée après la confirmation du panier. Les conditions seront vérifiées lors de la commande.`);
-                    }}
-                  >
-                    ✨ Voir les conditions
-                  </motion.button>
-                </div>
+            {/* Description */}
+            <div className="flex flex-col justify-center p-8 md:p-10 lg:p-12 order-1 lg:order-2">
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                3 pizzas achetées, 1 offerte
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-base md:text-lg leading-relaxed mb-6">
+                Choisissez <strong className="text-amber-600 dark:text-amber-400">3 pizzas en taille Senior ou Méga</strong> :
+                la 4<sup>e</sup> (une pizza Senior ou Méga au même prix) vous est offerte.
+              </p>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
+                  <CheckCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                  <span>Prenez des pizzas <strong>Senior</strong> ou <strong>Méga</strong> pour en profiter.</span>
+                </li>
+                <li className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
+                  <CheckCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                  <span>À l&apos;étape de <strong>confirmation de commande</strong>, un popup s&apos;affichera pour confirmer la promotion.</span>
+                </li>
+              </ul>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  href="/commander"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl shadow-lg transition-all"
+                >
+                  <Pizza className="w-5 h-5" />
+                  Commander et en profiter
+                </Link>
               </motion.div>
-            ))}
+            </div>
           </div>
         </motion.div>
 
         {/* Section d'informations supplémentaires */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-16 text-center"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mt-12 md:mt-16 text-center"
         >
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 max-w-4xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="flex items-center justify-center space-x-3">
-                <Clock className="w-6 h-6 text-primary" />
+                <Clock className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 <span className="text-gray-700 dark:text-gray-300 font-medium">
                   Livraison gratuite
                 </span>
               </div>
               <div className="flex items-center justify-center space-x-3">
-                <Coffee className="w-6 h-6 text-primary" />
+                <Coffee className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 <span className="text-gray-700 dark:text-gray-300 font-medium">
                   Halal certifié
                 </span>
               </div>
               <div className="flex items-center justify-center space-x-3">
-                <Star className="w-6 h-6 text-primary" />
+                <Star className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 <span className="text-gray-700 dark:text-gray-300 font-medium">
                   Qualité garantie
                 </span>
               </div>
             </div>
-            
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-gray-600 dark:text-gray-400">
-                <strong>Téléphone:</strong> 03 26 40 79 67 | 
-                <strong> Adresse:</strong> 9 Route de Bétheny - 51450
+              <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base">
+                <strong>Téléphone :</strong> 03 26 40 79 67 — <strong>Adresse :</strong> 9 Route de Bétheny, 51450 Reims
               </p>
             </div>
           </div>

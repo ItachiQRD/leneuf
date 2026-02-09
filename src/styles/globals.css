@@ -100,37 +100,6 @@
   animation: float 3s ease-in-out infinite;
 }
 
-/* Section Explorez (menu) - background style fast-food */
-@keyframes explorez-float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(5deg); }
-}
-@keyframes explorez-float-reverse {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-15px) rotate(-5deg); }
-}
-@keyframes explorez-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-@keyframes explorez-pulse-glow {
-  0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 200, 0, 0.5)); }
-  50% { filter: drop-shadow(0 0 20px rgba(255, 200, 0, 0.8)); }
-}
-.explorez-bg-gradient {
-  background: linear-gradient(135deg, #dc2626 0%, #f97316 50%, #eab308 100%);
-}
-.explorez-pattern-dots {
-  background-image: radial-gradient(circle, rgba(255,255,255,0.12) 2px, transparent 2px);
-  background-size: 30px 30px;
-}
-.explorez-float-1 { animation: explorez-float 4s ease-in-out infinite; }
-.explorez-float-2 { animation: explorez-float-reverse 5s ease-in-out infinite 0.5s; }
-.explorez-float-3 { animation: explorez-float 6s ease-in-out infinite 1s; }
-.explorez-spin { animation: explorez-spin 20s linear infinite; }
-.explorez-spin-reverse { animation: explorez-spin 25s linear infinite reverse; }
-.explorez-glow { animation: explorez-pulse-glow 2s ease-in-out infinite; }
-
 /* Styles pour les scrollbars */
 ::-webkit-scrollbar {
   width: 10px;

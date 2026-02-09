@@ -14,7 +14,6 @@ import TexMexComposer from '@/components/commander/TexMexComposer';
 import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
 import PizzaMenuSelector from '@/components/commander/PizzaMenuSelector';
 import OrderTypeModal from '@/components/checkout/OrderTypeModal';
-
 export default function CommanderPage() {
   const router = useRouter();
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
@@ -730,30 +729,27 @@ export default function CommanderPage() {
           ) : selectedCategory === 'pizzas' ? (
             /* Section Pizzas avec menus */
             <div className="space-y-6">
-              {/* Bannière promotion unique (ne redirige pas) - desktop: grande carte, mobile: compacte */}
-              <div className="mb-6">
-                <div className="relative w-full overflow-hidden rounded-xl border-2 border-amber-400/50 bg-white shadow-lg">
-                  <div className="relative flex items-center gap-4 md:gap-6 p-4 md:p-6">
-                    <div className="relative w-28 h-20 md:w-48 md:h-36 flex-shrink-0 rounded-lg overflow-hidden">
+              {/* Bannière promotion unique (desktop) - ne redirige pas */}
+              <div className="mb-6 hidden md:block">
+                <div className="relative w-full overflow-hidden rounded-xl border-2 border-amber-400/50 bg-gradient-to-br from-amber-50 via-white to-orange-50 shadow-lg">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  <div className="relative p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-2xl md:text-3xl font-black text-amber-600 uppercase tracking-tight mb-2">
+                        Offre 2 achetées, 1 offerte
+                      </h3>
+                      <p className="text-gray-700 text-base md:text-lg">
+                        2 pizzas Senior ou Méga achetées = la 3<sup>e</sup> offerte. Choisissez vos pizzas ci-dessous puis confirmez la promotion à l&apos;étape de validation de la commande.
+                      </p>
+                    </div>
+                    <div className="relative w-full md:w-48 h-32 md:h-28 flex-shrink-0 rounded-lg overflow-hidden">
                       <Image
                         src="/images/menu/promo.jpg"
-                        alt="Promotion 2 achetées 1 offerte"
+                        alt="Promotion pizzas"
                         fill
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-lg md:text-xl font-bold text-amber-600 mb-0.5 md:mb-1">Offre Pizzas</h3>
-                      <p className="text-gray-800 font-medium text-sm md:text-base">
-                        2 pizzas Senior ou Méga achetées = la 3<sup>e</sup> offerte.
-                      </p>
-                      <p className="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
-                        À confirmer au checkout.
-                      </p>
-                    </div>
-                    <span className="hidden sm:inline-flex px-3 py-1.5 md:px-4 md:py-2 bg-amber-500 text-white font-bold rounded-full text-xs md:text-sm shrink-0">
-                      2 · 1 offerte
-                    </span>
                   </div>
                 </div>
               </div>

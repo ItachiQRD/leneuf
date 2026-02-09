@@ -39,7 +39,7 @@ export default function MenuOffers() {
             <div className="relative h-64 md:h-80 lg:h-auto lg:min-h-[380px] order-2 lg:order-1">
               <Image
                 src="/images/menu/promo.jpg"
-                alt="Promotion Le 9 - 2 pizzas achetées 1 offerte"
+                alt="Pizzas Le 9 - Promotion 2 achetées 1 offerte"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"

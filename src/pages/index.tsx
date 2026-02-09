@@ -167,7 +167,7 @@ export default function Home() {
             src="/images/bg-hero.webp"
             alt="Hero background"
             fill
-            className="object-cover opacity-60"
+            className="object-cover object-[center_35%] opacity-60"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80" />

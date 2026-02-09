@@ -14,7 +14,6 @@ import TexMexComposer from '@/components/commander/TexMexComposer';
 import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
 import PizzaMenuSelector from '@/components/commander/PizzaMenuSelector';
 import OrderTypeModal from '@/components/checkout/OrderTypeModal';
-import PizzaPromoBanner from '@/components/commander/PizzaPromoBanner';
 
 export default function CommanderPage() {
   const router = useRouter();
@@ -731,32 +730,32 @@ export default function CommanderPage() {
           ) : selectedCategory === 'pizzas' ? (
             /* Section Pizzas avec menus */
             <div className="space-y-6">
-              {/* Bannières promotionnelles */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <PizzaPromoBanner
-                  title="OFFRE"
-                  description="2 pizzas senior achetées = la 3ème offerte"
-                  pizzaSize="senior"
-                  onClick={() => {
-                    const seniorMenu = pizzaMenus.find(m => m.id === 'menu-senior');
-                    if (seniorMenu) {
-                      setSelectedPizzaMenu(seniorMenu);
-                      setShowPizzaMenuSelector(true);
-                    }
-                  }}
-                />
-                <PizzaPromoBanner
-                  title="OFFRE"
-                  description="2 pizzas mega achetées = la 3ème offerte"
-                  pizzaSize="mega"
-                  onClick={() => {
-                    const megaMenu = pizzaMenus.find(m => m.pizzaSize === 'méga' || m.pizzaSize === 'mega');
-                    if (megaMenu) {
-                      setSelectedPizzaMenu(megaMenu);
-                      setShowPizzaMenuSelector(true);
-                    }
-                  }}
-                />
+              {/* Bannière promotion unique (ne redirige pas) - desktop: grande carte, mobile: compacte */}
+              <div className="mb-6">
+                <div className="relative w-full overflow-hidden rounded-xl border-2 border-amber-400/50 bg-white shadow-lg">
+                  <div className="relative flex items-center gap-4 md:gap-6 p-4 md:p-6">
+                    <div className="relative w-28 h-20 md:w-48 md:h-36 flex-shrink-0 rounded-lg overflow-hidden">
+                      <Image
+                        src="/images/menu/promo.jpg"
+                        alt="Promotion 2 achetées 1 offerte"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg md:text-xl font-bold text-amber-600 mb-0.5 md:mb-1">Offre Pizzas</h3>
+                      <p className="text-gray-800 font-medium text-sm md:text-base">
+                        2 pizzas Senior ou Méga achetées = la 3<sup>e</sup> offerte.
+                      </p>
+                      <p className="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
+                        À confirmer au checkout.
+                      </p>
+                    </div>
+                    <span className="hidden sm:inline-flex px-3 py-1.5 md:px-4 md:py-2 bg-amber-500 text-white font-bold rounded-full text-xs md:text-sm shrink-0">
+                      2 · 1 offerte
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Menus Pizza - Discret */}

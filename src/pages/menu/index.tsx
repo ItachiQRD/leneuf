@@ -378,17 +378,30 @@ export default function MenuPage() {
           <MenuOffers />
         </section>
 
-        {/* Carousel des catégories */}
+        {/* Carousel des catégories - background style Explorez */}
         <section
           ref={carouselRef}
-          className="relative bg-gradient-to-b from-black via-gray-900 to-black"
+          className="relative overflow-hidden"
           style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
+          {/* Background: gradient + pattern + décor (style fast-food) */}
+          <div className="absolute inset-0 explorez-bg-gradient" aria-hidden="true" />
+          <div className="absolute inset-0 explorez-pattern-dots" aria-hidden="true" />
+          <div className="absolute -top-20 -right-20 w-64 h-64 explorez-spin opacity-20 pointer-events-none" aria-hidden="true">
+            <svg viewBox="0 0 100 100" className="w-full h-full"><circle cx="50" cy="50" r="45" fill="none" stroke="white" strokeWidth="2" strokeDasharray="10 5" /></svg>
+          </div>
+          <div className="absolute -bottom-32 -left-32 w-80 h-80 explorez-spin-reverse opacity-15 pointer-events-none" aria-hidden="true">
+            <svg viewBox="0 0 100 100" className="w-full h-full"><circle cx="50" cy="50" r="45" fill="none" stroke="white" strokeWidth="3" strokeDasharray="15 8" /></svg>
+          </div>
+          <div className="absolute bottom-0 left-0 w-full pointer-events-none" aria-hidden="true">
+            <svg viewBox="0 0 1440 100" fill="none" className="w-full"><path d="M0 50 Q360 0 720 50 Q1080 100 1440 50 L1440 100 L0 100 Z" fill="rgba(255,255,255,0.1)" /></svg>
+          </div>
+
           {/* Mobile : une slide à la fois, swipe + boutons (pas de scroll) */}
           {isMobileCarousel ? (
-            <div className="py-12 px-4 min-h-[85vh] flex flex-col">
+            <div className="relative z-10 py-12 px-4 min-h-[85vh] flex flex-col">
               <div className="text-center mb-6">
-                <h2 className="text-3xl font-black text-white mb-1 tracking-tight">EXPLOREZ</h2>
+                <h2 className="text-3xl font-black text-white mb-1 tracking-tight drop-shadow-lg">EXPLOREZ</h2>
                 <p className="text-gray-400 text-sm">Glissez ou utilisez les flèches</p>
               </div>
               <div className="flex-1 flex items-center justify-center relative">
@@ -476,12 +489,12 @@ export default function MenuPage() {
             </div>
           ) : (
             <>
-            <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
+            <div className="sticky top-0 z-10 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
               <div className="w-full flex-shrink-0 pt-8 pb-4 text-center">
-                <h2 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight">
+                <h2 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight drop-shadow-lg" style={{ textShadow: '4px 4px 0 rgba(0,0,0,0.2)' }}>
                   EXPLOREZ
                 </h2>
-                <p className="text-lg md:text-xl text-gray-400 font-light">
+                <p className="text-lg md:text-xl text-yellow-100 font-light drop-shadow-md">
                   Faites défiler pour découvrir les catégories
                 </p>
               </div>

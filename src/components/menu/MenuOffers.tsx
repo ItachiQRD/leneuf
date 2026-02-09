@@ -26,7 +26,7 @@ export default function MenuOffers() {
           </p>
         </motion.div>
 
-        {/* Bloc principal : image + description 3 achetées 1 offerte */}
+        {/* Bloc principal : image + description 2 achetées 1 offerte */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -38,8 +38,8 @@ export default function MenuOffers() {
             {/* Image */}
             <div className="relative h-64 md:h-80 lg:h-auto lg:min-h-[380px] order-2 lg:order-1">
               <Image
-                src="/images/menu/pizzas.jpg"
-                alt="Pizzas Le 9 - Promotion 3 achetées 1 offerte"
+                src="/images/menu/promo.jpg"
+                alt="Promotion Le 9 - 2 pizzas achetées 1 offerte"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -48,7 +48,7 @@ export default function MenuOffers() {
               <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-amber-900/40 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 lg:left-4 lg:right-auto lg:top-1/2 lg:-translate-y-1/2">
                 <span className="inline-block px-4 py-2 bg-amber-500 text-white font-bold text-sm md:text-base rounded-full shadow-lg">
-                  3 achetées · 1 offerte
+                  2 achetées · 1 offerte
                 </span>
               </div>
             </div>
@@ -56,11 +56,11 @@ export default function MenuOffers() {
             {/* Description */}
             <div className="flex flex-col justify-center p-8 md:p-10 lg:p-12 order-1 lg:order-2">
               <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                3 pizzas achetées, 1 offerte
+                2 pizzas achetées, 1 offerte
               </h3>
               <p className="text-gray-600 dark:text-gray-300 text-base md:text-lg leading-relaxed mb-6">
-                Choisissez <strong className="text-amber-600 dark:text-amber-400">3 pizzas en taille Senior ou Méga</strong> :
-                la 4<sup>e</sup> (une pizza Senior ou Méga au même prix) vous est offerte.
+                Choisissez <strong className="text-amber-600 dark:text-amber-400">2 pizzas en taille Senior ou Méga</strong> :
+                la 3<sup>e</sup> (une pizza Senior ou Méga au même prix) vous est offerte.
               </p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-3 text-gray-700 dark:text-gray-300">

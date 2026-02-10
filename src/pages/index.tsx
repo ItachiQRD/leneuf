@@ -388,81 +388,121 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section Notre Carte - Grande photo + description + lien menu */}
-      <section id="menu" className="py-0 overflow-hidden">
-        <motion.div
-          className="relative min-h-[70vh] md:min-h-[85vh] flex flex-col md:flex-row"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="relative w-full md:w-[60%] min-h-[50vh] md:min-h-[85vh]">
+      {/* Section Notre Carte - fond.png + fond1.png + aliments carte (effet de profondeur) */}
+      <section id="menu" className="relative min-h-[75vh] md:min-h-[85vh] overflow-hidden flex items-center justify-center py-16 md:py-24">
+        {/* Couche 1 : fond.png */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/carte/fond.png"
+            alt=""
+            fill
+            className="object-cover"
+            sizes="100vw"
+            priority={false}
+          />
+        </div>
+        {/* Couche 2 : fond1.png par-dessus */}
+        <div className="absolute inset-0 z-[1]">
+          <Image
+            src="/images/carte/fond1.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+            priority={false}
+          />
+        </div>
+        {/* Couche 3 : aliments du dossier carte, centre + gauche/droite, tailles croissantes → effet profondeur */}
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 flex items-center justify-center min-h-[50vh]">
+          {/* Gauche : petites → moyennes */}
+          <div className="absolute left-0 md:left-4 lg:left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 md:gap-6">
             <motion.div
-              className="absolute inset-0"
-              initial={{ scale: 1.05 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 1.2 }}
-              viewport={{ once: true }}
-            >
-              <Image
-                src="/images/menu/promo.jpg"
-                alt="Notre carte - Pizzas et plats Le 9"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 60vw"
-                priority={false}
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent md:from-black/50" />
-            </motion.div>
-          </div>
-          <div className="relative w-full md:w-[40%] flex flex-col justify-center px-6 py-16 md:py-24 md:pl-12 lg:pl-16 bg-gray-50">
-            <motion.h2
-              className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-4 font-serif"
+              className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 opacity-90"
               initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              whileInView={{ opacity: 0.9, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              Notre <span className="text-amber-600">Carte</span>
-            </motion.h2>
-            <motion.p
-              className="text-lg md:text-xl text-gray-600 mb-6 max-w-md"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              <Image src="/images/carte/kapsalon.png" alt="" fill className="object-contain drop-shadow-lg" sizes="96px" />
+            </motion.div>
+            <motion.div
+              className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 opacity-95"
+              initial={{ opacity: 0, x: -15 }}
+              whileInView={{ opacity: 0.95, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              Pizzas au feu de bois, burgers gourmands, salades fraîches, tacos et spécialités maison. Des produits soignés et une cuisine généreuse.
-            </motion.p>
-            <motion.p
-              className="text-gray-500 mb-8 max-w-md"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              <Image src="/images/carte/burger.png" alt="" fill className="object-contain drop-shadow-xl" sizes="160px" />
+            </motion.div>
+          </div>
+          {/* Centre : image principale (grande) */}
+          <motion.div
+            className="relative w-40 h-40 md:w-56 md:h-56 lg:w-72 lg:h-72 shrink-0 z-20"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+          >
+            <Image
+              src="/images/carte/pizza.png"
+              alt="Notre carte - Pizzas et plats"
+              fill
+              className="object-contain drop-shadow-2xl"
+              sizes="(max-width: 768px) 160px, (max-width: 1024px) 224px, 288px"
+              priority={false}
+            />
+          </motion.div>
+          {/* Droite : moyennes → petites */}
+          <div className="absolute right-0 md:right-4 lg:right-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 md:gap-6">
+            <motion.div
+              className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 opacity-95"
+              initial={{ opacity: 0, x: 15 }}
+              whileInView={{ opacity: 0.95, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <Image src="/images/carte/kebab.png" alt="" fill className="object-contain drop-shadow-xl" sizes="160px" />
+            </motion.div>
+            <motion.div
+              className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 opacity-90"
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 0.9, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              Découvrez nos plats préparés avec passion par notre équipe.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <Link href="/menu">
-                <motion.span
-                  className="inline-flex items-center gap-2 px-8 py-4 text-lg font-medium text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-xl shadow-lg transition-all duration-300"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Découvrir la carte
-                  <ChevronRight className="w-5 h-5" />
-                </motion.span>
-              </Link>
+              <Image src="/images/carte/burger.png" alt="" fill className="object-contain drop-shadow-lg" sizes="96px" />
             </motion.div>
           </div>
-        </motion.div>
+        </div>
+        {/* Titre + CTA au-dessus du décor */}
+        <div className="absolute bottom-6 left-0 right-0 z-20 text-center px-4">
+          <motion.h2
+            className="text-3xl md:text-4xl font-light text-white mb-2 font-serif drop-shadow-md"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            Notre <span className="text-amber-300">Carte</span>
+          </motion.h2>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Link href="/menu">
+              <motion.span
+                className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-gray-900 bg-white/95 hover:bg-white rounded-xl shadow-lg transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Découvrir la carte
+                <ChevronRight className="w-5 h-5" />
+              </motion.span>
+            </Link>
+          </motion.div>
+        </div>
       </section>
 
       {/* Section Offres Spéciales */}

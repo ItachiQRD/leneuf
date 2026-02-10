@@ -392,22 +392,18 @@ export default function Home() {
       <section id="menu" className="py-0 overflow-hidden">
         <motion.div
           className="relative min-h-[70vh] md:min-h-[85vh] flex flex-col md:flex-row"
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.2 }}
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: { staggerChildren: 0.15, delayChildren: 0.1 }
-            }
-          }}
+          transition={{ duration: 0.8 }}
         >
-          {/* Grande image */}
           <div className="relative w-full md:w-[60%] min-h-[50vh] md:min-h-[85vh]">
             <motion.div
               className="absolute inset-0"
-              variants={{ hidden: { scale: 1.1, opacity: 0.8 }, visible: { scale: 1, opacity: 1, transition: { duration: 1.2, ease: 'easeOut' } }}
+              initial={{ scale: 1.05 }}
+              whileInView={{ scale: 1 }}
+              transition={{ duration: 1.2 }}
+              viewport={{ once: true }}
             >
               <Image
                 src="/images/menu/promo.jpg"
@@ -420,34 +416,44 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent md:from-black/50" />
             </motion.div>
           </div>
-
-          {/* Description + CTA */}
           <div className="relative w-full md:w-[40%] flex flex-col justify-center px-6 py-16 md:py-24 md:pl-12 lg:pl-16 bg-gray-50">
             <motion.h2
               className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-4 font-serif"
-              variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.7 } }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
             >
               Notre <span className="text-amber-600">Carte</span>
             </motion.h2>
             <motion.p
               className="text-lg md:text-xl text-gray-600 mb-6 max-w-md"
-              variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.15 } }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
             >
               Pizzas au feu de bois, burgers gourmands, salades fraîches, tacos et spécialités maison. Des produits soignés et une cuisine généreuse.
             </motion.p>
             <motion.p
               className="text-gray-500 mb-8 max-w-md"
-              variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.25 } }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
               Découvrez nos plats préparés avec passion par notre équipe.
             </motion.p>
             <motion.div
-              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.4 } }}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
             >
               <Link href="/menu">
                 <motion.span
                   className="inline-flex items-center gap-2 px-8 py-4 text-lg font-medium text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-xl shadow-lg transition-all duration-300"
-                  whileHover={{ scale: 1.03, boxShadow: '0 20px 40px -12px rgba(251, 191, 36, 0.4)' }}
+                  whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   Découvrir la carte

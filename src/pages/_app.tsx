@@ -70,18 +70,21 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <title>{`Le Neuf - ${getPageTitle(router.pathname)}`}</title>
           <link rel="icon" href="/images/logo.png" />
         </Head>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={router.asPath}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-            className="min-h-full"
-          >
-            <Component {...pageProps} />
-          </motion.div>
-        </AnimatePresence>
+        <div className="overflow-hidden min-h-full">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={router.pathname}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -24 }}
+              transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+              className="min-h-full"
+              style={{ willChange: 'opacity, transform' }}
+            >
+              <Component {...pageProps} />
+            </motion.div>
+          </AnimatePresence>
+        </div>
         <Toaster />
       </Layout>
     </ProviderWrapper>

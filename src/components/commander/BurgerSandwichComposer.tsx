@@ -838,7 +838,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
               className="flex-1 md:flex-none min-h-[48px] md:min-h-0 text-base md:text-sm px-4 md:px-4 py-3 md:py-2 font-medium"
             >
               <ArrowLeft className="w-4 h-4 md:w-4 md:h-4 md:mr-2" />
-              <span className="md:inline">Préc.</span>
+              <span className="md:hidden">Préc.</span>
+              <span className="hidden md:inline">Précédent</span>
             </Button>
 
             {/* Quantité uniquement sur desktop (modification depuis le panier sur mobile) */}
@@ -870,8 +871,8 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
               </Button>
             ) : (
               <Button onClick={handleNext} disabled={!canProceed()} className="flex-1 md:flex-none min-h-[48px] md:min-h-0 text-base md:text-sm px-4 md:px-4 py-3 md:py-2 font-medium">
-                <span className="md:inline">Suivant</span>
                 <span className="md:hidden">Suiv.</span>
+                <span className="hidden md:inline">Suivant</span>
                 <ArrowRight className="w-4 h-4 md:w-4 md:h-4 md:ml-2" />
               </Button>
             )}

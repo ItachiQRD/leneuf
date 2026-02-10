@@ -164,15 +164,25 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
           }
         };
 
-        // Toujours charger les données publiques pour que menu et commander soient visibles par tous (avec ou sans compte)
-        await Promise.all([
-          loadDataSafely('/api/admin/foods', setFoods, 'plats', true),
-          loadDataSafely('/api/admin/drinks', setDrinks, 'boissons', true),
-          loadDataSafely('/api/admin/desserts', setDesserts, 'desserts', true),
-          loadDataSafely('/api/admin/sauces', setSauces, 'sauces', true),
-          loadDataSafely('/api/admin/sides', setSides, 'accompagnements', true),
-          loadDataSafely('/api/admin/ingredients', setIngredients, 'ingrédients', true)
-        ]);
+        if (isAuthenticated) {
+          await Promise.all([
+            loadDataSafely('/api/admin/foods', setFoods, 'plats'),
+            loadDataSafely('/api/admin/drinks', setDrinks, 'boissons'),
+            loadDataSafely('/api/admin/desserts', setDesserts, 'desserts'),
+            loadDataSafely('/api/admin/sauces', setSauces, 'sauces'),
+            loadDataSafely('/api/admin/sides', setSides, 'accompagnements'),
+            loadDataSafely('/api/admin/ingredients', setIngredients, 'ingrédients')
+          ]);
+        } else {
+          await Promise.all([
+            loadDataSafely('/api/admin/foods', setFoods, 'plats', true),
+            loadDataSafely('/api/admin/drinks', setDrinks, 'boissons', true),
+            loadDataSafely('/api/admin/desserts', setDesserts, 'desserts', true),
+            loadDataSafely('/api/admin/sauces', setSauces, 'sauces', true),
+            loadDataSafely('/api/admin/sides', setSides, 'accompagnements', true),
+            loadDataSafely('/api/admin/ingredients', setIngredients, 'ingrédients', true)
+          ]);
+        }
         
         console.log(' [ProductContext] Données chargées avec succès');
       } catch (error) {
@@ -184,7 +194,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     };
 
     loadData();
-  }, []);
+  }, [isAuthenticated]);
 
   // Foods CRUD
   const createFood = useCallback(async (food: FoodInputAPI) => {

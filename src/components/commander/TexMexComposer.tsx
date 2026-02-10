@@ -804,7 +804,8 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
               className="flex-1 md:flex-none min-h-[48px] md:min-h-0 text-base md:text-sm px-4 py-3 md:py-2 font-medium"
             >
               <ArrowLeft className="w-4 h-4 md:mr-2" />
-              <span className="md:inline">Préc.</span>
+              <span className="md:hidden">Préc.</span>
+              <span className="hidden md:inline">Précédent</span>
             </Button>
 
             <div className="hidden md:flex items-center space-x-2">
@@ -833,8 +834,8 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
               </Button>
             ) : (
               <Button onClick={handleNext} disabled={!canProceed()} className="flex-1 md:flex-none min-h-[48px] md:min-h-0 text-base md:text-sm px-4 py-3 md:py-2 font-medium">
-                <span className="md:inline">Suivant</span>
                 <span className="md:hidden">Suiv.</span>
+                <span className="hidden md:inline">Suivant</span>
                 <ArrowRight className="w-4 h-4 md:ml-2" />
               </Button>
             )}

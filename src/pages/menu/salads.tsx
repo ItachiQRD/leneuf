@@ -334,13 +334,13 @@ export default function SaladsPage() {
                       <div className="text-2xl font-bold text-green-600">
                         {salad.price}€
                       </div>
-                      <Link href="/commander?category=assiettes">
+                      <Link href="/commander?category=assiettes&open=1">
                         <motion.span
                           className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-3 rounded-full hover:bg-green-600 transition-colors font-medium"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          Composer <ChevronRight className="w-5 h-5" />
+                          Ajouter <ChevronRight className="w-5 h-5" />
                         </motion.span>
                       </Link>
                     </div>

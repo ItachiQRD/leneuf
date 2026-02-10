@@ -322,13 +322,13 @@ export default function SandwichesPage() {
                         </div>
                       </div>
 
-                      <Link href="/commander?category=sandwichs">
+                      <Link href={`/commander?category=sandwichs&open=1&product=${(sandwich as any)._id}`}>
                         <motion.span
                           className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-200"
                           whileHover={{ scale: 1.03 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          Composer <ChevronRight className="w-4 h-4" />
+                          Ajouter <ChevronRight className="w-4 h-4" />
                         </motion.span>
                       </Link>
                     </div>

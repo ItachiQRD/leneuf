@@ -664,8 +664,8 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                   </div>
                 )}
 
-                {/* Quantité */}
-                <div className="border-t pt-4">
+                {/* Quantité (desktop uniquement, modifier depuis le panier sur mobile) */}
+                <div className="hidden md:block border-t pt-4">
                   <h4 className="font-semibold text-sm lg:text-base text-gray-700 mb-3">Quantité</h4>
                   <div className="flex items-center space-x-4">
                     <button
@@ -687,7 +687,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
             )}
           </div>
 
-          {/* Footer - Always visible */}
+          {/* Footer - Boutons agrandis sur mobile (Préc. / Suiv.) */}
           <div className="flex items-center justify-between p-4 lg:p-6 border-t bg-gray-50 flex-shrink-0 gap-2 lg:gap-4">
             <button
               onClick={() => {
@@ -699,12 +699,12 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                 }
               }}
               disabled={currentStep === 'pizzas'}
-              className="px-4 lg:px-6 py-2 lg:py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors text-sm lg:text-base"
+              className="flex-1 md:flex-none min-h-[48px] md:min-h-0 px-4 lg:px-6 py-3 lg:py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors text-base md:text-sm"
             >
-              Précédent
+              <span className="lg:inline">Préc.</span>
             </button>
             
-            <div className="text-center flex-shrink-0">
+            <div className="text-center flex-shrink-0 hidden md:block">
               <div className="text-xs lg:text-sm text-gray-600">Total</div>
               <div className="text-lg lg:text-2xl font-bold text-red-600">
                 {calculatePrice().toFixed(2)} €
@@ -715,7 +715,7 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
               <button
                 onClick={handleAddToCart}
                 disabled={!canAddToCart()}
-                className="px-4 lg:px-8 py-2 lg:py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm lg:text-base"
+                className="flex-1 md:flex-none min-h-[48px] md:min-h-0 px-4 lg:px-8 py-3 lg:py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-base md:text-sm"
               >
                 <span className="hidden lg:inline">Ajouter au panier</span>
                 <span className="lg:hidden">Ajouter</span>
@@ -730,9 +730,9 @@ export default function PizzaMenuSelector({ isOpen, onClose, menu, pizzas: pizza
                   }
                   else if (currentStep === 'petite-faim') setCurrentStep('summary');
                 }}
-                className="px-4 lg:px-6 py-2 lg:py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors text-sm lg:text-base"
+                className="flex-1 md:flex-none min-h-[48px] md:min-h-0 px-4 lg:px-6 py-3 lg:py-3 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors text-base md:text-sm"
               >
-                Suivant
+                <span className="lg:inline">Suiv.</span>
               </button>
             )}
           </div>

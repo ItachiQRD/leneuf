@@ -44,6 +44,7 @@ export default function CommanderPage() {
   const [selectedDrinks, setSelectedDrinks] = useState<any[]>([]);
   const [drinks, setDrinks] = useState<any[]>([]);
   const [showOrderTypeModal, setShowOrderTypeModal] = useState(false);
+  const [pendingProductIdFromUrl, setPendingProductIdFromUrl] = useState<string | null>(null);
 
   // Données de menu
   const menuCategories = [
@@ -131,22 +132,23 @@ export default function CommanderPage() {
     }
   ];
 
-  // Lire ?category= et ?open= depuis l'URL (ex: depuis les pages menu)
+  // Lire ?category=, ?open= et ?product= depuis l'URL (depuis les pages menu "Ajouter")
   useEffect(() => {
     if (!router.isReady) return;
     const category = router.query.category as string | undefined;
     const open = router.query.open as string | undefined;
+    const productId = router.query.product as string | undefined;
     const validCategories = ['sandwichs', 'burgers', 'pizzas', 'assiettes', 'accompagnements', 'tacos', 'paninis', 'tex-mex', 'ptite-faim', 'menu-enfants', 'boissons', 'desserts'];
     if (category && validCategories.includes(category)) {
       setSelectedCategory(category);
-      // Optionnel : ouvrir directement le compositeur pour burgers/sandwichs
-      if (open === '1' && (category === 'burgers' || category === 'sandwichs')) {
+      if (open === '1' && productId) {
+        setPendingProductIdFromUrl(productId);
+      } else if (open === '1' && (category === 'burgers' || category === 'sandwichs')) {
         setTimeout(() => setShowBurgerSandwichComposer(true), 400);
       }
-      // Nettoyer l'URL sans recharger la page
       router.replace('/commander', undefined, { shallow: true });
     }
-  }, [router.isReady, router.query.category, router.query.open]);
+  }, [router.isReady, router.query.category, router.query.open, router.query.product]);
 
   // Charger les produits quand la catégorie change
   useEffect(() => {
@@ -163,6 +165,23 @@ export default function CommanderPage() {
     
     fetchProducts(selectedCategory);
   }, [selectedCategory]);
+
+  // Ouvrir le formulaire du produit quand on arrive depuis le menu avec ?product=id
+  useEffect(() => {
+    if (!pendingProductIdFromUrl || !products.length) return;
+    const product = products.find((p: any) => p._id === pendingProductIdFromUrl);
+    if (product) {
+      setSelectedProduct(product);
+      if (selectedCategory === 'burgers' || selectedCategory === 'sandwichs') {
+        setShowBurgerSandwichComposer(true);
+      } else if (selectedCategory === 'tex-mex') {
+        setShowTexMexComposer(true);
+      } else if (selectedCategory === 'menu-enfants') {
+        setShowMenuEnfantsComposer(true);
+      }
+    }
+    setPendingProductIdFromUrl(null);
+  }, [pendingProductIdFromUrl, products, selectedCategory]);
 
   // Charger les sauces quand on ouvre le modal pour les accompagnements ou la personnalisation
   useEffect(() => {

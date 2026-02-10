@@ -331,13 +331,13 @@ export default function PizzasPage() {
                       <div className="text-2xl font-bold text-red-600">
                         {pizza.price}€
                       </div>
-                      <Link href="/commander?category=pizzas">
+                      <Link href="/commander?category=pizzas&open=1">
                         <motion.span
                           className="inline-flex items-center gap-2 bg-red-500 text-white px-4 py-3 rounded-full hover:bg-red-600 transition-colors font-medium"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          Choisir taille & composer <ChevronRight className="w-5 h-5" />
+                          Ajouter <ChevronRight className="w-5 h-5" />
                         </motion.span>
                       </Link>
                     </div>

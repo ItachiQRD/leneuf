@@ -316,13 +316,13 @@ export default function BurgersPage() {
                       <div className="text-2xl font-bold text-amber-600">
                         {burger.price}€
                       </div>
-                      <Link href="/commander?category=burgers">
+                      <Link href={`/commander?category=burgers&open=1&product=${burger._id}`}>
                         <motion.span
                           className="inline-flex items-center gap-2 bg-amber-500 text-white px-4 py-3 rounded-full hover:bg-amber-600 transition-colors font-medium"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          Composer <ChevronRight className="w-5 h-5" />
+                          Ajouter <ChevronRight className="w-5 h-5" />
                         </motion.span>
                       </Link>
                     </div>

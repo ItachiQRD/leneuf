@@ -280,13 +280,13 @@ export default function DessertsPage() {
                       <div className="text-2xl font-bold text-pink-600">
                         {dessert.price}€
                       </div>
-                      <Link href="/commander?category=desserts">
+                      <Link href="/commander?category=desserts&open=1">
                         <motion.span
                           className="inline-flex items-center gap-2 bg-pink-500 text-white px-4 py-3 rounded-full hover:bg-pink-600 transition-colors font-medium"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          Composer <ChevronRight className="w-5 h-5" />
+                          Ajouter <ChevronRight className="w-5 h-5" />
                         </motion.span>
                       </Link>
                     </div>

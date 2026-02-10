@@ -442,30 +442,31 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-4 lg:p-6 border-t bg-gray-50">
+          <div className="flex items-center justify-between gap-2 p-4 lg:p-6 border-t bg-gray-50">
             <Button
               variant="outline"
               onClick={currentStep === 0 ? handleClose : handlePrevious}
-              className="text-sm lg:text-base px-2 lg:px-4 py-2 lg:py-2"
+              className="flex-1 min-h-[48px] md:min-h-0 text-base md:text-sm px-4 py-3 md:py-2 font-medium"
             >
-              <ArrowLeft className="w-3 h-3 lg:w-4 lg:h-4 lg:mr-2" />
-              <span className="hidden lg:inline">{currentStep === 0 ? 'Annuler' : 'Précédent'}</span>
+              <ArrowLeft className="w-4 h-4 md:mr-2" />
+              <span className="md:inline">{currentStep === 0 ? 'Annuler' : 'Préc.'}</span>
             </Button>
 
-            <div className="flex items-center space-x-2 lg:space-x-4">
+            <div className="flex-1 flex justify-end">
               {currentStep < STEPS.length - 1 ? (
                 <Button
                   onClick={handleNext}
                   disabled={!canProceed()}
-                  className="text-sm lg:text-base px-2 lg:px-4 py-2 lg:py-2"
+                  className="min-h-[48px] md:min-h-0 w-full md:w-auto text-base md:text-sm px-4 py-3 md:py-2 font-medium"
                 >
-                  <span className="hidden lg:inline">Suivant</span>
-                  <ArrowRight className="w-3 h-3 lg:w-4 lg:h-4 lg:ml-2" />
+                  <span className="md:inline">Suivant</span>
+                  <span className="md:hidden">Suiv.</span>
+                  <ArrowRight className="w-4 h-4 md:ml-2" />
                 </Button>
               ) : (
-                <Button onClick={handleAddToCart} className="text-sm lg:text-base px-2 lg:px-4 py-2 lg:py-2">
-                  <span className="hidden lg:inline">Ajouter au panier ({calculatePrice()}€)</span>
-                  <span className="lg:hidden">+ {calculatePrice()}€</span>
+                <Button onClick={handleAddToCart} className="min-h-[48px] md:min-h-0 w-full md:w-auto text-base md:text-sm px-4 py-3 md:py-2 font-medium">
+                  <span className="md:inline">Ajouter ({calculatePrice()}€)</span>
+                  <span className="md:hidden">Ajouter</span>
                 </Button>
               )}
             </div>

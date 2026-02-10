@@ -258,8 +258,8 @@ export default function MenuEnfantsComposer({ isOpen, onClose, onAddToCart, prod
               )}
             </div>
 
-            {/* Quantité */}
-            <div className="flex items-center justify-between mb-6">
+            {/* Quantité (desktop uniquement) */}
+            <div className="hidden md:flex items-center justify-between mb-6">
               <span className="text-sm lg:text-base font-medium text-gray-900">Quantité:</span>
               <div className="flex items-center space-x-2">
                 <Button

@@ -801,14 +801,14 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
               variant="outline"
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className="flex-1 md:flex-none min-h-[48px] md:min-h-0 text-base md:text-sm px-4 py-3 md:py-2 font-medium"
+              className="min-h-[48px] lg:min-h-0 px-4 py-3 lg:py-2 text-base font-medium"
             >
-              <ArrowLeft className="w-4 h-4 md:mr-2" />
-              <span className="md:hidden">Préc.</span>
-              <span className="hidden md:inline">Précédent</span>
+              <ArrowLeft className="w-5 h-5 lg:w-4 lg:h-4 lg:mr-2 shrink-0" />
+              <span className="lg:hidden">Prec</span>
+              <span className="hidden lg:inline">Précédent</span>
             </Button>
 
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden lg:flex items-center space-x-2">
               <Button
                 variant="outline"
                 onClick={() => setConfig(prev => ({ ...prev, quantity: Math.max(1, prev.quantity - 1) }))}
@@ -817,7 +817,9 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
               >
                 <Minus className="w-4 h-4" />
               </Button>
-              <span className="px-4 py-2 bg-white border rounded-lg text-base">{config.quantity}</span>
+              <span className="px-4 py-2 bg-white border rounded-lg text-base min-w-[3rem] text-center">
+                {config.quantity}
+              </span>
               <Button
                 variant="outline"
                 onClick={() => setConfig(prev => ({ ...prev, quantity: prev.quantity + 1 }))}
@@ -828,15 +830,15 @@ export default function TexMexComposer({ isOpen, onClose, onAddToCart, product }
             </div>
 
             {currentStep === STEPS.length - 1 ? (
-              <Button onClick={handleAddToCart} disabled={!canProceed()} className="flex-1 md:flex-none min-h-[48px] md:min-h-0 text-base md:text-sm px-4 py-3 md:py-2 font-medium">
-                <span className="md:inline">Ajouter au panier</span>
-                <span className="md:hidden">Ajouter</span>
+              <Button onClick={handleAddToCart} disabled={!canProceed()} className="min-h-[48px] lg:min-h-0 px-4 py-3 lg:py-2 text-base font-medium">
+                <span className="hidden lg:inline">Ajouter au panier</span>
+                <span className="lg:hidden">+ Panier</span>
               </Button>
             ) : (
-              <Button onClick={handleNext} disabled={!canProceed()} className="flex-1 md:flex-none min-h-[48px] md:min-h-0 text-base md:text-sm px-4 py-3 md:py-2 font-medium">
-                <span className="md:hidden">Suiv.</span>
-                <span className="hidden md:inline">Suivant</span>
-                <ArrowRight className="w-4 h-4 md:ml-2" />
+              <Button onClick={handleNext} disabled={!canProceed()} className="min-h-[48px] lg:min-h-0 px-4 py-3 lg:py-2 text-base font-medium">
+                <span className="lg:hidden">Suiv</span>
+                <span className="hidden lg:inline">Suivant</span>
+                <ArrowRight className="w-5 h-5 lg:w-4 lg:h-4 lg:ml-2 shrink-0" />
               </Button>
             )}
           </div>

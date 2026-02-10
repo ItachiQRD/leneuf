@@ -3,15 +3,13 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 
 interface LoginFormData {
   email: string;
   password: string;
 }
 
-function LoginPage() {
+export default function LoginPage() {
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: ''
@@ -76,31 +74,26 @@ function LoginPage() {
   // Afficher un chargement pendant la vérification de l'authentification
   if (loading) {
     return (
-      <PageTransition>
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="text-center">
           Chargement...
         </div>
       </div>
-      </PageTransition>
     );
   }
 
   // Ne pas afficher le formulaire si déjà authentifié
   if (isAuthenticated) {
     return (
-      <PageTransition>
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="text-center">
           Redirection en cours...
         </div>
       </div>
-      </PageTransition>
     );
   }
 
   return (
-    <PageTransition>
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -198,8 +191,5 @@ function LoginPage() {
         </div>
       </div>
     </div>
-    </PageTransition>
   );
 }
-
-export default motion(LoginPage);

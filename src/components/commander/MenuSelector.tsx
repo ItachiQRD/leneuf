@@ -351,8 +351,8 @@ export default function MenuSelector({ isOpen, onClose, onAddToCart, product }: 
                   </div>
                 )}
 
-            {/* Quantité */}
-            <div className="mt-6">
+            {/* Quantité : uniquement sur desktop */}
+            <div className="hidden lg:block mt-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Quantité
               </h3>

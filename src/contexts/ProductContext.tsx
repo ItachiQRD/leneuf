@@ -165,6 +165,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
         };
 
         if (isAuthenticated) {
+          // Charger toutes les données admin si authentifié
           await Promise.all([
             loadDataSafely('/api/admin/foods', setFoods, 'plats'),
             loadDataSafely('/api/admin/drinks', setDrinks, 'boissons'),
@@ -174,6 +175,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
             loadDataSafely('/api/admin/ingredients', setIngredients, 'ingrédients')
           ]);
         } else {
+          // Charger seulement les données publiques si non authentifié
           await Promise.all([
             loadDataSafely('/api/admin/foods', setFoods, 'plats', true),
             loadDataSafely('/api/admin/drinks', setDrinks, 'boissons', true),

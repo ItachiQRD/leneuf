@@ -1,5 +1,4 @@
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -205,7 +204,7 @@ function DesktopCarouselSlide({
   );
 }
 
-function MenuPage() {
+export default function MenuPage() {
   const { foods, drinks, desserts, sides, sauces } = useProducts();
   const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -229,22 +228,33 @@ function MenuPage() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Calculer le nombre de produits par catégorie (même logique que /api/products/by-category et page commander)
+  // Calculer le nombre de produits par catégorie
   useEffect(() => {
     const categoriesWithCount = menuCategories.map(category => {
       let count = 0;
       switch (category.id) {
         case 'pizza':
-          count = foods.filter((f: any) => f.type === 'pizza').length;
+          count = foods.filter((food: any) => food.type === 'pizza').length;
           break;
         case 'burger':
-          count = foods.filter((f: any) => f.type === 'burger').length;
+          count = foods.filter((food: any) => food.type === 'burger').length;
           break;
         case 'salad':
-          count = foods.filter((f: any) => f.type === 'salad' || f.type === 'plates').length;
+          count = foods.filter((food: any) => 
+            food.type === 'salad' || 
+            food.type === 'plate' ||
+            food.type === 'plates' ||
+            food.category === 'assiettes' ||
+            food.name?.toLowerCase().includes('assiette')
+          ).length;
           break;
         case 'sandwich':
-          count = foods.filter((f: any) => f.type === 'sandwich_durum').length;
+          count = foods.filter((food: any) => 
+            food.type === 'sandwich' || 
+            food.type === 'sandwich_durum' ||
+            food.category === 'sandwichs' ||
+            (food.category === 'food' && food.name?.toLowerCase().includes('sandwich'))
+          ).length;
           break;
         case 'dessert':
           count = desserts.length;
@@ -252,11 +262,11 @@ function MenuPage() {
       }
       return { ...category, count };
     });
-
-    categoriesWithCount.forEach((cat, index) => {
-      menuCategories[index].count = cat.count;
+    
+    menuCategories.forEach((category, index) => {
+      menuCategories[index].count = categoriesWithCount[index].count;
     });
-
+    
     setIsLoading(false);
   }, [foods, drinks, desserts, sides, sauces]);
 
@@ -266,7 +276,6 @@ function MenuPage() {
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0.6]);
 
   return (
-    <PageTransition>
     <>
       <Head>
         <title>Le 9 - Notre Carte | Restaurant Fast-Food de Qualité à Reims</title>
@@ -363,14 +372,11 @@ function MenuPage() {
           </motion.div>
         </motion.section>
 
-        {/* Carousel des catégories - hauteur fixe pour un scroll fluide (desktop) */}
+        {/* Carousel des catégories */}
         <section
           ref={carouselRef}
           className="relative bg-gradient-to-b from-black via-gray-900 to-black"
-          style={{
-            height: isMobileCarousel ? 'auto' : `${menuCategories.length * 75}vh`,
-            minHeight: isMobileCarousel ? '85vh' : undefined,
-          }}
+          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
           {/* Mobile : une slide à la fois, swipe + boutons (pas de scroll) */}
           {isMobileCarousel ? (
@@ -574,8 +580,5 @@ function MenuPage() {
         </motion.section>
       </div>
     </>
-    </PageTransition>
   );
 }
-
-export default motion(MenuPage);

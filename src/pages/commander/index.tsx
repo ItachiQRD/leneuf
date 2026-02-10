@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 import { ShoppingCart, Plus, Minus, Trash2, Clock, MapPin, Phone, Menu } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,7 +14,7 @@ import TexMexComposer from '@/components/commander/TexMexComposer';
 import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
 import PizzaMenuSelector from '@/components/commander/PizzaMenuSelector';
 import OrderTypeModal from '@/components/checkout/OrderTypeModal';
-function CommanderPage() {
+export default function CommanderPage() {
   const router = useRouter();
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
   const { isAuthenticated, user } = useAuth();
@@ -45,7 +44,6 @@ function CommanderPage() {
   const [selectedDrinks, setSelectedDrinks] = useState<any[]>([]);
   const [drinks, setDrinks] = useState<any[]>([]);
   const [showOrderTypeModal, setShowOrderTypeModal] = useState(false);
-  const [pendingProductIdFromUrl, setPendingProductIdFromUrl] = useState<string | null>(null);
 
   // Données de menu
   const menuCategories = [
@@ -133,23 +131,22 @@ function CommanderPage() {
     }
   ];
 
-  // Lire ?category=, ?open= et ?product= depuis l'URL (depuis les pages menu "Ajouter")
+  // Lire ?category= et ?open= depuis l'URL (ex: depuis les pages menu)
   useEffect(() => {
     if (!router.isReady) return;
     const category = router.query.category as string | undefined;
     const open = router.query.open as string | undefined;
-    const productId = router.query.product as string | undefined;
     const validCategories = ['sandwichs', 'burgers', 'pizzas', 'assiettes', 'accompagnements', 'tacos', 'paninis', 'tex-mex', 'ptite-faim', 'menu-enfants', 'boissons', 'desserts'];
     if (category && validCategories.includes(category)) {
       setSelectedCategory(category);
-      if (open === '1' && productId) {
-        setPendingProductIdFromUrl(productId);
-      } else if (open === '1' && (category === 'burgers' || category === 'sandwichs')) {
+      // Optionnel : ouvrir directement le compositeur pour burgers/sandwichs
+      if (open === '1' && (category === 'burgers' || category === 'sandwichs')) {
         setTimeout(() => setShowBurgerSandwichComposer(true), 400);
       }
+      // Nettoyer l'URL sans recharger la page
       router.replace('/commander', undefined, { shallow: true });
     }
-  }, [router.isReady, router.query.category, router.query.open, router.query.product]);
+  }, [router.isReady, router.query.category, router.query.open]);
 
   // Charger les produits quand la catégorie change
   useEffect(() => {
@@ -166,23 +163,6 @@ function CommanderPage() {
     
     fetchProducts(selectedCategory);
   }, [selectedCategory]);
-
-  // Ouvrir le formulaire du produit quand on arrive depuis le menu avec ?product=id
-  useEffect(() => {
-    if (!pendingProductIdFromUrl || !products.length) return;
-    const product = products.find((p: any) => p._id === pendingProductIdFromUrl);
-    if (product) {
-      setSelectedProduct(product);
-      if (selectedCategory === 'burgers' || selectedCategory === 'sandwichs') {
-        setShowBurgerSandwichComposer(true);
-      } else if (selectedCategory === 'tex-mex') {
-        setShowTexMexComposer(true);
-      } else if (selectedCategory === 'menu-enfants') {
-        setShowMenuEnfantsComposer(true);
-      }
-    }
-    setPendingProductIdFromUrl(null);
-  }, [pendingProductIdFromUrl, products, selectedCategory]);
 
   // Charger les sauces quand on ouvre le modal pour les accompagnements ou la personnalisation
   useEffect(() => {
@@ -672,7 +652,6 @@ function CommanderPage() {
   };
 
   return (
-    <PageTransition>
     <div className="min-h-screen bg-gray-100 pt-20">
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen">
@@ -1712,8 +1691,5 @@ function CommanderPage() {
         onSelect={handleOrderTypeSelect}
       />
     </div>
-    </PageTransition>
   );
 }
-
-export default motion(CommanderPage);

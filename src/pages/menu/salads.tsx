@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import { useState } from 'react';
 import { 
@@ -67,7 +66,7 @@ const hoverVariants = {
   }
 };
 
-function SaladsPage() {
+export default function SaladsPage() {
   const { foods } = useProducts();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -119,7 +118,6 @@ function SaladsPage() {
   };
 
   return (
-    <PageTransition>
     <>
       <Head>
         <title>Le 9 - Salades et Assiettes | Menu</title>
@@ -371,8 +369,5 @@ function SaladsPage() {
         </section>
       </div>
     </>
-    </PageTransition>
   );
 }
-
-export default motion(SaladsPage);

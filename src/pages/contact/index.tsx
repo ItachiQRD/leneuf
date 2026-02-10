@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring, useInView, AnimatePresence } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import Image from 'next/image';
 import { 
@@ -39,7 +38,7 @@ const itemVariants = {
   }
 };
 
-function ContactPage() {
+export default function ContactPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -98,7 +97,6 @@ function ContactPage() {
   };
 
   return (
-    <PageTransition>
     <>
       <Head>
         <title>Contact - LE NEUF | Fast Food & Grill</title>
@@ -606,8 +604,5 @@ function ContactPage() {
         </motion.section>
       </div>
     </>
-    </PageTransition>
   );
 }
-
-export default motion(ContactPage);

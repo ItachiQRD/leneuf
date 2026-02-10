@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 
 interface RegisterFormData {
   name: string;
@@ -20,7 +18,7 @@ interface RegisterFormData {
   };
 }
 
-function RegisterPage() {
+export default function RegisterPage() {
   const [formData, setFormData] = useState<RegisterFormData>({
     name: '',
     email: '',
@@ -55,13 +53,11 @@ function RegisterPage() {
       router.push(returnUrl || '/');
     }
     return (
-      <PageTransition>
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="text-center">
           Redirection en cours...
         </div>
       </div>
-      </PageTransition>
     );
   }
 
@@ -126,7 +122,6 @@ function RegisterPage() {
   };
 
   return (
-    <PageTransition>
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -311,8 +306,5 @@ function RegisterPage() {
         </div>
       </div>
     </div>
-    </PageTransition>
   );
 }
-
-export default motion(RegisterPage);

@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -24,7 +23,7 @@ const staggerContainer = {
   }
 };
 
-function Home() {
+export default function Home() {
   const router = useRouter();
   const [showOrderSuccess, setShowOrderSuccess] = useState(false);
 
@@ -99,7 +98,6 @@ function Home() {
   ];
 
   return (
-    <PageTransition>
     <>
       {/* Modal de succès de commande */}
       <Transition show={showOrderSuccess} as={Fragment}>
@@ -390,92 +388,75 @@ function Home() {
         </div>
       </section>
 
-      {/* Section Menu - Aperçu */}
-      <section id="menu" className="py-24 bg-white">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-5xl font-light text-gray-900 mb-6 font-serif">
-              Notre <span className="text-amber-600">Carte</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Une sélection de nos plats les plus appréciés, préparés avec passion
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {menuHighlights.map((item, index) => (
-              <motion.div
-                key={item.id}
-                className="group bg-white border border-gray-200 hover:border-gray-300 transition-all duration-300 hover:shadow-lg"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <div className="flex">
-                  <div className="relative w-32 h-32 flex-shrink-0">
-                    <SmartImage
-                      src={item.image}
-                      alt={item.name}
-                      width={128}
-                      height={128}
-                      className="w-full h-full object-cover"
-                    />
-                    {item.isNew && (
-                      <div className="absolute top-2 left-2 bg-black text-white px-2 py-1 text-xs font-medium">
-                        Nouveau
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-6 flex-1">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-xl font-light text-gray-900 group-hover:text-gray-700 transition-colors">
-                        {item.name}
-                      </h3>
-                      <span className="text-lg font-medium text-gray-900">
-                        {item.price}€
-                      </span>
-                    </div>
-                    <p className="text-gray-600 mb-3 text-sm">
-                      {item.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="ml-1 text-sm text-gray-600">{item.rating}</span>
-                      </div>
-                      <span className="text-xs text-gray-500 uppercase tracking-wide">
-                        {item.category}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+      {/* Section Notre Carte - Grande photo + description + lien menu */}
+      <section id="menu" className="py-0 overflow-hidden">
+        <motion.div
+          className="relative min-h-[70vh] md:min-h-[85vh] flex flex-col md:flex-row"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.15, delayChildren: 0.1 }
+            }
+          }}
+        >
+          {/* Grande image */}
+          <div className="relative w-full md:w-[60%] min-h-[50vh] md:min-h-[85vh]">
+            <motion.div
+              className="absolute inset-0"
+              variants={{ hidden: { scale: 1.1, opacity: 0.8 }, visible: { scale: 1, opacity: 1, transition: { duration: 1.2, ease: 'easeOut' } }}
+            >
+              <Image
+                src="/images/menu/promo.jpg"
+                alt="Notre carte - Pizzas et plats Le 9"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 60vw"
+                priority={false}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent md:from-black/50" />
+            </motion.div>
           </div>
 
-          <motion.div
-            className="text-center mt-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <Link
-              href="/menu"
-              className="inline-flex items-center px-8 py-3 text-gray-900 border border-gray-300 hover:bg-gray-900 hover:text-white transition-all duration-300"
+          {/* Description + CTA */}
+          <div className="relative w-full md:w-[40%] flex flex-col justify-center px-6 py-16 md:py-24 md:pl-12 lg:pl-16 bg-gray-50">
+            <motion.h2
+              className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-4 font-serif"
+              variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.7 } }}
             >
-              Voir la carte complète
-              <ChevronRight className="ml-2 w-4 h-4" />
-            </Link>
-          </motion.div>
-        </div>
+              Notre <span className="text-amber-600">Carte</span>
+            </motion.h2>
+            <motion.p
+              className="text-lg md:text-xl text-gray-600 mb-6 max-w-md"
+              variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.15 } }}
+            >
+              Pizzas au feu de bois, burgers gourmands, salades fraîches, tacos et spécialités maison. Des produits soignés et une cuisine généreuse.
+            </motion.p>
+            <motion.p
+              className="text-gray-500 mb-8 max-w-md"
+              variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.25 } }}
+            >
+              Découvrez nos plats préparés avec passion par notre équipe.
+            </motion.p>
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.4 } }}
+            >
+              <Link href="/menu">
+                <motion.span
+                  className="inline-flex items-center gap-2 px-8 py-4 text-lg font-medium text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-xl shadow-lg transition-all duration-300"
+                  whileHover={{ scale: 1.03, boxShadow: '0 20px 40px -12px rgba(251, 191, 36, 0.4)' }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Découvrir la carte
+                  <ChevronRight className="w-5 h-5" />
+                </motion.span>
+              </Link>
+            </motion.div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Section Offres Spéciales */}
@@ -688,8 +669,5 @@ function Home() {
       </section>
     </div>
     </>
-    </PageTransition>
   );
 }
-
-export default motion(Home);

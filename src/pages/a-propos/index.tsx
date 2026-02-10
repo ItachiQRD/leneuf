@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -66,7 +65,7 @@ const hoverVariants = {
   }
 };
 
-function AboutPage() {
+export default function AboutPage() {
   const [isVisible, setIsVisible] = useState(false);
   const { scrollYProgress } = useScroll();
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
@@ -95,7 +94,6 @@ function AboutPage() {
   }, []);
 
   return (
-    <PageTransition>
     <>
       <Head>
         <title>À Propos - LE NEUF | Fast Food & Grill</title>
@@ -709,8 +707,5 @@ function AboutPage() {
         </motion.section>
       </div>
     </>
-    </PageTransition>
   );
 }
-
-export default motion(AboutPage);

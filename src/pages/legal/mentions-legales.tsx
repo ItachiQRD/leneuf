@@ -2,12 +2,9 @@ import React from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 
 const MentionsLegales: NextPage = () => {
   return (
-    <PageTransition>
     <>
       <Head>
         <title>Mentions Légales - Le Neuf</title>
@@ -74,8 +71,7 @@ const MentionsLegales: NextPage = () => {
         </div>
       </div>
     </>
-    </PageTransition>
   );
 };
 
-export default motion(MentionsLegales);
+export default MentionsLegales;

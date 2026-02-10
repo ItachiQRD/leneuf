@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import { useState } from 'react';
 import { 
@@ -73,7 +72,7 @@ const hoverVariants = {
   }
 };
 
-function BurgersPage() {
+export default function BurgersPage() {
   const { foods } = useProducts();
   const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
@@ -119,7 +118,6 @@ function BurgersPage() {
   };
 
   return (
-    <PageTransition>
     <>
       <Head>
         <title>Le 9 - Nos Burgers | Menu</title>
@@ -318,7 +316,7 @@ function BurgersPage() {
                       <div className="text-2xl font-bold text-amber-600">
                         {burger.price}€
                       </div>
-                      <Link href={`/commander?category=burgers&open=1&product=${burger._id}`}>
+                      <Link href="/commander?category=burgers&open=1">
                         <motion.span
                           className="inline-flex items-center gap-2 bg-amber-500 text-white px-4 py-3 rounded-full hover:bg-amber-600 transition-colors font-medium"
                           whileHover={{ scale: 1.05 }}
@@ -353,8 +351,5 @@ function BurgersPage() {
         </section>
       </div>
     </>
-    </PageTransition>
   );
 }
-
-export default motion(BurgersPage);

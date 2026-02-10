@@ -446,31 +446,29 @@ export default function PaniniComposer({ isOpen, onClose, onAddToCart }: PaniniC
             <Button
               variant="outline"
               onClick={currentStep === 0 ? handleClose : handlePrevious}
-              className="flex-1 min-h-[48px] md:min-h-0 text-base md:text-sm px-4 py-3 md:py-2 font-medium"
+              className="min-h-[48px] lg:min-h-0 px-4 py-3 lg:py-2 text-base font-medium"
             >
-              <ArrowLeft className="w-4 h-4 md:mr-2" />
-              <span className="md:hidden">{currentStep === 0 ? 'Annuler' : 'Préc.'}</span>
-              <span className="hidden md:inline">{currentStep === 0 ? 'Annuler' : 'Précédent'}</span>
+              <ArrowLeft className="w-5 h-5 lg:w-4 lg:h-4 lg:mr-2 shrink-0" />
+              <span className="lg:hidden">{currentStep === 0 ? 'Annuler' : 'Prec'}</span>
+              <span className="hidden lg:inline">{currentStep === 0 ? 'Annuler' : 'Précédent'}</span>
             </Button>
 
-            <div className="flex-1 flex justify-end">
-              {currentStep < STEPS.length - 1 ? (
-                <Button
-                  onClick={handleNext}
-                  disabled={!canProceed()}
-                  className="min-h-[48px] md:min-h-0 w-full md:w-auto text-base md:text-sm px-4 py-3 md:py-2 font-medium"
-                >
-                  <span className="md:hidden">Suiv.</span>
-                  <span className="hidden md:inline">Suivant</span>
-                  <ArrowRight className="w-4 h-4 md:ml-2" />
-                </Button>
-              ) : (
-                <Button onClick={handleAddToCart} className="min-h-[48px] md:min-h-0 w-full md:w-auto text-base md:text-sm px-4 py-3 md:py-2 font-medium">
-                  <span className="md:hidden">Ajouter</span>
-                  <span className="hidden md:inline">Ajouter ({calculatePrice()}€)</span>
-                </Button>
-              )}
-            </div>
+            {currentStep < STEPS.length - 1 ? (
+              <Button
+                onClick={handleNext}
+                disabled={!canProceed()}
+                className="min-h-[48px] lg:min-h-0 px-4 py-3 lg:py-2 text-base font-medium"
+              >
+                <span className="lg:hidden">Suiv</span>
+                <span className="hidden lg:inline">Suivant</span>
+                <ArrowRight className="w-5 h-5 lg:w-4 lg:h-4 lg:ml-2 shrink-0" />
+              </Button>
+            ) : (
+              <Button onClick={handleAddToCart} className="min-h-[48px] lg:min-h-0 px-4 py-3 lg:py-2 text-base font-medium">
+                <span className="hidden lg:inline">Ajouter au panier ({calculatePrice()}€)</span>
+                <span className="lg:hidden">+ {calculatePrice()}€</span>
+              </Button>
+            )}
           </div>
         </motion.div>
       </motion.div>

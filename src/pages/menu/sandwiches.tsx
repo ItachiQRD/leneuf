@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import { useState } from 'react';
 import { 
@@ -70,7 +69,7 @@ const pulseVariants = {
   }
 };
 
-function SandwichesPage() {
+export default function SandwichesPage() {
   const { foods, loading } = useProducts();
   const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
@@ -134,7 +133,6 @@ function SandwichesPage() {
   const sortedSandwiches = getSortedSandwiches();
 
   return (
-    <PageTransition>
     <>
       <Head>
         <title>Sandwichs - LE NEUF</title>
@@ -324,7 +322,7 @@ function SandwichesPage() {
                         </div>
                       </div>
 
-                      <Link href={`/commander?category=sandwichs&open=1&product=${(sandwich as any)._id}`}>
+                      <Link href="/commander?category=sandwichs&open=1">
                         <motion.span
                           className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-200"
                           whileHover={{ scale: 1.03 }}
@@ -352,8 +350,5 @@ function SandwichesPage() {
         </div>
       </div>
     </>
-    </PageTransition>
   );
 }
-
-export default motion(SandwichesPage);

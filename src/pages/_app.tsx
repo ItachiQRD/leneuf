@@ -7,7 +7,6 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import MainLayout from '@/components/layout/MainLayout';
 import { useRouter } from 'next/router';
 import { Toaster } from '@/components/ui/Toaster';
-import { AnimatePresence } from 'framer-motion';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -70,11 +69,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <title>{`Le Neuf - ${getPageTitle(router.pathname)}`}</title>
           <link rel="icon" href="/images/logo.png" />
         </Head>
-        <div className="min-h-full overflow-x-hidden">
-          <AnimatePresence mode="wait" initial={false}>
-            <Component key={router.asPath} {...pageProps} />
-          </AnimatePresence>
-        </div>
+        <Component {...pageProps} />
         <Toaster />
       </Layout>
     </ProviderWrapper>

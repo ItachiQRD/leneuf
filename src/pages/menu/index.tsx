@@ -229,33 +229,22 @@ function MenuPage() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Calculer le nombre de produits par catégorie
+  // Calculer le nombre de produits par catégorie (même logique que /api/products/by-category et page commander)
   useEffect(() => {
     const categoriesWithCount = menuCategories.map(category => {
       let count = 0;
       switch (category.id) {
         case 'pizza':
-          count = foods.filter((food: any) => food.type === 'pizza').length;
+          count = foods.filter((f: any) => f.type === 'pizza').length;
           break;
         case 'burger':
-          count = foods.filter((food: any) => food.type === 'burger').length;
+          count = foods.filter((f: any) => f.type === 'burger').length;
           break;
         case 'salad':
-          count = foods.filter((food: any) => 
-            food.type === 'salad' || 
-            food.type === 'plate' ||
-            food.type === 'plates' ||
-            food.category === 'assiettes' ||
-            food.name?.toLowerCase().includes('assiette')
-          ).length;
+          count = foods.filter((f: any) => f.type === 'salad' || f.type === 'plates').length;
           break;
         case 'sandwich':
-          count = foods.filter((food: any) => 
-            food.type === 'sandwich' || 
-            food.type === 'sandwich_durum' ||
-            food.category === 'sandwichs' ||
-            (food.category === 'food' && food.name?.toLowerCase().includes('sandwich'))
-          ).length;
+          count = foods.filter((f: any) => f.type === 'sandwich_durum').length;
           break;
         case 'dessert':
           count = desserts.length;
@@ -263,11 +252,11 @@ function MenuPage() {
       }
       return { ...category, count };
     });
-    
-    menuCategories.forEach((category, index) => {
-      menuCategories[index].count = categoriesWithCount[index].count;
+
+    categoriesWithCount.forEach((cat, index) => {
+      menuCategories[index].count = cat.count;
     });
-    
+
     setIsLoading(false);
   }, [foods, drinks, desserts, sides, sauces]);
 
@@ -374,11 +363,14 @@ function MenuPage() {
           </motion.div>
         </motion.section>
 
-        {/* Carousel des catégories */}
+        {/* Carousel des catégories - hauteur fixe pour un scroll fluide (desktop) */}
         <section
           ref={carouselRef}
           className="relative bg-gradient-to-b from-black via-gray-900 to-black"
-          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
+          style={{
+            height: isMobileCarousel ? 'auto' : `${menuCategories.length * 75}vh`,
+            minHeight: isMobileCarousel ? '85vh' : undefined,
+          }}
         >
           {/* Mobile : une slide à la fois, swipe + boutons (pas de scroll) */}
           {isMobileCarousel ? (

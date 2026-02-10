@@ -9,17 +9,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     await dbConnect();
-    
-    const foods = await Food.find({}).sort({ createdAt: -1 });
-    
-    // Formater les plats pour inclure un prix de base
-    const formattedFoods = foods.map(food => ({
-      ...food.toObject(),
-      price: food.price || (food.pizzaSizes?.[0]?.price) || 0, // Prix direct ou première taille de pizza
-      category: food.category || 'foods',
-      type: 'food'
-    }));
-    
+
+    const foods = await Food.find({ available: true, active: true }).sort({ createdAt: -1 });
+
+    const formattedFoods = foods.map(food => {
+      const obj = food.toObject();
+      return {
+        ...obj,
+        price: food.price ?? (food.pizzaSizes?.[0]?.price) ?? 0,
+        category: food.category || 'regular',
+        type: food.type,
+      };
+    });
+
     res.status(200).json(formattedFoods);
   } catch (error) {
     console.error('Error fetching foods:', error);

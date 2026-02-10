@@ -70,7 +70,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <title>{`Le Neuf - ${getPageTitle(router.pathname)}`}</title>
           <link rel="icon" href="/images/logo.png" />
         </Head>
-        <div className="overflow-hidden min-h-full">
+        <div className="min-h-full overflow-x-hidden">
           <AnimatePresence mode="wait" initial={false}>
             <Component key={router.asPath} {...pageProps} />
           </AnimatePresence>

@@ -7,8 +7,10 @@ import Cart from '@/components/cart/Cart';
 import AccountCreationModal from '@/components/checkout/AccountCreationModal';
 import { ShoppingCart, ArrowLeft, Clock, MapPin, User, Phone, CreditCard, Banknote, MessageSquare, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
+import { motion } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 
-export default function CommandeFormulairePage() {
+function CommandeFormulairePage() {
   const router = useRouter();
   const { items, total, clearCart, promotionDiscount, promotionDescription } = useCart();
   const [customerData, setCustomerData] = useState<CustomerData | null>(null);
@@ -40,6 +42,7 @@ export default function CommandeFormulairePage() {
   // Rediriger si le panier est vide
   if (!items || items.length === 0) {
     return (
+      <PageTransition>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <MainHeader onOpenCart={() => setIsCartOpen(true)} />
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -60,6 +63,7 @@ export default function CommandeFormulairePage() {
           </div>
         </div>
       </div>
+      </PageTransition>
     );
   }
 
@@ -137,16 +141,19 @@ export default function CommandeFormulairePage() {
 
   if (!customerData) {
     return (
+      <PageTransition>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">Chargement...</p>
         </div>
       </div>
+      </PageTransition>
     );
   }
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <MainHeader onOpenCart={() => setIsCartOpen(true)} />
       
@@ -382,5 +389,8 @@ export default function CommandeFormulairePage() {
         onSkip={() => setShowAccountModal(false)}
       />
     </div>
+    </PageTransition>
   );
 }
+
+export default motion(CommandeFormulairePage);

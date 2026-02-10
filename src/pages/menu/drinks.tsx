@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import { useState } from 'react';
 import { 
@@ -62,7 +63,7 @@ const hoverVariants = {
   }
 };
 
-export default function DrinksPage() {
+function DrinksPage() {
   const { drinks } = useProducts();
   const { addItem } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
@@ -93,6 +94,7 @@ export default function DrinksPage() {
   };
 
   return (
+    <PageTransition>
     <>
       <Head>
         <title>Le 9 - Nos Boissons | Menu</title>
@@ -300,5 +302,8 @@ export default function DrinksPage() {
         </section>
       </div>
     </>
+    </PageTransition>
   );
 }
+
+export default motion(DrinksPage);

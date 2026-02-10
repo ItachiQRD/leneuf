@@ -7,7 +7,7 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import MainLayout from '@/components/layout/MainLayout';
 import { useRouter } from 'next/router';
 import { Toaster } from '@/components/ui/Toaster';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -72,17 +72,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         </Head>
         <div className="overflow-hidden min-h-full">
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={router.pathname}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -24 }}
-              transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
-              className="min-h-full"
-              style={{ willChange: 'opacity, transform' }}
-            >
-              <Component {...pageProps} />
-            </motion.div>
+            <Component key={router.asPath} {...pageProps} />
           </AnimatePresence>
         </div>
         <Toaster />

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -23,7 +24,7 @@ const staggerContainer = {
   }
 };
 
-export default function Home() {
+function Home() {
   const router = useRouter();
   const [showOrderSuccess, setShowOrderSuccess] = useState(false);
 
@@ -98,6 +99,7 @@ export default function Home() {
   ];
 
   return (
+    <PageTransition>
     <>
       {/* Modal de succès de commande */}
       <Transition show={showOrderSuccess} as={Fragment}>
@@ -686,5 +688,8 @@ export default function Home() {
       </section>
     </div>
     </>
+    </PageTransition>
   );
 }
+
+export default motion(Home);

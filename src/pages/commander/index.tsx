@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 import { ShoppingCart, Plus, Minus, Trash2, Clock, MapPin, Phone, Menu } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,7 +15,7 @@ import TexMexComposer from '@/components/commander/TexMexComposer';
 import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
 import PizzaMenuSelector from '@/components/commander/PizzaMenuSelector';
 import OrderTypeModal from '@/components/checkout/OrderTypeModal';
-export default function CommanderPage() {
+function CommanderPage() {
   const router = useRouter();
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
   const { isAuthenticated, user } = useAuth();
@@ -671,6 +672,7 @@ export default function CommanderPage() {
   };
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-gray-100 pt-20">
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen">
@@ -1710,5 +1712,8 @@ export default function CommanderPage() {
         onSelect={handleOrderTypeSelect}
       />
     </div>
+    </PageTransition>
   );
 }
+
+export default motion(CommanderPage);

@@ -2,9 +2,12 @@ import React from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 
 const PolitiqueConfidentialite: NextPage = () => {
   return (
+    <PageTransition>
     <>
       <Head>
         <title>Politique de Confidentialité - Le Neuf</title>
@@ -108,7 +111,8 @@ const PolitiqueConfidentialite: NextPage = () => {
         </div>
       </div>
     </>
+    </PageTransition>
   );
 };
 
-export default PolitiqueConfidentialite;
+export default motion(PolitiqueConfidentialite);

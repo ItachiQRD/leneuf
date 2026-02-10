@@ -2,9 +2,12 @@ import React from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 
 const ConditionsGenerales: NextPage = () => {
   return (
+    <PageTransition>
     <>
       <Head>
         <title>Conditions Générales de Vente - Le Neuf</title>
@@ -96,7 +99,8 @@ const ConditionsGenerales: NextPage = () => {
         </div>
       </div>
     </>
+    </PageTransition>
   );
 };
 
-export default ConditionsGenerales;
+export default motion(ConditionsGenerales);

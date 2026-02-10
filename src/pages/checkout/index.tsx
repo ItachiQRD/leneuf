@@ -10,8 +10,9 @@ import PromotionSelector from '@/components/checkout/PromotionSelector';
 import { ShoppingCart, ArrowLeft, Clock, MapPin, UserPlus, Gift, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Dialog, Transition } from '@headlessui/react';
+import PageTransition from '@/components/common/PageTransition';
 
-export default function CheckoutPage() {
+function CheckoutPage() {
   const router = useRouter();
   const { items, total, clearCart, promotionDiscount, promotionDescription, applyPromotion, removePromotion } = useCart();
   const { customerData } = useCustomerData();
@@ -39,6 +40,7 @@ export default function CheckoutPage() {
   // Rediriger si le panier est vide
   if (!items || items.length === 0) {
     return (
+      <PageTransition>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <MainHeader onOpenCart={() => setIsCartOpen(true)} />
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -59,6 +61,7 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+      </PageTransition>
     );
   }
 
@@ -77,6 +80,7 @@ export default function CheckoutPage() {
   };
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Popup plein écran : confirmation de la promotion */}
       <Transition show={showPromotionModal && promotionDiscount > 0} as={Fragment}>
@@ -344,5 +348,8 @@ export default function CheckoutPage() {
         onSkip={() => setShowAccountModal(false)}
       />
     </div>
+    </PageTransition>
   );
 }
+
+export default motion(CheckoutPage);

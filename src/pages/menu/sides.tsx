@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import { useState } from 'react';
 import { 
@@ -62,7 +63,7 @@ const hoverVariants = {
   }
 };
 
-export default function SidesPage() {
+function SidesPage() {
   const { sides, sauces } = useProducts();
   const { addItem } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
@@ -98,6 +99,7 @@ export default function SidesPage() {
   };
 
   return (
+    <PageTransition>
     <>
       <Head>
         <title>Le 9 - Nos Accompagnements | Menu</title>
@@ -314,5 +316,8 @@ export default function SidesPage() {
         </section>
       </div>
     </>
+    </PageTransition>
   );
 }
+
+export default motion(SidesPage);

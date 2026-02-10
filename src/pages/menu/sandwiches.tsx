@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import { useState } from 'react';
 import { 
@@ -69,7 +70,7 @@ const pulseVariants = {
   }
 };
 
-export default function SandwichesPage() {
+function SandwichesPage() {
   const { foods, loading } = useProducts();
   const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
@@ -133,6 +134,7 @@ export default function SandwichesPage() {
   const sortedSandwiches = getSortedSandwiches();
 
   return (
+    <PageTransition>
     <>
       <Head>
         <title>Sandwichs - LE NEUF</title>
@@ -350,5 +352,8 @@ export default function SandwichesPage() {
         </div>
       </div>
     </>
+    </PageTransition>
   );
 }
+
+export default motion(SandwichesPage);

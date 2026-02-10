@@ -1,4 +1,5 @@
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -204,7 +205,7 @@ function DesktopCarouselSlide({
   );
 }
 
-export default function MenuPage() {
+function MenuPage() {
   const { foods, drinks, desserts, sides, sauces } = useProducts();
   const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -276,6 +277,7 @@ export default function MenuPage() {
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.8, 0.6]);
 
   return (
+    <PageTransition>
     <>
       <Head>
         <title>Le 9 - Notre Carte | Restaurant Fast-Food de Qualité à Reims</title>
@@ -580,5 +582,8 @@ export default function MenuPage() {
         </motion.section>
       </div>
     </>
+    </PageTransition>
   );
 }
+
+export default motion(MenuPage);

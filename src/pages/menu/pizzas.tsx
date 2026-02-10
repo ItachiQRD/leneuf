@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import PageTransition from '@/components/common/PageTransition';
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { 
@@ -71,7 +72,7 @@ const hoverVariants = {
   }
 };
 
-export default function PizzasPage() {
+function PizzasPage() {
   const { foods } = useProducts();
   const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
@@ -116,6 +117,7 @@ export default function PizzasPage() {
   };
 
   return (
+    <PageTransition>
     <>
       <Head>
         <title>Le 9 - Nos Pizzas | Menu</title>
@@ -377,5 +379,8 @@ export default function PizzasPage() {
         </Link>
       </div>
     </>
+    </PageTransition>
   );
 }
+
+export default motion(PizzasPage);

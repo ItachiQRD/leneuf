@@ -103,8 +103,19 @@ export default function Home() {
   const sectionTestimonialsRef = useRef<HTMLElement>(null);
   const sectionContactRef = useRef<HTMLElement>(null);
   const sectionCtaRef = useRef<HTMLElement>(null);
+  const menuVideoRef = useRef<HTMLVideoElement>(null);
 
   const scrollOffset: ['start end', 'end start'] = ['start end', 'end start'];
+
+  const handleMenuVideoEnded = () => {
+    const video = menuVideoRef.current;
+    if (!video) return;
+    video.pause();
+    window.setTimeout(() => {
+      video.currentTime = 0;
+      video.play();
+    }, 5000);
+  };
 
   const { scrollYProgress: progressAbout } = useScroll({ target: sectionAboutRef, offset: scrollOffset });
   const opacityAbout = useTransform(progressAbout, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
@@ -408,20 +419,34 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Section Explorer - vidéo plein écran, navbar masquée pendant la section, bouton en bas */}
+      {/* Section Explorer - fond.mp4 + Menu.mp4 (pause 5s en fin), bouton en bas, scroll normal */}
       <section
         id="menu"
-        className="sticky top-0 z-[60] h-screen min-h-screen overflow-hidden flex flex-col justify-end items-center pb-10 md:pb-12"
+        className="relative min-h-screen overflow-hidden flex flex-col justify-end items-center pb-10 md:pb-12"
       >
-        {/* Fond vidéo : toute la vidéo visible (object-contain), pas de voile */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center bg-black">
+        {/* Couche 1 : fond.mp4 remplit tout (côtés noirs comblés) */}
+        <div className="absolute inset-0 z-0">
           <video
             autoPlay
             loop
             muted
             playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            aria-hidden
+          >
+            <source src="/images/carte/fond.mp4" type="video/mp4" />
+          </video>
+        </div>
+        {/* Couche 2 : Menu.mp4 au centre (object-contain), figé 5s en fin puis redémarre */}
+        <div className="absolute inset-0 z-[1] flex items-center justify-center">
+          <video
+            ref={menuVideoRef}
+            autoPlay
+            muted
+            playsInline
             className="absolute inset-0 w-full h-full object-contain"
             aria-hidden
+            onEnded={handleMenuVideoEnded}
           >
             <source src="/images/carte/Menu.mp4" type="video/mp4" />
           </video>

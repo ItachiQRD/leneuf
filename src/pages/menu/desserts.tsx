@@ -206,7 +206,7 @@ export default function DessertsPage() {
                   whileHover="hover"
                   className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
                 >
-                  <div className="relative h-64 overflow-hidden bg-gray-100">
+                  <div className="relative h-64 overflow-hidden bg-white">
                     <SmartImage
                       src={dessert.image || '/images/placeholder-food.svg'}
                       alt={dessert.name}

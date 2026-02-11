@@ -352,7 +352,7 @@ export default function ContactPage() {
                   </h3>
                   <div className="w-full h-64 rounded-lg overflow-hidden shadow-md">
                     <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2620.3!2d4.025!3d49.25!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e9744c5c1c5c1f%3A0x40c14484fb61e60!2s9%20Route%20de%20B%C3%A9theny%2C%2051100%20Reims%2C%20France!5e0!3m2!1sfr!2sfr!4v1640000000000!5m2!1sfr!2sfr"
+                      src="https://www.google.com/maps?q=9+Route+de+B%C3%A9theny,+51100+Reims,+France&output=embed&z=16"
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, Trash2, Clock, MapPin, Phone, Menu } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -644,6 +644,13 @@ export default function CommanderPage() {
     setShowOrderTypeModal(true);
   };
 
+  const commanderContentRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: commanderScroll } = useScroll({
+    target: commanderContentRef,
+    offset: ['start start', 'end end'],
+  });
+  const commanderOpacity = useTransform(commanderScroll, [0, 0.12, 0.88, 1], [0, 1, 1, 0]);
+
   const handleOrderTypeSelect = (type: 'delivery' | 'pickup') => {
     // Sauvegarder le type de commande dans localStorage
     localStorage.setItem('orderType', type);
@@ -680,10 +687,17 @@ export default function CommanderPage() {
         </div>
 
         {/* Contenu central - Articles */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+        <div ref={commanderContentRef} className="flex-1 p-6 overflow-y-auto">
+          <motion.div className="min-h-full" style={{ opacity: commanderOpacity }}>
+          <motion.h1
+            className="text-3xl font-bold text-gray-900 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7, ease: [0.22, 0.61, 0.36, 1] }}
+          >
             {menuCategories.find(c => c.id === selectedCategory)?.name}
-          </h1>
+          </motion.h1>
           
           {selectedCategory === 'tacos' ? (
             /* Interface spéciale pour les tacos */
@@ -788,11 +802,13 @@ export default function CommanderPage() {
                       <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
                     </div>
                   ) : (
-                    products.map((item) => (
+                    products.map((item, index) => (
                       <motion.div
                         key={item._id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 0.61, 0.36, 1] }}
                         className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
                       >
                         <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
@@ -847,14 +863,16 @@ export default function CommanderPage() {
                 <div className="text-center py-8">
                   <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
                 </div>
-              ) : (
-                products.map((item) => (
-                  <motion.div
-                    key={item._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
-                  >
+                  ) : (
+                    products.map((item, index) => (
+                      <motion.div
+                        key={item._id}
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 0.61, 0.36, 1] }}
+                        className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
+                      >
                     <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
                       <Image
                         src={item.image || '/images/placeholder-food.svg'}
@@ -907,6 +925,7 @@ export default function CommanderPage() {
               )}
             </div>
           )}
+          </motion.div>
         </div>
 
         {/* Panier de droite */}
@@ -1095,11 +1114,13 @@ export default function CommanderPage() {
                       <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
                     </div>
                   ) : (
-                    products.map((item) => (
+                    products.map((item, index) => (
                       <motion.div
                         key={item._id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 0.61, 0.36, 1] }}
                         className="bg-white rounded-lg shadow-md p-4"
                       >
                         <div className="flex items-start space-x-4">
@@ -1163,11 +1184,13 @@ export default function CommanderPage() {
                   <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
                 </div>
               ) : (
-                products.map((item) => (
+                products.map((item, index) => (
                   <motion.div
                     key={item._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 0.61, 0.36, 1] }}
                     className="bg-white rounded-lg shadow-md p-4"
                   >
                     <div className="flex items-start space-x-4">

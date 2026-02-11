@@ -1,8 +1,8 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Utensils, Clock, Award, Star, MapPin, Phone, Navigation, Calendar, Users, Heart, ChefHat, Pizza, Wine, Coffee, CheckCircle } from 'lucide-react';
 import SmartImage from '@/components/common/SmartImage';
 import MenuOffers from '@/components/menu/MenuOffers';
@@ -96,6 +96,26 @@ export default function Home() {
       isNew: false
     }
   ];
+
+  // Refs pour effet apparition / disparition au scroll
+  const sectionAboutRef = useRef<HTMLElement>(null);
+  const sectionExpertiseRef = useRef<HTMLElement>(null);
+  const sectionTestimonialsRef = useRef<HTMLElement>(null);
+  const sectionContactRef = useRef<HTMLElement>(null);
+  const sectionCtaRef = useRef<HTMLElement>(null);
+
+  const scrollOpts = { offset: ['start end', 'end start'] as const };
+
+  const { scrollYProgress: progressAbout } = useScroll({ target: sectionAboutRef, ...scrollOpts });
+  const opacityAbout = useTransform(progressAbout, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
+  const { scrollYProgress: progressExpertise } = useScroll({ target: sectionExpertiseRef, ...scrollOpts });
+  const opacityExpertise = useTransform(progressExpertise, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
+  const { scrollYProgress: progressTestimonials } = useScroll({ target: sectionTestimonialsRef, ...scrollOpts });
+  const opacityTestimonials = useTransform(progressTestimonials, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
+  const { scrollYProgress: progressContact } = useScroll({ target: sectionContactRef, ...scrollOpts });
+  const opacityContact = useTransform(progressContact, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
+  const { scrollYProgress: progressCta } = useScroll({ target: sectionCtaRef, ...scrollOpts });
+  const opacityCta = useTransform(progressCta, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
 
   return (
     <>
@@ -253,14 +273,14 @@ export default function Home() {
       </section>
 
       {/* Section À Propos - Notre Histoire */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
-        <div className="container mx-auto px-4 max-w-6xl">
+      <section ref={sectionAboutRef} className="py-24 bg-gradient-to-br from-gray-50 to-white">
+        <motion.div className="container mx-auto px-4 max-w-6xl" style={{ opacity: opacityAbout }}>
           <motion.div
             className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 36, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 1, ease: [0.22, 0.61, 0.36, 1] }}
           >
             <div>
               <h2 className="text-5xl font-light text-gray-900 mb-8 font-serif">
@@ -306,18 +326,18 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Section Expertise Culinaire */}
-      <section className="py-24 bg-gradient-to-br from-amber-50 to-orange-50">
-        <div className="container mx-auto px-4 max-w-6xl">
+      <section ref={sectionExpertiseRef} className="py-24 bg-gradient-to-br from-amber-50 to-orange-50">
+        <motion.div className="container mx-auto px-4 max-w-6xl" style={{ opacity: opacityExpertise }}>
           <motion.div
             className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 32, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 1, ease: [0.22, 0.61, 0.36, 1] }}
           >
             <h2 className="text-5xl font-light text-gray-900 mb-6 font-serif">
               Notre <span className="text-amber-600">Expertise</span>
@@ -331,10 +351,10 @@ export default function Home() {
             {/* Pizzaiolos */}
             <motion.div
               className="text-center group"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.85, delay: 0.1, ease: [0.22, 0.61, 0.36, 1] }}
             >
               <div className="w-24 h-24 bg-gradient-to-r from-amber-600 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Pizza className="w-12 h-12 text-white" />
@@ -350,10 +370,10 @@ export default function Home() {
             {/* Techniques */}
             <motion.div
               className="text-center group"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.85, delay: 0.2, ease: [0.22, 0.61, 0.36, 1] }}
             >
               <div className="w-24 h-24 bg-gradient-to-r from-amber-600 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <ChefHat className="w-12 h-12 text-white" />
@@ -369,10 +389,10 @@ export default function Home() {
             {/* Innovation */}
             <motion.div
               className="text-center group"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.85, delay: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
             >
               <div className="w-24 h-24 bg-gradient-to-r from-amber-600 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Award className="w-12 h-12 text-white" />
@@ -385,97 +405,134 @@ export default function Home() {
               </p>
             </motion.div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* Section Notre Carte - fond.png + fond1.png + aliments carte (effet de profondeur) */}
+      {/* Section Notre Carte - fond.png + fond1.png (redimensionné) + aliments en disposition élégante */}
       <section id="menu" className="relative min-h-[75vh] md:min-h-[85vh] overflow-hidden flex items-center justify-center py-16 md:py-24">
-        {/* Couche 1 : fond.png */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/carte/fond.png"
-            alt=""
-            fill
-            className="object-cover"
-            sizes="100vw"
-            priority={false}
-          />
-        </div>
-        {/* Couche 2 : fond1.png par-dessus */}
-        <div className="absolute inset-0 z-[1]">
-          <Image
-            src="/images/carte/fond1.png"
-            alt=""
-            fill
-            className="object-cover object-center"
-            sizes="100vw"
-            priority={false}
-          />
-        </div>
-        {/* Couche 3 : aliments du dossier carte, centre + gauche/droite, tailles croissantes → effet profondeur */}
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 flex items-center justify-center min-h-[50vh]">
-          {/* Gauche : petites → moyennes */}
-          <div className="absolute left-0 md:left-4 lg:left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 md:gap-6">
-            <motion.div
-              className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 opacity-90"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 0.9, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <Image src="/images/carte/kapsalon.png" alt="" fill className="object-contain drop-shadow-lg" sizes="96px" />
-            </motion.div>
-            <motion.div
-              className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 opacity-95"
-              initial={{ opacity: 0, x: -15 }}
-              whileInView={{ opacity: 0.95, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <Image src="/images/carte/burger.png" alt="" fill className="object-contain drop-shadow-xl" sizes="160px" />
-            </motion.div>
-          </div>
-          {/* Centre : image principale (grande) */}
-          <motion.div
-            className="relative w-40 h-40 md:w-56 md:h-56 lg:w-72 lg:h-72 shrink-0 z-20"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-          >
+        {/* Couche 1 : fond.png (contenu pour éviter zoom et pixelisation) */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center bg-gray-900/30">
+          <div className="relative w-[85%] h-[85%] min-w-[280px] min-h-[200px] max-w-[90vw] max-h-[90vh]">
             <Image
-              src="/images/carte/pizza.png"
-              alt="Notre carte - Pizzas et plats"
+              src="/images/carte/fond.png"
+              alt=""
               fill
-              className="object-contain drop-shadow-2xl"
-              sizes="(max-width: 768px) 160px, (max-width: 1024px) 224px, 288px"
+              className="object-contain object-center"
+              sizes="90vw"
               priority={false}
             />
-          </motion.div>
-          {/* Droite : moyennes → petites */}
-          <div className="absolute right-0 md:right-4 lg:right-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 md:gap-6">
+          </div>
+        </div>
+        {/* Couche 2 : fond1.png par-dessus, contenu sans zoom (évite le flou) */}
+        <div className="absolute inset-0 z-[1] flex items-center justify-center">
+          <div className="relative w-[82%] h-[82%] min-w-[280px] min-h-[200px] max-w-[88vw] max-h-[88vh]">
+            <Image
+              src="/images/carte/fond1.png"
+              alt=""
+              fill
+              className="object-contain object-center"
+              sizes="88vw"
+              priority={false}
+            />
+          </div>
+        </div>
+        {/* Couche 3 : aliments en grille asymétrique avec animations */}
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          <div className="relative w-full h-full max-w-6xl mx-auto px-4 py-8">
+            {/* Pizza : centre-droite, pièce maîtresse */}
             <motion.div
-              className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 opacity-95"
-              initial={{ opacity: 0, x: 15 }}
-              whileInView={{ opacity: 0.95, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              className="absolute right-[8%] top-[35%] w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 pointer-events-auto"
+              initial={{ opacity: 0, scale: 0.5, rotate: -8 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              whileHover={{ scale: 1.12, rotate: 3, y: -12, transition: { duration: 0.25 } }}
             >
-              <Image src="/images/carte/kebab.png" alt="" fill className="object-contain drop-shadow-xl" sizes="160px" />
+              <motion.div
+                className="relative w-full h-full"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                whileHover={{ filter: 'drop-shadow(0 20px 25px rgba(0,0,0,0.35))' }}
+              >
+                <Image src="/images/carte/pizza.png" alt="Pizza" fill className="object-contain drop-shadow-2xl" sizes="224px" />
+              </motion.div>
             </motion.div>
+            {/* Burger : haut gauche */}
             <motion.div
-              className="relative w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 opacity-90"
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 0.9, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              className="absolute left-[5%] top-[15%] w-20 h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 pointer-events-auto"
+              initial={{ opacity: 0, x: -40, y: -20 }}
+              whileInView={{ opacity: 1, x: 0, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+              whileHover={{ scale: 1.15, x: 4, transition: { duration: 0.2 } }}
             >
-              <Image src="/images/carte/burger.png" alt="" fill className="object-contain drop-shadow-lg" sizes="96px" />
+              <motion.div
+                className="relative w-full h-full"
+                animate={{ y: [0, 6, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                whileHover={{ filter: 'drop-shadow(0 16px 20px rgba(0,0,0,0.3))' }}
+              >
+                <Image src="/images/carte/burger.png" alt="Burger" fill className="object-contain drop-shadow-xl" sizes="144px" />
+              </motion.div>
+            </motion.div>
+            {/* Kebab : bas gauche */}
+            <motion.div
+              className="absolute left-[12%] bottom-[20%] w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-auto"
+              initial={{ opacity: 0, x: -30, scale: 0.8 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.35 }}
+              whileHover={{ scale: 1.18, rotate: -4, transition: { duration: 0.2 } }}
+            >
+              <motion.div
+                className="relative w-full h-full"
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
+                whileHover={{ filter: 'drop-shadow(0 18px 22px rgba(0,0,0,0.32))' }}
+              >
+                <Image src="/images/carte/kebab.png" alt="Kebab" fill className="object-contain drop-shadow-xl" sizes="160px" />
+              </motion.div>
+            </motion.div>
+            {/* Kapsalon : haut droite */}
+            <motion.div
+              className="absolute right-[25%] top-[8%] w-16 h-16 md:w-24 md:h-24 lg:w-28 lg:h-28 pointer-events-auto"
+              initial={{ opacity: 0, scale: 0.6, y: -25 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.45 }}
+              whileHover={{ scale: 1.2, y: -6, transition: { duration: 0.2 } }}
+            >
+              <motion.div
+                className="relative w-full h-full"
+                animate={{ y: [0, 4, 0] }}
+                transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+                whileHover={{ filter: 'drop-shadow(0 12px 16px rgba(0,0,0,0.28))' }}
+              >
+                <Image src="/images/carte/kapsalon.png" alt="Kapsalon" fill className="object-contain drop-shadow-lg" sizes="112px" />
+              </motion.div>
+            </motion.div>
+            {/* Burger 2 : bas droite */}
+            <motion.div
+              className="absolute right-[2%] bottom-[25%] w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 pointer-events-auto"
+              initial={{ opacity: 0, scale: 0.7, rotate: 5 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.55, delay: 0.2 }}
+              whileHover={{ scale: 1.2, rotate: -3, transition: { duration: 0.2 } }}
+            >
+              <motion.div
+                className="relative w-full h-full"
+                animate={{ y: [0, 7, 0] }}
+                transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+                whileHover={{ filter: 'drop-shadow(0 14px 18px rgba(0,0,0,0.3))' }}
+              >
+                <Image src="/images/carte/burger.png" alt="" fill className="object-contain drop-shadow-lg" sizes="128px" />
+              </motion.div>
             </motion.div>
           </div>
         </div>
-        {/* Titre + CTA au-dessus du décor */}
-        <div className="absolute bottom-6 left-0 right-0 z-20 text-center px-4">
+        {/* Titre + CTA */}
+        <div className="absolute bottom-6 left-0 right-0 z-20 text-center px-4 pointer-events-auto">
           <motion.h2
             className="text-3xl md:text-4xl font-light text-white mb-2 font-serif drop-shadow-md"
             initial={{ opacity: 0, y: 10 }}
@@ -509,14 +566,14 @@ export default function Home() {
       <MenuOffers />
 
       {/* Section Témoignages */}
-      <section className="py-24 bg-gray-50">
-        <div className="container mx-auto px-4 max-w-6xl">
+      <section ref={sectionTestimonialsRef} className="py-24 bg-gray-50">
+        <motion.div className="container mx-auto px-4 max-w-6xl" style={{ opacity: opacityTestimonials }}>
           <motion.div
             className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 32, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 1, ease: [0.22, 0.61, 0.36, 1] }}
           >
             <h2 className="text-5xl font-light text-gray-900 mb-6 font-serif">
               Nos <span className="text-amber-600">Clients</span>
@@ -547,10 +604,10 @@ export default function Home() {
               <motion.div
                 key={testimonial.name}
                 className="bg-white p-8 border border-gray-200 hover:border-gray-300 transition-all duration-300"
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.85, delay: index * 0.12, ease: [0.22, 0.61, 0.36, 1] }}
               >
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -566,18 +623,18 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Section Informations Pratiques */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-4 max-w-6xl">
+      <section ref={sectionContactRef} className="py-24 bg-white">
+        <motion.div className="container mx-auto px-4 max-w-6xl" style={{ opacity: opacityContact }}>
           <motion.div
             className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 32, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 1, ease: [0.22, 0.61, 0.36, 1] }}
           >
             <h2 className="text-5xl font-light text-gray-900 mb-6 font-serif">
               Nous <span className="text-amber-600">Trouver</span>
@@ -590,10 +647,10 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <motion.div
               className="space-y-8"
-              initial={{ opacity: 0, x: -30 }}
+              initial={{ opacity: 0, x: -28 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.9, ease: [0.22, 0.61, 0.36, 1] }}
             >
               <div className="flex items-start space-x-4">
                 <MapPin className="w-6 h-6 text-gray-900 mt-1 flex-shrink-0" />
@@ -637,13 +694,13 @@ export default function Home() {
 
             <motion.div
               className="relative h-96 rounded-lg overflow-hidden"
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: 28 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.9, ease: [0.22, 0.61, 0.36, 1] }}
             >
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2620.3!2d4.025!3d49.25!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e9744c5c1c5c1f%3A0x40c14484fb61e60!2s9%20Route%20de%20B%C3%A9theny%2C%2051100%20Reims%2C%20France!5e0!3m2!1sfr!2sfr!4v1640000000000!5m2!1sfr!2sfr"
+                src="https://www.google.com/maps?q=9+Route+de+B%C3%A9theny,+51100+Reims,+France&output=embed&z=16"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -666,17 +723,17 @@ export default function Home() {
               </div>
             </motion.div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* CTA Final */}
-      <section className="py-24 bg-gray-900">
-        <div className="container mx-auto px-4 text-center">
+      <section ref={sectionCtaRef} className="py-24 bg-gray-900">
+        <motion.div className="container mx-auto px-4 text-center" style={{ opacity: opacityCta }}>
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 32, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 1, ease: [0.22, 0.61, 0.36, 1] }}
           >
             <h2 className="text-4xl font-light text-white mb-6 font-serif">
               Prêt à nous rejoindre ?
@@ -711,7 +768,7 @@ export default function Home() {
               </motion.div>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
     </div>
     </>

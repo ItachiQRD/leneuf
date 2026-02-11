@@ -437,8 +437,10 @@ export default function Home() {
             <source src="/images/carte/fond.mp4" type="video/mp4" />
           </video>
         </div>
-        {/* Couche 2 : Menu.mp4 dans un cadre inséré pour laisser fond.mp4 visible en haut, bas, gauche, droite */}
-        <div className="absolute inset-[6%] z-[1] flex items-center justify-center md:inset-[5%]">
+        {/* Couche 2 : Menu.mp4 dans un cadre inséré (marge plus grande en haut/bas), bords arrondis et ombre */}
+        <div
+          className="absolute z-[1] flex items-center justify-center left-[5%] right-[5%] top-[10%] bottom-[10%] md:left-[5%] md:right-[5%] md:top-[12%] md:bottom-[12%] rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5),0_0_80px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+        >
           <video
             ref={menuVideoRef}
             autoPlay

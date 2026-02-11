@@ -420,7 +420,7 @@ export default function Home() {
             className="absolute inset-0 w-full h-full object-cover"
             aria-hidden
           >
-            <source src="/carte/menu.mp4" type="video/mp4" />
+            <source src="images/carte/Menu.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/50" aria-hidden />
         </div>

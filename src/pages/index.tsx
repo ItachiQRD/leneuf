@@ -419,12 +419,12 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Section Explorer - fond.mp4 + Menu.mp4 (pause 5s en fin), bouton en bas, scroll normal */}
+      {/* Section Explorer - fond.mp4 + Menu.mp4, responsive toute taille d'écran, arrondi + ombre sur la section */}
       <section
         id="menu"
-        className="relative min-h-screen overflow-hidden flex flex-col justify-end items-center pb-10 md:pb-12"
+        className="relative min-h-screen w-full overflow-hidden flex flex-col justify-end items-center rounded-2xl sm:rounded-3xl shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_6px_24px_rgba(0,0,0,0.25)] pb-6 sm:pb-8 md:pb-10 lg:pb-12"
       >
-        {/* Couche 1 : fond.mp4 remplit tout (côtés noirs comblés) */}
+        {/* Couche 1 : fond.mp4 */}
         <div className="absolute inset-0 z-0">
           <video
             autoPlay
@@ -437,8 +437,8 @@ export default function Home() {
             <source src="/images/carte/fond.mp4" type="video/mp4" />
           </video>
         </div>
-        {/* Couche 2 : Menu.mp4 dans un cadre inséré, bords arrondis et ombres */}
-        <div className="absolute inset-[6%] z-[1] flex items-center justify-center md:inset-[5%] rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.1),0_8px_30px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]">
+        {/* Couche 2 : Menu.mp4 plein cadre, sans marges */}
+        <div className="absolute inset-0 z-[1] flex items-center justify-center">
           <video
             ref={menuVideoRef}
             autoPlay
@@ -454,7 +454,7 @@ export default function Home() {
 
         {/* Bouton "Voir le menu" tout en bas */}
         <motion.div
-          className="relative z-10 text-center"
+          className="relative z-10 text-center px-4"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -462,7 +462,7 @@ export default function Home() {
         >
           <Link href="/menu">
             <motion.span
-              className="inline-flex items-center gap-2 px-8 py-4 text-lg font-medium text-gray-900 bg-white hover:bg-amber-50 rounded-xl shadow-xl transition-all border border-amber-200/50"
+              className="inline-flex items-center gap-2 px-6 py-3 text-base sm:px-8 sm:py-4 sm:text-lg font-medium text-gray-900 bg-white hover:bg-amber-50 rounded-xl shadow-xl transition-all border border-amber-200/50"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
             >

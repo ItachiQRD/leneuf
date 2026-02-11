@@ -408,38 +408,26 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Section Notre Carte / Explorer - fond + bandeau de plats harmonisé */}
+      {/* Section Explorer / Notre Carte - vidéo menu.mp4 + bouton vers le menu */}
       <section id="menu" className="relative min-h-[70vh] md:min-h-[80vh] overflow-hidden flex flex-col items-center justify-center py-16 md:py-20">
-        {/* Couche 1 : fond.png */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center bg-gray-900/40">
-          <div className="relative w-[85%] h-[85%] min-w-[280px] min-h-[200px] max-w-[90vw] max-h-[90vh]">
-            <Image
-              src="/images/carte/fond.png"
-              alt=""
-              fill
-              className="object-contain object-center"
-              sizes="90vw"
-              priority={false}
-            />
-          </div>
-        </div>
-        {/* Couche 2 : fond1.png */}
-        <div className="absolute inset-0 z-[1] flex items-center justify-center">
-          <div className="relative w-[82%] h-[82%] min-w-[280px] min-h-[200px] max-w-[88vw] max-h-[88vh]">
-            <Image
-              src="/images/carte/fond1.png"
-              alt=""
-              fill
-              className="object-contain object-center"
-              sizes="88vw"
-              priority={false}
-            />
-          </div>
+        {/* Fond vidéo : menu.mp4 */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            aria-hidden
+          >
+            <source src="/menu.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-black/50" aria-hidden />
         </div>
 
-        {/* Titre en haut */}
+        {/* Contenu au-dessus de la vidéo */}
         <motion.h2
-          className="relative z-20 text-3xl md:text-4xl font-light text-white mb-8 md:mb-10 font-serif drop-shadow-md text-center px-4"
+          className="relative z-10 text-3xl md:text-4xl font-light text-white mb-8 md:mb-10 font-serif drop-shadow-md text-center px-4"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -448,52 +436,21 @@ export default function Home() {
           Notre <span className="text-amber-300">Carte</span>
         </motion.h2>
 
-        {/* Bandeau horizontal : 4 plats, même taille, disposition claire */}
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 flex flex-wrap justify-center gap-6 md:gap-8">
-          {[
-            { src: '/images/carte/pizza.png', alt: 'Pizza', label: 'Pizzas' },
-            { src: '/images/carte/burger.png', alt: 'Burger', label: 'Burgers' },
-            { src: '/images/carte/kebab.png', alt: 'Kebab', label: 'Kebabs' },
-            { src: '/images/carte/kapsalon.png', alt: 'Kapsalon', label: 'Kapsalon' },
-          ].map((item, index) => (
-            <motion.div
-              key={item.src + index}
-              className="flex flex-col items-center"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 0.61, 0.36, 1] }}
-              whileHover={{ y: -8, transition: { duration: 0.2 } }}
-            >
-              <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-sm shadow-xl ring-1 ring-white/20">
-                <Image
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  className="object-contain p-2"
-                  sizes="(max-width: 640px) 112px, (max-width: 768px) 128px, (max-width: 1024px) 144px, 160px"
-                />
-              </div>
-              <span className="mt-2 text-sm font-medium text-white/90 drop-shadow-sm">{item.label}</span>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* CTA */}
+        {/* Bouton direct vers le menu */}
         <motion.div
-          className="relative z-20 mt-10 text-center"
+          className="relative z-10 text-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Link href="/menu">
             <motion.span
-              className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-gray-900 bg-white/95 hover:bg-white rounded-xl shadow-lg transition-all"
+              className="inline-flex items-center gap-2 px-8 py-4 text-lg font-medium text-gray-900 bg-white hover:bg-amber-50 rounded-xl shadow-xl transition-all border border-amber-200/50"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
             >
-              Découvrir la carte
+              Voir le menu
               <ChevronRight className="w-5 h-5" />
             </motion.span>
           </Link>

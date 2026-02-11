@@ -437,8 +437,8 @@ export default function Home() {
             <source src="/images/carte/fond.mp4" type="video/mp4" />
           </video>
         </div>
-        {/* Couche 2 : Menu.mp4 au centre (object-contain), figé 5s en fin puis redémarre */}
-        <div className="absolute inset-0 z-[1] flex items-center justify-center">
+        {/* Couche 2 : Menu.mp4 dans un cadre inséré pour laisser fond.mp4 visible en haut, bas, gauche, droite */}
+        <div className="absolute inset-[6%] z-[1] flex items-center justify-center md:inset-[5%]">
           <video
             ref={menuVideoRef}
             autoPlay

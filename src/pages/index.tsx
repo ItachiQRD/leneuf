@@ -104,7 +104,7 @@ export default function Home() {
   const sectionContactRef = useRef<HTMLElement>(null);
   const sectionCtaRef = useRef<HTMLElement>(null);
 
-  const scrollOffset: [string, string] = ['start end', 'end start'];
+  const scrollOffset: ['start end', 'end start'] = ['start end', 'end start'];
 
   const { scrollYProgress: progressAbout } = useScroll({ target: sectionAboutRef, offset: scrollOffset });
   const opacityAbout = useTransform(progressAbout, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);

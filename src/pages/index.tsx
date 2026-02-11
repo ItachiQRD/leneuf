@@ -408,10 +408,10 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Section Notre Carte - fond.png + fond1.png (redimensionné) + aliments en disposition élégante */}
-      <section id="menu" className="relative min-h-[75vh] md:min-h-[85vh] overflow-hidden flex items-center justify-center py-16 md:py-24">
-        {/* Couche 1 : fond.png (contenu pour éviter zoom et pixelisation) */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center bg-gray-900/30">
+      {/* Section Notre Carte / Explorer - fond + bandeau de plats harmonisé */}
+      <section id="menu" className="relative min-h-[70vh] md:min-h-[80vh] overflow-hidden flex flex-col items-center justify-center py-16 md:py-20">
+        {/* Couche 1 : fond.png */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center bg-gray-900/40">
           <div className="relative w-[85%] h-[85%] min-w-[280px] min-h-[200px] max-w-[90vw] max-h-[90vh]">
             <Image
               src="/images/carte/fond.png"
@@ -423,7 +423,7 @@ export default function Home() {
             />
           </div>
         </div>
-        {/* Couche 2 : fond1.png par-dessus, contenu sans zoom (évite le flou) */}
+        {/* Couche 2 : fond1.png */}
         <div className="absolute inset-0 z-[1] flex items-center justify-center">
           <div className="relative w-[82%] h-[82%] min-w-[280px] min-h-[200px] max-w-[88vw] max-h-[88vh]">
             <Image
@@ -436,130 +436,68 @@ export default function Home() {
             />
           </div>
         </div>
-        {/* Couche 3 : aliments en grille asymétrique avec animations */}
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          <div className="relative w-full h-full max-w-6xl mx-auto px-4 py-8">
-            {/* Pizza : centre-droite, pièce maîtresse */}
+
+        {/* Titre en haut */}
+        <motion.h2
+          className="relative z-20 text-3xl md:text-4xl font-light text-white mb-8 md:mb-10 font-serif drop-shadow-md text-center px-4"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          Notre <span className="text-amber-300">Carte</span>
+        </motion.h2>
+
+        {/* Bandeau horizontal : 4 plats, même taille, disposition claire */}
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 flex flex-wrap justify-center gap-6 md:gap-8">
+          {[
+            { src: '/images/carte/pizza.png', alt: 'Pizza', label: 'Pizzas' },
+            { src: '/images/carte/burger.png', alt: 'Burger', label: 'Burgers' },
+            { src: '/images/carte/kebab.png', alt: 'Kebab', label: 'Kebabs' },
+            { src: '/images/carte/kapsalon.png', alt: 'Kapsalon', label: 'Kapsalon' },
+          ].map((item, index) => (
             <motion.div
-              className="absolute right-[8%] top-[35%] w-32 h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 pointer-events-auto"
-              initial={{ opacity: 0, scale: 0.5, rotate: -8 }}
-              whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+              key={item.src + index}
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-              whileHover={{ scale: 1.12, rotate: 3, y: -12, transition: { duration: 0.25 } }}
+              transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 0.61, 0.36, 1] }}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
             >
-              <motion.div
-                className="relative w-full h-full"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                whileHover={{ filter: 'drop-shadow(0 20px 25px rgba(0,0,0,0.35))' }}
-              >
-                <Image src="/images/carte/pizza.png" alt="Pizza" fill className="object-contain drop-shadow-2xl" sizes="224px" />
-              </motion.div>
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-sm shadow-xl ring-1 ring-white/20">
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  className="object-contain p-2"
+                  sizes="(max-width: 640px) 112px, (max-width: 768px) 128px, (max-width: 1024px) 144px, 160px"
+                />
+              </div>
+              <span className="mt-2 text-sm font-medium text-white/90 drop-shadow-sm">{item.label}</span>
             </motion.div>
-            {/* Burger : haut gauche */}
-            <motion.div
-              className="absolute left-[5%] top-[15%] w-20 h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 pointer-events-auto"
-              initial={{ opacity: 0, x: -40, y: -20 }}
-              whileInView={{ opacity: 1, x: 0, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              whileHover={{ scale: 1.15, x: 4, transition: { duration: 0.2 } }}
-            >
-              <motion.div
-                className="relative w-full h-full"
-                animate={{ y: [0, 6, 0] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-                whileHover={{ filter: 'drop-shadow(0 16px 20px rgba(0,0,0,0.3))' }}
-              >
-                <Image src="/images/carte/burger.png" alt="Burger" fill className="object-contain drop-shadow-xl" sizes="144px" />
-              </motion.div>
-            </motion.div>
-            {/* Kebab : bas gauche */}
-            <motion.div
-              className="absolute left-[12%] bottom-[20%] w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-auto"
-              initial={{ opacity: 0, x: -30, scale: 0.8 }}
-              whileInView={{ opacity: 1, x: 0, scale: 1 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.6, delay: 0.35 }}
-              whileHover={{ scale: 1.18, rotate: -4, transition: { duration: 0.2 } }}
-            >
-              <motion.div
-                className="relative w-full h-full"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
-                whileHover={{ filter: 'drop-shadow(0 18px 22px rgba(0,0,0,0.32))' }}
-              >
-                <Image src="/images/carte/kebab.png" alt="Kebab" fill className="object-contain drop-shadow-xl" sizes="160px" />
-              </motion.div>
-            </motion.div>
-            {/* Kapsalon : haut droite */}
-            <motion.div
-              className="absolute right-[25%] top-[8%] w-16 h-16 md:w-24 md:h-24 lg:w-28 lg:h-28 pointer-events-auto"
-              initial={{ opacity: 0, scale: 0.6, y: -25 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, delay: 0.45 }}
-              whileHover={{ scale: 1.2, y: -6, transition: { duration: 0.2 } }}
-            >
-              <motion.div
-                className="relative w-full h-full"
-                animate={{ y: [0, 4, 0] }}
-                transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-                whileHover={{ filter: 'drop-shadow(0 12px 16px rgba(0,0,0,0.28))' }}
-              >
-                <Image src="/images/carte/kapsalon.png" alt="Kapsalon" fill className="object-contain drop-shadow-lg" sizes="112px" />
-              </motion.div>
-            </motion.div>
-            {/* Burger 2 : bas droite */}
-            <motion.div
-              className="absolute right-[2%] bottom-[25%] w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 pointer-events-auto"
-              initial={{ opacity: 0, scale: 0.7, rotate: 5 }}
-              whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.55, delay: 0.2 }}
-              whileHover={{ scale: 1.2, rotate: -3, transition: { duration: 0.2 } }}
-            >
-              <motion.div
-                className="relative w-full h-full"
-                animate={{ y: [0, 7, 0] }}
-                transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                whileHover={{ filter: 'drop-shadow(0 14px 18px rgba(0,0,0,0.3))' }}
-              >
-                <Image src="/images/carte/burger.png" alt="" fill className="object-contain drop-shadow-lg" sizes="128px" />
-              </motion.div>
-            </motion.div>
-          </div>
+          ))}
         </div>
-        {/* Titre + CTA */}
-        <div className="absolute bottom-6 left-0 right-0 z-20 text-center px-4 pointer-events-auto">
-          <motion.h2
-            className="text-3xl md:text-4xl font-light text-white mb-2 font-serif drop-shadow-md"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            Notre <span className="text-amber-300">Carte</span>
-          </motion.h2>
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <Link href="/menu">
-              <motion.span
-                className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-gray-900 bg-white/95 hover:bg-white rounded-xl shadow-lg transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Découvrir la carte
-                <ChevronRight className="w-5 h-5" />
-              </motion.span>
-            </Link>
-          </motion.div>
-        </div>
+
+        {/* CTA */}
+        <motion.div
+          className="relative z-20 mt-10 text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <Link href="/menu">
+            <motion.span
+              className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-gray-900 bg-white/95 hover:bg-white rounded-xl shadow-lg transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Découvrir la carte
+              <ChevronRight className="w-5 h-5" />
+            </motion.span>
+          </Link>
+        </motion.div>
       </section>
 
       {/* Section Offres Spéciales */}

@@ -408,39 +408,30 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Section Explorer / Notre Carte - vidéo menu.mp4 + bouton vers le menu */}
-      <section id="menu" className="relative min-h-[70vh] md:min-h-[80vh] overflow-hidden flex flex-col items-center justify-center py-16 md:py-20">
-        {/* Fond vidéo : menu.mp4 */}
-        <div className="absolute inset-0 z-0">
+      {/* Section Explorer - vidéo plein écran, navbar masquée pendant la section, bouton en bas */}
+      <section
+        id="menu"
+        className="sticky top-0 z-[60] h-screen min-h-screen overflow-hidden flex flex-col justify-end items-center pb-10 md:pb-12"
+      >
+        {/* Fond vidéo : toute la vidéo visible (object-contain), pas de voile */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center bg-black">
           <video
             autoPlay
             loop
             muted
             playsInline
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-contain"
             aria-hidden
           >
-            <source src="images/carte/Menu.mp4" type="video/mp4" />
+            <source src="/images/carte/Menu.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-black/50" aria-hidden />
         </div>
 
-        {/* Contenu au-dessus de la vidéo */}
-        <motion.h2
-          className="relative z-10 text-3xl md:text-4xl font-light text-white mb-8 md:mb-10 font-serif drop-shadow-md text-center px-4"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          Notre <span className="text-amber-300">Carte</span>
-        </motion.h2>
-
-        {/* Bouton direct vers le menu */}
+        {/* Bouton "Voir le menu" tout en bas */}
         <motion.div
           className="relative z-10 text-center"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >

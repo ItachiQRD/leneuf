@@ -865,16 +865,16 @@ export default function CommanderPage() {
                 <div className="text-center py-8">
                   <p className="text-gray-500">Aucun produit disponible dans cette catégorie</p>
                 </div>
-                  ) : (
+              ) : (
                     products.map((item, index) => (
-                      <motion.div
-                        key={item._id}
+                  <motion.div
+                    key={item._id}
                         initial={{ opacity: 0, y: 24 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 0.61, 0.36, 1] }}
-                        className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
-                      >
+                    className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4"
+                  >
                     <div className="relative w-24 h-24 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
                       <Image
                         src={item.image || '/images/placeholder-food.svg'}

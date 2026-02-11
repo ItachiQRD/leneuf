@@ -437,17 +437,14 @@ export default function Home() {
             <source src="/images/carte/fond.mp4" type="video/mp4" />
           </video>
         </div>
-        {/* Couche 2 : Menu.mp4 — marge augmentée en haut/bas, côtés inchangés, bords arrondis + ombre */}
-        <div
-          className="absolute left-[6%] right-[6%] top-[10%] bottom-[10%] z-[1] flex items-center justify-center overflow-hidden rounded-2xl md:left-[5%] md:right-[5%] md:top-[8%] md:bottom-[8%]"
-          style={{ boxShadow: '0 0 40px rgba(0,0,0,0.5), 0 0 80px rgba(0,0,0,0.25), inset 0 0 20px rgba(0,0,0,0.1)' }}
-        >
+        {/* Couche 2 : Menu.mp4 dans un cadre inséré, bords arrondis et ombres */}
+        <div className="absolute inset-[6%] z-[1] flex items-center justify-center md:inset-[5%] rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.1),0_8px_30px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)]">
           <video
             ref={menuVideoRef}
             autoPlay
             muted
             playsInline
-            className="absolute inset-0 h-full w-full rounded-2xl object-contain"
+            className="absolute inset-0 w-full h-full object-contain"
             aria-hidden
             onEnded={handleMenuVideoEnded}
           >

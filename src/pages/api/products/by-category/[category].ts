@@ -21,47 +21,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     let products = [];
 
+    const foodVisible = { $and: [{ $or: [{ available: true }, { available: { $exists: false } }] }, { $or: [{ active: true }, { active: { $exists: false } }] }] };
+    const sideVisible = { $and: [{ $or: [{ available: true }, { available: { $exists: false } }] }, { $or: [{ active: true }, { active: { $exists: false } }] }] };
+
     switch (category) {
       case 'burgers':
-        products = await Food.find({ 
-          type: 'burger',
-          available: true,
-          active: true 
-        }).select('name price image description category type baseIngredients nutritionalInfo');
+        products = await Food.find({ type: 'burger', ...foodVisible }).select('name price image description category type baseIngredients nutritionalInfo pizzaSizes');
         break;
 
       case 'sandwichs':
-        products = await Food.find({ 
-          type: 'sandwich_durum',
-          available: true,
-          active: true 
-        }).select('name price image description category type baseIngredients nutritionalInfo');
+        products = await Food.find({ type: 'sandwich_durum', ...foodVisible }).select('name price image description category type baseIngredients nutritionalInfo');
         break;
 
       case 'pizzas':
-        products = await Food.find({ 
-          type: 'pizza',
-          available: true,
-          active: true 
-        }).select('name price image description category type baseIngredients nutritionalInfo');
+        products = await Food.find({ type: 'pizza', ...foodVisible }).select('name price image description category type baseIngredients nutritionalInfo pizzaSizes');
         break;
 
       case 'assiettes':
-        products = await Food.find({ 
-          $or: [
-            { type: 'plates' },
-            { type: 'salad' }
-          ],
-          available: true,
-          active: true 
+        products = await Food.find({
+          $or: [{ type: 'plates' }, { type: 'salad' }],
+          ...foodVisible
         }).select('name price image description category type baseIngredients nutritionalInfo');
         break;
 
       case 'accompagnements':
-        products = await Side.find({ 
-          available: true,
-          active: true 
-        }).select('name price image description category nutritionalInfo sizes');
+        products = await Side.find(sideVisible).select('name price image description category nutritionalInfo sizes');
         break;
 
       case 'tacos':
@@ -87,26 +71,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
 
       case 'paninis':
-        products = await Food.find({ 
-          type: 'paninis',
-          available: true,
-          active: true 
-        }).select('name price image description category type baseIngredients nutritionalInfo');
+        products = await Food.find({ type: 'paninis', ...foodVisible }).select('name price image description category type baseIngredients nutritionalInfo');
         break;
 
       case 'boissons':
-        products = await Drink.find({ 
-          available: true,
-          active: true 
-        }).select('name price image description category nutritionalInfo sizes type brand');
+        products = await Drink.find({ $or: [{ available: true }, { available: { $exists: false } }] }).select('name price image description category nutritionalInfo sizes type brand');
         break;
 
-      case 'desserts':
-        products = await Dessert.find({ 
-          available: true,
-          active: true 
-        }).select('name price image description category nutritionalInfo sizes');
+      case 'desserts': {
+        const dessertVisible = { $and: [{ $or: [{ available: true }, { available: { $exists: false } }] }, { $or: [{ active: true }, { active: { $exists: false } }] }] };
+        products = await Dessert.find(dessertVisible).select('name price image description category nutritionalInfo sizes');
         break;
+      }
 
       default:
         return res.status(400).json({ message: 'Invalid category' });

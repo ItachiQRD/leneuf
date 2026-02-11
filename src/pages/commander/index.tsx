@@ -316,21 +316,23 @@ export default function CommanderPage() {
 
   const fetchProducts = async (category: string) => {
     setLoadingProducts(true);
+    setProducts([]);
     try {
-      // Vérifier si c'est une catégorie statique
       const staticCategories = ['ptite-faim', 'tex-mex', 'menu-enfants'];
       if (staticCategories.includes(category)) {
         setProducts(getStaticProducts(category));
-      } else {
-        // Récupérer depuis l'API pour les autres catégories
+        return;
+      }
       const response = await fetch(`/api/products/by-category/${category}`);
       const data = await response.json();
-      if (data.success) {
+      if (response.ok && data.success && Array.isArray(data.products)) {
         setProducts(data.products);
-        }
+      } else {
+        setProducts([]);
       }
     } catch (error) {
       console.error('Error fetching products:', error);
+      setProducts([]);
     } finally {
       setLoadingProducts(false);
     }

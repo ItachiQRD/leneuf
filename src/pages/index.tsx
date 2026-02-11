@@ -437,9 +437,9 @@ export default function Home() {
             <source src="/images/carte/fond.mp4" type="video/mp4" />
           </video>
         </div>
-        {/* Couche 2 : Menu.mp4 dans un cadre inséré (marge plus grande en haut/bas), bords arrondis et ombre */}
+        {/* Couche 2 : Menu.mp4 dans un cadre inséré (marge plus grande haut/bas), bords arrondis et ombre */}
         <div
-          className="absolute z-[1] flex items-center justify-center left-[5%] right-[5%] top-[10%] bottom-[10%] md:left-[5%] md:right-[5%] md:top-[12%] md:bottom-[12%] rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5),0_0_80px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+          className="absolute left-[5%] right-[5%] top-[9%] bottom-[9%] z-[1] flex items-center justify-center overflow-hidden rounded-2xl shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_8px_24px_rgba(0,0,0,0.25),0_16px_48px_rgba(0,0,0,0.15)] md:top-[8%] md:bottom-[8%] md:rounded-3xl md:shadow-[0_0_0_1px_rgba(0,0,0,0.1),0_12px_32px_rgba(0,0,0,0.3),0_24px_64px_rgba(0,0,0,0.2)]"
         >
           <video
             ref={menuVideoRef}

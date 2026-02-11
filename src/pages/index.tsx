@@ -104,17 +104,17 @@ export default function Home() {
   const sectionContactRef = useRef<HTMLElement>(null);
   const sectionCtaRef = useRef<HTMLElement>(null);
 
-  const scrollOpts = { offset: ['start end', 'end start'] as const };
+  const scrollOffset: [string, string] = ['start end', 'end start'];
 
-  const { scrollYProgress: progressAbout } = useScroll({ target: sectionAboutRef, ...scrollOpts });
+  const { scrollYProgress: progressAbout } = useScroll({ target: sectionAboutRef, offset: scrollOffset });
   const opacityAbout = useTransform(progressAbout, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
-  const { scrollYProgress: progressExpertise } = useScroll({ target: sectionExpertiseRef, ...scrollOpts });
+  const { scrollYProgress: progressExpertise } = useScroll({ target: sectionExpertiseRef, offset: scrollOffset });
   const opacityExpertise = useTransform(progressExpertise, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
-  const { scrollYProgress: progressTestimonials } = useScroll({ target: sectionTestimonialsRef, ...scrollOpts });
+  const { scrollYProgress: progressTestimonials } = useScroll({ target: sectionTestimonialsRef, offset: scrollOffset });
   const opacityTestimonials = useTransform(progressTestimonials, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
-  const { scrollYProgress: progressContact } = useScroll({ target: sectionContactRef, ...scrollOpts });
+  const { scrollYProgress: progressContact } = useScroll({ target: sectionContactRef, offset: scrollOffset });
   const opacityContact = useTransform(progressContact, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
-  const { scrollYProgress: progressCta } = useScroll({ target: sectionCtaRef, ...scrollOpts });
+  const { scrollYProgress: progressCta } = useScroll({ target: sectionCtaRef, offset: scrollOffset });
   const opacityCta = useTransform(progressCta, [0, 0.15, 0.88, 1], [0, 1, 1, 0]);
 
   return (

@@ -386,7 +386,7 @@ export default function MenuPage() {
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-contain"
               aria-hidden
             >
               <source src="/images/carte/background-mobile.mp4" type="video/mp4" />
@@ -399,7 +399,7 @@ export default function MenuPage() {
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-contain"
               aria-hidden
             >
               <source src="/images/carte/background-mobile.mp4" type="video/mp4" />

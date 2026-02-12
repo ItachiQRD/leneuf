@@ -377,7 +377,7 @@ export default function MenuPage() {
         <section
           ref={carouselRef}
           className="relative overflow-hidden"
-          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
+          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 70}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
           {/* Vidéo de fond — mobile: background-mobile.mp4 ; desktop: background.mp4 entièrement visible (object-contain), sans voile */}
           <div className="absolute inset-0 z-0">

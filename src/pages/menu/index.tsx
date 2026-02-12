@@ -379,14 +379,14 @@ export default function MenuPage() {
           className="relative overflow-hidden"
           style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
-          {/* Vidéo de fond */}
+          {/* Vidéo de fond — object-contain pour afficher toute la vidéo sans recadrage */}
           <div className="absolute inset-0 z-0">
             <video
               autoPlay
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-contain"
               aria-hidden
             >
               <source src="/images/carte/background.mp4" type="video/mp4" />

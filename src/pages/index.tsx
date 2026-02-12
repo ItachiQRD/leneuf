@@ -472,7 +472,7 @@ export default function Home() {
           </video>
         </div>
         {/* Couche 2 : cadre vidéo Menu uniquement avec arrondi + ombre (fond reste sans cadre) — desktop: léger inset pour que le cadre soit bien sur la vidéo */}
-        <div className="absolute inset-0 md:inset-[2%] z-[1] flex items-center justify-center rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_6px_24px_rgba(0,0,0,0.25)]">
+        <div className="absolute inset-0 z-[1] flex items-center justify-center rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_6px_24px_rgba(0,0,0,0.25)]">
           {/* Vidéo mobile (< md) */}
           <video
             autoPlay
@@ -499,7 +499,7 @@ export default function Home() {
 
         {/* Bouton "Voir le menu" — mobile: un peu plus bas que le milieu ; desktop: en bas */}
         <motion.div
-          className="absolute left-0 right-0 z-10 text-center px-4 top-[58%] md:top-auto md:bottom-8 lg:bottom-12"
+          className="absolute left-0 right-0 z-10 text-center px-4 top-[62%] md:top-auto md:bottom-8 lg:bottom-12"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

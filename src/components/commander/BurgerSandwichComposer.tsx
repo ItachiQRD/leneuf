@@ -312,6 +312,18 @@ export default function BurgerSandwichComposer({ isOpen, onClose, onAddToCart, p
 
   if (!isOpen) return null;
 
+  // Sécurité : ne pas afficher le contenu si product est absent (ex. ouverture depuis lien menu)
+  if (!product) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-xl shadow-2xl p-6 text-center max-w-sm">
+          <p className="text-gray-600 mb-4">Chargement du formulaire…</p>
+          <button onClick={onClose} className="text-green-600 font-medium">Fermer</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <AnimatePresence>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

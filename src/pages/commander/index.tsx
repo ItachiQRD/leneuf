@@ -131,6 +131,22 @@ export default function CommanderPage() {
     }
   ];
 
+  // Produit par défaut quand on ouvre le compositeur depuis le lien menu (sans cliquer sur un produit)
+  const DEFAULT_SANDWICH_PRODUCT = {
+    _id: 'compose-sandwich',
+    name: 'Sandwich personnalisé',
+    price: 8,
+    image: '/images/menu/panini.jpeg',
+    description: 'Composez votre sandwich'
+  };
+  const DEFAULT_BURGER_PRODUCT = {
+    _id: 'compose-burger',
+    name: 'Burger personnalisé',
+    price: 10,
+    image: '/images/menu/signature.jpg',
+    description: 'Composez votre burger'
+  };
+
   // Lire ?category= et ?open= depuis l'URL (ex: depuis les pages menu)
   useEffect(() => {
     if (!router.isReady) return;
@@ -139,11 +155,10 @@ export default function CommanderPage() {
     const validCategories = ['sandwichs', 'burgers', 'pizzas', 'assiettes', 'accompagnements', 'tacos', 'paninis', 'tex-mex', 'ptite-faim', 'menu-enfants', 'boissons', 'desserts'];
     if (category && validCategories.includes(category)) {
       setSelectedCategory(category);
-      // Optionnel : ouvrir directement le compositeur pour burgers/sandwichs
       if (open === '1' && (category === 'burgers' || category === 'sandwichs')) {
+        setSelectedProduct(category === 'sandwichs' ? DEFAULT_SANDWICH_PRODUCT : DEFAULT_BURGER_PRODUCT);
         setTimeout(() => setShowBurgerSandwichComposer(true), 400);
       }
-      // Nettoyer l'URL sans recharger la page
       router.replace('/commander', undefined, { shallow: true });
     }
   }, [router.isReady, router.query.category, router.query.open]);

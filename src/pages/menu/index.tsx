@@ -373,33 +373,20 @@ export default function MenuPage() {
           </motion.div>
         </motion.section>
 
-        {/* Carousel des catégories — fond vidéo background-mobile.mp4 (mobile + desktop, derrière le carousel) */}
+        {/* Carousel des catégories — fond vidéo background.mp4 */}
         <section
           ref={carouselRef}
           className="relative overflow-hidden"
-          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
+          style={{ height: isMobileCarousel ? 'auto' : '105vh', minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
-          {/* Vidéo de fond — mobile */}
+          {/* Vidéo de fond — mobile uniquement ; desktop : pas de background vidéo pour l'instant */}
           <div className="absolute inset-0 z-0 md:hidden">
             <video
               autoPlay
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-contain"
-              aria-hidden
-            >
-              <source src="/images/carte/background-mobile.mp4" type="video/mp4" />
-            </video>
-          </div>
-          {/* Vidéo de fond — desktop (même vidéo, derrière le carousel) */}
-          <div className="absolute inset-0 z-0 hidden md:block">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 w-full h-full object-contain"
+              className="absolute inset-0 w-full h-full object-cover"
               aria-hidden
             >
               <source src="/images/carte/background-mobile.mp4" type="video/mp4" />

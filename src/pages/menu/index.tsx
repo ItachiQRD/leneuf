@@ -379,14 +379,14 @@ export default function MenuPage() {
           className="relative overflow-hidden"
           style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
-          {/* Vidéo de fond — mobile: background-mobile.mp4 ; desktop: background.mp4, object-cover + object-top pour éviter espaces noirs */}
+          {/* Vidéo de fond — mobile: background-mobile.mp4 ; desktop: background.mp4 entièrement visible (object-contain), sans voile */}
           <div className="absolute inset-0 z-0">
             <video
               autoPlay
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-cover object-top md:object-center md:hidden"
+              className="absolute inset-0 w-full h-full object-cover md:hidden"
               aria-hidden
             >
               <source src="/images/carte/background-mobile.mp4" type="video/mp4" />
@@ -396,12 +396,11 @@ export default function MenuPage() {
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-cover object-top hidden md:block"
+              className="absolute inset-0 w-full h-full object-contain hidden md:block"
               aria-hidden
             >
               <source src="/images/carte/background.mp4" type="video/mp4" />
             </video>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90" />
           </div>
 
           {/* Mobile : une slide à la fois, swipe + boutons (pas de scroll) */}

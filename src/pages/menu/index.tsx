@@ -379,8 +379,8 @@ export default function MenuPage() {
           className="relative overflow-hidden"
           style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 70}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
-          {/* Vidéo de fond — mobile: background-mobile.mp4 ; desktop: background.mp4 entièrement visible (object-contain), sans voile */}
-          <div className="absolute inset-0 z-0">
+          {/* Vidéo de fond — desktop: fixed pour rester derrière le carousel (toujours visible pendant le scroll) ; mobile: absolute */}
+          <div className="absolute inset-0 z-0 md:fixed md:inset-0 md:z-0">
             <video
               autoPlay
               loop

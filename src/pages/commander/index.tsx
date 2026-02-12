@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, Trash2, Clock, MapPin, Phone, Menu } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -646,13 +646,6 @@ export default function CommanderPage() {
     setShowOrderTypeModal(true);
   };
 
-  const commanderContentRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: commanderScroll } = useScroll({
-    target: commanderContentRef,
-    offset: ['start start', 'end end'],
-  });
-  const commanderOpacity = useTransform(commanderScroll, [0, 0.12, 0.88, 1], [0, 1, 1, 0]);
-
   const handleOrderTypeSelect = (type: 'delivery' | 'pickup') => {
     // Sauvegarder le type de commande dans localStorage
     localStorage.setItem('orderType', type);
@@ -689,8 +682,8 @@ export default function CommanderPage() {
         </div>
 
         {/* Contenu central - Articles */}
-        <div ref={commanderContentRef} className="flex-1 p-6 overflow-y-auto">
-          <motion.div className="min-h-full" style={{ opacity: commanderOpacity }}>
+        <div className="flex-1 p-6 overflow-y-auto">
+          <div className="min-h-full">
           <motion.h1
             className="text-3xl font-bold text-gray-900 mb-6"
             initial={{ opacity: 0, y: 20 }}
@@ -927,7 +920,7 @@ export default function CommanderPage() {
               )}
             </div>
           )}
-          </motion.div>
+          </div>
         </div>
 
         {/* Panier de droite */}

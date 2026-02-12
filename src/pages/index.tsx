@@ -26,6 +26,8 @@ const staggerContainer = {
 export default function Home() {
   const router = useRouter();
   const [showOrderSuccess, setShowOrderSuccess] = useState(false);
+  const [histoireExpanded, setHistoireExpanded] = useState(false);
+  const [expertiseExpanded, setExpertiseExpanded] = useState(false);
 
   // Vérifier si on vient d'une commande réussie
   useEffect(() => {
@@ -48,7 +50,6 @@ export default function Home() {
   // CTA principaux proposés
   const ctaOptions = [
     { text: "Découvrir notre carte", href: "/menu", icon: <Utensils className="w-5 h-5" /> },
-    { text: "Réserver une table", href: "tel:0326407967", icon: <Phone className="w-5 h-5" /> },
     { text: "Commander en ligne", href: "/menu", icon: <ChevronRight className="w-5 h-5" /> },
     { text: "Voir nos spécialités", href: "#specialites", icon: <Star className="w-5 h-5" /> }
   ];
@@ -301,23 +302,37 @@ export default function Home() {
                   avec pour seul capital : une passion dévorante pour la cuisine et 
                   l'envie farouche de partager des saveurs authentiques.
                 </p>
-                <p className="text-lg">
-                  Les premiers mois furent difficiles. Les clients se comptaient sur 
-                  les doigts d'une main, les recettes suffisaient à peine à payer 
-                  les factures. Mais chaque plat préparé avec amour, chaque sourire 
-                  d'un client satisfait, nourrissait notre détermination.
-                </p>
-                <p className="text-lg">
-                  Aujourd'hui, Le 9 rayonne dans le cœur de Reims. Notre équipe de 
-                  passionnés, dirigée par deux pizzaiolos d'exception - dont l'un 
-                  formé en Italie - perpétue cette tradition d'excellence qui nous 
-                  anime depuis le premier jour.
-                </p>
-                <p className="text-lg font-medium text-gray-800">
-                  L'avenir s'écrit maintenant en lettres d'or, avec l'ambition de 
-                  devenir LA référence gastronomique de la région.
-                </p>
+                {histoireExpanded && (
+                  <>
+                    <p className="text-lg">
+                      Les premiers mois furent difficiles. Les clients se comptaient sur 
+                      les doigts d'une main, les recettes suffisaient à peine à payer 
+                      les factures. Mais chaque plat préparé avec amour, chaque sourire 
+                      d'un client satisfait, nourrissait notre détermination.
+                    </p>
+                    <p className="text-lg">
+                      Aujourd'hui, Le 9 rayonne dans le cœur de Reims. Notre équipe de 
+                      passionnés, dirigée par deux pizzaiolos d'exception - dont l'un 
+                      formé en Italie - perpétue cette tradition d'excellence qui nous 
+                      anime depuis le premier jour.
+                    </p>
+                    <p className="text-lg font-medium text-gray-800">
+                      L'avenir s'écrit maintenant en lettres d'or, avec l'ambition de 
+                      devenir LA référence gastronomique de la région.
+                    </p>
+                  </>
+                )}
               </div>
+              {!histoireExpanded && (
+                <button
+                  type="button"
+                  onClick={() => setHistoireExpanded(true)}
+                  className="mt-6 text-amber-600 hover:text-amber-700 font-medium inline-flex items-center gap-1"
+                >
+                  En savoir plus
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
             <div className="relative">
               <Image
@@ -369,10 +384,13 @@ export default function Home() {
                 <Pizza className="w-12 h-12 text-white" />
               </div>
               <h3 className="text-2xl font-light text-gray-900 mb-4">Pizzaiolos d'Exception</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed hidden md:block">
                 Deux maîtres pizzaiolos avec 15 ans d'expérience, dont l'un formé 
                 directement en Italie. Chaque pizza est pétrie, étalée et cuite 
                 selon les traditions les plus authentiques.
+              </p>
+              <p className="text-gray-600 leading-relaxed md:hidden">
+                {expertiseExpanded ? 'Deux maîtres pizzaiolos avec 15 ans d\'expérience, dont l\'un formé directement en Italie. Chaque pizza est pétrie, étalée et cuite selon les traditions les plus authentiques.' : 'Deux maîtres pizzaiolos, 15 ans d\'expérience, tradition italienne.'}
               </p>
             </motion.div>
 
@@ -388,10 +406,13 @@ export default function Home() {
                 <ChefHat className="w-12 h-12 text-white" />
               </div>
               <h3 className="text-2xl font-light text-gray-900 mb-4">Techniques Ancestrales</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed hidden md:block">
                 Pâte fermentée 48h, cuisson au feu de bois, ingrédients 
                 sélectionnés chez les meilleurs producteurs locaux. 
                 Chaque geste respecte l'art culinaire traditionnel.
+              </p>
+              <p className="text-gray-600 leading-relaxed md:hidden">
+                {expertiseExpanded ? 'Pâte fermentée 48h, cuisson au feu de bois, ingrédients sélectionnés chez les meilleurs producteurs locaux. Chaque geste respecte l\'art culinaire traditionnel.' : 'Pâte 48h, feu de bois, producteurs locaux.'}
               </p>
             </motion.div>
 
@@ -407,12 +428,27 @@ export default function Home() {
                 <Award className="w-12 h-12 text-white" />
               </div>
               <h3 className="text-2xl font-light text-gray-900 mb-4">Innovation Créative</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed hidden md:block">
                 Tradition et modernité se rencontrent dans nos créations. 
                 Recettes originales, associations audacieuses, 
                 toujours dans le respect des saveurs authentiques.
               </p>
+              <p className="text-gray-600 leading-relaxed md:hidden">
+                {expertiseExpanded ? 'Tradition et modernité se rencontrent dans nos créations. Recettes originales, associations audacieuses, toujours dans le respect des saveurs authentiques.' : 'Tradition et modernité, créations originales.'}
+              </p>
             </motion.div>
+          </div>
+          <div className="mt-8 text-center md:hidden">
+            {!expertiseExpanded && (
+              <button
+                type="button"
+                onClick={() => setExpertiseExpanded(true)}
+                className="text-amber-600 hover:text-amber-700 font-medium inline-flex items-center gap-1"
+              >
+                En savoir plus
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </motion.div>
       </section>
@@ -435,8 +471,8 @@ export default function Home() {
             <source src="/images/carte/fond.mp4" type="video/mp4" />
           </video>
         </div>
-        {/* Couche 2 : cadre vidéo avec bords arrondis et ombre (pas la section) */}
-        <div className="absolute inset-0 z-[1] flex items-center justify-center rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_6px_24px_rgba(0,0,0,0.25)]">
+        {/* Couche 2 : cadre vidéo Menu uniquement avec arrondi + ombre (fond reste sans cadre) — desktop: léger inset pour que le cadre soit bien sur la vidéo */}
+        <div className="absolute inset-0 md:inset-[2%] z-[1] flex items-center justify-center rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_6px_24px_rgba(0,0,0,0.25)]">
           {/* Vidéo mobile (< md) */}
           <video
             autoPlay
@@ -461,9 +497,9 @@ export default function Home() {
           </video>
         </div>
 
-        {/* Bouton "Voir le menu" tout en bas */}
+        {/* Bouton "Voir le menu" — mobile: un peu plus bas que le milieu ; desktop: en bas */}
         <motion.div
-          className="relative z-10 text-center px-4"
+          className="absolute left-0 right-0 z-10 text-center px-4 top-[58%] md:top-auto md:bottom-8 lg:bottom-12"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -672,18 +708,6 @@ export default function Home() {
                 >
                   <Utensils className="w-5 h-5 mr-3" />
                   Voir notre carte
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  href="tel:0326407967"
-                  className="inline-flex items-center px-8 py-4 text-lg font-medium text-white border border-white hover:bg-white hover:text-gray-900 transition-all duration-300"
-                >
-                  <Phone className="w-5 h-5 mr-3" />
-                  Réserver
                 </Link>
               </motion.div>
             </div>

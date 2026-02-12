@@ -15,6 +15,7 @@ import {
   Flame
 } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
+import MenuOffers from '@/components/menu/MenuOffers';
 
 // Configuration des catégories de menu
 const menuCategories = [
@@ -372,15 +373,30 @@ export default function MenuPage() {
           </motion.div>
         </motion.section>
 
-        {/* Carousel des catégories */}
+        {/* Carousel des catégories — fond vidéo background.mp4 */}
         <section
           ref={carouselRef}
-          className="relative bg-gradient-to-b from-black via-gray-900 to-black"
+          className="relative overflow-hidden"
           style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
+          {/* Vidéo de fond */}
+          <div className="absolute inset-0 z-0">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+              aria-hidden
+            >
+              <source src="/images/carte/background.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90" />
+          </div>
+
           {/* Mobile : une slide à la fois, swipe + boutons (pas de scroll) */}
           {isMobileCarousel ? (
-            <div className="py-12 px-4 min-h-[85vh] flex flex-col">
+            <div className="relative z-10 py-12 px-4 min-h-[85vh] flex flex-col">
               <div className="text-center mb-6">
                 <h2 className="text-3xl font-black text-white mb-1 tracking-tight">EXPLOREZ</h2>
                 <p className="text-gray-400 text-sm">Glissez ou utilisez les flèches</p>
@@ -470,7 +486,7 @@ export default function MenuPage() {
             </div>
           ) : (
             <>
-            <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
+            <div className="sticky top-0 z-10 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
               <div className="w-full flex-shrink-0 pt-8 pb-4 text-center">
                 <h2 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight">
                   EXPLOREZ
@@ -496,6 +512,9 @@ export default function MenuPage() {
           </>
           )}
         </section>
+
+        {/* Section Offres Spéciales / Promotions */}
+        <MenuOffers />
 
         {/* Section CTA finale - compacte sur mobile */}
         <motion.section 

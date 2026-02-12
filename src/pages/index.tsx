@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Utensils, Clock, Award, Star, MapPin, Phone, Navigation, Calendar, Users, Heart, ChefHat, Pizza, Wine, Coffee, CheckCircle } from 'lucide-react';
 import SmartImage from '@/components/common/SmartImage';
-import MenuOffers from '@/components/menu/MenuOffers';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 
@@ -517,9 +516,6 @@ export default function Home() {
           </Link>
         </motion.div>
       </section>
-
-      {/* Section Offres Spéciales */}
-      <MenuOffers />
 
       {/* Section Témoignages */}
       <section ref={sectionTestimonialsRef} className="py-24 bg-gray-50">

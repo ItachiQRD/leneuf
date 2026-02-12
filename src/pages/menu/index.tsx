@@ -373,33 +373,36 @@ export default function MenuPage() {
           </motion.div>
         </motion.section>
 
-        {/* Carousel des catégories — fond vidéo background.mp4 */}
+        {/* Carousel des catégories — fond vidéo background-mobile.mp4 (mobile + desktop, derrière le carousel) */}
         <section
           ref={carouselRef}
           className="relative overflow-hidden"
-          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 70}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
+          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
-          {/* Vidéo de fond — desktop: fixed pour rester derrière le carousel (toujours visible pendant le scroll) ; mobile: absolute */}
-          <div className="absolute inset-0 z-0 md:fixed md:inset-0 md:z-0">
+          {/* Vidéo de fond — mobile */}
+          <div className="absolute inset-0 z-0 md:hidden">
             <video
               autoPlay
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-cover md:hidden"
+              className="absolute inset-0 w-full h-full object-cover"
               aria-hidden
             >
               <source src="/images/carte/background-mobile.mp4" type="video/mp4" />
             </video>
+          </div>
+          {/* Vidéo de fond — desktop (même vidéo, derrière le carousel) */}
+          <div className="absolute inset-0 z-0 hidden md:block">
             <video
               autoPlay
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-contain hidden md:block"
+              className="absolute inset-0 w-full h-full object-cover"
               aria-hidden
             >
-              <source src="/images/carte/background.mp4" type="video/mp4" />
+              <source src="/images/carte/background-mobile.mp4" type="video/mp4" />
             </video>
           </div>
 

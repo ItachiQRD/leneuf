@@ -103,12 +103,10 @@ export default function Home() {
   const sectionTestimonialsRef = useRef<HTMLElement>(null);
   const sectionContactRef = useRef<HTMLElement>(null);
   const sectionCtaRef = useRef<HTMLElement>(null);
-  const menuVideoRef = useRef<HTMLVideoElement>(null);
-
   const scrollOffset: ['start end', 'end start'] = ['start end', 'end start'];
 
-  const handleMenuVideoEnded = () => {
-    const video = menuVideoRef.current;
+  const handleMenuVideoEnded = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    const video = e.currentTarget;
     if (!video) return;
     video.pause();
     window.setTimeout(() => {
@@ -419,10 +417,10 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Section Explorer - fond.mp4 + Menu.mp4, responsive toute taille d'écran, arrondi + ombre sur la section */}
+      {/* Section Explorer - fond.mp4 + Menu (desktop) / Menu-mobile (mobile), arrondi + ombre sur le cadre vidéo */}
       <section
         id="menu"
-        className="relative min-h-screen w-full overflow-hidden flex flex-col justify-end items-center rounded-2xl sm:rounded-3xl shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_6px_24px_rgba(0,0,0,0.25)] pb-6 sm:pb-8 md:pb-10 lg:pb-12"
+        className="relative min-h-screen w-full overflow-hidden flex flex-col justify-end items-center pb-6 sm:pb-8 md:pb-10 lg:pb-12"
       >
         {/* Couche 1 : fond.mp4 */}
         <div className="absolute inset-0 z-0">
@@ -437,14 +435,25 @@ export default function Home() {
             <source src="/images/carte/fond.mp4" type="video/mp4" />
           </video>
         </div>
-        {/* Couche 2 : Menu.mp4 plein cadre, sans marges */}
-        <div className="absolute inset-0 z-[1] flex items-center justify-center">
+        {/* Couche 2 : cadre vidéo avec bords arrondis et ombre (pas la section) */}
+        <div className="absolute inset-0 z-[1] flex items-center justify-center rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_6px_24px_rgba(0,0,0,0.25)]">
+          {/* Vidéo mobile (< md) */}
           <video
-            ref={menuVideoRef}
             autoPlay
             muted
             playsInline
-            className="absolute inset-0 w-full h-full object-contain"
+            className="absolute inset-0 w-full h-full object-contain md:hidden"
+            aria-hidden
+            onEnded={handleMenuVideoEnded}
+          >
+            <source src="/images/carte/Menu-mobile.mp4" type="video/mp4" />
+          </video>
+          {/* Vidéo desktop (md et +) */}
+          <video
+            autoPlay
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-contain hidden md:block"
             aria-hidden
             onEnded={handleMenuVideoEnded}
           >

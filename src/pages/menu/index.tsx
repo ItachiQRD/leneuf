@@ -373,13 +373,13 @@ export default function MenuPage() {
           </motion.div>
         </motion.section>
 
-        {/* Carousel des catégories — fond vidéo background.mp4 */}
+        {/* Carousel des catégories */}
         <section
           ref={carouselRef}
-          className="relative overflow-hidden"
-          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 45}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
+          className="relative bg-gradient-to-b from-black via-gray-900 to-black overflow-hidden"
+          style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
-          {/* Vidéo de fond — mobile uniquement ; desktop : pas de background vidéo pour l'instant */}
+          {/* Fond vidéo mobile */}
           <div className="absolute inset-0 z-0 md:hidden">
             <video
               autoPlay
@@ -391,8 +391,8 @@ export default function MenuPage() {
             >
               <source src="/images/carte/background-mobile.mp4" type="video/mp4" />
             </video>
+            <div className="absolute inset-0 bg-black/50" />
           </div>
-
           {/* Mobile : une slide à la fois, swipe + boutons (pas de scroll) */}
           {isMobileCarousel ? (
             <div className="relative z-10 py-12 px-4 min-h-[85vh] flex flex-col">
@@ -485,7 +485,7 @@ export default function MenuPage() {
             </div>
           ) : (
             <>
-            <div className="sticky top-0 z-10 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
+            <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
               <div className="w-full flex-shrink-0 pt-8 pb-4 text-center">
                 <h2 className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tight">
                   EXPLOREZ
@@ -512,7 +512,7 @@ export default function MenuPage() {
           )}
         </section>
 
-        {/* Section Offres Spéciales / Promotions */}
+        {/* Section Offres / Promotions */}
         <MenuOffers />
 
         {/* Section CTA finale - compacte sur mobile */}

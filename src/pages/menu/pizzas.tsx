@@ -191,7 +191,7 @@ export default function PizzasPage() {
 
         {/* Filtres */}
         <section className={`py-8 border-b transition-colors duration-300 ${
-          isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+          'bg-white border-gray-200'
         }`}>
           <div className="container mx-auto px-4">
             <motion.div
@@ -209,8 +209,6 @@ export default function PizzasPage() {
                     className={`flex items-center px-6 py-3 rounded-full border-2 transition-all duration-300 ${
                       selectedFilter === filter.id
                         ? 'border-red-500 bg-red-500 text-white'
-                        : isDark
-                        ? 'border-gray-600 text-gray-300 hover:border-red-400 hover:bg-gray-700'
                         : 'border-gray-300 text-gray-700 hover:border-red-300 hover:bg-red-50'
                     }`}
                     whileHover={{ scale: 1.05 }}
@@ -239,11 +237,7 @@ export default function PizzasPage() {
                   key={pizza._id || pizza.id}
                   variants={itemVariants}
                   whileHover="hover"
-                  className={`group rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border ${
-                    isDark 
-                      ? 'bg-gray-800 border-gray-700 hover:border-gray-600' 
-                      : 'bg-white border-gray-100 hover:border-gray-200'
-                  }`}
+                  className="group rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border bg-white border-gray-100 hover:border-gray-200"
                 >
                   <div className="relative h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
                     <ProductImage
@@ -280,22 +274,16 @@ export default function PizzasPage() {
                   
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-3">
-                      <h3 className={`text-xl font-semibold group-hover:text-red-600 transition-colors ${
-                        isDark ? 'text-white' : 'text-gray-900'
-                      }`}>
+                      <h3 className="text-xl font-semibold group-hover:text-red-600 transition-colors text-gray-900">
                         {pizza.name}
                       </h3>
-                      <div className={`flex items-center text-sm ${
-                        isDark ? 'text-gray-400' : 'text-gray-500'
-                      }`}>
+                      <div className="flex items-center text-sm text-gray-500">
                         <Clock className="w-4 h-4 mr-1" />
                         {pizza.preparationTimeMinutes}min
                       </div>
                     </div>
 
-                    <p className={`text-sm mb-4 line-clamp-2 ${
-                      isDark ? 'text-gray-300' : 'text-gray-600'
-                    }`}>
+                    <p className="text-sm mb-4 line-clamp-2 text-gray-600">
                       {pizza.baseIngredients?.join(', ') || 'Délicieuse pizza préparée avec soin'}
                     </p>
 

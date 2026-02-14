@@ -22,8 +22,6 @@ import ProductImage from '@/components/common/ProductImage';
 import SmartImage from '@/components/common/SmartImage';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import OrderButton from '@/components/common/OrderButton';
-import DarkModeToggle from '@/components/common/DarkModeToggle';
-
 // Filtres spécifiques aux burgers
 const burgerFilters = [
   { id: 'all', name: 'Tous', icon: Utensils },

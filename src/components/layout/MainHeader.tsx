@@ -1,10 +1,9 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ShoppingCart, Menu, User, Shield, LogOut, Sun, Moon } from 'lucide-react';
+import { ShoppingCart, Menu, User, Shield, LogOut } from 'lucide-react';
 import { useHeaderColor } from '@/hooks/useHeaderColor';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import Image from 'next/image';
@@ -20,7 +19,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileHovered, setIsProfileHovered] = useState(false);
-  const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
@@ -44,21 +42,6 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
     >
       <div className="w-full mx-auto relative">
         <div className="flex items-center justify-center h-24 px-8 relative">
-          {/* Dark mode */}
-          <motion.button
-            onClick={toggleTheme}
-            whileHover={{ scale: 1.1, rotate: 180 }}
-            whileTap={{ scale: 0.9 }}
-            className={`absolute left-8 p-3 rounded-full hover:bg-gray-100/10 dark:hover:bg-gray-800/50 transition-all duration-300 ${textColor}`}
-            aria-label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-6 h-6" />
-            ) : (
-              <Moon className="w-6 h-6" />
-            )}
-          </motion.button>
-
           {/* Logo - Mobile only */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

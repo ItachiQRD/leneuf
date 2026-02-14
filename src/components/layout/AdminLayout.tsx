@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
 import AdminMobileMenu from '@/components/ui/AdminMobileMenu';
 import { Toaster } from '@/components/ui/Toaster';
 import {
@@ -21,8 +20,6 @@ import {
   ShoppingBag,
   BarChart,
   Package,
-  Moon,
-  Sun,
   LogOut,
   Percent
 } from 'lucide-react';
@@ -37,7 +34,6 @@ import {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated, loading, logout } = useAuth();
 
   useEffect(() => {
@@ -127,17 +123,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
 
           <div className="p-4 border-t border-gray-700">
-            <div className="flex items-center justify-between">
-            <button
-                onClick={toggleTheme}
-                className="p-2 hover:bg-muted rounded-lg transition-colors"
-              >
-                {theme === 'dark' ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </button>
+            <div className="flex items-center justify-end">
               <button 
                 onClick={logout}
                 className="flex items-center space-x-2 text-red-400 hover:text-red-300 transition-colors"

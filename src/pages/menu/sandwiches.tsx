@@ -21,9 +21,7 @@ import Link from 'next/link';
 import { useProducts } from '@/contexts/ProductContext';
 import ProductImage from '@/components/common/ProductImage';
 import SmartImage from '@/components/common/SmartImage';
-import { useDarkMode } from '@/hooks/useDarkMode';
 import OrderButton from '@/components/common/OrderButton';
-import DarkModeToggle from '@/components/common/DarkModeToggle';
 
 // Filtres spécifiques aux sandwichs
 const sandwichFilters = [
@@ -71,7 +69,6 @@ const pulseVariants = {
 
 export default function SandwichesPage() {
   const { foods, loading } = useProducts();
-  const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
@@ -139,12 +136,7 @@ export default function SandwichesPage() {
         <meta name="description" content="Découvrez nos délicieux sandwichs préparés avec des ingrédients frais et des pains artisanaux" />
       </Head>
 
-      <div className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        {/* Header avec toggle dark mode */}
-        <div className="fixed top-4 right-4 z-50">
-          <DarkModeToggle />
-        </div>
-
+      <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="relative h-96 bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 overflow-hidden">
           <div className="absolute inset-0 bg-black bg-opacity-30"></div>
@@ -198,9 +190,7 @@ export default function SandwichesPage() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                    className={`w-full pl-10 pr-4 py-3 rounded-xl border-2 border-transparent focus:border-orange-500 focus:outline-none transition-all duration-300 ${
-                     isDark 
-                       ? 'bg-gray-800 text-white placeholder-gray-400' 
-                       : 'bg-white text-gray-900 placeholder-gray-500'
+'bg-white text-gray-900 placeholder-gray-500'
                    }`}
                 />
               </div>
@@ -220,9 +210,7 @@ export default function SandwichesPage() {
                        className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
                          isActive
                            ? 'bg-orange-500 text-white shadow-lg'
-                           : isDark
-                           ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                           : 'bg-white text-gray-700 hover:bg-gray-100'
+: 'bg-white text-gray-700 hover:bg-gray-100'
                        }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -237,9 +225,7 @@ export default function SandwichesPage() {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                  className={`px-4 py-2 rounded-xl border-2 border-transparent focus:border-orange-500 focus:outline-none transition-all duration-300 ${
-                   isDark 
-                     ? 'bg-gray-800 text-white' 
-                     : 'bg-white text-gray-900'
+'bg-white text-gray-900'
                  }`}
               >
                 <option value="name">Trier par nom</option>
@@ -267,7 +253,7 @@ export default function SandwichesPage() {
                   variants={itemVariants}
                   whileHover="hover"
                    className={`group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 ${
-                     isDark ? 'bg-gray-800' : 'bg-white'
+                     'bg-white'
                    }`}
                 >
                   {/* Image */}
@@ -295,7 +281,7 @@ export default function SandwichesPage() {
                   {/* Contenu */}
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-3">
-                       <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                       <h3 className={`text-xl font-bold text-gray-900`}>
                         {sandwich.name}
                       </h3>
                       <div className="text-2xl font-bold text-orange-500">
@@ -304,7 +290,7 @@ export default function SandwichesPage() {
                     </div>
 
                      <p className={`text-sm mb-4 line-clamp-2 ${
-                       isDark ? 'text-gray-300' : 'text-gray-600'
+                       'text-gray-600'
                      }`}>
                       {(sandwich as any).description || 'Sandwich préparé avec des ingrédients frais et de qualité.'}
                     </p>
@@ -339,10 +325,10 @@ export default function SandwichesPage() {
           ) : (
             <div className="text-center py-20">
               <Utensils className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-               <h3 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+               <h3 className={`text-xl font-semibold mb-2 text-gray-900`}>
                 Aucun sandwich trouvé
               </h3>
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className={`${'text-gray-600'}`}>
                 Essayez de modifier vos critères de recherche
               </p>
             </div>

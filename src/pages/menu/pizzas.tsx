@@ -14,14 +14,10 @@ import {
   Leaf,
   Zap,
   Plus,
-  Minus,
-  Sun,
-  Moon
+  Minus
 } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductContext';
 import ProductImage from '@/components/common/ProductImage';
-import { useDarkMode } from '@/hooks/useDarkMode';
-import DarkModeToggle from '@/components/common/DarkModeToggle';
 import Link from 'next/link';
 
 // Filtres spécifiques aux pizzas
@@ -73,7 +69,6 @@ const hoverVariants = {
 
 export default function PizzasPage() {
   const { foods } = useProducts();
-  const { isDark } = useDarkMode();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
@@ -125,11 +120,7 @@ export default function PizzasPage() {
         />
       </Head>
 
-      <div className={`min-h-screen transition-colors duration-300 ${
-        isDark 
-          ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-red-900' 
-          : 'bg-gradient-to-br from-gray-50 via-white to-red-50'
-      }`}>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50">
         {/* Hero Section */}
         <motion.section 
           className="relative py-24 bg-gradient-to-r from-red-600 via-orange-500 to-red-700 overflow-hidden"
@@ -174,18 +165,6 @@ export default function PizzasPage() {
               >
                 Pâte maison, cuisson au feu de bois, ingrédients frais
               </motion.p>
-
-              {/* Toggle mode sombre */}
-              <motion.div
-                className="flex items-center gap-4 justify-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 1.3 }}
-              >
-                <Sun className="w-5 h-5 text-yellow-300" />
-                <DarkModeToggle />
-                <Moon className="w-5 h-5 text-yellow-300" />
-              </motion.div>
 
               {/* Barre de recherche */}
               <motion.div

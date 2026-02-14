@@ -504,14 +504,23 @@ export default function Home() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <Link href="/menu">
+          <Link href="/menu" className="inline-block">
             <motion.span
-              className="inline-flex items-center gap-2 px-6 py-3 text-base sm:px-8 sm:py-4 sm:text-lg font-medium text-gray-900 bg-white hover:bg-amber-50 rounded-xl shadow-xl transition-all border border-amber-200/50"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
+              className="group relative inline-flex items-center gap-3 px-8 py-4 text-base sm:px-10 sm:py-4 sm:text-lg font-semibold tracking-wide text-gray-900 bg-white/95 backdrop-blur-sm rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.12),0_0_0_1px_rgba(251,191,36,0.2)] border border-amber-100/80 overflow-hidden"
+              whileHover={{
+                scale: 1.04,
+                y: -4,
+                boxShadow: '0 20px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(251,191,36,0.3)'
+              }}
+              whileTap={{ scale: 0.98, y: 0 }}
+              transition={{ type: 'tween', duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
             >
-              Voir le menu
-              <ChevronRight className="w-5 h-5" />
+              {/* Lueur douce au survol */}
+              <span className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/10 to-amber-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="relative">Voir le menu</span>
+              <span className="relative flex items-center justify-center transition-transform duration-300 ease-out group-hover:translate-x-1">
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600 group-hover:text-amber-700 transition-colors duration-300" />
+              </span>
             </motion.span>
           </Link>
         </motion.div>

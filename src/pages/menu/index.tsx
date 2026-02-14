@@ -86,6 +86,28 @@ const menuCategories = [
   }
 ];
 
+// Positions et timings déterministes pour éviter le hydration mismatch (Math.random diffère serveur/client)
+const HERO_PARTICLE_COUNT = 20;
+const getHeroParticleStyle = (i: number) => ({
+  left: `${((i * 17 + 5) % 97) + 1}%`,
+  top: `${((i * 23 + 11) % 97) + 1}%`,
+});
+const getHeroParticleTransition = (i: number) => ({
+  duration: 3 + (i % 3),
+  repeat: Infinity,
+  delay: (i % 5) * 0.4,
+});
+const CTA_PARTICLE_COUNT = 30;
+const getCtaParticleStyle = (i: number) => ({
+  left: `${((i * 13 + 7) % 97) + 1}%`,
+  top: `${((i * 19 + 3) % 97) + 1}%`,
+});
+const getCtaParticleTransition = (i: number) => ({
+  duration: 4 + (i % 3),
+  repeat: Infinity,
+  delay: (i % 7) * 0.45,
+});
+
 // Animations
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
@@ -340,24 +362,17 @@ export default function MenuPage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 2 }}
             >
-              {[...Array(20)].map((_, i) => (
+              {[...Array(HERO_PARTICLE_COUNT)].map((_, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-2 h-2 bg-amber-400 rounded-full"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                  }}
+                  style={getHeroParticleStyle(i)}
                   animate={{
                     y: [0, -30, 0],
                     opacity: [0, 1, 0],
                     scale: [0, 1, 0],
                   }}
-                  transition={{
-                    duration: 3 + Math.random() * 2,
-                    repeat: Infinity,
-                    delay: Math.random() * 2,
-                  }}
+                  transition={getHeroParticleTransition(i)}
                 />
               ))}
             </motion.div>
@@ -376,10 +391,10 @@ export default function MenuPage() {
         {/* Carousel des catégories */}
         <section
           ref={carouselRef}
-          className="relative bg-gradient-to-b from-black via-gray-900 to-black overflow-hidden"
+          className="relative bg-gradient-to-b from-black via-gray-900 to-black"
           style={{ height: isMobileCarousel ? 'auto' : `${menuCategories.length * 100}vh`, minHeight: isMobileCarousel ? '85vh' : undefined }}
         >
-          {/* Fond vidéo mobile */}
+          {/* Fond vidéo mobile uniquement (desktop garde le gradient) */}
           <div className="absolute inset-0 z-0 md:hidden">
             <video
               autoPlay
@@ -391,11 +406,12 @@ export default function MenuPage() {
             >
               <source src="/images/carte/background-mobile.mp4" type="video/mp4" />
             </video>
-            <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-gray-900/60 to-black/80" />
           </div>
+
           {/* Mobile : une slide à la fois, swipe + boutons (pas de scroll) */}
           {isMobileCarousel ? (
-            <div className="relative z-10 py-12 px-4 min-h-[85vh] flex flex-col">
+            <div className="py-12 px-4 min-h-[85vh] flex flex-col">
               <div className="text-center mb-6">
                 <h2 className="text-3xl font-black text-white mb-1 tracking-tight">EXPLOREZ</h2>
                 <p className="text-gray-400 text-sm">Glissez ou utilisez les flèches</p>
@@ -525,24 +541,17 @@ export default function MenuPage() {
         >
           {/* Effets de particules */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(30)].map((_, i) => (
+            {[...Array(CTA_PARTICLE_COUNT)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute w-2 h-2 md:w-3 md:h-3 bg-white/30 rounded-full"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                }}
+                style={getCtaParticleStyle(i)}
                 animate={{
                   y: [0, -50, 0],
                   opacity: [0, 1, 0],
                   scale: [0, 1.5, 0],
                 }}
-                transition={{
-                  duration: 4 + Math.random() * 2,
-                  repeat: Infinity,
-                  delay: Math.random() * 3,
-                }}
+                transition={getCtaParticleTransition(i)}
               />
             ))}
           </div>

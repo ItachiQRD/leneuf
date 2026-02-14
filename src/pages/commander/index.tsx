@@ -14,11 +14,20 @@ import TexMexComposer from '@/components/commander/TexMexComposer';
 import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
 import PizzaMenuSelector from '@/components/commander/PizzaMenuSelector';
 import OrderTypeModal from '@/components/checkout/OrderTypeModal';
+const COMMANDER_ACCESS_BLOCKED = true; // Mettre à false pour rouvrir la page de commande
+
 export default function CommanderPage() {
   const router = useRouter();
   const { items, updateQuantity, removeItem, clearCart, total, itemCount, addItem } = useCart();
   const { isAuthenticated, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Accès à la commande temporairement bloqué
+  useEffect(() => {
+    if (COMMANDER_ACCESS_BLOCKED) {
+      router.replace('/');
+    }
+  }, [router]);
   const [selectedCategory, setSelectedCategory] = useState('ptite-faim');
   const [products, setProducts] = useState<any[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
@@ -667,6 +676,14 @@ export default function CommanderPage() {
     // Rediriger vers la page de checkout
     window.location.href = '/checkout';
   };
+
+  if (COMMANDER_ACCESS_BLOCKED) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <p className="text-gray-500">Redirection…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 pt-20">

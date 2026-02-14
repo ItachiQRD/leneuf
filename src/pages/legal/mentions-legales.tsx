@@ -55,7 +55,7 @@ const MentionsLegales: NextPage = () => {
               <p className="text-gray-600 mb-6">
                 Pour toute question concernant ces mentions légales, vous pouvez nous contacter à l'adresse suivante :
                 <br />
-                Email : contact@leneuf.fr
+                Email : leneuf2018@gmail.com
               </p>
             </div>
 

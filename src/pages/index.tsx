@@ -610,7 +610,7 @@ export default function Home() {
                   <h3 className="text-xl font-light text-gray-900 mb-2">Adresse</h3>
                   <p className="text-gray-600">
                     9 route de Bétheny<br />
-                    51100 Reims, France
+                    51450 Bétheny
                   </p>
                 </div>
               </div>
@@ -636,8 +636,8 @@ export default function Home() {
                     </a>
                   </p>
                   <p className="text-gray-600">
-                    <a href="mailto:contact@le9.fr" className="hover:text-gray-900 transition-colors">
-                      contact@le9.fr
+                    <a href="mailto:leneuf2018@gmail.com" className="hover:text-gray-900 transition-colors">
+                      leneuf2018@gmail.com
                     </a>
                   </p>
                 </div>
@@ -652,7 +652,7 @@ export default function Home() {
               transition={{ duration: 0.9, ease: [0.22, 0.61, 0.36, 1] }}
             >
               <iframe
-                src="https://www.google.com/maps?q=9+Route+de+B%C3%A9theny,+51100+Reims,+France&output=embed&z=16"
+                src="https://www.google.com/maps?q=9+Route+de+B%C3%A9theny,+51450+B%C3%A9theny,+France&output=embed&z=16"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -660,12 +660,12 @@ export default function Home() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="rounded-lg"
-                title="Localisation Le 9 Restaurant - 9 route de Bétheny, 51100 Reims"
+                title="Localisation Le 9 Restaurant - 9 route de Bétheny, 51450 Bétheny"
               />
               <div className="absolute inset-0 bg-black/10" />
               <div className="absolute top-4 left-4 right-4">
                 <Link
-                  href="https://www.google.com/maps/search/9+route+de+Bétheny+51100+Reims"
+                  href="https://www.google.com/maps/search/9+route+de+Bétheny+51450+Bétheny"
                   target="_blank"
                   className="inline-flex items-center px-4 py-2 bg-white text-gray-900 text-sm font-medium hover:bg-gray-100 transition-colors shadow-lg rounded-lg"
                 >

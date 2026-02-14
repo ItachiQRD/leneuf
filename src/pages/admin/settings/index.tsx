@@ -84,7 +84,7 @@ export default function AdminSettingsPage() {
     name: 'Le 9',
     address: '9 route de Bétheny, 51100 Reims',
     phone: '0326407967',
-    email: 'contact@leneuf.fr',
+    email: 'leneuf2018@gmail.com',
     website: 'https://leneuf.fr',
   });
 
@@ -336,7 +336,7 @@ export default function AdminSettingsPage() {
                     onChange={(e) =>
                       setRestaurantSettings({ ...restaurantSettings, email: e.target.value })
                     }
-                    placeholder="contact@leneuf.fr"
+                    placeholder="leneuf2018@gmail.com"
                   />
                 </div>
                 <div>

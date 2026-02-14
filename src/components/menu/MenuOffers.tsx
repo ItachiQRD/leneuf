@@ -116,7 +116,7 @@ export default function MenuOffers() {
             </div>
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base">
-                <strong>Téléphone :</strong> 03 26 40 79 67 — <strong>Adresse :</strong> 9 Route de Bétheny, 51450 Reims
+                <strong>Téléphone :</strong> 03 26 40 79 67 — <strong>Adresse :</strong> 9 Route de Bétheny, 51450 Bétheny
               </p>
             </div>
           </div>

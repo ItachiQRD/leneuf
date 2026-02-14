@@ -267,7 +267,7 @@ export default function ContactPage() {
                       content: (
                         <>
                           9 route de Bétheny<br />
-                          51100 Reims, France
+                          51450 Bétheny
                         </>
                       ),
                       color: "from-red-500 to-pink-500",
@@ -288,8 +288,8 @@ export default function ContactPage() {
                       icon: Mail,
                       title: "Email",
                       content: (
-                        <a href="mailto:contact@le9.fr" className="hover:text-red-600 transition-colors">
-                          contact@le9.fr
+                        <a href="mailto:leneuf2018@gmail.com" className="hover:text-red-600 transition-colors">
+                          leneuf2018@gmail.com
                         </a>
                       ),
                       color: "from-green-500 to-emerald-500",
@@ -352,7 +352,7 @@ export default function ContactPage() {
                   </h3>
                   <div className="w-full h-64 rounded-lg overflow-hidden shadow-md">
                     <iframe
-                      src="https://www.google.com/maps?q=9+Route+de+B%C3%A9theny,+51100+Reims,+France&output=embed&z=16"
+                      src="https://www.google.com/maps?q=9+Route+de+B%C3%A9theny,+51450+B%C3%A9theny,+France&output=embed&z=16"
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
@@ -360,7 +360,7 @@ export default function ContactPage() {
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
                       className="rounded-lg"
-                      title="Localisation Le 9 Restaurant - 9 route de Bétheny, 51100 Reims"
+                      title="Localisation Le 9 Restaurant - 9 route de Bétheny, 51450 Bétheny"
                     />
                   </div>
                 </motion.div>

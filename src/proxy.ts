@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyTokenEdge } from '@/utils/jwt';
 
 // Routes qui ne nécessitent pas d'authentification
 const publicRoutes = [
@@ -45,11 +44,11 @@ interface JWTPayload {
   isAdmin: boolean;
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Ignorer les routes publiques et les fichiers statiques
-  if (publicRoutes.some(route => pathname.startsWith(route)) || 
+  if (publicRoutes.some(route => pathname.startsWith(route)) ||
       pathname.startsWith('/_next') ||
       pathname.startsWith('/static') ||
       pathname.startsWith('/favicon') ||

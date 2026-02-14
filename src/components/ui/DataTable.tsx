@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Input } from './Input';
 
 interface Column {
   header: string;
   accessorKey?: string;
-  cell?: (props: { row: any }) => string | JSX.Element;
+  cell?: (props: { row: any }) => string | React.ReactElement;
 }
 
 interface DataTableProps {

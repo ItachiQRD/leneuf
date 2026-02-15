@@ -453,7 +453,7 @@ export default function MenuPage() {
                 </motion.button>
 
                 <motion.div
-                  className="w-full max-w-[min(360px,92vw)] mx-auto overflow-visible touch-pan-y select-none"
+                  className="relative w-full max-w-[min(360px,92vw)] mx-auto overflow-hidden touch-pan-y select-none min-h-[320px] sm:min-h-[380px]"
                   drag="x"
                   dragConstraints={{ left: 0, right: 0 }}
                   dragElastic={0.15}
@@ -469,7 +469,7 @@ export default function MenuPage() {
                   }}
                   style={{ touchAction: 'pan-y' }}
                 >
-                  <AnimatePresence mode="wait" initial={false}>
+                  <AnimatePresence initial={false} mode="sync">
                     {menuCategories.map((category, index) => {
                       if (index !== mobileCarouselIndex) return null;
                       const Icon = category.icon;
@@ -477,29 +477,28 @@ export default function MenuPage() {
                       return (
                         <motion.div
                           key={category.id}
-                          initial={{ opacity: 0, x: direction * 80, scale: 0.92 }}
+                          initial={{ opacity: 0, x: direction * 80, scale: 0.96 }}
                           animate={{
                             opacity: 1,
                             x: 0,
                             scale: 1,
                             transition: {
                               type: 'spring',
-                              stiffness: 320,
-                              damping: 30,
+                              stiffness: 400,
+                              damping: 35,
                             },
                           }}
                           exit={{
                             opacity: 0,
                             x: -direction * 80,
-                            scale: 0.92,
+                            scale: 0.96,
                             transition: {
                               type: 'spring',
-                              stiffness: 300,
-                              damping: 28,
-                              duration: 0.2,
+                              stiffness: 400,
+                              damping: 35,
                             },
                           }}
-                          className="w-full"
+                          className="absolute inset-0 w-full flex items-center justify-center"
                         >
                           <Link href={category.href} className="block active:opacity-95">
                             <motion.div
@@ -510,9 +509,9 @@ export default function MenuPage() {
                               <div className="relative aspect-[3/4] min-h-[320px] sm:min-h-[380px] overflow-hidden">
                                 <motion.div
                                   className="absolute inset-0"
-                                  initial={{ scale: 1.08 }}
+                                  initial={{ scale: 1.05 }}
                                   animate={{ scale: 1 }}
-                                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                                  transition={{ duration: 0.35, ease: 'easeOut' }}
                                 >
                                   <Image
                                     src={category.image || '/images/menu/pizzas.jpg'}
@@ -532,8 +531,8 @@ export default function MenuPage() {
                                     hidden: {},
                                     visible: {
                                       transition: {
-                                        staggerChildren: 0.08,
-                                        delayChildren: 0.12,
+                                        staggerChildren: 0.04,
+                                        delayChildren: 0.04,
                                       },
                                     },
                                   }}

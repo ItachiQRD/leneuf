@@ -412,9 +412,9 @@ export default function MenuPage() {
 
           {/* Mobile : une slide à la fois, swipe + boutons, dimensions et animations adaptées */}
           {isMobileCarousel ? (
-            <div className="min-h-[100dvh] flex flex-col py-6 px-3 sm:px-4">
+            <div className="min-h-[100dvh] flex flex-col py-3 px-2 sm:py-4 sm:px-3">
               <motion.div
-                className="text-center mb-4 sm:mb-6"
+                className="text-center mb-2 sm:mb-3 flex-shrink-0"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -423,7 +423,7 @@ export default function MenuPage() {
                 <p className="text-gray-400 text-xs sm:text-sm">Glissez ou utilisez les flèches</p>
               </motion.div>
 
-              <div className="flex-1 flex items-center justify-center relative min-h-0">
+              <div className="flex-1 flex items-center justify-center relative min-h-0 w-full">
                 {/* Boutons précédent / suivant — plus grands, avec animation */}
                 <motion.button
                   type="button"
@@ -453,7 +453,7 @@ export default function MenuPage() {
                 </motion.button>
 
                 <motion.div
-                  className="relative w-full max-w-[min(360px,92vw)] mx-auto overflow-hidden touch-pan-y select-none min-h-[320px] sm:min-h-[380px]"
+                  className="relative w-full max-w-[min(480px,96vw)] mx-auto overflow-hidden touch-pan-y select-none min-h-[62dvh] sm:min-h-[68dvh]"
                   drag="x"
                   dragConstraints={{ left: 0, right: 0 }}
                   dragElastic={0.15}
@@ -498,15 +498,15 @@ export default function MenuPage() {
                               damping: 35,
                             },
                           }}
-                          className="absolute inset-0 w-full flex items-center justify-center"
+                          className="absolute inset-0 w-full flex items-stretch justify-center"
                         >
-                          <Link href={category.href} className="block active:opacity-95">
+                          <Link href={category.href} className="block w-full h-full active:opacity-95">
                             <motion.div
-                              className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl ring-2 ring-white/10"
+                              className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl ring-2 ring-white/10 w-full h-full"
                               whileTap={{ scale: 0.98 }}
                               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                             >
-                              <div className="relative aspect-[3/4] min-h-[320px] sm:min-h-[380px] overflow-hidden">
+                              <div className="relative w-full h-full overflow-hidden">
                                 <motion.div
                                   className="absolute inset-0"
                                   initial={{ scale: 1.05 }}
@@ -518,7 +518,7 @@ export default function MenuPage() {
                                     alt={category.title}
                                     fill
                                     className="object-cover"
-                                    sizes="(max-width: 400px) 92vw, 360px"
+                                    sizes="(max-width: 520px) 96vw, 480px"
                                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                                   />
                                 </motion.div>

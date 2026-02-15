@@ -22,12 +22,7 @@ export default function CommanderPage() {
   const { isAuthenticated, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Accès à la commande temporairement bloqué
-  useEffect(() => {
-    if (COMMANDER_ACCESS_BLOCKED) {
-      router.replace('/');
-    }
-  }, [router]);
+  // Pas de redirection : on affiche la page "commande indisponible" ci-dessous
   const [selectedCategory, setSelectedCategory] = useState('ptite-faim');
   const [products, setProducts] = useState<any[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
@@ -679,8 +674,32 @@ export default function CommanderPage() {
 
   if (COMMANDER_ACCESS_BLOCKED) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p className="text-gray-500">Redirection…</p>
+      <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white pt-20 pb-12 px-4">
+        <div className="max-w-lg mx-auto text-center">
+          <div className="mb-6 text-6xl">🍔</div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+            Nous sommes désolés pour ce désagrément
+          </h1>
+          <p className="text-gray-600 mb-8">
+            La commande en ligne sera à nouveau disponible très bientôt. En attendant, vous pouvez consulter notre menu et nous appeler pour commander.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/menu"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-6 py-3 font-semibold text-white shadow-sm hover:bg-red-700 transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+              Voir le menu
+            </Link>
+            <a
+              href="tel:0326407967"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Phone className="w-5 h-5" />
+              Commander par téléphone : 03 26 40 79 67
+            </a>
+          </div>
+        </div>
       </div>
     );
   }

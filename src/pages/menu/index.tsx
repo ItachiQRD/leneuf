@@ -233,6 +233,7 @@ export default function MenuPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
+  const mobileSlideDirection = useRef(1); // 1 = vers la droite (slide depuis la droite), -1 = vers la gauche
   const [isMobileCarousel, setIsMobileCarousel] = useState(false);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -409,77 +410,166 @@ export default function MenuPage() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-gray-900/60 to-black/80" />
           </div>
 
-          {/* Mobile : une slide à la fois, swipe + boutons (pas de scroll) */}
+          {/* Mobile : une slide à la fois, swipe + boutons, dimensions et animations adaptées */}
           {isMobileCarousel ? (
-            <div className="py-12 px-4 min-h-[85vh] flex flex-col">
-              <div className="text-center mb-6">
-                <h2 className="text-3xl font-black text-white mb-1 tracking-tight">EXPLOREZ</h2>
-                <p className="text-gray-400 text-sm">Glissez ou utilisez les flèches</p>
-              </div>
-              <div className="flex-1 flex items-center justify-center relative">
+            <div className="min-h-[100dvh] flex flex-col py-6 px-3 sm:px-4">
+              <motion.div
+                className="text-center mb-4 sm:mb-6"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+              >
+                <h2 className="text-2xl sm:text-3xl font-black text-white mb-0.5 tracking-tight">EXPLOREZ</h2>
+                <p className="text-gray-400 text-xs sm:text-sm">Glissez ou utilisez les flèches</p>
+              </motion.div>
+
+              <div className="flex-1 flex items-center justify-center relative min-h-0">
+                {/* Boutons précédent / suivant — plus grands, avec animation */}
                 <motion.button
                   type="button"
                   aria-label="Précédent"
-                  className="absolute left-2 z-10 w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white touch-none"
-                  onClick={() => setMobileCarouselIndex((i) => (i === 0 ? menuCategories.length - 1 : i - 1))}
+                  className="absolute left-1 sm:left-2 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-white touch-manipulation active:scale-95 transition-transform shadow-lg"
+                  onClick={() => {
+                    mobileSlideDirection.current = -1;
+                    setMobileCarouselIndex((i) => (i === 0 ? menuCategories.length - 1 : i - 1));
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.25)' }}
                 >
-                  <ChevronLeft className="w-6 h-6" />
+                  <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
                 </motion.button>
                 <motion.button
                   type="button"
                   aria-label="Suivant"
-                  className="absolute right-2 z-10 w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white touch-none"
-                  onClick={() => setMobileCarouselIndex((i) => (i === menuCategories.length - 1 ? 0 : i + 1))}
+                  className="absolute right-1 sm:right-2 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-white touch-manipulation active:scale-95 transition-transform shadow-lg"
+                  onClick={() => {
+                    mobileSlideDirection.current = 1;
+                    setMobileCarouselIndex((i) => (i === menuCategories.length - 1 ? 0 : i + 1));
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.25)' }}
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
                 </motion.button>
+
                 <motion.div
-                  className="w-full max-w-[340px] mx-auto overflow-hidden touch-pan-y"
+                  className="w-full max-w-[min(360px,92vw)] mx-auto overflow-visible touch-pan-y select-none"
                   drag="x"
                   dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
+                  dragElastic={0.15}
                   onDragEnd={(_, info) => {
-                    if (info.offset.x > 60) setMobileCarouselIndex((i) => (i === 0 ? menuCategories.length - 1 : i - 1));
-                    if (info.offset.x < -60) setMobileCarouselIndex((i) => (i === menuCategories.length - 1 ? 0 : i + 1));
+                    if (info.offset.x > 50) {
+                      mobileSlideDirection.current = -1;
+                      setMobileCarouselIndex((i) => (i === 0 ? menuCategories.length - 1 : i - 1));
+                    }
+                    if (info.offset.x < -50) {
+                      mobileSlideDirection.current = 1;
+                      setMobileCarouselIndex((i) => (i === menuCategories.length - 1 ? 0 : i + 1));
+                    }
                   }}
+                  style={{ touchAction: 'pan-y' }}
                 >
                   <AnimatePresence mode="wait" initial={false}>
                     {menuCategories.map((category, index) => {
                       if (index !== mobileCarouselIndex) return null;
                       const Icon = category.icon;
+                      const direction = mobileSlideDirection.current;
                       return (
                         <motion.div
                           key={category.id}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -20 }}
-                          transition={{ type: 'tween', duration: 0.25 }}
+                          initial={{ opacity: 0, x: direction * 80, scale: 0.92 }}
+                          animate={{
+                            opacity: 1,
+                            x: 0,
+                            scale: 1,
+                            transition: {
+                              type: 'spring',
+                              stiffness: 320,
+                              damping: 30,
+                            },
+                          }}
+                          exit={{
+                            opacity: 0,
+                            x: -direction * 80,
+                            scale: 0.92,
+                            transition: {
+                              type: 'spring',
+                              stiffness: 300,
+                              damping: 28,
+                              duration: 0.2,
+                            },
+                          }}
                           className="w-full"
                         >
-                          <Link href={category.href} className="block">
-                            <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-                              <div className="relative aspect-[4/3] overflow-hidden">
-                                <Image
-                                  src={category.image || '/images/menu/pizzas.jpg'}
-                                  alt={category.title}
-                                  fill
-                                  className="object-cover"
-                                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                />
-                                <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent ${category.color} opacity-70`} />
-                                <div className="absolute inset-0 flex flex-col justify-end p-5">
-                                  <div className={`inline-flex w-12 h-12 rounded-full ${category.bgColor} items-center justify-center mb-2 shadow-xl`}>
-                                    <Icon className="w-6 h-6 text-white" />
-                                  </div>
-                                  <h3 className="text-2xl font-black text-white tracking-tight">{category.title}</h3>
-                                  <p className="text-sm text-white/90 font-light mb-2">{category.subtitle}</p>
-                                  <div className="flex items-center gap-2 text-white/90 text-sm">
+                          <Link href={category.href} className="block active:opacity-95">
+                            <motion.div
+                              className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl ring-2 ring-white/10"
+                              whileTap={{ scale: 0.98 }}
+                              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                            >
+                              <div className="relative aspect-[3/4] min-h-[320px] sm:min-h-[380px] overflow-hidden">
+                                <motion.div
+                                  className="absolute inset-0"
+                                  initial={{ scale: 1.08 }}
+                                  animate={{ scale: 1 }}
+                                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                                >
+                                  <Image
+                                    src={category.image || '/images/menu/pizzas.jpg'}
+                                    alt={category.title}
+                                    fill
+                                    className="object-cover"
+                                    sizes="(max-width: 400px) 92vw, 360px"
+                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                  />
+                                </motion.div>
+                                <div className={`absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent ${category.color} opacity-75`} />
+                                <motion.div
+                                  className="absolute inset-0 flex flex-col justify-end p-5 sm:p-6"
+                                  initial="hidden"
+                                  animate="visible"
+                                  variants={{
+                                    hidden: {},
+                                    visible: {
+                                      transition: {
+                                        staggerChildren: 0.08,
+                                        delayChildren: 0.12,
+                                      },
+                                    },
+                                  }}
+                                >
+                                  <motion.div
+                                    className={`inline-flex w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${category.bgColor} items-center justify-center mb-3 shadow-xl`}
+                                    variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                  >
+                                    <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                                  </motion.div>
+                                  <motion.h3
+                                    className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight"
+                                    variants={{ hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                  >
+                                    {category.title}
+                                  </motion.h3>
+                                  <motion.p
+                                    className="text-sm sm:text-base text-white/90 font-light mt-1 mb-3"
+                                    variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                  >
+                                    {category.subtitle}
+                                  </motion.p>
+                                  <motion.div
+                                    className="flex items-center gap-2 text-white/90 text-sm"
+                                    variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                  >
                                     <span className="font-semibold">{category.count} produit{category.count !== 1 ? 's' : ''}</span>
                                     <span className="flex items-center gap-1 font-semibold">Découvrir <ArrowRight className="w-4 h-4" /></span>
-                                  </div>
-                                </div>
+                                  </motion.div>
+                                </motion.div>
                               </div>
-                            </div>
+                            </motion.div>
                           </Link>
                         </motion.div>
                       );
@@ -487,17 +577,37 @@ export default function MenuPage() {
                   </AnimatePresence>
                 </motion.div>
               </div>
-              <div className="flex justify-center gap-2 mt-6">
+
+              {/* Indicateurs de slide — plus visibles et animés */}
+              <motion.div
+                className="flex justify-center gap-2 sm:gap-2.5 mt-5 sm:mt-6 pb-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
                 {menuCategories.map((_, i) => (
-                  <button
+                  <motion.button
                     key={i}
                     type="button"
-                    aria-label={`Slide ${i + 1}`}
-                    className={`w-2 h-2 rounded-full transition-colors ${i === mobileCarouselIndex ? 'bg-white w-6' : 'bg-white/40'}`}
-                    onClick={() => setMobileCarouselIndex(i)}
-                  />
+                    aria-label={`Catégorie ${i + 1}`}
+                    onClick={() => {
+                      mobileSlideDirection.current = i > mobileCarouselIndex ? 1 : -1;
+                      setMobileCarouselIndex(i);
+                    }}
+                    className="rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <motion.span
+                      className="block h-2 sm:h-2.5 rounded-full bg-white/40"
+                      animate={{
+                        width: i === mobileCarouselIndex ? 24 : 8,
+                        backgroundColor: i === mobileCarouselIndex ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0.4)',
+                      }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  </motion.button>
                 ))}
-              </div>
+              </motion.div>
             </div>
           ) : (
             <>

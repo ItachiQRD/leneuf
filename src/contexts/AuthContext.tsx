@@ -50,8 +50,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    // Rediriger les utilisateurs connectés hors des pages auth
-    if (user && path.startsWith('/auth/')) {
+    // Rediriger les utilisateurs connectés hors des pages auth (sauf réinitialisation mot de passe)
+    if (user && path.startsWith('/auth/') && path !== '/auth/nouveau-mot-de-passe') {
       router.replace(user.isAdmin ? '/admin' : '/');
       return;
     }
@@ -260,6 +260,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const refreshUser = async () => {
+    await checkAuth();
+  };
+
   const value = {
     user,
     loading,
@@ -267,6 +271,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     login,
     register,
     logout,
+    refreshUser,
     isAuthenticated: !!user,
     isAdmin: user?.isAdmin || false
   };

@@ -9,69 +9,59 @@ interface JWTPayload {
   isAdmin: boolean;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log('\n👤 /api/auth/me - Vérification de session');
-  console.log('🔧 JWT_SECRET défini:', !!process.env.JWT_SECRET);
-  console.log('🍪 Cookies reçus:', req.cookies);
+function toUserInfo(user: { _id: unknown; name: string; email: string; phone: string; address: unknown; isAdmin: boolean }) {
+  return {
+    _id: String(user._id),
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    address: user.address,
+    isAdmin: user.isAdmin
+  };
+}
 
-  if (req.method !== 'GET') {
-    console.log('❌ Méthode non autorisée:', req.method);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET' && req.method !== 'PATCH') {
     return res.status(405).json({ message: 'Méthode non autorisée' });
   }
 
   try {
-    // Récupérer le token du cookie
     const token = req.cookies.token;
-    console.log('🔍 Recherche du token dans les cookies...');
-    console.log('🔑 Token trouvé:', !!token);
+    if (!token) return res.status(401).json({ message: 'Non authentifié' });
 
-    if (!token) {
-      console.log('❌ Pas de token trouvé');
-      return res.status(401).json({ message: 'Non authentifié' });
-    }
-
-    console.log('✅ Token trouvé, vérification...');
-
-    // Vérifier et décoder le token
     const decoded = verifyToken(token) as JWTPayload;
+    if (!decoded) return res.status(401).json({ message: 'Token invalide' });
 
-    if (!decoded) {
-      console.log('❌ Token invalide ou expiré');
-      return res.status(401).json({ message: 'Token invalide' });
-    }
-
-    console.log('✅ Token valide pour userId:', decoded.userId);
-
-    // Connexion à la base de données
-    console.log('🔌 Connexion à la base de données...');
     await dbConnect();
-    console.log('✅ Connecté à la base de données');
 
-    // Récupérer l'utilisateur (sans le mot de passe)
-    console.log('🔍 Recherche de l\'utilisateur:', decoded.userId);
-    const user = await User.findById(decoded.userId).select('-password');
-
-    if (!user) {
-      console.log('❌ Utilisateur non trouvé dans la base de données');
-      return res.status(401).json({ message: 'Utilisateur non trouvé' });
+    if (req.method === 'GET') {
+      const user = await User.findById(decoded.userId).select('-password');
+      if (!user) return res.status(401).json({ message: 'Utilisateur non trouvé' });
+      return res.status(200).json({ user: toUserInfo(user) });
     }
 
-    console.log('✅ Utilisateur trouvé:', user.email);
-
-    // Retourner les informations de l'utilisateur
-    const userInfo = {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      address: user.address,
-      isAdmin: user.isAdmin
-    };
-
-    console.log('📤 Envoi des informations utilisateur');
-    res.status(200).json({ user: userInfo });
+    if (req.method === 'PATCH') {
+      const { name, phone, address } = req.body || {};
+      const update: Record<string, unknown> = {};
+      if (typeof name === 'string' && name.trim()) update.name = name.trim();
+      if (typeof phone === 'string' && phone.trim()) update.phone = phone.trim();
+      if (address && typeof address === 'object') {
+        const a = address as { street?: string; city?: string; postalCode?: string; complement?: string };
+        if (typeof a.street === 'string' && a.street.trim()) update['address.street'] = a.street.trim();
+        if (typeof a.city === 'string' && a.city.trim()) update['address.city'] = a.city.trim();
+        if (typeof a.postalCode === 'string' && /^[0-9]{5}$/.test(a.postalCode)) update['address.postalCode'] = a.postalCode;
+        if (typeof a.complement === 'string') update['address.complement'] = a.complement;
+      }
+      const updated = await User.findByIdAndUpdate(
+        decoded.userId,
+        { $set: update },
+        { new: true }
+      ).select('-password');
+      if (!updated) return res.status(401).json({ message: 'Utilisateur non trouvé' });
+      return res.status(200).json({ user: toUserInfo(updated) });
+    }
   } catch (error) {
-    console.error('❌ Erreur dans /api/auth/me:', error);
-    res.status(401).json({ message: 'Token invalide' });
+    console.error('Erreur /api/auth/me:', error);
+    return res.status(401).json({ message: 'Token invalide' });
   }
 }

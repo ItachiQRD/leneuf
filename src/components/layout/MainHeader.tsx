@@ -41,16 +41,38 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
       transition={{ duration: 0.5 }}
     >
       <div className="w-full mx-auto relative">
-        <div className="flex items-center justify-center h-24 px-8 relative">
-          {/* Logo - Mobile only */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
+        <div className="flex items-center justify-between md:justify-center h-24 px-4 md:px-8 relative">
+          {/* Mobile : panier à gauche */}
+          <div className="flex items-center md:hidden w-12 flex-shrink-0">
+            <motion.button
+              onClick={onOpenCart}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className={`relative p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 ${textColor}`}
+              aria-label="Panier"
+            >
+              <ShoppingCart className="w-7 h-7" />
+              {itemCount > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-0.5 -right-0.5 bg-gradient-to-r from-red-600 to-red-700 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg"
+                >
+                  {itemCount}
+                </motion.span>
+              )}
+            </motion.button>
+          </div>
+
+          {/* Logo - Mobile : centré et agrandi */}
+          <div className="flex-1 flex justify-center md:hidden">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link href="/">
                 <Image
                   src="/images/logo.png"
                   alt="Le 9 Logo"
-                  width={40}
-                  height={40}
+                  width={72}
+                  height={72}
                   className="drop-shadow-lg"
                   style={{ width: 'auto', height: 'auto' }}
                 />
@@ -176,8 +198,8 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
             </motion.div>
           </div>
 
-          {/* Partie droite : Auth, Cart, Mobile menu */}
-          <div className="absolute right-8 flex items-center space-x-3">
+          {/* Partie droite : Auth (desktop), Cart (desktop), Menu (mobile) */}
+          <div className="flex md:absolute md:right-8 items-center justify-end space-x-3 w-12 md:w-auto flex-shrink-0">
             {/* Auth */}
             <div className="hidden md:block">
               {isAuthenticated ? (
@@ -316,12 +338,12 @@ export default function MainHeader({ onOpenCart }: MainHeaderProps) {
               )}
             </div>
 
-            {/* Cart Button avec animation */}
+            {/* Cart Button (desktop uniquement ; sur mobile le panier est à gauche du logo) */}
             <motion.button
               onClick={onOpenCart}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className={`relative p-3 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 ${textColor}`}
+              className={`hidden md:block relative p-3 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 ${textColor}`}
               aria-label="Panier"
             >
               <ShoppingCart className="w-6 h-6" />

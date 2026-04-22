@@ -14,7 +14,7 @@ import TexMexComposer from '@/components/commander/TexMexComposer';
 import MenuEnfantsComposer from '@/components/commander/MenuEnfantsComposer';
 import PizzaMenuSelector from '@/components/commander/PizzaMenuSelector';
 import OrderTypeModal from '@/components/checkout/OrderTypeModal';
-const COMMANDER_ACCESS_BLOCKED = true; // Mettre à false pour rouvrir la page de commande
+const COMMANDER_ACCESS_BLOCKED = false; // Mettre à true pour bloquer la page de commande
 
 export default function CommanderPage() {
   const router = useRouter();

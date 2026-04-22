@@ -1,22 +1,29 @@
 import { useState, useEffect } from 'react';
 import { useCustomerData, CustomerData } from '@/hooks/useCustomerData';
-import { User, Phone, MapPin, CreditCard, Banknote, MessageSquare, UserPlus } from 'lucide-react';
+import { User, Phone, MapPin, CreditCard, Banknote, MessageSquare, UserPlus, AlertTriangle, CheckCircle, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/Buttons';
 import { AddressAutocomplete } from '@/components/common/AddressAutocomplete';
+import { haversineKm } from '@/utils/distance';
+import { RESTAURANT_COORDS, getDeliveryZone, MAX_DELIVERY_KM, type DeliveryZone } from '@/config/delivery';
 
 interface DeliveryFormProps {
   onSubmit: (data: CustomerData) => void;
   isLoading?: boolean;
   onShowAccountModal?: () => void;
   orderType?: 'delivery' | 'pickup';
+  onDeliveryInfoChange?: (fee: number, zone: DeliveryZone | null, distanceKm: number | null) => void;
+  cartTotal?: number;
 }
 
-export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccountModal, orderType = 'delivery' }: DeliveryFormProps) {
+export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccountModal, orderType = 'delivery', onDeliveryInfoChange, cartTotal = 0 }: DeliveryFormProps) {
   const { customerData, updateCustomerData } = useCustomerData();
   const [formData, setFormData] = useState<CustomerData>(customerData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
   const [isAddressConfirmed, setIsAddressConfirmed] = useState(false);
+  const [deliveryDistanceKm, setDeliveryDistanceKm] = useState<number | null>(null);
+  const [deliveryZone, setDeliveryZone] = useState<DeliveryZone | null>(null);
+  const [distanceError, setDistanceError] = useState<string | null>(null);
 
   // Mettre à jour le formulaire quand les données des cookies changent
   useEffect(() => {
@@ -47,6 +54,10 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
         newErrors.address = 'L\'adresse est requise';
       } else if (!selectedAddress || !isAddressConfirmed) {
         newErrors.address = 'Veuillez sélectionner et confirmer une adresse valide dans la liste';
+      } else if (distanceError) {
+        newErrors.address = distanceError;
+      } else if (deliveryZone && cartTotal > 0 && cartTotal < deliveryZone.minOrder) {
+        newErrors.address = `Commande minimum de ${deliveryZone.minOrder} € pour cette zone de livraison (${deliveryZone.label}).`;
       }
     }
 
@@ -72,12 +83,32 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
   const handleAddressSelect = (address: any) => {
     setSelectedAddress(address);
     setIsAddressConfirmed(true);
-    // Effacer l'erreur d'adresse si elle existe
     if (errors.address) {
-      setErrors(prev => ({
-        ...prev,
-        address: ''
-      }));
+      setErrors(prev => ({ ...prev, address: '' }));
+    }
+
+    // Calcul de la distance avec le restaurant
+    if (address?.lat && address?.lon) {
+      const km = haversineKm(
+        RESTAURANT_COORDS.lat,
+        RESTAURANT_COORDS.lon,
+        parseFloat(address.lat),
+        parseFloat(address.lon)
+      );
+      const rounded = Math.round(km * 10) / 10;
+      setDeliveryDistanceKm(rounded);
+
+      if (rounded > MAX_DELIVERY_KM) {
+        const err = `Votre adresse est à ${rounded} km du restaurant. Nous ne livrons que dans un rayon de ${MAX_DELIVERY_KM} km.`;
+        setDistanceError(err);
+        setDeliveryZone(null);
+        onDeliveryInfoChange?.(0, null, rounded);
+      } else {
+        const zone = getDeliveryZone(rounded);
+        setDeliveryZone(zone);
+        setDistanceError(null);
+        onDeliveryInfoChange?.(zone?.fee ?? 0, zone, rounded);
+      }
     }
   };
 
@@ -164,29 +195,65 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
             />
             {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
             {selectedAddress && isAddressConfirmed && (
-              <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center text-sm text-green-700">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  <span className="font-medium">Adresse validée :</span>
+              <div className="mt-2 space-y-2">
+                <div className="p-2 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center text-sm text-green-700">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span className="font-medium">Adresse validée :</span>
+                  </div>
+                  <div className="text-sm text-green-600 mt-1">
+                    {(() => {
+                      const address = selectedAddress.address;
+                      if (!address) return selectedAddress.display_name;
+                      const parts = [];
+                      if (address.house_number && address.road) parts.push(`${address.house_number} ${address.road}`);
+                      else if (address.road) parts.push(address.road);
+                      if (address.postcode && address.city) parts.push(`${address.postcode} ${address.city}`);
+                      return parts.join(', ') || selectedAddress.display_name;
+                    })()}
+                  </div>
                 </div>
-                <div className="text-sm text-green-600 mt-1">
-                  {(() => {
-                    const address = selectedAddress.address;
-                    if (!address) return selectedAddress.display_name;
-                    
-                    const parts = [];
-                    if (address.house_number && address.road) {
-                      parts.push(`${address.house_number} ${address.road}`);
-                    } else if (address.road) {
-                      parts.push(address.road);
-                    }
-                    if (address.postcode && address.city) {
-                      parts.push(`${address.postcode} ${address.city}`);
-                    }
-                    
-                    return parts.join(', ') || selectedAddress.display_name;
-                  })()}
-                </div>
+
+                {/* Affichage de la zone de livraison */}
+                {deliveryDistanceKm !== null && (
+                  distanceError ? (
+                    <div className="flex items-start gap-2 rounded-lg border border-red-300 bg-red-50 p-3">
+                      <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-semibold text-red-700">Zone non desservie</p>
+                        <p className="text-sm text-red-600">{distanceError}</p>
+                      </div>
+                    </div>
+                  ) : deliveryZone && (
+                    <div className={`flex items-start gap-2 rounded-lg border p-3 ${
+                      deliveryZone.fee === 0 ? 'border-green-300 bg-green-50' : 'border-amber-300 bg-amber-50'
+                    }`}>
+                      <div className="flex-shrink-0 mt-0.5">
+                        {deliveryZone.fee === 0
+                          ? <CheckCircle className="w-5 h-5 text-green-600" />
+                          : <Truck className="w-5 h-5 text-amber-600" />
+                        }
+                      </div>
+                      <div>
+                        <p className={`text-sm font-semibold ${deliveryZone.fee === 0 ? 'text-green-700' : 'text-amber-700'}`}>
+                          Zone {deliveryZone.label} — à {deliveryDistanceKm} km
+                        </p>
+                        <p className={`text-sm ${deliveryZone.fee === 0 ? 'text-green-600' : 'text-amber-600'}`}>
+                          {deliveryZone.fee === 0
+                            ? 'Livraison gratuite'
+                            : `Frais de livraison : ${deliveryZone.fee.toFixed(2)} €`
+                          }
+                          {' · '}Commande minimum : {deliveryZone.minOrder} €
+                          {cartTotal > 0 && cartTotal < deliveryZone.minOrder && (
+                            <span className="block mt-0.5 font-medium text-red-600">
+                              Il manque {(deliveryZone.minOrder - cartTotal).toFixed(2)} € pour atteindre le minimum.
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
             )}
           </div>

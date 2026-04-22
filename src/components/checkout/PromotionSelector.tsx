@@ -14,6 +14,7 @@ interface PromotionSelectorProps {
   items: CartItem[];
   onPromotionApplied: (discount: number, description: string) => void;
   onPromotionRemoved: () => void;
+  orderType?: 'delivery' | 'pickup';
 }
 
 interface Promotion {
@@ -45,7 +46,7 @@ const availablePromotions: Promotion[] = [
   }
 ];
 
-export default function PromotionSelector({ items, onPromotionApplied, onPromotionRemoved }: PromotionSelectorProps) {
+export default function PromotionSelector({ items, onPromotionApplied, onPromotionRemoved, orderType = 'pickup' }: PromotionSelectorProps) {
   const [selectedPromotions, setSelectedPromotions] = useState<string[]>([]);
   const [availableOffers, setAvailableOffers] = useState<Promotion[]>([]);
   const [appliedPromotions, setAppliedPromotions] = useState<Promotion[]>([]);
@@ -187,7 +188,21 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
         </h3>
       </div>
 
-      <div className="space-y-4">
+      {/* Promotions réservées aux commandes à emporter */}
+      {orderType === 'delivery' && (
+        <div className="mb-4 flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4">
+          <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-amber-800">Promotions réservées aux commandes à emporter</p>
+            <p className="text-sm text-amber-700 mt-1">
+              Les offres pizzas (2 achetées = 1 offerte) sont valables uniquement pour les commandes récupérées sur place.
+              Passez en <strong>À emporter</strong> pour en profiter.
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-4" style={{ display: orderType === 'delivery' ? 'none' : undefined }}>
         {availableOffers.length === 0 ? (
           <div className="text-center py-8">
             <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -336,15 +351,17 @@ export default function PromotionSelector({ items, onPromotionApplied, onPromoti
         </motion.div>
       )}
 
-      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-        <div className="flex items-start">
-          <AlertCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
-          <p className="text-sm text-blue-800">
-            <strong>Note :</strong> Les promotions sont automatiquement appliquées selon les conditions de votre panier. 
-            La pizza offerte sera ajoutée à votre commande.
-          </p>
+      {orderType !== 'delivery' && (
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-start">
+            <AlertCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
+            <p className="text-sm text-blue-800">
+              <strong>Note :</strong> Les promotions sont automatiquement appliquées selon les conditions de votre panier. 
+              La pizza offerte sera ajoutée à votre commande.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </motion.div>
   );
 }

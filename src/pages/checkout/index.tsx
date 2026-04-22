@@ -20,12 +20,14 @@ export default function CheckoutPage() {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showPromotionModal, setShowPromotionModal] = useState(false);
   const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
+  const [deliveryFee, setDeliveryFee] = useState(0);
 
   // Charger le type de commande depuis localStorage
   useEffect(() => {
     const savedOrderType = localStorage.getItem('orderType');
     if (savedOrderType === 'pickup' || savedOrderType === 'delivery') {
       setOrderType(savedOrderType);
+      if (savedOrderType === 'pickup') setDeliveryFee(0);
     }
   }, []);
 
@@ -124,9 +126,15 @@ export default function CheckoutPage() {
                       <span>Remise</span>
                       <span className="font-bold text-green-600 dark:text-green-400">-{promotionDiscount.toFixed(2)} €</span>
                     </div>
+                    {orderType === 'delivery' && deliveryFee > 0 && (
+                      <div className="flex justify-between text-gray-700 dark:text-gray-300">
+                        <span>Frais de livraison</span>
+                        <span>+{deliveryFee.toFixed(2)} €</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-lg font-bold text-gray-900 dark:text-white pt-2 border-t border-amber-200 dark:border-amber-700">
                       <span>Total après remise</span>
-                      <span>{(total - promotionDiscount).toFixed(2)} €</span>
+                      <span>{(total - promotionDiscount + (orderType === 'delivery' ? deliveryFee : 0)).toFixed(2)} €</span>
                     </div>
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
@@ -196,16 +204,19 @@ export default function CheckoutPage() {
           items={items}
           onPromotionApplied={handlePromotionApplied}
           onPromotionRemoved={handlePromotionRemoved}
+          orderType={orderType}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Formulaire de livraison */}
           <div className="lg:col-span-2">
-            <DeliveryForm 
+            <DeliveryForm
               onSubmit={handleOrderSubmit}
               isLoading={isLoading}
               onShowAccountModal={() => setShowAccountModal(true)}
               orderType={orderType}
+              cartTotal={total - promotionDiscount}
+              onDeliveryInfoChange={(fee) => setDeliveryFee(orderType === 'delivery' ? fee : 0)}
             />
           </div>
 
@@ -293,15 +304,27 @@ export default function CheckoutPage() {
                 </div>
               )}
 
+              {/* Frais de livraison */}
+              {orderType === 'delivery' && (
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mb-2">
+                  <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
+                    <span>Frais de livraison</span>
+                    <span className={deliveryFee === 0 ? 'text-green-600 font-medium' : 'font-medium'}>
+                      {deliveryFee === 0 ? 'Gratuit' : `+${deliveryFee.toFixed(2)} €`}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {/* Total */}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div className={`border-t border-gray-200 dark:border-gray-700 pt-4 ${orderType === 'delivery' ? '' : 'mt-0'}`}>
                 <div className="flex justify-between text-lg font-bold text-gray-900 dark:text-white">
                   <span>Total</span>
-                  <span>{(total - promotionDiscount).toFixed(2)}€</span>
+                  <span>{(total - promotionDiscount + (orderType === 'delivery' ? deliveryFee : 0)).toFixed(2)} €</span>
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Livraison incluse
-                </p>
+                {orderType === 'delivery' && deliveryFee === 0 && (
+                  <p className="text-sm text-green-600 mt-1">Livraison offerte 🎉</p>
+                )}
               </div>
 
               {/* Informations de livraison */}

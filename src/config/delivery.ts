@@ -11,8 +11,8 @@ export interface DeliveryZone {
 
 export const DELIVERY_ZONES: DeliveryZone[] = [
   { maxKm: 3,   fee: 0,    minOrder: 15, label: '0 – 3 km'  },
-  { maxKm: 5,   fee: 2,    minOrder: 18, label: '3 – 5 km'  },
-  { maxKm: 7,   fee: 3.50, minOrder: 20, label: '5 – 7 km'  },
+  { maxKm: 5,   fee: 2,    minOrder: 20, label: '3 – 5 km'  },
+  { maxKm: 7,   fee: 3.50, minOrder: 25, label: '5 – 7 km'  },
 ];
 
 export const MAX_DELIVERY_KM = 7;

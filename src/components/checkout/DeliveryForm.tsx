@@ -186,33 +186,25 @@ export default function DeliveryForm({ onSubmit, isLoading = false, onShowAccoun
               value={formData.address}
               onChange={(value) => {
                 handleInputChange('address', value);
-                setIsAddressConfirmed(false);
-                setSelectedAddress(null);
+                // Réinitialise uniquement si l'utilisateur tape manuellement
+                // (pas lors d'une sélection — géré par onAddressSelect)
+                if (selectedAddress && value !== selectedAddress.display_name) {
+                  setIsAddressConfirmed(false);
+                  setSelectedAddress(null);
+                  setDeliveryDistanceKm(null);
+                  setDeliveryZone(null);
+                  setDistanceError(null);
+                  onDeliveryInfoChange?.(0, null, null);
+                }
               }}
               onAddressSelect={handleAddressSelect}
-              placeholder="Rechercher votre adresse..."
+              placeholder="Ex: 15 rue de la Paix, Reims..."
               className={errors.address ? 'border-red-500' : ''}
             />
             {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
             {selectedAddress && isAddressConfirmed && (
               <div className="mt-2 space-y-2">
-                <div className="p-2 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center text-sm text-green-700">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span className="font-medium">Adresse validée :</span>
-                  </div>
-                  <div className="text-sm text-green-600 mt-1">
-                    {(() => {
-                      const address = selectedAddress.address;
-                      if (!address) return selectedAddress.display_name;
-                      const parts = [];
-                      if (address.house_number && address.road) parts.push(`${address.house_number} ${address.road}`);
-                      else if (address.road) parts.push(address.road);
-                      if (address.postcode && address.city) parts.push(`${address.postcode} ${address.city}`);
-                      return parts.join(', ') || selectedAddress.display_name;
-                    })()}
-                  </div>
-                </div>
+                {/* La confirmation visuelle est déjà gérée dans AddressAutocomplete */}
 
                 {/* Affichage de la zone de livraison */}
                 {deliveryDistanceKm !== null && (

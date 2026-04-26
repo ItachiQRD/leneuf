@@ -7,7 +7,7 @@ import Cart from '@/components/cart/Cart';
 import DeliveryForm from '@/components/checkout/DeliveryForm';
 import AccountCreationModal from '@/components/checkout/AccountCreationModal';
 import PromotionSelector from '@/components/checkout/PromotionSelector';
-import { ShoppingCart, ArrowLeft, Clock, MapPin, UserPlus, Gift, CheckCircle } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Clock, MapPin, UserPlus, Gift, CheckCircle, Truck, Store } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Dialog, Transition } from '@headlessui/react';
 
@@ -19,17 +19,20 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showPromotionModal, setShowPromotionModal] = useState(false);
-  const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
   const [deliveryFee, setDeliveryFee] = useState(0);
 
-  // Charger le type de commande depuis localStorage
-  useEffect(() => {
-    const savedOrderType = localStorage.getItem('orderType');
-    if (savedOrderType === 'pickup' || savedOrderType === 'delivery') {
-      setOrderType(savedOrderType);
-      if (savedOrderType === 'pickup') setDeliveryFee(0);
-    }
-  }, []);
+  // Initialisation depuis localStorage pour éviter le flash 'delivery' → 'pickup'
+  const [orderType, setOrderType] = useState<'delivery' | 'pickup'>(() => {
+    if (typeof window === 'undefined') return 'delivery';
+    const saved = localStorage.getItem('orderType');
+    return saved === 'pickup' ? 'pickup' : 'delivery';
+  });
+
+  const handleOrderTypeChange = (type: 'delivery' | 'pickup') => {
+    setOrderType(type);
+    localStorage.setItem('orderType', type);
+    if (type === 'pickup') setDeliveryFee(0);
+  };
 
   // Afficher le popup de confirmation de promotion quand une promotion est appliquée
   useEffect(() => {
@@ -174,6 +177,45 @@ export default function CheckoutPage() {
           <p className="text-gray-600 dark:text-gray-400 mt-2">
             Vérifiez vos informations et confirmez votre commande
           </p>
+        </div>
+
+        {/* Sélecteur du mode de commande — visible en premier pour éviter toute ambiguïté */}
+        <div className="mb-6">
+          <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
+            Mode de commande
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => handleOrderTypeChange('pickup')}
+              className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-4 font-semibold transition-all ${
+                orderType === 'pickup'
+                  ? 'border-red-500 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'
+                  : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600'
+              }`}
+            >
+              <Store className="w-5 h-5" />
+              <div className="text-left">
+                <div className="text-sm font-bold">À emporter</div>
+                <div className="text-xs opacity-70">Récupérer sur place</div>
+              </div>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleOrderTypeChange('delivery')}
+              className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-4 font-semibold transition-all ${
+                orderType === 'delivery'
+                  ? 'border-red-500 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'
+                  : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600'
+              }`}
+            >
+              <Truck className="w-5 h-5" />
+              <div className="text-left">
+                <div className="text-sm font-bold">Livraison</div>
+                <div className="text-xs opacity-70">Livré chez vous</div>
+              </div>
+            </button>
+          </div>
         </div>
 
         {/* Bandeau d'incitation à créer un compte */}
